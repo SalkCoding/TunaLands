@@ -1,6 +1,7 @@
 # TunaLands
 
-## Developing environment: Kotlin 1.4.10 + Gradle
+## Developing environment
+* Kotlin 1.4.10 + Gradle
 
 ## Dependencies
 * kotlin-stdlib

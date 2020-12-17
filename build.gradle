@@ -1,0 +1,22 @@
+plugins {
+    id "org.jetbrains.kotlin.jvm" version "1.4.10"
+}
+
+group "kr.kro.salk"
+version "1.0.0-SNAPSHOT"
+
+repositories {
+    mavenCentral()
+    maven {
+        url "http://nexus.devsrsouza.com.br/repository/maven-public/"
+    }
+    maven {
+        url "https://papermc.io/repo/repository/maven-public/"
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+    compileOnly "com.destroystokyo.paper:paper-api:1.16.4-R0.1-SNAPSHOT"
+    compileOnly "br.com.devsrsouza.kotlinbukkitapi:core:0.2.0-SNAPSHOT"
+}

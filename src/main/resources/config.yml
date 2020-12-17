@@ -1,0 +1,21 @@
+protect:
+  coreBlock: DIAMOND_BLOCK #Not ID, Material
+  createPrice: 10
+  baseMaxExtendCount: 5
+  baseLimitExtendPrice: 5
+
+flag:
+  takeFlagPrice: 10
+  removeFlagPrice: 5
+
+command:
+  cooldown: #Tick
+    rejoin: 5184000 #3d
+    visit: 200 #10s
+    spawn: 200 #10s
+  price:
+    setSpawnPrice: 10
+
+limitWorld:
+    - world_nether
+    - world_the_end
