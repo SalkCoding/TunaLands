@@ -1,7 +1,8 @@
-package com.salkcoding.tunalands.gui.render
+package com.salkcoding.tunalands.gui.render.settinggui
 
 import br.com.devsrsouza.kotlinbukkitapi.extensions.item.displayName
 import com.salkcoding.tunalands.gui.GuiInterface
+import com.salkcoding.tunalands.gui.render.openMainGui
 import com.salkcoding.tunalands.guiManager
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.util.backButton
@@ -14,7 +15,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.inventory.Inventory
 
-class SettingGui(private val player: Player) : GuiInterface {
+class VisitorSettingGui(private val player: Player) : GuiInterface {
     //First row
     private val canPVP = (Material.DIAMOND_SWORD * 1).apply { this.displayName("PVP") }
     private val breakBlock = (Material.DIAMOND_PICKAXE * 1).apply { this.displayName("블록 부수기") }
@@ -71,7 +72,7 @@ class SettingGui(private val player: Player) : GuiInterface {
     private val useJukebox = (Material.JUKEBOX * 1).apply { this.displayName("주크박스 사용") }
 
     override fun render(inv: Inventory) {
-        val setting = landManager.getPlayerLandSetting(player.uniqueId)!!
+        val setting = landManager.getLandVisitorSetting(player.uniqueId)!!
 
         //First row
         canPVP.apply { this.lore = listOf("상태: ${setting.canPVP}") }
@@ -180,10 +181,10 @@ class SettingGui(private val player: Player) : GuiInterface {
 
     override fun onClick(event: InventoryClickEvent) {
         event.isCancelled = true
-        val setting = landManager.getPlayerLandSetting(player.uniqueId)!!
+        val setting = landManager.getLandVisitorSetting(player.uniqueId)!!
         val inv = event.inventory
         when (event.rawSlot) {
-            0, 8 -> player.openMainGui()//Back button
+            0, 8 -> player.openSettingGui()//Back button
             //First row
             9 -> {
                 setting.canPVP = !setting.canPVP
@@ -516,9 +517,9 @@ class SettingGui(private val player: Player) : GuiInterface {
     }
 }
 
-fun Player.openSettingGui() {
-    val inventory = Bukkit.createInventory(null, 54, "Setting GUI")
-    val gui = SettingGui(this)
+fun Player.openVisitorSettingGui() {
+    val inventory = Bukkit.createInventory(null, 54, "방문자 설정")
+    val gui = VisitorSettingGui(this)
     gui.render(inventory)
 
     val view = this.openInventory(inventory)!!

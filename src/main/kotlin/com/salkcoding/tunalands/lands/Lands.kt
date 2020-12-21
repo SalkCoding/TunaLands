@@ -7,9 +7,13 @@ import java.util.*
 class Lands(
     val landList: MutableList<String>,
     val landInfo: LandInfo,
-    val setting: LandSetting,
     val core: Core //Core is not chest, it is core block
 ) {
+    var open = false
+    val visitorSetting = LandSetting()
+    val memberSetting = LandSetting()
+    val delegatorSetting = DelegatorSetting()
+    val partTimeJobSetting = LandSetting()
 
     data class LandInfo(
         val firstOwner: String,

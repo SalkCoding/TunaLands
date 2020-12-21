@@ -1,7 +1,6 @@
 package com.salkcoding.tunalands.lands
 
 data class LandSetting(
-    var open: Boolean = false,
     //First row
     var canPVP: Boolean = false,
     var breakBlock: Boolean = false,

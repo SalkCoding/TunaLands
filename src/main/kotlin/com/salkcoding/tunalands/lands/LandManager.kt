@@ -1,5 +1,6 @@
 package com.salkcoding.tunalands.lands
 
+import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.*
 import org.bukkit.Chunk
 import org.bukkit.Color
@@ -57,8 +58,20 @@ class LandManager {
         return if (playerUUID in playerLandMap) playerLandMap[playerUUID]!!.landInfo else null
     }
 
-    fun getPlayerLandSetting(playerUUID: UUID): LandSetting? {
-        return if (playerUUID in playerLandMap) playerLandMap[playerUUID]!!.setting else null
+    fun getLandVisitorSetting(playerUUID: UUID): LandSetting? {
+        return if (playerUUID in playerLandMap) playerLandMap[playerUUID]!!.visitorSetting else null
+    }
+
+    fun getLandMemberSetting(playerUUID: UUID): LandSetting? {
+        return if (playerUUID in playerLandMap) playerLandMap[playerUUID]!!.memberSetting else null
+    }
+
+    fun getLandDelegatorSetting(playerUUID: UUID): DelegatorSetting? {
+        return if (playerUUID in playerLandMap) playerLandMap[playerUUID]!!.delegatorSetting else null
+    }
+
+    fun getLandPartTimeJobSetting(playerUUID: UUID): LandSetting? {
+        return if (playerUUID in playerLandMap) playerLandMap[playerUUID]!!.partTimeJobSetting else null
     }
 
     fun buyLand(player: Player, core: Block) {
@@ -70,7 +83,13 @@ class LandManager {
             val uuid = player.uniqueId
             if (uuid in playerLandMap) {
                 if (chunk.isMeetOtherChunk(playerLandMap[uuid]!!.landList)) {//Additional buying
-                    playerLandMap[uuid]!!.landList.add(query)
+                    tunaLands.server.scheduler.runTaskAsynchronously(tunaLands, Runnable {
+                        if (!playerLandMap[uuid]!!.checkFloodFill()) {
+                            playerLandMap[uuid]!!.landList.add(query)
+                        } else {
+                            player.sendMessage("Flood fill false! Your bought will be cancelled!".errorFormat())
+                        }
+                    })
                 } else {
                     player.sendMessage("You can only buy a chunk that meet other chunk that you owned".errorFormat())
                     return
@@ -89,7 +108,6 @@ class LandManager {
                             expired.timeInMillis,
                             mutableListOf(uuid)
                         ),
-                        LandSetting(),
                         Lands.Core(core.world.name, core.location.blockX, core.location.blockY, core.location.blockZ)
                     )
             }
@@ -98,7 +116,6 @@ class LandManager {
         }
     }
 
-    //TODO Correct selling system (Core couldn't be sell when it will be last chunk. A chunk that meet other chunks all side can't sell)
     fun sellLand(player: Player, chunk: Chunk) {
         val query = chunk.toQuery()
         if (query in landMap) {

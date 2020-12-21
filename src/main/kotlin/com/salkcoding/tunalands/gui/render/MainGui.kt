@@ -3,6 +3,7 @@ package com.salkcoding.tunalands.gui.render
 import br.com.devsrsouza.kotlinbukkitapi.extensions.item.displayName
 import br.com.devsrsouza.kotlinbukkitapi.extensions.player.playSound
 import com.salkcoding.tunalands.gui.GuiInterface
+import com.salkcoding.tunalands.gui.render.settinggui.openSettingGui
 import com.salkcoding.tunalands.guiManager
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.tunaLands
@@ -92,10 +93,9 @@ class MainGui(private val player: Player) : GuiInterface {
             inv.setItem(4, totalInfoIcon)
         }, 0, 20)
 
-        val setting = lands.setting
         lockButton.apply {
             this.displayName(
-                when (setting.open) {
+                when (lands.open) {
                     true -> "지역을 비공개로 전환"
                     false -> "지역을 공개로 전환"
                 }
@@ -123,20 +123,19 @@ class MainGui(private val player: Player) : GuiInterface {
 
         val clicked = event.rawSlot
         val lands = landManager.getPlayerLands(player.uniqueId)!!
-        val setting = lands.setting
         when (clicked) {
             47 -> {
                 //TODO If public turns to private, make a sound door closed, else door opened
                 lockButton.apply {
                     this.displayName(
-                        when (setting.open) {
+                        when (lands.open) {
                             true -> {
-                                setting.open = false
+                                lands.open = false
                                 player.playSound(Sound.BLOCK_WOODEN_DOOR_CLOSE, .5f, 1f)
                                 "지역을 공개로 전환"
                             }
                             false -> {
-                                setting.open = true
+                                lands.open = true
                                 player.playSound(Sound.BLOCK_WOODEN_DOOR_OPEN, .5f, 1f)
                                 "지역을 비공개로 전환"
                             }
