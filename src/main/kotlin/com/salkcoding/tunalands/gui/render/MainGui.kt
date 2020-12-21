@@ -6,8 +6,10 @@ import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.gui.render.settinggui.openSettingGui
 import com.salkcoding.tunalands.guiManager
 import com.salkcoding.tunalands.landManager
+import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.blackPane
+import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.times
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -21,7 +23,7 @@ import org.bukkit.scheduler.BukkitTask
 import java.util.*
 import kotlin.math.floor
 
-class MainGui(private val player: Player) : GuiInterface {
+class MainGui(private val player: Player, private val rank: Rank) : GuiInterface {
 
     //Dynamic
     private val totalInfoIcon = (Material.CAMPFIRE * 1).apply {
@@ -67,12 +69,12 @@ class MainGui(private val player: Player) : GuiInterface {
 
         val uuid = player.uniqueId
         val lands = landManager.getPlayerLands(uuid)!!
-        val landInfo = lands.landInfo
+        val landHistory = lands.landHistory
         val created = Calendar.getInstance()
-        created.timeInMillis = landInfo.createdMillisecond
-        var expired = landInfo.expiredMillisecond - System.currentTimeMillis()
+        created.timeInMillis = landHistory.createdMillisecond
+        var expired = landHistory.expiredMillisecond - System.currentTimeMillis()
 
-        task = Bukkit.getScheduler().runTaskTimer(tunaLands, Runnable {
+        task = Bukkit.getScheduler().runTaskTimerAsynchronously(tunaLands, Runnable {
             expired -= 1000
             totalInfoIcon.apply {
                 this.lore = listOf(
@@ -86,11 +88,13 @@ class MainGui(private val player: Player) : GuiInterface {
                         (expired / 1000) % 60
                     }초",
                     "점유한 지역: ${lands.landList.size}개",
-                    "멤버 수: ${landInfo.memberList.size}명",
+                    "멤버 수: ${lands.memberList.size}명",
                     "생성일: ${created.get(Calendar.YEAR)}/${created.get(Calendar.MONTH) + 1}/${created.get(Calendar.DATE)}"
                 )
             }
-            inv.setItem(4, totalInfoIcon)
+            Bukkit.getScheduler().runTask(tunaLands, Runnable {
+                inv.setItem(4, totalInfoIcon)
+            })
         }, 0, 20)
 
         lockButton.apply {
@@ -125,27 +129,36 @@ class MainGui(private val player: Player) : GuiInterface {
         val lands = landManager.getPlayerLands(player.uniqueId)!!
         when (clicked) {
             47 -> {
-                //TODO If public turns to private, make a sound door closed, else door opened
-                lockButton.apply {
-                    this.displayName(
-                        when (lands.open) {
-                            true -> {
-                                lands.open = false
-                                player.playSound(Sound.BLOCK_WOODEN_DOOR_CLOSE, .5f, 1f)
-                                "지역을 공개로 전환"
-                            }
-                            false -> {
-                                lands.open = true
-                                player.playSound(Sound.BLOCK_WOODEN_DOOR_OPEN, .5f, 1f)
-                                "지역을 비공개로 전환"
-                            }
+                when (rank) {
+                    Rank.OWNER, Rank.DELEGATOR -> {
+                        lockButton.apply {
+                            this.displayName(
+                                when (lands.open) {
+                                    true -> {
+                                        lands.open = false
+                                        player.playSound(Sound.BLOCK_WOODEN_DOOR_CLOSE, .5f, 1f)
+                                        "지역을 공개로 전환"
+                                    }
+                                    false -> {
+                                        lands.open = true
+                                        player.playSound(Sound.BLOCK_WOODEN_DOOR_OPEN, .5f, 1f)
+                                        "지역을 비공개로 전환"
+                                    }
+                                }
+                            )
                         }
-                    )
+                        event.inventory.setItem(47, lockButton)
+                    }
+                    else -> {
+                        player.sendMessage("You don't have a permission to access".errorFormat())
+                    }
                 }
-                event.inventory.setItem(47, lockButton)
             }
             48 -> {
-                player.openSettingGui()
+                when (rank) {
+                    Rank.OWNER, Rank.DELEGATOR -> player.openSettingGui(rank)
+                    else -> player.sendMessage("You don't have a permission to access".errorFormat())
+                }
             }
             49 -> {
                 player.openShopGui()
@@ -160,7 +173,7 @@ class MainGui(private val player: Player) : GuiInterface {
 
         //Exclude 0~9 and 45~53, only allow 10~44 but its mod not has to 0 or 8
         val mod = clicked % 9
-        if ((clicked in 0..9) or (clicked in 45..53) or ((mod == 0) or (mod == 8) and (clicked < 54))) {
+        if (clicked in 0..9 || clicked in 45..53 || (mod == 0 || mod == 8 && clicked < 54)) {
             return
         }
 
@@ -175,7 +188,7 @@ class MainGui(private val player: Player) : GuiInterface {
         val inv = event.inventory
         for (i in 10..44) {
             val mod = i % 9
-            if ((mod == 0) or (mod == 8))
+            if (mod == 0 || mod == 8)
                 continue
             val item = inv.getItem(i)
             if (item != null)
@@ -186,9 +199,9 @@ class MainGui(private val player: Player) : GuiInterface {
 
 }
 
-fun Player.openMainGui() {
+fun Player.openMainGui(rank: Rank) {
     val inventory = Bukkit.createInventory(null, 54, "Main GUI")
-    val gui = MainGui(this)
+    val gui = MainGui(this, rank)
     gui.render(inventory)
 
     val view = this.openInventory(inventory)!!

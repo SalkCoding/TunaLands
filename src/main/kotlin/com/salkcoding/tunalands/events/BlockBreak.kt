@@ -21,14 +21,14 @@ class BlockBreak : Listener {
         val chunk = event.block.chunk
         val protected = landManager.isProtectedLand(chunk)
         val owned = landManager.isPlayerLand(player, chunk)
-        if (protected and owned) {
+        if (protected && owned) {
             val block = event.block
             //Trying to break core or chest of core.
-            if ((block.type == Material.CHEST) or (block.type == configuration.protect.coreBlock)) {
+            if (block.type == Material.CHEST || block.type == configuration.protect.coreBlock) {
                 player.sendMessage("You can't break core or core of chest".warnFormat())
                 event.isCancelled = true
             }
-        } else if (protected and !owned) {
+        } else if (protected && !owned) {
             player.sendMessage("This land protected by ${landManager.getLandOwnerName(chunk)}".warnFormat())
             event.isCancelled = true
         }

@@ -19,7 +19,7 @@ class BlockPlace : Listener {
 
         val player = event.player
         val chunk = event.block.chunk
-        if (landManager.isProtectedLand(event.block.chunk) and landManager.isPlayerLand(player, chunk)) {
+        if (landManager.isProtectedLand(event.block.chunk) && landManager.isPlayerLand(player, chunk)) {
             player.sendMessage("This land is protected by ${landManager.getLandOwnerName(chunk)}".warnFormat())
             event.isCancelled = true
         }

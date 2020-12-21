@@ -12,18 +12,18 @@ import org.bukkit.entity.Player
 class Debug : CommandExecutor {
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        if (!sender.isOp or args.isEmpty())
+        if (!sender.isOp || args.isEmpty())
             return false
 
         when {
-            (args[0] == "info") and (args.size == 2) -> {
+            args[0] == "info" && args.size == 2 -> {
                 val name = args[1]
                 val list = landManager.getPlayerLandList(Bukkit.getOfflinePlayer(name).uniqueId)
                 if (list != null) sender.sendMessage("Lands of $name: ${list.joinToString(separator = ", ")}".infoFormat())
                 else sender.sendMessage("")
                 return true
             }
-            (args[0] == "buy") and (args.size == 1) -> {
+            args[0] == "buy" && args.size == 1 -> {
                 val player = sender as? Player
                 if (player != null) {
                     landManager.buyLand(player, player.location.block)
@@ -32,7 +32,7 @@ class Debug : CommandExecutor {
                 }
                 return true
             }
-            (args[0] == "sell") and (args.size == 1) -> {
+            args[0] == "sell" && args.size == 1 -> {
                 val player = sender as? Player
                 if (player != null) {
                     landManager.sellLand(player, player.chunk)

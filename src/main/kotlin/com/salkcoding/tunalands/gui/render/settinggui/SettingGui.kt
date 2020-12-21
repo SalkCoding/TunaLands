@@ -4,7 +4,9 @@ import br.com.devsrsouza.kotlinbukkitapi.extensions.item.displayName
 import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.gui.render.openMainGui
 import com.salkcoding.tunalands.guiManager
+import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.backButton
+import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.times
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -14,7 +16,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.inventory.Inventory
 
-class SettingGui(private val player: Player) : GuiInterface {
+class SettingGui(private val player: Player, private val rank: Rank) : GuiInterface {
 
     companion object {
         val visitorSettingButton = (Material.OAK_SIGN * 1).apply {
@@ -56,19 +58,22 @@ class SettingGui(private val player: Player) : GuiInterface {
         event.isCancelled = true
         when (event.rawSlot) {
             0 -> {
-                player.openMainGui()
+                player.openMainGui(rank)
             }
             2 -> {
-                player.openVisitorSettingGui()
+                player.openVisitorSettingGui(rank)
             }
             3 -> {
-                player.openMemberSettingGui()
+                player.openMemberSettingGui(rank)
             }
             4 -> {
-                player.openDelegatorSettingGui()
+                when (rank) {
+                    Rank.OWNER, Rank.DELEGATOR -> player.openDelegatorSettingGui(rank)
+                    else -> player.sendMessage("You don't have a permission to access".errorFormat())
+                }
             }
             6 -> {
-                player.openPartTimeJobSettingGui()
+                player.openPartTimeJobSettingGui(rank)
             }
             /*7 -> {
                 TODO("NOT implemented")
@@ -85,9 +90,9 @@ class SettingGui(private val player: Player) : GuiInterface {
     }
 }
 
-fun Player.openSettingGui() {
+fun Player.openSettingGui(rank: Rank) {
     val inventory = Bukkit.createInventory(null, 9, "설정")
-    val gui = SettingGui(this)
+    val gui = SettingGui(this, rank)
     gui.render(inventory)
 
     val view = this.openInventory(inventory)!!

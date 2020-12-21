@@ -5,6 +5,7 @@ import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.gui.render.openMainGui
 import com.salkcoding.tunalands.guiManager
 import com.salkcoding.tunalands.landManager
+import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.backButton
 import com.salkcoding.tunalands.util.times
 import org.bukkit.Bukkit
@@ -15,7 +16,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.inventory.Inventory
 
-class DelegatorSettingGui(private val player: Player) : GuiInterface {
+class DelegatorSettingGui(private val player: Player, private val rank: Rank) : GuiInterface {
 
     private val setSpawnVisitor = (Material.NETHER_STAR * 1).apply { this.displayName("방문자 스폰 설정") }
     private val setPartTimeJobSetting = (Material.BOOK * 1).apply { this.displayName("알바 설정 수정") }
@@ -54,7 +55,7 @@ class DelegatorSettingGui(private val player: Player) : GuiInterface {
         val setting = landManager.getLandDelegatorSetting(player.uniqueId)!!
         val inv = event.inventory
         when (event.rawSlot) {
-            0, 8 -> player.openSettingGui()//Back button
+            0, 8 -> player.openSettingGui(rank)//Back button
             //First row
             9 -> {
                 setting.setSpawnVisitor = !setting.setSpawnVisitor
@@ -117,9 +118,9 @@ class DelegatorSettingGui(private val player: Player) : GuiInterface {
     }
 }
 
-fun Player.openDelegatorSettingGui() {
+fun Player.openDelegatorSettingGui(rank: Rank) {
     val inventory = Bukkit.createInventory(null, 18, "관리대리인 설정")
-    val gui = DelegatorSettingGui(this)
+    val gui = DelegatorSettingGui(this, rank)
     gui.render(inventory)
 
     val view = this.openInventory(inventory)!!

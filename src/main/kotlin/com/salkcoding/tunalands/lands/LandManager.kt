@@ -2,10 +2,7 @@ package com.salkcoding.tunalands.lands
 
 import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.*
-import org.bukkit.Chunk
-import org.bukkit.Color
-import org.bukkit.Material
-import org.bukkit.Particle
+import org.bukkit.*
 import org.bukkit.block.Block
 import org.bukkit.entity.Player
 import java.util.*
@@ -46,32 +43,71 @@ class LandManager {
             null
     }
 
+    fun getChunkInfo(chunk: Chunk): Lands.ChunkInfo? {
+        val query = chunk.toQuery()
+        return if (query in landMap)
+            landMap[query]!!
+        else
+            null
+    }
+
     fun getPlayerLands(playerUUID: UUID): Lands? {
-        return if (playerUUID in playerLandMap) playerLandMap[playerUUID] else null
+        return if (playerUUID in playerLandMap)
+            playerLandMap[playerUUID]
+        else
+            null
     }
 
     fun getPlayerLandList(playerUUID: UUID): List<String>? {
-        return if (playerUUID in playerLandMap) playerLandMap[playerUUID]!!.landList else null
+        return if (playerUUID in playerLandMap)
+            playerLandMap[playerUUID]!!.landList
+        else
+            null
     }
 
-    fun getPlayerLandInfo(playerUUID: UUID): Lands.LandInfo? {
-        return if (playerUUID in playerLandMap) playerLandMap[playerUUID]!!.landInfo else null
+    fun getPlayerLandHistory(playerUUID: UUID): Lands.LandHistory? {
+        return if (playerUUID in playerLandMap)
+            playerLandMap[playerUUID]!!.landHistory
+        else
+            null
     }
 
     fun getLandVisitorSetting(playerUUID: UUID): LandSetting? {
-        return if (playerUUID in playerLandMap) playerLandMap[playerUUID]!!.visitorSetting else null
+        return if (playerUUID in playerLandMap)
+            playerLandMap[playerUUID]!!.visitorSetting
+        else
+            null
     }
 
     fun getLandMemberSetting(playerUUID: UUID): LandSetting? {
-        return if (playerUUID in playerLandMap) playerLandMap[playerUUID]!!.memberSetting else null
+        return if (playerUUID in playerLandMap)
+            playerLandMap[playerUUID]!!.memberSetting
+        else
+            null
     }
 
     fun getLandDelegatorSetting(playerUUID: UUID): DelegatorSetting? {
-        return if (playerUUID in playerLandMap) playerLandMap[playerUUID]!!.delegatorSetting else null
+        return if (playerUUID in playerLandMap)
+            playerLandMap[playerUUID]!!.delegatorSetting
+        else
+            null
     }
 
     fun getLandPartTimeJobSetting(playerUUID: UUID): LandSetting? {
-        return if (playerUUID in playerLandMap) playerLandMap[playerUUID]!!.partTimeJobSetting else null
+        return if (playerUUID in playerLandMap)
+            playerLandMap[playerUUID]!!.partTimeJobSetting
+        else
+            null
+    }
+
+    fun getLandsWithChunk(chunk: Chunk): Lands? {
+        val query = chunk.toQuery()
+        return if (query in landMap) {
+            val chunkInfo = landMap[query]!!
+            playerLandMap[chunkInfo.ownerUUID]
+        } else {
+            null
+        }
     }
 
     fun buyLand(player: Player, core: Block) {
@@ -83,7 +119,7 @@ class LandManager {
             val uuid = player.uniqueId
             if (uuid in playerLandMap) {
                 if (chunk.isMeetOtherChunk(playerLandMap[uuid]!!.landList)) {//Additional buying
-                    tunaLands.server.scheduler.runTaskAsynchronously(tunaLands, Runnable {
+                    Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
                         if (!playerLandMap[uuid]!!.checkFloodFill()) {
                             playerLandMap[uuid]!!.landList.add(query)
                         } else {
@@ -100,13 +136,13 @@ class LandManager {
                 expired.add(Calendar.DATE, 1)//Next day(Temp value)
                 playerLandMap[uuid] =
                     Lands(
+                        uuid,
                         mutableListOf(query),
-                        Lands.LandInfo(
+                        Lands.LandHistory(
                             player.name,
                             uuid,
                             now,
                             expired.timeInMillis,
-                            mutableListOf(uuid)
                         ),
                         Lands.Core(core.world.name, core.location.blockX, core.location.blockY, core.location.blockZ)
                     )

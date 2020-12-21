@@ -53,6 +53,7 @@ class TunaLands : JavaPlugin() {
         server.pluginManager.registerEvents(InventoryClick(), this)
         server.pluginManager.registerEvents(InventoryClose(), this)
         server.pluginManager.registerEvents(InventoryDrag(), this)
+        server.pluginManager.registerEvents(PlayerInteract(), this)
 
         if (chunkDebug) {
             logger.warning("Chunk debug mode is enabled".consoleFormat())

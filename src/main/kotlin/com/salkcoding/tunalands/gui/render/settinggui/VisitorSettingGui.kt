@@ -5,6 +5,7 @@ import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.gui.render.openMainGui
 import com.salkcoding.tunalands.guiManager
 import com.salkcoding.tunalands.landManager
+import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.backButton
 import com.salkcoding.tunalands.util.times
 import org.bukkit.Bukkit
@@ -15,7 +16,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.inventory.Inventory
 
-class VisitorSettingGui(private val player: Player) : GuiInterface {
+class VisitorSettingGui(private val player: Player, private val rank: Rank) : GuiInterface {
     //First row
     private val canPVP = (Material.DIAMOND_SWORD * 1).apply { this.displayName("PVP") }
     private val breakBlock = (Material.DIAMOND_PICKAXE * 1).apply { this.displayName("블록 부수기") }
@@ -184,7 +185,7 @@ class VisitorSettingGui(private val player: Player) : GuiInterface {
         val setting = landManager.getLandVisitorSetting(player.uniqueId)!!
         val inv = event.inventory
         when (event.rawSlot) {
-            0, 8 -> player.openSettingGui()//Back button
+            0, 8 -> player.openSettingGui(rank)//Back button
             //First row
             9 -> {
                 setting.canPVP = !setting.canPVP
@@ -517,9 +518,9 @@ class VisitorSettingGui(private val player: Player) : GuiInterface {
     }
 }
 
-fun Player.openVisitorSettingGui() {
+fun Player.openVisitorSettingGui(rank: Rank) {
     val inventory = Bukkit.createInventory(null, 54, "방문자 설정")
-    val gui = VisitorSettingGui(this)
+    val gui = VisitorSettingGui(this, rank)
     gui.render(inventory)
 
     val view = this.openInventory(inventory)!!

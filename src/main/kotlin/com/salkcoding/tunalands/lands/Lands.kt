@@ -5,8 +5,9 @@ import org.bukkit.Chunk
 import java.util.*
 
 class Lands(
+    val ownerUUID: UUID,
     val landList: MutableList<String>,
-    val landInfo: LandInfo,
+    val landHistory: LandHistory,
     val core: Core //Core is not chest, it is core block
 ) {
     var open = false
@@ -15,12 +16,25 @@ class Lands(
     val delegatorSetting = DelegatorSetting()
     val partTimeJobSetting = LandSetting()
 
-    data class LandInfo(
+    val memberList = mutableListOf<UUID>()
+    val delegatorList = mutableListOf<UUID>()
+    val partTimeJobList = mutableListOf<UUID>()
+
+    fun getRank(playerUUID: UUID): Rank {
+        return when (playerUUID) {
+            in partTimeJobList -> Rank.PARTTIMEJOB
+            in memberList -> Rank.MEMBER
+            in delegatorList -> Rank.DELEGATOR
+            ownerUUID -> Rank.OWNER
+            else -> Rank.VISITOR
+        }
+    }
+
+    data class LandHistory(
         val firstOwner: String,
         val firstOwnerUUID: UUID,
         val createdMillisecond: Long,
         val expiredMillisecond: Long,
-        val memberList: MutableList<UUID>,
     )
 
     data class ChunkInfo(

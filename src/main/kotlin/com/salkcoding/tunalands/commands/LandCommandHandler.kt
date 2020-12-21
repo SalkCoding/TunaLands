@@ -27,7 +27,7 @@ class LandCommandHandler : CommandExecutor {
     //ignoreCases
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         //Main command
-        if (args.isEmpty()) {
+        /*if (args.isEmpty()) {
             val player = sender as? Player
             if (player != null) {
                 if (landManager.hasLand(player))
@@ -38,7 +38,7 @@ class LandCommandHandler : CommandExecutor {
                 sender.sendMessage("Only player can use this command".errorFormat())
             }
             return true
-        }
+        }*/
 
         //Sub command
         val newLabel = args[0].toLowerCase()
