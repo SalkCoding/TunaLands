@@ -23,10 +23,6 @@ class LandManager {
         return landMap[chunk.toQuery()]!!.ownerUUID == player.uniqueId
     }
 
-    fun hasLand(player: Player): Boolean {
-        return player.uniqueId in playerLandMap
-    }
-
     fun getLandOwnerName(chunk: Chunk): String? {
         val query = chunk.toQuery()
         return if (query in landMap)

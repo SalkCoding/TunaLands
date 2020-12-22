@@ -1,4 +1,4 @@
-package com.salkcoding.tunalands.events
+package com.salkcoding.tunalands.listener
 
 import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.landManager
@@ -6,27 +6,40 @@ import com.salkcoding.tunalands.util.isSameLocation
 import com.salkcoding.tunalands.util.warnFormat
 import org.bukkit.Material
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
-import org.bukkit.event.hanging.HangingBreakByEntityEvent
-import org.bukkit.event.hanging.HangingBreakEvent
+import org.bukkit.event.block.BlockPlaceEvent
 
-class BlockBreak : Listener {
+class CoreListener : Listener {
 
-    @EventHandler
-    fun onProtect(event: BlockBreakEvent) {
+    @EventHandler(priority = EventPriority.HIGH)
+    fun onCorePlace(event: BlockPlaceEvent) {
         if (event.isCancelled) return
 
-        val player = event.player
-        player.sendMessage(event.block.type.toString())
+        val chest = event.block
+        if (chest.type == Material.CHEST) {
+            val coreBlock = chest.getRelative(0, -1, 0)
+            if (coreBlock.type == configuration.protect.coreBlock) {
+                val player = event.player
+                landManager.buyLand(player, chest, coreBlock)
+            }
+        }
+    }
+
+    @EventHandler
+    fun onCoreBreak(event: BlockBreakEvent) {
+        if (event.isCancelled) return
+
         val chunk = event.block.chunk
-        val protected = landManager.isProtectedLand(chunk)
-        val owned = landManager.isPlayerLand(player, chunk)
-        if (protected && owned) {
+        val lands = landManager.getLandsWithChunk(chunk) ?: return
+        if (!lands.enable) return
+
+        val player = event.player
+        if (landManager.isProtectedLand(chunk)) {
+            //Core protection
             val block = event.block
-            //Trying to break core or chest of core.
             if (block.type == Material.CHEST || block.type == configuration.protect.coreBlock) {
-                val lands = landManager.getLandsWithChunk(chunk) ?: return
                 val upCore = lands.upCore
                 val downCore = lands.downCore
 
@@ -37,10 +50,6 @@ class BlockBreak : Listener {
                     event.isCancelled = true
                 }
             }
-        } else if (protected && !owned) {
-            player.sendMessage("This land protected by ${landManager.getLandOwnerName(chunk)}".warnFormat())
-            event.isCancelled = true
         }
     }
-
 }

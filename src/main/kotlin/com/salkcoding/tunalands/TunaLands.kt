@@ -3,9 +3,10 @@ package com.salkcoding.tunalands
 import com.salkcoding.tunalands.commands.LandCommandHandler
 import com.salkcoding.tunalands.commands.debug.Debug
 import com.salkcoding.tunalands.commands.sub.*
-import com.salkcoding.tunalands.events.*
+import com.salkcoding.tunalands.listener.*
 import com.salkcoding.tunalands.gui.GuiManager
 import com.salkcoding.tunalands.lands.LandManager
+import com.salkcoding.tunalands.listener.region.*
 import com.salkcoding.tunalands.util.consoleFormat
 import org.bukkit.Material
 import org.bukkit.plugin.java.JavaPlugin
@@ -48,12 +49,22 @@ class TunaLands : JavaPlugin() {
 
         getCommand("land")!!.setExecutor(handler)
 
-        server.pluginManager.registerEvents(BlockBreak(), this)
-        server.pluginManager.registerEvents(BlockPlace(), this)
-        server.pluginManager.registerEvents(InventoryClick(), this)
-        server.pluginManager.registerEvents(InventoryClose(), this)
-        server.pluginManager.registerEvents(InventoryDrag(), this)
-        server.pluginManager.registerEvents(PlayerInteract(), this)
+        server.pluginManager.registerEvents(BlockBreakListener(), this)
+        server.pluginManager.registerEvents(BlockPlaceListener(), this)
+        server.pluginManager.registerEvents(CakeListener(), this)
+        server.pluginManager.registerEvents(ChestOpenListener(), this)
+        server.pluginManager.registerEvents(DropItemListener(), this)
+        server.pluginManager.registerEvents(HurtListener(), this)
+        server.pluginManager.registerEvents(PickupExpListener(), this)
+        server.pluginManager.registerEvents(PickupItemListener(), this)
+        server.pluginManager.registerEvents(PVPListener(), this)
+        //TODO from second row
+
+        server.pluginManager.registerEvents(CoreListener(), this)
+        server.pluginManager.registerEvents(InventoryClickListener(), this)
+        server.pluginManager.registerEvents(InventoryCloseListener(), this)
+        server.pluginManager.registerEvents(InventoryDragListener(), this)
+        server.pluginManager.registerEvents(ChestGuiOpenListener(), this)
 
         if (chunkDebug) {
             logger.warning("Chunk debug mode is enabled".consoleFormat())

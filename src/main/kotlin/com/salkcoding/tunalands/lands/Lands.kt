@@ -11,6 +11,7 @@ class Lands(
     val upCore: Core, //Chest
     val downCore: Core //Core block
 ) {
+    var enable = true
     var open = false
     val visitorSetting = LandSetting()
     val memberSetting = LandSetting()

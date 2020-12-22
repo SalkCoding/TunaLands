@@ -11,6 +11,7 @@ import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.blackPane
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.times
+import com.salkcoding.tunalands.util.warnFormat
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound
@@ -20,6 +21,7 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.inventory.Inventory
+import org.bukkit.inventory.ItemStack
 import org.bukkit.scheduler.BukkitTask
 import java.util.*
 import kotlin.math.floor
@@ -76,6 +78,17 @@ class MainGui(private val player: Player, private val rank: Rank) : GuiInterface
         var expired = landHistory.expiredMillisecond - System.currentTimeMillis()
 
         task = Bukkit.getScheduler().runTaskTimerAsynchronously(tunaLands, Runnable {
+            //Expired
+            if (expired < 1000) {
+                task.cancel()
+                player.sendMessage("Protect expired! All of your lands are going to be unprotected!".warnFormat())
+                player.sendMessage("If you want to reactivate protection, refill fuels.".warnFormat())
+
+                if (lands.enable)
+                    lands.enable = false
+                return@Runnable
+            }
+            //Not expired
             expired -= 1000
             totalInfoIcon.apply {
                 this.lore = listOf(
@@ -193,6 +206,17 @@ class MainGui(private val player: Player, private val rank: Rank) : GuiInterface
 
     override fun onClose(event: InventoryCloseEvent) {
         task.cancel()
+
+        val inv = event.inventory
+        val fuelList = mutableListOf<ItemStack>()
+        for (i in 1..4) {
+            for (j in 1..7) {
+                fuelList.add(inv.getItem((i * 9) + j) ?: continue)
+            }
+        }
+
+        //TODO read item and add to expired
+
         guiManager.guiMap.remove(event.view)
     }
 

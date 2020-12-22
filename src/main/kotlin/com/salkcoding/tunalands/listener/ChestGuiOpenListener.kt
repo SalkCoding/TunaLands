@@ -1,4 +1,4 @@
-package com.salkcoding.tunalands.events
+package com.salkcoding.tunalands.listener
 
 import com.salkcoding.tunalands.gui.render.openMainGui
 import com.salkcoding.tunalands.landManager
@@ -6,18 +6,19 @@ import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.isSameLocation
 import org.bukkit.Material
+import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
 
-class PlayerInteract : Listener {
+class ChestGuiOpenListener : Listener {
 
     @EventHandler
     fun onInteract(event: PlayerInteractEvent) {
-        if(event.isCancelled) return
-        val block = event.clickedBlock ?: return
+        if (event.useInteractedBlock() == Event.Result.DENY) return
         if (event.action != Action.RIGHT_CLICK_BLOCK) return
+        val block = event.clickedBlock!!
 
         //Open gui with core
         if (block.type == Material.CHEST) {
