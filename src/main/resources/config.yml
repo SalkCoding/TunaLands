@@ -6,7 +6,7 @@ protect:
 
 flag:
   takeFlagPrice: 10
-  removeFlagPrice: 5
+  releaseFlagPrice: 5
 
 command:
   cooldown: #Tick

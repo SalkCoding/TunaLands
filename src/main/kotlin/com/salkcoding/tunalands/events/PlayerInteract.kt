@@ -15,6 +15,7 @@ class PlayerInteract : Listener {
 
     @EventHandler
     fun onInteract(event: PlayerInteractEvent) {
+        if(event.isCancelled) return
         val block = event.clickedBlock ?: return
         if (event.action != Action.RIGHT_CLICK_BLOCK) return
 
@@ -23,9 +24,9 @@ class PlayerInteract : Listener {
             val player = event.player
             val chunk = block.chunk
             val lands = landManager.getLandsWithChunk(chunk) ?: return
-            val core = lands.core
-            if (!block.isSameLocation(core.world, core.x, core.y, core.z)) return
-
+            val upCore = lands.upCore
+            if (!block.isSameLocation(upCore.world, upCore.x, upCore.y, upCore.z)) return
+            event.isCancelled = true
             when (val rank = lands.getRank(player.uniqueId)) {
                 Rank.MEMBER -> player.sendMessage("You don't have a permission to access setting gui".errorFormat())
                 else -> player.openMainGui(rank)

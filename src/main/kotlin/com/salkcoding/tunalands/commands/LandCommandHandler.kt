@@ -19,7 +19,7 @@ class LandCommandHandler : CommandExecutor {
         val lowerCase = command.toLowerCase()
         if (lowerCase !in commandMap) {
             commandMap[lowerCase] = executor
-            Bukkit.getLogger().info("$lowerCase is registered".consoleFormat())
+            Bukkit.getLogger().info("Command, $lowerCase is registered".consoleFormat())
         } else
             throw IllegalArgumentException("Command: $lowerCase is already registered.")
     }

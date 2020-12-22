@@ -15,15 +15,16 @@ class GuiManager {
             guiMap[event.view]!!.onClick(event)
     }
 
-    fun onDrag(event: InventoryDragEvent) {
-        if (event.view in guiMap)
-            guiMap[event.view]!!.onDrag(event)
-    }
-
     fun onClose(event: InventoryCloseEvent) {
         if (event.view in guiMap) {
             guiMap[event.view]!!.onClose(event)
             guiMap.remove(event.view)
+        }
+    }
+
+    fun onDrag(event: InventoryDragEvent) {
+        if (event.view in guiMap) {
+            event.isCancelled = true
         }
     }
 

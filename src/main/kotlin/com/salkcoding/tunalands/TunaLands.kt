@@ -75,7 +75,7 @@ class TunaLands : JavaPlugin() {
         logger.warning("Plugin is now disabled".consoleFormat())
     }
 
-    fun configRead() {
+    private fun configRead() {
         saveDefaultConfig()
 
         //Protect
@@ -91,7 +91,7 @@ class TunaLands : JavaPlugin() {
         val configFlag = config.getConfigurationSection("flag")!!
         val flag = Config.Flag(
             configFlag.getInt("takeFlagPrice"),
-            configFlag.getInt("removeFlagPrice")
+            configFlag.getInt("releaseFlagPrice")
         )
         logger.info(flag.toString())
         //Command
@@ -128,8 +128,8 @@ data class Config(
     )
 
     data class Flag(
-        val buyPrice: Int,
-        val sellPrice: Int
+        val takeFlagPrice: Int,
+        val releaseFlagPrice: Int
     )
 
     data class Command(

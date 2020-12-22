@@ -110,7 +110,7 @@ class LandManager {
         }
     }
 
-    fun buyLand(player: Player, core: Block) {
+    fun buyLand(player: Player, upCore: Block, downCore: Block) {
         val chunk = player.chunk
         val query = chunk.toQuery()
         if (query in landMap) {
@@ -144,7 +144,18 @@ class LandManager {
                             now,
                             expired.timeInMillis,
                         ),
-                        Lands.Core(core.world.name, core.location.blockX, core.location.blockY, core.location.blockZ)
+                        Lands.Core(
+                            upCore.world.name,
+                            upCore.location.blockX,
+                            upCore.location.blockY,
+                            upCore.location.blockZ
+                        ),
+                        Lands.Core(
+                            downCore.world.name,
+                            downCore.location.blockX,
+                            downCore.location.blockY,
+                            downCore.location.blockZ
+                        )
                     )
             }
             landMap[query] = Lands.ChunkInfo(player.name, uuid, chunk.world.name, chunk.x, chunk.z)
@@ -157,12 +168,15 @@ class LandManager {
         if (query in landMap) {
             if (player.uniqueId == landMap[query]!!.ownerUUID) {
                 landMap.remove(query)
-                playerLandMap[player.uniqueId]!!.landList.remove(query)
 
-                if (playerLandMap[player.uniqueId]!!.landList.isEmpty()) {
-                    val core = playerLandMap[player.uniqueId]!!.core
-                    chunk.world.getBlockAt(core.x, core.y, core.z).breakNaturally()//Core destroy naturally
-                    chunk.world.getBlockAt(core.x, core.y + 1, core.z).type = Material.AIR//Chest delete
+                val lands = playerLandMap[player.uniqueId]!!
+
+                lands.landList.remove(query)
+                if (lands.landList.isEmpty()) {
+                    val upCore = lands.upCore
+                    val downCore = lands.downCore
+                    chunk.world.getBlockAt(upCore.x, upCore.y, upCore.z).breakNaturally()//Chest delete
+                    chunk.world.getBlockAt(downCore.x, downCore.y, downCore.z).breakNaturally()//Core destroy naturally
 
                     playerLandMap.remove(player.uniqueId)
                 }

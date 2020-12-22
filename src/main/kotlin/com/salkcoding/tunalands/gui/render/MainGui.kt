@@ -15,6 +15,7 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.InventoryAction
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.inventory.InventoryDragEvent
@@ -122,7 +123,8 @@ class MainGui(private val player: Player, private val rank: Rank) : GuiInterface
     }
 
     override fun onClick(event: InventoryClickEvent) {
-        //Another menu clicked
+        if (event.isCancelled) return
+
         event.isCancelled = true
 
         val clicked = event.rawSlot
@@ -161,39 +163,36 @@ class MainGui(private val player: Player, private val rank: Rank) : GuiInterface
                 }
             }
             49 -> {
-                player.openShopGui()
+                player.openShopGui(rank)
             }
             50 -> {
-                player.openUserListGui()
+                player.openUserListGui(rank)
             }
             51 -> {
                 TODO("Not implemented")
             }
         }
 
-        //Exclude 0~9 and 45~53, only allow 10~44 but its mod not has to 0 or 8
-        val mod = clicked % 9
-        if (clicked in 0..9 || clicked in 45..53 || (mod == 0 || mod == 8 && clicked < 54)) {
-            return
+        when (event.action) {
+            InventoryAction.PICKUP_ALL, InventoryAction.PICKUP_ONE, InventoryAction.PICKUP_SOME -> {
+                if (event.clickedInventory == player.openInventory.topInventory)
+                    return
+            }
+            InventoryAction.COLLECT_TO_CURSOR -> {
+                return
+            }
+            InventoryAction.PLACE_ALL, InventoryAction.PLACE_ONE, InventoryAction.PLACE_SOME -> {//Ignore
+            }
+            else -> {
+                if (clicked < 54) return
+            }
         }
 
         event.isCancelled = false
     }
 
-    //Implementation not needed
-    override fun onDrag(event: InventoryDragEvent) {}
-
     override fun onClose(event: InventoryCloseEvent) {
         task.cancel()
-        val inv = event.inventory
-        for (i in 10..44) {
-            val mod = i % 9
-            if (mod == 0 || mod == 8)
-                continue
-            val item = inv.getItem(i)
-            if (item != null)
-                event.player.inventory.addItem(inv.getItem(i))
-        }
         guiManager.guiMap.remove(event.view)
     }
 

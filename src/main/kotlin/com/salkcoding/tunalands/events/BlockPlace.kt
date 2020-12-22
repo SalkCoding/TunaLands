@@ -19,7 +19,7 @@ class BlockPlace : Listener {
 
         val player = event.player
         val chunk = event.block.chunk
-        if (landManager.isProtectedLand(event.block.chunk) && landManager.isPlayerLand(player, chunk)) {
+        if (landManager.isProtectedLand(event.block.chunk) && !landManager.isPlayerLand(player, chunk)) {
             player.sendMessage("This land is protected by ${landManager.getLandOwnerName(chunk)}".warnFormat())
             event.isCancelled = true
         }
@@ -31,10 +31,10 @@ class BlockPlace : Listener {
 
         val chest = event.block
         if (chest.type == Material.CHEST) {
-            val coreBlock = chest.world.getBlockAt(chest.location.subtract(0.0, 1.0, 0.0))
+            val coreBlock = chest.getRelative(0, -1, 0)
             if (coreBlock.type == configuration.protect.coreBlock) {
                 val player = event.player
-                landManager.buyLand(player, coreBlock)
+                landManager.buyLand(player, chest, coreBlock)
             }
         }
     }

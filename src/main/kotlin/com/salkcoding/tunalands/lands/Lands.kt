@@ -8,7 +8,8 @@ class Lands(
     val ownerUUID: UUID,
     val landList: MutableList<String>,
     val landHistory: LandHistory,
-    val core: Core //Core is not chest, it is core block
+    val upCore: Core, //Chest
+    val downCore: Core //Core block
 ) {
     var open = false
     val visitorSetting = LandSetting()

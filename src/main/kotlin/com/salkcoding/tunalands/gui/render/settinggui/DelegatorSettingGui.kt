@@ -109,10 +109,6 @@ class DelegatorSettingGui(private val player: Player, private val rank: Rank) : 
         }
     }
 
-    override fun onDrag(event: InventoryDragEvent) {
-        event.isCancelled = true
-    }
-
     override fun onClose(event: InventoryCloseEvent) {
         guiManager.guiMap.remove(event.view)
     }

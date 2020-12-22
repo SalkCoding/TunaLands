@@ -15,9 +15,6 @@ interface GuiInterface : Listener {
     fun onClick(event: InventoryClickEvent)
 
     @EventHandler
-    fun onDrag(event: InventoryDragEvent)
-
-    @EventHandler
     fun onClose(event: InventoryCloseEvent)
 
 }

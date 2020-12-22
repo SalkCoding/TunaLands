@@ -81,10 +81,6 @@ class SettingGui(private val player: Player, private val rank: Rank) : GuiInterf
         }
     }
 
-    override fun onDrag(event: InventoryDragEvent) {
-        event.isCancelled = true
-    }
-
     override fun onClose(event: InventoryCloseEvent) {
         guiManager.guiMap.remove(event.view)
     }
