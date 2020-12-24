@@ -20,52 +20,46 @@ class BlockBreakListener : Listener {
         if (!lands.enable) return
 
         val player = event.player
-        if (landManager.isProtectedLand(chunk)) {
-            val block = event.block
-            val setting = when (lands.getRank(player.uniqueId)) {
-                Rank.MEMBER -> lands.memberSetting
-                Rank.PARTTIMEJOB -> lands.partTimeJobSetting
-                Rank.VISITOR -> lands.visitorSetting
-                else -> null
-            } ?: return
+        if (!landManager.isProtectedLand(chunk)) return
 
-            when (block.type) {
-                Material.WHEAT,
-                Material.POTATOES,
-                Material.CARROTS,
-                Material.BEETROOTS,
-                Material.NETHER_WART,
-                Material.COCOA,
-                Material.MELON,
-                Material.MELON_STEM,
-                Material.PUMPKIN,
-                Material.PUMPKIN_STEM,
-                Material.CACTUS,
-                Material.SUGAR_CANE,
-                Material.CHORUS_PLANT,
-                Material.CHORUS_FLOWER,
-                Material.BAMBOO,
-                Material.BAMBOO_SAPLING,
-                Material.KELP,
-                Material.KELP_PLANT
-                -> {
-                    if (!setting.canHarvest) {
-                        player.sendMessage("You don't have a permission.".errorFormat())
-                        event.isCancelled = true
-                    }
-                }
-                Material.ITEM_FRAME -> {
-                    if (!setting.breakItemFrame) {
-                        player.sendMessage("You don't have a permission.".errorFormat())
-                        event.isCancelled = true
-                    }
-                }
-                else -> {
-                    if (!setting.breakBlock) {
-                        player.sendMessage("You don't have a permission.".errorFormat())
-                        event.isCancelled = true
-                    }
-                }
+        val block = event.block
+        val setting = when (lands.getRank(player.uniqueId)) {
+            Rank.MEMBER -> lands.memberSetting
+            Rank.PARTTIMEJOB -> lands.partTimeJobSetting
+            Rank.VISITOR -> lands.visitorSetting
+            else -> null
+        } ?: return
+
+        when (block.type) {
+            Material.WHEAT,
+            Material.POTATOES,
+            Material.CARROTS,
+            Material.BEETROOTS,
+            Material.NETHER_WART,
+            Material.COCOA,
+            Material.MELON,
+            Material.MELON_STEM,
+            Material.PUMPKIN,
+            Material.PUMPKIN_STEM,
+            Material.CACTUS,
+            Material.SUGAR_CANE,
+            Material.CHORUS_PLANT,
+            Material.CHORUS_FLOWER,
+            Material.BAMBOO,
+            Material.BAMBOO_SAPLING,
+            Material.KELP,
+            Material.KELP_PLANT
+            -> {
+                if (!setting.canHarvest)
+                    event.isCancelled = true
+            }
+            Material.ITEM_FRAME -> {
+                if (!setting.breakItemFrame)
+                    event.isCancelled = true
+            }
+            else -> {
+                if (!setting.breakBlock)
+                    event.isCancelled = true
             }
         }
     }

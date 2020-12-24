@@ -49,16 +49,23 @@ class TunaLands : JavaPlugin() {
 
         getCommand("land")!!.setExecutor(handler)
 
+        server.pluginManager.registerEvents(ArmorStandListener(), this)
         server.pluginManager.registerEvents(BlockBreakListener(), this)
         server.pluginManager.registerEvents(BlockPlaceListener(), this)
-        server.pluginManager.registerEvents(CakeListener(), this)
-        server.pluginManager.registerEvents(ChestOpenListener(), this)
+        server.pluginManager.registerEvents(BreedListener(), this)
+        server.pluginManager.registerEvents(BucketListener(), this)
+        server.pluginManager.registerEvents(ClickedInteractListener(), this)
+        server.pluginManager.registerEvents(ConsumeListener(), this)
         server.pluginManager.registerEvents(DropItemListener(), this)
+        server.pluginManager.registerEvents(EntityMountListener(), this)
         server.pluginManager.registerEvents(HurtListener(), this)
+        server.pluginManager.registerEvents(LeashEntityListener(), this)
+        server.pluginManager.registerEvents(PhysicalInteractListener(), this)
         server.pluginManager.registerEvents(PickupExpListener(), this)
         server.pluginManager.registerEvents(PickupItemListener(), this)
         server.pluginManager.registerEvents(PVPListener(), this)
-        //TODO from second row
+        server.pluginManager.registerEvents(ShearListener(), this)
+        server.pluginManager.registerEvents(ThrowListener(), this)
 
         server.pluginManager.registerEvents(CoreListener(), this)
         server.pluginManager.registerEvents(InventoryClickListener(), this)

@@ -19,7 +19,7 @@ data class LandSetting(
     var usePressureSensor: Boolean = false,
     var useDoor: Boolean = false,
     var useTrapdoor: Boolean = false,
-    var useFenceDoor: Boolean = false,
+    var useFenceGate: Boolean = false,
     var useHopper: Boolean = false,
     var useDispenserAndDropper: Boolean = false,
 
@@ -37,7 +37,7 @@ data class LandSetting(
     //Fourth row
     var canSow: Boolean = false,
     var canHarvest: Boolean = false,
-    var canFeed: Boolean = false,
+    var canBreed: Boolean = false,
     var useBucket: Boolean = false,
     var useMilk: Boolean = false,
     var throwEgg: Boolean = false,

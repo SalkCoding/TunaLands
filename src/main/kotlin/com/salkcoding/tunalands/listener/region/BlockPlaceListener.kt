@@ -20,41 +20,41 @@ class BlockPlaceListener : Listener {
         if (!lands.enable) return
 
         val player = event.player
-        if (landManager.isProtectedLand(chunk)) {
-            val block = event.block
-            //Block break following rank
-            val setting = when (lands.getRank(player.uniqueId)) {
-                Rank.MEMBER -> lands.memberSetting
-                Rank.PARTTIMEJOB -> lands.partTimeJobSetting
-                Rank.VISITOR -> lands.visitorSetting
-                else -> null
-            } ?: return
+        if (!landManager.isProtectedLand(chunk)) return
 
-            when (block.type) {
-                Material.WHEAT,
-                Material.POTATOES,
-                Material.CARROTS,
-                Material.BEETROOTS,
-                Material.NETHER_WART,
-                Material.COCOA,
-                Material.MELON_STEM,
-                Material.PUMPKIN_STEM,
-                Material.CACTUS,
-                Material.SUGAR_CANE,
-                Material.CHORUS_FLOWER,
-                Material.BAMBOO_SAPLING,
-                Material.KELP -> {
-                    if (!setting.canSow) {
-                        player.sendMessage("You don't have a permission.".errorFormat())
-                        event.isCancelled = true
-                    }
-                }
-                else -> {
-                    if (!setting.placeBlock) {
-                        player.sendMessage("You don't have a permission.".errorFormat())
-                        event.isCancelled = true
-                    }
-                }
+        val block = event.block
+        //Block break following rank
+        val setting = when (lands.getRank(player.uniqueId)) {
+            Rank.MEMBER -> lands.memberSetting
+            Rank.PARTTIMEJOB -> lands.partTimeJobSetting
+            Rank.VISITOR -> lands.visitorSetting
+            else -> null
+        } ?: return
+
+        when (block.type) {
+            Material.WHEAT,
+            Material.POTATOES,
+            Material.CARROTS,
+            Material.BEETROOTS,
+            Material.NETHER_WART,
+            Material.COCOA,
+            Material.MELON_STEM,
+            Material.PUMPKIN_STEM,
+            Material.CACTUS,
+            Material.SUGAR_CANE,
+            Material.CHORUS_FLOWER,
+            Material.BAMBOO_SAPLING,
+            Material.KELP -> {
+                if (!setting.canSow)
+                    event.isCancelled = true
+            }
+            Material.FIRE->{
+                if (!setting.useFlintAndSteel)
+                    event.isCancelled = true
+            }
+            else -> {
+                if (!setting.placeBlock)
+                    event.isCancelled = true
             }
         }
     }

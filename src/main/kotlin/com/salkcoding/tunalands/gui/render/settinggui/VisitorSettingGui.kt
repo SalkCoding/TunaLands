@@ -35,7 +35,7 @@ class VisitorSettingGui(private val player: Player, private val rank: Rank) : Gu
     private val usePressureSensor = (Material.OAK_PRESSURE_PLATE * 1).apply { this.displayName("압력판 사용") }
     private val useDoor = (Material.OAK_DOOR * 1).apply { this.displayName("문 사용") }
     private val useTrapdoor = (Material.OAK_TRAPDOOR * 1).apply { this.displayName("다락문 사용") }
-    private val useFenceDoor = (Material.OAK_FENCE_GATE * 1).apply { this.displayName("울타리 문 사용") }
+    private val useFenceGate = (Material.OAK_FENCE_GATE * 1).apply { this.displayName("울타리 문 사용") }
     private val useHopper = (Material.HOPPER * 1).apply { this.displayName("깔대기 사용") }
     private val useDispenserAndDropper = (Material.DISPENSER * 1).apply { this.displayName("발사기/공급기 사용") }
 
@@ -53,7 +53,7 @@ class VisitorSettingGui(private val player: Player, private val rank: Rank) : Gu
     //Fourth row
     private val canSow = (Material.WHEAT_SEEDS * 1).apply { this.displayName("농작물 심기") }
     private val canHarvest = (Material.DIAMOND_HOE * 1).apply { this.displayName("농작물 수확") }
-    private val canFeed = (Material.WHEAT * 1).apply { this.displayName("동물 먹이 주기") }
+    private val canBreed = (Material.WHEAT * 1).apply { this.displayName("동물 교배") }
     private val useBucket = (Material.BUCKET * 1).apply { this.displayName("양동이 사용") }
     private val useMilk = (Material.MILK_BUCKET * 1).apply { this.displayName("우유 마시기") }
     private val throwEgg = (Material.EGG * 1).apply { this.displayName("달걀 던지기") }
@@ -66,7 +66,7 @@ class VisitorSettingGui(private val player: Player, private val rank: Rank) : Gu
     private val canFishing = (Material.FISHING_ROD * 1).apply { this.displayName("낚시") }
     private val useBoat = (Material.OAK_BOAT * 1).apply { this.displayName("배 사용") }
     private val canRiding = (Material.SADDLE * 1).apply { this.displayName("라이딩") }
-    private val useChestedHorse = (Material.DIAMOND_HORSE_ARMOR * 1).apply { this.displayName("말 인벤토리 이용") }
+    private val useChestedHorse = (Material.DIAMOND_HORSE_ARMOR * 1).apply { this.displayName("말 인벤토리 사용") }
     private val useLead = (Material.LEAD * 1).apply { this.displayName("끈 사용") }
     private val breakItemFrame = (Material.ITEM_FRAME * 1).apply { this.displayName("아이템 액자 부수기") }
     private val useNoteBlock = (Material.NOTE_BLOCK * 1).apply { this.displayName("노트블록 사용") }
@@ -93,7 +93,7 @@ class VisitorSettingGui(private val player: Player, private val rank: Rank) : Gu
         usePressureSensor.apply { this.lore = listOf("상태: ${setting.usePressureSensor}") }
         useDoor.apply { this.lore = listOf("상태: ${setting.useDoor}") }
         useTrapdoor.apply { this.lore = listOf("상태: ${setting.useTrapdoor}") }
-        useFenceDoor.apply { this.lore = listOf("상태: ${setting.useFenceDoor}") }
+        useFenceGate.apply { this.lore = listOf("상태: ${setting.useFenceGate}") }
         useHopper.apply { this.lore = listOf("상태: ${setting.useHopper}") }
         useDispenserAndDropper.apply { this.lore = listOf("상태: ${setting.useDispenserAndDropper}") }
 
@@ -111,7 +111,7 @@ class VisitorSettingGui(private val player: Player, private val rank: Rank) : Gu
         //Fourth row
         canSow.apply { this.lore = listOf("상태: ${setting.canSow}") }
         canHarvest.apply { this.lore = listOf("상태: ${setting.canHarvest}") }
-        canFeed.apply { this.lore = listOf("상태: ${setting.canFeed}") }
+        canBreed.apply { this.lore = listOf("상태: ${setting.canBreed}") }
         useBucket.apply { this.lore = listOf("상태: ${setting.useBucket}") }
         useMilk.apply { this.lore = listOf("상태: ${setting.useMilk}") }
         throwEgg.apply { this.lore = listOf("상태: ${setting.throwEgg}") }
@@ -148,7 +148,7 @@ class VisitorSettingGui(private val player: Player, private val rank: Rank) : Gu
         inv.setItem(21, usePressureSensor)
         inv.setItem(22, useDoor)
         inv.setItem(23, useTrapdoor)
-        inv.setItem(24, useFenceDoor)
+        inv.setItem(24, useFenceGate)
         inv.setItem(25, useHopper)
         inv.setItem(26, useDispenserAndDropper)
         inv.setItem(27, useCraftTable)
@@ -162,7 +162,7 @@ class VisitorSettingGui(private val player: Player, private val rank: Rank) : Gu
         inv.setItem(35, useArmorStand)
         inv.setItem(36, canSow)
         inv.setItem(37, canHarvest)
-        inv.setItem(38, canFeed)
+        inv.setItem(38, canBreed)
         inv.setItem(39, useBucket)
         inv.setItem(40, useMilk)
         inv.setItem(41, throwEgg)
@@ -294,9 +294,9 @@ class VisitorSettingGui(private val player: Player, private val rank: Rank) : Gu
                 }
             }
             24 -> {
-                setting.useFenceDoor = !setting.useFenceDoor
-                useFenceDoor.apply {
-                    this.lore = listOf("상태: ${setting.useFenceDoor}")
+                setting.useFenceGate = !setting.useFenceGate
+                useFenceGate.apply {
+                    this.lore = listOf("상태: ${setting.useFenceGate}")
                     inv.setItem(24, this)
                 }
             }
@@ -394,9 +394,9 @@ class VisitorSettingGui(private val player: Player, private val rank: Rank) : Gu
                 }
             }
             38 -> {
-                setting.canFeed = !setting.canFeed
-                canFeed.apply {
-                    this.lore = listOf("상태: ${setting.canFeed}")
+                setting.canBreed = !setting.canBreed
+                canBreed.apply {
+                    this.lore = listOf("상태: ${setting.canBreed}")
                     inv.setItem(38, this)
                 }
             }

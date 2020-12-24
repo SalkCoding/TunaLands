@@ -2,23 +2,17 @@ package com.salkcoding.tunalands.listener.region
 
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
-import org.bukkit.Material
-import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.event.block.Action
-import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.event.player.PlayerShearEntityEvent
 
-class CakeListener : Listener {
+class ShearListener : Listener {
 
     @EventHandler
-    fun onEat(event: PlayerInteractEvent) {
-        if (event.useInteractedBlock() == Event.Result.DENY) return
-        if (event.action != Action.RIGHT_CLICK_BLOCK) return
-        val block = event.clickedBlock!!
+    fun onShear(event: PlayerShearEntityEvent) {
+        if(event.isCancelled) return
 
-        if (block.type != Material.CAKE) return
-        val lands = landManager.getLandsWithChunk(block.chunk) ?: return
+        val lands = landManager.getLandsWithChunk(event.entity.chunk) ?: return
         if (!lands.enable) return
 
         val player = event.player
@@ -29,7 +23,7 @@ class CakeListener : Listener {
             else -> null
         } ?: return
 
-        if (!setting.eatCake)
+        if (setting.useShears)
             event.isCancelled = true
     }
 }
