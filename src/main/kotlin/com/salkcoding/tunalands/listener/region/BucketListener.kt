@@ -2,6 +2,7 @@ package com.salkcoding.tunalands.listener.region
 
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
+import com.salkcoding.tunalands.util.errorFormat
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerBucketEmptyEvent
@@ -25,8 +26,10 @@ class BucketListener : Listener {
             else -> null
         } ?: return
 
-        if (setting.useBucket)
+        if (setting.useBucket) {
+            player.sendMessage("You don't have a permission!".errorFormat())
             event.isCancelled = true
+        }
     }
 
     @EventHandler
@@ -45,7 +48,9 @@ class BucketListener : Listener {
             else -> null
         } ?: return
 
-        if (setting.useBucket)
+        if (setting.useBucket) {
+            player.sendMessage("You don't have a permission!".errorFormat())
             event.isCancelled = true
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.salkcoding.tunalands.listener.region
 
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
+import com.salkcoding.tunalands.util.errorFormat
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerDropItemEvent
@@ -23,7 +24,9 @@ class DropItemListener : Listener {
             else -> null
         } ?: return
 
-        if (!setting.dropItem)
+        if (!setting.dropItem) {
+            player.sendMessage("You don't have a permission!".errorFormat())
             event.isCancelled = true
+        }
     }
 }

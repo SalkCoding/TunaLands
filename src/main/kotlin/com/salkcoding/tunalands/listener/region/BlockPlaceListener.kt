@@ -48,7 +48,7 @@ class BlockPlaceListener : Listener {
                 if (!setting.canSow)
                     event.isCancelled = true
             }
-            Material.FIRE->{
+            Material.FIRE -> {
                 if (!setting.useFlintAndSteel)
                     event.isCancelled = true
             }
@@ -57,5 +57,8 @@ class BlockPlaceListener : Listener {
                     event.isCancelled = true
             }
         }
+
+        if (event.isCancelled)
+            player.sendMessage("You don't have a permission!".errorFormat())
     }
 }

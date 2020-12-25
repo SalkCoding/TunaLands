@@ -9,10 +9,13 @@ class Lands(
     val landList: MutableList<String>,
     val landHistory: LandHistory,
     val upCore: Core, //Chest
-    val downCore: Core //Core block
+    val downCore: Core, //Core block
+    var expiredMillisecond: Long
 ) {
     var enable = true
+    var extendLimit = 10
     var open = false
+
     val visitorSetting = LandSetting()
     val memberSetting = LandSetting()
     val delegatorSetting = DelegatorSetting()
@@ -36,7 +39,6 @@ class Lands(
         val firstOwner: String,
         val firstOwnerUUID: UUID,
         val createdMillisecond: Long,
-        val expiredMillisecond: Long,
     )
 
     data class ChunkInfo(

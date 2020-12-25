@@ -2,6 +2,7 @@ package com.salkcoding.tunalands.listener.region
 
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
+import com.salkcoding.tunalands.util.errorFormat
 import org.bukkit.Material
 import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
@@ -48,5 +49,8 @@ class PhysicalInteractListener : Listener {
             }
             else -> return
         }
+
+        if (event.useInteractedBlock() == Event.Result.DENY)
+            player.sendMessage("You don't have a permission!".errorFormat())
     }
 }

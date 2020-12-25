@@ -41,26 +41,29 @@ class MainGui(private val player: Player, private val rank: Rank) : GuiInterface
 
     //Static
     companion object {
-        val settingButton = (Material.BONE * 1).apply {
+        private val settingButton = (Material.BONE * 1).apply {
             this.displayName("지역 관리")
             this.lore = listOf(
                 "지역의 세부 설정을 변경합니다."
             )
         }
 
-        val shopButton = (Material.HEART_OF_THE_SEA * 1).apply {
+        private val shopButton = (Material.HEART_OF_THE_SEA * 1).apply {
             this.displayName("지역 상점")
             this.lore = listOf(
                 "지역에 관련된 물품을 구매할 수 있습니다."
             )
         }
 
-        val userListButton = (Material.WRITABLE_BOOK * 1).apply {
+        private val userListButton = (Material.WRITABLE_BOOK * 1).apply {
             this.displayName("사용자 목록")
             this.lore = listOf(
                 "지역의 사용자 목록을 확인합니다."
             )
         }
+
+        private val timeRegex = Regex("[\\d]+")
+        private val measureRegex = Regex("[가-힣]+")
     }
 
     lateinit var task: BukkitTask
@@ -75,7 +78,7 @@ class MainGui(private val player: Player, private val rank: Rank) : GuiInterface
         val landHistory = lands.landHistory
         val created = Calendar.getInstance()
         created.timeInMillis = landHistory.createdMillisecond
-        var expired = landHistory.expiredMillisecond - System.currentTimeMillis()
+        var expired = lands.expiredMillisecond - System.currentTimeMillis()
 
         task = Bukkit.getScheduler().runTaskTimerAsynchronously(tunaLands, Runnable {
             //Expired
@@ -84,6 +87,14 @@ class MainGui(private val player: Player, private val rank: Rank) : GuiInterface
                 player.sendMessage("Protect expired! All of your lands are going to be unprotected!".warnFormat())
                 player.sendMessage("If you want to reactivate protection, refill fuels.".warnFormat())
 
+                totalInfoIcon.apply {
+                    this.lore = listOf(
+                        "보호: 비활성화",
+                        "점유한 지역: ${lands.landList.size}개",
+                        "멤버 수: ${lands.memberList.size}명",
+                        "생성일: ${created.get(Calendar.YEAR)}/${created.get(Calendar.MONTH) + 1}/${created.get(Calendar.DATE)}"
+                    )
+                }
                 if (lands.enable)
                     lands.enable = false
                 return@Runnable
@@ -206,6 +217,7 @@ class MainGui(private val player: Player, private val rank: Rank) : GuiInterface
 
     override fun onClose(event: InventoryCloseEvent) {
         task.cancel()
+        guiManager.guiMap.remove(event.view)
 
         val inv = event.inventory
         val fuelList = mutableListOf<ItemStack>()
@@ -215,11 +227,25 @@ class MainGui(private val player: Player, private val rank: Rank) : GuiInterface
             }
         }
 
-        //TODO read item and add to expired
+        val lands = landManager.getPlayerLands(event.player.uniqueId) ?: return
+        for (fuel in fuelList) {
+            val lore = fuel.lore ?: continue
+            if (lore.size != 2) continue
+            if (fuel.itemMeta.displayName != "연료") continue
 
-        guiManager.guiMap.remove(event.view)
+            val timeLore = lore[1].split(" ")[0]
+            val time = timeRegex.find(timeLore)!!.value.toInt()
+            lands.expiredMillisecond += when (measureRegex.find(timeLore)!!.value) {
+                "분" -> {
+                    time * 60000
+                }
+                "시간" -> {
+                    time * 3600000
+                }
+                else -> 0
+            }
+        }
     }
-
 }
 
 fun Player.openMainGui(rank: Rank) {

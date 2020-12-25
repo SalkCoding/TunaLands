@@ -62,5 +62,8 @@ class BlockBreakListener : Listener {
                     event.isCancelled = true
             }
         }
+
+        if (event.isCancelled)
+            player.sendMessage("You don't have a permission!".errorFormat())
     }
 }

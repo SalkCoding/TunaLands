@@ -1,6 +1,7 @@
 package com.salkcoding.tunalands.util
 
 import com.salkcoding.tunalands.lands.Lands
+import java.util.*
 import kotlin.math.abs
 
 /*
@@ -10,32 +11,30 @@ import kotlin.math.abs
 */
 fun Lands.checkFloodFill(): Boolean {
     val xList = mutableListOf<Int>()
-    val yList = mutableListOf<Int>()
+    val zList = mutableListOf<Int>()
     landList.forEach { query ->
         val split = query.split(":")
         xList.add(split[0].toInt())
-        yList.add(split[1].toInt())
+        zList.add(split[1].toInt())
     }
-    val xMin = abs(xList.minByOrNull { it }!!) + 1
-    val xMax = abs(xList.maxByOrNull { it }!!) + 1
-    val yMin = abs(yList.minByOrNull { it }!!) + 1
-    val yMax = abs(yList.maxByOrNull { it }!!) + 1
+    val xMin = xList.minByOrNull { it }!!
+    val zMin = zList.minByOrNull { it }!!
 
-    //Array[xMin+xMax+1][yMin+yMax+1]
-    val xLen = xMin + xMax + 1
-    val yLen = yMin + yMax + 1
-    val array = Array(xLen) { Array(yLen) { 0 } }
+    //Array
+    val xLen = xList.toSet().size + 2
+    val zLen = zList.toSet().size + 2
+    val array = Array(xLen) { Array(zLen) { 0 } }
 
     //Setting array (xList size always equals with yList size)
     for (i in 0 until xList.size) {
-        val x = xList[i] + xMin
-        val y = yList[i] + yMin
+        val x = xList[i] + (-xMin) + 1
+        val y = zList[i] + (-zMin) + 1
 
         array[x][y] = 1
     }
 
     //Perform flood fill
-    floodFill(array, 0, 0, xLen, yLen)
+    floodFill(array, 0, 0, xLen, zLen)
 
     //Check and return value
     array.forEach { subArray ->
@@ -52,16 +51,16 @@ Max array input almost 75x75(5625chunks).
 If pass over value then function throws StackOverFlowException
 */
 
-fun floodFill(array: Array<Array<Int>>, x: Int, y: Int, xLimit: Int, yLimit: Int) {
+fun floodFill(array: Array<Array<Int>>, x: Int, y: Int, xLimit: Int, zLimit: Int) {
     if (x < 0 || y < 0) return
-    if (xLimit <= x || yLimit <= y) return
+    if (xLimit <= x || zLimit <= y) return
     if (array[x][y] == 1) return
     if (array[x][y] != 0) return
     array[x][y] = 1
-    floodFill(array, x, y - 1, xLimit, yLimit)//South
-    floodFill(array, x, y + 1, xLimit, yLimit)//North
-    floodFill(array, x - 1, y, xLimit, yLimit)//West
-    floodFill(array, x + 1, y, xLimit, yLimit)//East
+    floodFill(array, x, y - 1, xLimit, zLimit)//South
+    floodFill(array, x, y + 1, xLimit, zLimit)//North
+    floodFill(array, x - 1, y, xLimit, zLimit)//West
+    floodFill(array, x + 1, y, xLimit, zLimit)//East
 }
 
 /*  Implements with recursive function

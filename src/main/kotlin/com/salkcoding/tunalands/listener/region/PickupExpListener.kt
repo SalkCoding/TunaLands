@@ -3,6 +3,8 @@ package com.salkcoding.tunalands.listener.region
 import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
+import com.salkcoding.tunalands.util.errorFormat
+import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 
@@ -23,7 +25,9 @@ class PickupExpListener : Listener {
             else -> null
         } ?: return
 
-        if (!setting.pickupExp)
+        if (!setting.pickupExp) {
+            player.sendMessage("You don't have a permission!".errorFormat())
             event.isCancelled = true
+        }
     }
 }

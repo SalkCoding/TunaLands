@@ -7,6 +7,7 @@ import com.salkcoding.tunalands.guiManager
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.backButton
 import com.salkcoding.tunalands.util.blackPane
+import com.salkcoding.tunalands.util.giveOrDrop
 import com.salkcoding.tunalands.util.times
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -19,7 +20,7 @@ import org.bukkit.inventory.Inventory
 class ShopGui(private val player: Player, private val rank: Rank) : GuiInterface {
 
     companion object {
-        private val takeFlag = (Material.PAPER * 1).apply {
+        val takeFlag = (Material.GREEN_BANNER * 1).apply {
             this.displayName("점유 깃발")
             this.lore = listOf(
                 "가격: ${configuration.flag.takeFlagPrice}캔",
@@ -27,7 +28,7 @@ class ShopGui(private val player: Player, private val rank: Rank) : GuiInterface
             )
         }
 
-        private val releaseFlag = (Material.PAPER * 1).apply {
+        val releaseFlag = (Material.RED_BANNER * 1).apply {
             this.displayName("제거 깃발")
             this.lore = listOf(
                 "가격: ${configuration.flag.takeFlagPrice}캔",
@@ -35,11 +36,43 @@ class ShopGui(private val player: Player, private val rank: Rank) : GuiInterface
             )
         }
 
-        private val fuel = (Material.GLOBE_BANNER_PATTERN * 1).apply {
+        private val fuel30Minutes = (Material.PAPER * 1).apply {
             this.displayName("연료")
             this.lore = listOf(
-                "가격: ${15}캔",
+                "가격: ${30}캔",
                 "30분 동안 유지되는 연료이다."
+            )
+        }
+
+        private val fuel1Hour = (Material.PAPER * 1).apply {
+            this.displayName("연료")
+            this.lore = listOf(
+                "가격: ${50}캔",
+                "1시간 동안 유지되는 연료이다."
+            )
+        }
+
+        private val fuel6Hours = (Material.PAPER * 1).apply {
+            this.displayName("연료")
+            this.lore = listOf(
+                "가격: ${290}캔",
+                "6시간 동안 유지되는 연료이다."
+            )
+        }
+
+        private val fuel12Hours = (Material.PAPER * 1).apply {
+            this.displayName("연료")
+            this.lore = listOf(
+                "가격: ${570}캔",
+                "12시간 동안 유지되는 연료이다."
+            )
+        }
+
+        private val fuel24Hours = (Material.PAPER * 1).apply {
+            this.displayName("연료")
+            this.lore = listOf(
+                "가격: ${1100}캔",
+                "24시간 동안 유지되는 연료이다."
             )
         }
     }
@@ -62,11 +95,11 @@ class ShopGui(private val player: Player, private val rank: Rank) : GuiInterface
 
         inv.setItem(20, takeFlag)
         inv.setItem(21, releaseFlag)
-        inv.setItem(29, fuel)
-        inv.setItem(30, fuel)
-        inv.setItem(31, fuel)
-        inv.setItem(32, fuel)
-        inv.setItem(33, fuel)
+        inv.setItem(29, fuel30Minutes)
+        inv.setItem(30, fuel1Hour)
+        inv.setItem(31, fuel6Hours)
+        inv.setItem(32, fuel12Hours)
+        inv.setItem(33, fuel24Hours)
     }
 
     override fun onClick(event: InventoryClickEvent) {
@@ -76,27 +109,41 @@ class ShopGui(private val player: Player, private val rank: Rank) : GuiInterface
             0 -> {
                 player.openMainGui(rank)
             }
-            //TODO buying code
+            //TODO paying code
             20 -> {
-
+                when (rank) {
+                    Rank.OWNER, Rank.DELEGATOR -> {
+                        player.giveOrDrop(takeFlag)
+                    }
+                    else -> {
+                        player.sendMessage("You don't have a permission to buy")
+                    }
+                }
             }
             21 -> {
-
+                when (rank) {
+                    Rank.OWNER, Rank.DELEGATOR -> {
+                        player.giveOrDrop(releaseFlag)
+                    }
+                    else -> {
+                        player.sendMessage("You don't have a permission to buy")
+                    }
+                }
             }
             29 -> {
-
+                player.giveOrDrop(fuel30Minutes)
             }
             30 -> {
-
+                player.giveOrDrop(fuel1Hour)
             }
             31 -> {
-
+                player.giveOrDrop(fuel6Hours)
             }
             32 -> {
-
+                player.giveOrDrop(fuel12Hours)
             }
             33 -> {
-
+                player.giveOrDrop(fuel24Hours)
             }
         }
     }

@@ -22,6 +22,10 @@ class CoreListener : Listener {
             val coreBlock = chest.getRelative(0, -1, 0)
             if (coreBlock.type == configuration.protect.coreBlock) {
                 val player = event.player
+
+                val lands = landManager.getLandsWithChunk(chest.chunk)
+                if (lands != null) return
+
                 landManager.buyLand(player, chest, coreBlock)
             }
         }

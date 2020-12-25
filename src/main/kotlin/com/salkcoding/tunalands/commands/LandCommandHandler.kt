@@ -39,6 +39,7 @@ class LandCommandHandler : CommandExecutor {
             }
             return true
         }*/
+        if (args.isEmpty()) return false
 
         //Sub command
         val newLabel = args[0].toLowerCase()

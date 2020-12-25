@@ -2,6 +2,7 @@ package com.salkcoding.tunalands.listener.region
 
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
+import com.salkcoding.tunalands.util.errorFormat
 import org.bukkit.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -25,7 +26,9 @@ class ConsumeListener : Listener {
             else -> null
         } ?: return
 
-        if (setting.useMilk)
+        if (setting.useMilk) {
+            player.sendMessage("You don't have a permission!".errorFormat())
             event.isCancelled = true
+        }
     }
 }

@@ -2,6 +2,7 @@ package com.salkcoding.tunalands.listener.region
 
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
+import com.salkcoding.tunalands.util.errorFormat
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -45,5 +46,8 @@ class EntityMountListener : Listener {
             }
             else -> return
         }
+
+        if (event.isCancelled)
+            player.sendMessage("You don't have a permission!".errorFormat())
     }
 }

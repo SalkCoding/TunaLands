@@ -54,6 +54,7 @@ class TunaLands : JavaPlugin() {
         server.pluginManager.registerEvents(BlockPlaceListener(), this)
         server.pluginManager.registerEvents(BreedListener(), this)
         server.pluginManager.registerEvents(BucketListener(), this)
+        server.pluginManager.registerEvents(ChestedHorseListener(), this)
         server.pluginManager.registerEvents(ClickedInteractListener(), this)
         server.pluginManager.registerEvents(ConsumeListener(), this)
         server.pluginManager.registerEvents(DropItemListener(), this)
@@ -67,14 +68,16 @@ class TunaLands : JavaPlugin() {
         server.pluginManager.registerEvents(ShearListener(), this)
         server.pluginManager.registerEvents(ThrowListener(), this)
 
+        server.pluginManager.registerEvents(ChestGuiOpenListener(), this)
         server.pluginManager.registerEvents(CoreListener(), this)
+        server.pluginManager.registerEvents(FlagListener(), this)
         server.pluginManager.registerEvents(InventoryClickListener(), this)
         server.pluginManager.registerEvents(InventoryCloseListener(), this)
         server.pluginManager.registerEvents(InventoryDragListener(), this)
-        server.pluginManager.registerEvents(ChestGuiOpenListener(), this)
 
         if (chunkDebug) {
-            logger.warning("Chunk debug mode is enabled".consoleFormat())
+            logger.warning("Chunk debug mode is enabled.".consoleFormat())
+            logger.warning("It may cause ConcurrentModificationException.".consoleFormat())
             server.scheduler.runTaskTimer(this, Runnable {
                 landManager.debug()
             }, 20, 20)

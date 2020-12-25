@@ -26,7 +26,7 @@ class Debug : CommandExecutor {
             args[0] == "buy" && args.size == 1 -> {
                 val player = sender as? Player
                 if (player != null) {
-                    landManager.buyLand(player, player.location.block, player.location.block)
+                    landManager.buyLand(player, player.location.block)
                 } else {
                     sender.sendMessage("You can't use this command on Console".errorFormat())
                 }
