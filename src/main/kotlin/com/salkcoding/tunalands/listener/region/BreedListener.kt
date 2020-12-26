@@ -19,7 +19,7 @@ class BreedListener : Listener {
         if (!lands.enable) return
 
         val player = event.breeder as? Player ?: return
-        val setting = when (lands.getRank(player.uniqueId)) {
+        val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
             Rank.MEMBER -> lands.memberSetting
             Rank.PARTTIMEJOB -> lands.partTimeJobSetting
             Rank.VISITOR -> lands.visitorSetting

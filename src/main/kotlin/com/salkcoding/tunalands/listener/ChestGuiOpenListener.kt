@@ -28,7 +28,7 @@ class ChestGuiOpenListener : Listener {
             val upCore = lands.upCore
             if (!block.isSameLocation(upCore.world, upCore.x, upCore.y, upCore.z)) return
             event.isCancelled = true
-            when (val rank = lands.getRank(player.uniqueId)) {
+            when (val rank = lands.memberMap[player.uniqueId]!!.rank) {
                 Rank.MEMBER -> player.sendMessage("You don't have a permission to access setting gui".errorFormat())
                 else -> player.openMainGui(rank)
             }

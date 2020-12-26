@@ -5,6 +5,7 @@ import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.gui.render.openMainGui
 import com.salkcoding.tunalands.guiManager
 import com.salkcoding.tunalands.landManager
+import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.backButton
 import com.salkcoding.tunalands.util.times
@@ -17,6 +18,9 @@ import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.inventory.Inventory
 
 class VisitorSettingGui(private val player: Player, private val rank: Rank) : GuiInterface {
+
+    private val lands: Lands = landManager.getPlayerLands(player.uniqueId)!!
+
     //First row
     private val canPVP = (Material.DIAMOND_SWORD * 1).apply { this.displayName("PVP") }
     private val breakBlock = (Material.DIAMOND_PICKAXE * 1).apply { this.displayName("블록 부수기") }
@@ -73,7 +77,7 @@ class VisitorSettingGui(private val player: Player, private val rank: Rank) : Gu
     private val useJukebox = (Material.JUKEBOX * 1).apply { this.displayName("주크박스 사용") }
 
     override fun render(inv: Inventory) {
-        val setting = landManager.getLandVisitorSetting(player.uniqueId)!!
+        val setting = lands.visitorSetting
 
         //First row
         canPVP.apply { this.lore = listOf("상태: ${setting.canPVP}") }
@@ -182,7 +186,7 @@ class VisitorSettingGui(private val player: Player, private val rank: Rank) : Gu
 
     override fun onClick(event: InventoryClickEvent) {
         event.isCancelled = true
-        val setting = landManager.getLandVisitorSetting(player.uniqueId)!!
+        val setting = lands.visitorSetting
         val inv = event.inventory
         when (event.rawSlot) {
             0, 8 -> player.openSettingGui(rank)//Back button

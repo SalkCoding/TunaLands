@@ -24,7 +24,7 @@ class PVPListener : Listener {
         val lands = landManager.getLandsWithChunk(damager.chunk) ?: return
         if (!lands.enable) return
 
-        val damagerSetting = when (lands.getRank(damager.uniqueId)) {
+        val damagerSetting = when (lands.memberMap[damager.uniqueId]!!.rank) {
             Rank.MEMBER -> lands.memberSetting
             Rank.PARTTIMEJOB -> lands.partTimeJobSetting
             Rank.VISITOR -> lands.visitorSetting

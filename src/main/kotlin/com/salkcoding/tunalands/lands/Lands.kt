@@ -5,15 +5,14 @@ import org.bukkit.Chunk
 import java.util.*
 
 class Lands(
-    val ownerUUID: UUID,
     val landList: MutableList<String>,
     val landHistory: LandHistory,
     val upCore: Core, //Chest
     val downCore: Core, //Core block
     var expiredMillisecond: Long
 ) {
+
     var enable = true
-    var extendLimit = 10
     var open = false
 
     val visitorSetting = LandSetting()
@@ -21,23 +20,25 @@ class Lands(
     val delegatorSetting = DelegatorSetting()
     val partTimeJobSetting = LandSetting()
 
-    val memberList = mutableListOf<UUID>()
-    val delegatorList = mutableListOf<UUID>()
-    val partTimeJobList = mutableListOf<UUID>()
+    val memberMap = mutableMapOf<UUID, MemberData>()
+    val banMap = mutableMapOf<UUID, BanData>()
 
-    fun getRank(playerUUID: UUID): Rank {
-        return when (playerUUID) {
-            in partTimeJobList -> Rank.PARTTIMEJOB
-            in memberList -> Rank.MEMBER
-            in delegatorList -> Rank.DELEGATOR
-            ownerUUID -> Rank.OWNER
-            else -> Rank.VISITOR
-        }
-    }
+    data class MemberData(
+        val uuid: UUID,
+        val rank: Rank,
+        val joined: Long,
+        val lastLogin: Long
+    )
+
+    data class BanData(
+        val uuid: UUID,
+        val banned: Long
+    )
 
     data class LandHistory(
         val firstOwner: String,
         val firstOwnerUUID: UUID,
+        var visitorCount: Long,
         val createdMillisecond: Long,
     )
 
@@ -46,9 +47,9 @@ class Lands(
         val ownerUUID: UUID,
         val worldName: String,
         val xChunk: Int,
-        val yChunk: Int
+        val zChunk: Int
     ) {
-        val chunk: Chunk = Bukkit.getWorld(worldName)!!.getChunkAt(xChunk, yChunk)
+        val chunk: Chunk = Bukkit.getWorld(worldName)!!.getChunkAt(xChunk, zChunk)
     }
 
     data class Core(

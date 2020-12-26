@@ -19,7 +19,7 @@ class BucketListener : Listener {
         if (!lands.enable) return
 
         val player = event.player
-        val setting = when (lands.getRank(player.uniqueId)) {
+        val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
             Rank.MEMBER -> lands.memberSetting
             Rank.PARTTIMEJOB -> lands.partTimeJobSetting
             Rank.VISITOR -> lands.visitorSetting
@@ -41,7 +41,7 @@ class BucketListener : Listener {
         if (!lands.enable) return
 
         val player = event.player
-        val setting = when (lands.getRank(player.uniqueId)) {
+        val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
             Rank.MEMBER -> lands.memberSetting
             Rank.PARTTIMEJOB -> lands.partTimeJobSetting
             Rank.VISITOR -> lands.visitorSetting

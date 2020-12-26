@@ -20,7 +20,7 @@ class EntityMountListener : Listener {
 
         val player = event.entity as? Player ?: return
 
-        val setting = when (lands.getRank(player.uniqueId)) {
+        val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
             Rank.MEMBER -> lands.memberSetting
             Rank.PARTTIMEJOB -> lands.partTimeJobSetting
             Rank.VISITOR -> lands.visitorSetting

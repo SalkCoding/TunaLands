@@ -24,7 +24,7 @@ class BlockPlaceListener : Listener {
 
         val block = event.block
         //Block break following rank
-        val setting = when (lands.getRank(player.uniqueId)) {
+        val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
             Rank.MEMBER -> lands.memberSetting
             Rank.PARTTIMEJOB -> lands.partTimeJobSetting
             Rank.VISITOR -> lands.visitorSetting

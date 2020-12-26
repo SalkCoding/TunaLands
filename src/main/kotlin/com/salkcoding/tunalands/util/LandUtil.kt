@@ -1,8 +1,6 @@
 package com.salkcoding.tunalands.util
 
 import com.salkcoding.tunalands.lands.Lands
-import java.util.*
-import kotlin.math.abs
 
 /*
 * return
@@ -10,6 +8,8 @@ import kotlin.math.abs
 *   false: After performed,when a empty area is existed
 */
 fun Lands.checkFloodFill(): Boolean {
+    if (landList.isEmpty()) return true
+
     val xList = mutableListOf<Int>()
     val zList = mutableListOf<Int>()
     landList.forEach { query ->

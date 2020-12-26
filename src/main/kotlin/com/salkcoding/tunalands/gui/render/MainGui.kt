@@ -6,6 +6,7 @@ import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.gui.render.settinggui.openSettingGui
 import com.salkcoding.tunalands.guiManager
 import com.salkcoding.tunalands.landManager
+import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.blackPane
@@ -28,16 +29,14 @@ import kotlin.math.floor
 
 class MainGui(private val player: Player, private val rank: Rank) : GuiInterface {
 
+    private val lands: Lands = landManager.getPlayerLands(player.uniqueId)!!
+
     //Dynamic
     private val totalInfoIcon = (Material.CAMPFIRE * 1).apply {
         this.displayName("${player.name}의 지역")
     }
 
-    private val lockButton = (Material.IRON_DOOR * 1).apply {
-        this.lore = listOf(
-            "지역의 공개 여부를 변경합니다."
-        )
-    }
+    private val lockButton = (Material.IRON_DOOR * 1)
 
     //Static
     companion object {
@@ -62,6 +61,13 @@ class MainGui(private val player: Player, private val rank: Rank) : GuiInterface
             )
         }
 
+        private val banListButton = (Material.CRIMSON_SIGN * 1).apply {
+            this.displayName("밴 목록")
+            this.lore = listOf(
+                "밴 목록을 확인합니다."
+            )
+        }
+
         private val timeRegex = Regex("[\\d]+")
         private val measureRegex = Regex("[가-힣]+")
     }
@@ -73,8 +79,6 @@ class MainGui(private val player: Player, private val rank: Rank) : GuiInterface
             inv.setItem(i, blackPane)
         }
 
-        val uuid = player.uniqueId
-        val lands = landManager.getPlayerLands(uuid)!!
         val landHistory = lands.landHistory
         val created = Calendar.getInstance()
         created.timeInMillis = landHistory.createdMillisecond
@@ -83,7 +87,6 @@ class MainGui(private val player: Player, private val rank: Rank) : GuiInterface
         task = Bukkit.getScheduler().runTaskTimerAsynchronously(tunaLands, Runnable {
             //Expired
             if (expired < 1000) {
-                task.cancel()
                 player.sendMessage("Protect expired! All of your lands are going to be unprotected!".warnFormat())
                 player.sendMessage("If you want to reactivate protection, refill fuels.".warnFormat())
 
@@ -91,12 +94,13 @@ class MainGui(private val player: Player, private val rank: Rank) : GuiInterface
                     this.lore = listOf(
                         "보호: 비활성화",
                         "점유한 지역: ${lands.landList.size}개",
-                        "멤버 수: ${lands.memberList.size}명",
+                        "멤버 수: ${lands.memberMap.size}명",
                         "생성일: ${created.get(Calendar.YEAR)}/${created.get(Calendar.MONTH) + 1}/${created.get(Calendar.DATE)}"
                     )
                 }
                 if (lands.enable)
                     lands.enable = false
+                task.cancel()
                 return@Runnable
             }
             //Not expired
@@ -113,7 +117,7 @@ class MainGui(private val player: Player, private val rank: Rank) : GuiInterface
                         (expired / 1000) % 60
                     }초",
                     "점유한 지역: ${lands.landList.size}개",
-                    "멤버 수: ${lands.memberList.size}명",
+                    "멤버 수: ${lands.memberMap.size}명",
                     "생성일: ${created.get(Calendar.YEAR)}/${created.get(Calendar.MONTH) + 1}/${created.get(Calendar.DATE)}"
                 )
             }
@@ -124,10 +128,21 @@ class MainGui(private val player: Player, private val rank: Rank) : GuiInterface
 
         lockButton.apply {
             this.displayName(
-                when (lands.open) {
-                    true -> "지역을 비공개로 전환"
-                    false -> "지역을 공개로 전환"
-                }
+                "지역을 ${
+                    when (lands.open) {
+                        true -> "비공개"
+                        false -> "공개"
+                    }
+                }로 전환"
+            )
+            this.lore = listOf(
+                "지역의 공개 여부를 변경합니다.",
+                "현재 상태: ${
+                    when (lands.open) {
+                        true -> "공개"
+                        false -> "비공개"
+                    }
+                }"
             )
         }
 
@@ -141,7 +156,7 @@ class MainGui(private val player: Player, private val rank: Rank) : GuiInterface
         inv.setItem(48, settingButton)
         inv.setItem(49, shopButton)
         inv.setItem(50, userListButton)
-        inv.setItem(51, (Material.CRIMSON_SIGN * 1))
+        inv.setItem(51, banListButton)
         inv.setItem(52, blackPane)
         inv.setItem(53, blackPane)
     }
@@ -152,25 +167,35 @@ class MainGui(private val player: Player, private val rank: Rank) : GuiInterface
         event.isCancelled = true
 
         val clicked = event.rawSlot
-        val lands = landManager.getPlayerLands(player.uniqueId)!!
         when (clicked) {
             47 -> {
                 when (rank) {
                     Rank.OWNER, Rank.DELEGATOR -> {
                         lockButton.apply {
                             this.displayName(
-                                when (lands.open) {
-                                    true -> {
-                                        lands.open = false
-                                        player.playSound(Sound.BLOCK_WOODEN_DOOR_CLOSE, .5f, 1f)
-                                        "지역을 공개로 전환"
+                                "지역을 ${
+                                    when (lands.open) {
+                                        true -> {
+                                            lands.open = false
+                                            player.playSound(Sound.BLOCK_WOODEN_DOOR_CLOSE, .5f, 1f)
+                                            "공개"
+                                        }
+                                        false -> {
+                                            lands.open = true
+                                            player.playSound(Sound.BLOCK_WOODEN_DOOR_OPEN, .5f, 1f)
+                                            "비공개"
+                                        }
                                     }
-                                    false -> {
-                                        lands.open = true
-                                        player.playSound(Sound.BLOCK_WOODEN_DOOR_OPEN, .5f, 1f)
-                                        "지역을 비공개로 전환"
+                                }로 전환"
+                            )
+                            this.lore = listOf(
+                                "지역의 공개 여부를 변경합니다.",
+                                "현재 상태: ${
+                                    when (lands.open) {
+                                        true -> "공개"
+                                        false -> "비공개"
                                     }
-                                }
+                                }"
                             )
                         }
                         event.inventory.setItem(47, lockButton)
@@ -193,7 +218,7 @@ class MainGui(private val player: Player, private val rank: Rank) : GuiInterface
                 player.openUserListGui(rank)
             }
             51 -> {
-                TODO("Not implemented")
+                player.openBanListGui(rank)
             }
         }
 
@@ -227,7 +252,6 @@ class MainGui(private val player: Player, private val rank: Rank) : GuiInterface
             }
         }
 
-        val lands = landManager.getPlayerLands(event.player.uniqueId) ?: return
         for (fuel in fuelList) {
             val lore = fuel.lore ?: continue
             if (lore.size != 2) continue

@@ -19,7 +19,7 @@ class HurtListener : Listener {
         val lands = landManager.getLandsWithChunk(victim.chunk) ?: return
         if (!lands.enable) return
 
-        val victimSetting = when (lands.getRank(victim.uniqueId)) {
+        val victimSetting = when (lands.memberMap[victim.uniqueId]!!.rank) {
             Rank.MEMBER -> lands.memberSetting
             Rank.PARTTIMEJOB -> lands.partTimeJobSetting
             Rank.VISITOR -> lands.visitorSetting

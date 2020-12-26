@@ -1,6 +1,7 @@
 package com.salkcoding.tunalands.gui.render
 
 import br.com.devsrsouza.kotlinbukkitapi.extensions.item.displayName
+import com.salkcoding.tunalands.commands.sub.BanList
 import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.guiManager
 import com.salkcoding.tunalands.landManager
@@ -18,7 +19,7 @@ import org.bukkit.inventory.meta.SkullMeta
 import java.util.*
 import kotlin.math.min
 
-class UserListGui(private val player: Player, private val rank: Rank) : GuiInterface {
+class BanListGui(private val player: Player, private val rank: Rank) : GuiInterface {
 
     private val lands: Lands = landManager.getPlayerLands(player.uniqueId)!!
     private lateinit var playerList: MutableList<UUID>
@@ -35,27 +36,8 @@ class UserListGui(private val player: Player, private val rank: Rank) : GuiInter
     private var currentPage = 0
     override fun render(inv: Inventory) {
         statisticsInfo.apply {
-            var onlineCount = 0
-            var delegatorCount = 0
-            var memberCount = 0
-            var partTimeJobCount = 0
-            var visitorCount = 0
-            lands.memberMap.forEach { (uuid, data) ->
-                if (Bukkit.getOfflinePlayer(uuid).isOnline)
-                    onlineCount++
-                when (data.rank) {
-                    Rank.DELEGATOR -> delegatorCount++
-                    Rank.MEMBER -> memberCount++
-                    Rank.VISITOR -> visitorCount++
-                    Rank.PARTTIMEJOB -> partTimeJobCount++
-                }
-            }
             this.lore = listOf(
-                "총 인원: ${onlineCount}/${lands.memberMap.size}",
-                "관리 대리인: ${delegatorCount}명",
-                "멤버: ${memberCount}명",
-                "알바: ${partTimeJobCount}명",
-                "방문자: ${visitorCount}명"
+                "밴 된 유저: ${lands.banMap.size}명"
             )
         }
 
@@ -75,58 +57,17 @@ class UserListGui(private val player: Player, private val rank: Rank) : GuiInter
         val sortLore = when (sortWay) {
             0 -> {
                 //Default sorting
-                playerList = lands.memberMap.keys.sortedByDescending {
-                    lands.memberMap[it]!!.lastLogin
+                playerList = lands.banMap.keys.sortedBy {
+                    lands.banMap[it]!!.banned
                 }.toMutableList()
                 "기본"
             }
             1 -> {
-                //Delegator sorting
-                playerList = lands.memberMap.keys.sortedByDescending {
-                    val data = lands.memberMap[it]!!
-                    if (data.rank == Rank.DELEGATOR) {
-                        lands.memberMap[it]!!.lastLogin
-                    } else {
-                        0
-                    }
+                //Descending sorting
+                playerList = lands.banMap.keys.sortedByDescending {
+                    lands.banMap[it]!!.banned
                 }.toMutableList()
-                "관리 대리인"
-            }
-            2 -> {
-                //Member sorting
-                playerList = lands.memberMap.keys.sortedByDescending {
-                    val data = lands.memberMap[it]!!
-                    if (data.rank == Rank.MEMBER) {
-                        lands.memberMap[it]!!.lastLogin
-                    } else {
-                        0
-                    }
-                }.toMutableList()
-                "멤버"
-            }
-            3 -> {
-                //Part time job sorting
-                playerList = lands.memberMap.keys.sortedByDescending {
-                    val data = lands.memberMap[it]!!
-                    if (data.rank == Rank.PARTTIMEJOB) {
-                        lands.memberMap[it]!!.lastLogin
-                    } else {
-                        0
-                    }
-                }.toMutableList()
-                "알바"
-            }
-            4 -> {
-                //Visitor sorting
-                playerList = lands.memberMap.keys.sortedByDescending {
-                    val data = lands.memberMap[it]!!
-                    if (data.rank == Rank.VISITOR) {
-                        lands.memberMap[it]!!.lastLogin
-                    } else {
-                        0
-                    }
-                }.toMutableList()
-                "방문자"
+                "오래된 순"
             }
             else -> ""
         }
@@ -134,11 +75,8 @@ class UserListGui(private val player: Player, private val rank: Rank) : GuiInter
         sortButton.apply {
             this.lore = listOf(
                 "현재 보기 상태: $sortLore",
-                "기본: 모든 사용자를 최근에 입장한 순서로 봅니다.",
-                "관리 대리인: 가장 최근에 입장한 순서로 봅니다.",
-                "멤버: 가장 최근에 입장한 순서로 봅니다.",
-                "알바: 가장 최근에 입장한 순서로 봅니다.",
-                "방문자: 가장 최근에 방문한 순서로 봅니다.",
+                "기본: 최근에 밴 된 순서로 봅니다.",
+                "오래된 순: 오래된 순서대로 봅니다.",
                 "",
                 "클릭하여 정렬 방법을 변경할 수 있습니다."
             )
@@ -160,16 +98,12 @@ class UserListGui(private val player: Player, private val rank: Rank) : GuiInter
                 meta.setDisplayName(entry.name)
                 meta.lore = listOf(
                     "권한: ${memberData.rank}",
-                    "최근 방문일: ${
+                    "추방 일자: ${
                         date.get(Calendar.YEAR)
                     }/${
                         date.get(Calendar.MONTH) + 1
                     }/${
                         date.get(Calendar.DATE)
-                    } ${
-                        date.get(Calendar.HOUR_OF_DAY)
-                    }:${
-                        date.get(Calendar.MINUTE)
                     }"
                 )
                 this.itemMeta = meta
@@ -200,7 +134,7 @@ class UserListGui(private val player: Player, private val rank: Rank) : GuiInter
             //Hopper(Sorting way change)
             3, 5 -> {
                 sortWay++
-                if (sortWay > 4)
+                if (sortWay > 1)
                     sortWay = 0
                 pageRender(event.inventory)
             }
@@ -227,9 +161,9 @@ class UserListGui(private val player: Player, private val rank: Rank) : GuiInter
     }
 }
 
-fun Player.openUserListGui(rank: Rank) {
-    val inventory = Bukkit.createInventory(null, 54, "User list GUI")
-    val gui = UserListGui(this, rank)
+fun Player.openBanListGui(rank: Rank) {
+    val inventory = Bukkit.createInventory(null, 54, "Ban list GUI")
+    val gui = BanListGui(this, rank)
     gui.render(inventory)
 
     val view = this.openInventory(inventory)!!

@@ -24,14 +24,15 @@ class LandManager {
     }
 
     fun hasRank(playerUUID: UUID): Boolean {
-        var has: Boolean? = null
         playerLandMap.forEach { (_, lands) ->
-            if (lands.getRank(playerUUID) != Rank.VISITOR) {
-                has = true
-                return@forEach
+            if (playerUUID in lands.memberMap) {
+                return when (lands.memberMap[playerUUID]!!.rank) {
+                    Rank.VISITOR -> false
+                    else -> true
+                }
             }
         }
-        return has ?: false
+        return false
     }
 
     fun getLandOwnerName(chunk: Chunk): String? {
@@ -59,93 +60,97 @@ class LandManager {
     }
 
     fun getPlayerLands(playerUUID: UUID): Lands? {
-        var value: Lands? = null
         playerLandMap.forEach { (_, lands) ->
-            if (lands.getRank(playerUUID) != Rank.VISITOR && lands.getRank(playerUUID) != Rank.PARTTIMEJOB) {
-                value = lands
-                return@forEach
+            if (playerUUID in lands.memberMap) {
+                when (lands.memberMap[playerUUID]!!.rank) {
+                    Rank.VISITOR -> return@forEach
+                    else -> return lands
+                }
             }
         }
-        return value
+        return null
     }
 
     fun getPlayerLandList(playerUUID: UUID): List<String>? {
-        var list: List<String>? = null
         playerLandMap.forEach { (_, lands) ->
-            if (lands.getRank(playerUUID) != Rank.VISITOR && lands.getRank(playerUUID) != Rank.PARTTIMEJOB) {
-                list = lands.landList
-                return@forEach
+            if (playerUUID in lands.memberMap) {
+                when (lands.memberMap[playerUUID]!!.rank) {
+                    Rank.VISITOR -> return@forEach
+                    else -> return lands.landList
+                }
             }
         }
-        return list
+        return null
     }
 
     fun getPlayerLandHistory(playerUUID: UUID): Lands.LandHistory? {
-        var history: Lands.LandHistory? = null
         playerLandMap.forEach { (_, lands) ->
-            if (lands.getRank(playerUUID) != Rank.VISITOR && lands.getRank(playerUUID) != Rank.PARTTIMEJOB) {
-                history = lands.landHistory
-                return@forEach
+            if (playerUUID in lands.memberMap) {
+                when (lands.memberMap[playerUUID]!!.rank) {
+                    Rank.VISITOR -> return@forEach
+                    else -> return lands.landHistory
+                }
             }
         }
-        return history
+        return null
     }
 
     fun getLandVisitorSetting(playerUUID: UUID): LandSetting? {
-        var setting: LandSetting? = null
         playerLandMap.forEach { (_, lands) ->
-            if (lands.getRank(playerUUID) != Rank.VISITOR && lands.getRank(playerUUID) != Rank.PARTTIMEJOB) {
-                setting = lands.visitorSetting
-                return@forEach
+            if (playerUUID in lands.memberMap) {
+                when (lands.memberMap[playerUUID]!!.rank) {
+                    Rank.VISITOR -> return@forEach
+                    else -> return lands.visitorSetting
+                }
             }
         }
-        return setting
+        return null
     }
 
     fun getLandMemberSetting(playerUUID: UUID): LandSetting? {
-        var setting: LandSetting? = null
         playerLandMap.forEach { (_, lands) ->
-            if (lands.getRank(playerUUID) != Rank.VISITOR && lands.getRank(playerUUID) != Rank.PARTTIMEJOB) {
-                setting = lands.memberSetting
-                return@forEach
+            if (playerUUID in lands.memberMap) {
+                when (lands.memberMap[playerUUID]!!.rank) {
+                    Rank.VISITOR -> return@forEach
+                    else -> return lands.memberSetting
+                }
             }
         }
-        return setting
+        return null
     }
 
     fun getLandDelegatorSetting(playerUUID: UUID): DelegatorSetting? {
-        var setting: DelegatorSetting? = null
         playerLandMap.forEach { (_, lands) ->
-            if (lands.getRank(playerUUID) != Rank.VISITOR && lands.getRank(playerUUID) != Rank.PARTTIMEJOB) {
-                setting = lands.delegatorSetting
-                return@forEach
+            if (playerUUID in lands.memberMap) {
+                when (lands.memberMap[playerUUID]!!.rank) {
+                    Rank.VISITOR -> return@forEach
+                    else -> return lands.delegatorSetting
+                }
             }
         }
-        return setting
+        return null
     }
 
     fun getLandPartTimeJobSetting(playerUUID: UUID): LandSetting? {
-        var setting: LandSetting? = null
         playerLandMap.forEach { (_, lands) ->
-            when (lands.getRank(playerUUID)) {
-                Rank.OWNER, Rank.DELEGATOR -> {
-                    setting = lands.partTimeJobSetting
-                    return@forEach
+            if (playerUUID in lands.memberMap) {
+                when (lands.memberMap[playerUUID]!!.rank) {
+                    Rank.VISITOR -> return@forEach
+                    else -> return lands.partTimeJobSetting
                 }
-                else -> return@forEach
             }
         }
-        return setting
+        return null
     }
 
     fun getLandsWithChunk(chunk: Chunk): Lands? {
         val query = chunk.toQuery()
         return if (query in landMap) {
             var value: Lands? = null
-            playerLandMap.forEach { (_, lands) ->
+            for ((_, lands) in playerLandMap) {
                 if (lands.landList.contains(query)) {
                     value = lands
-                    return@forEach
+                    break
                 }
             }
             value
@@ -168,20 +173,20 @@ class LandManager {
                 return
             }
 
-            when (lands.getRank(uuid)) {
+            when (lands.memberMap[uuid]!!.rank) {
                 Rank.OWNER, Rank.DELEGATOR -> {
                     if (chunk.isMeetOtherChunk(playerLandMap[uuid]!!.landList)) {
                         playerLandMap[uuid]!!.landList.add(query)
                         landMap[query] = Lands.ChunkInfo(player.name, uuid, chunk.world.name, chunk.x, chunk.z)
                         Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
-                            val floodFill = !playerLandMap[uuid]!!.checkFloodFill()
+                            val floodFill = playerLandMap[uuid]!!.checkFloodFill()
                             Bukkit.getScheduler().runTask(tunaLands, Runnable {
-                                if (!floodFill) {
+                                if (floodFill) {
+                                    player.sendMessage("You bought a chunk you stand!".infoFormat())
+                                } else {
                                     playerLandMap[uuid]!!.landList.remove(query)
                                     landMap.remove(query)
                                     player.sendMessage("Flood fill false! Your bought will be cancelled!".errorFormat())
-                                } else {
-                                    player.sendMessage("You bought a chunk you stand!".infoFormat())
                                 }
                             })
                         })
@@ -210,11 +215,11 @@ class LandManager {
                 expired.add(Calendar.DATE, 1)//Next day(Temp value)
                 playerLandMap[uuid] =
                     Lands(
-                        uuid,
                         mutableListOf(query),
                         Lands.LandHistory(
                             player.name,
                             uuid,
+                            0,
                             now
                         ),
                         Lands.Core(
@@ -230,7 +235,9 @@ class LandManager {
                             downCore.location.blockZ
                         ),
                         expired.timeInMillis
-                    )
+                    ).apply {
+                        this.memberMap[uuid] = Lands.MemberData(uuid, Rank.OWNER, now, now)
+                    }
                 landMap[query] = Lands.ChunkInfo(player.name, uuid, chunk.world.name, chunk.x, chunk.z)
                 player.sendMessage("You bought a chunk you stand!".infoFormat())
             }
@@ -247,18 +254,23 @@ class LandManager {
                 return
             }
 
-            when (lands.getRank(uuid)) {
+            val info = lands.upCore
+            if (info.world == chunk.world.name) {
+                val coreChunk = chunk.world.getBlockAt(info.x, info.y, info.z).chunk
+                if (coreChunk.x == chunk.x && coreChunk.z == chunk.z && lands.landList.size > 1) {
+                    player.sendMessage("Core chunk can be sold after all of chunks are sold.".errorFormat())
+                    return
+                }
+            }
+
+            when (lands.memberMap[uuid]!!.rank) {
                 Rank.OWNER, Rank.DELEGATOR -> {
                     val removedInfo = landMap.remove(query)!!
                     lands.landList.remove(query)
                     Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
                         val floodFill = playerLandMap[uuid]!!.checkFloodFill()
                         Bukkit.getScheduler().runTask(tunaLands, Runnable {
-                            if (!floodFill) {
-                                landMap[query] = removedInfo
-                                playerLandMap[uuid]!!.landList.add(query)
-                                player.sendMessage("Flood fill false! Your sold will be cancelled!".errorFormat())
-                            } else {
+                            if (floodFill) {
                                 if (lands.landList.isEmpty()) {
                                     val upCore = lands.upCore
                                     val downCore = lands.downCore
@@ -269,6 +281,10 @@ class LandManager {
                                     playerLandMap.remove(player.uniqueId)
                                 }
                                 player.sendMessage("Successfully removed".infoFormat())
+                            } else {
+                                landMap[query] = removedInfo
+                                playerLandMap[uuid]!!.landList.add(query)
+                                player.sendMessage("Flood fill false! Your sold will be cancelled!".errorFormat())
                             }
                         })
                     })
