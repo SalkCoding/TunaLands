@@ -8,6 +8,7 @@ import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.backButton
+import com.salkcoding.tunalands.util.infoFormat
 import com.salkcoding.tunalands.util.times
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -16,10 +17,39 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.inventory.Inventory
+import java.util.*
+
+val loreChatMap = mutableMapOf<UUID, Int>()
+val welcomeMessageChatSet = mutableSetOf<UUID>()
 
 class VisitorSettingGui(private val player: Player, private val rank: Rank) : GuiInterface {
 
     private val lands: Lands = landManager.getPlayerLands(player.uniqueId)!!
+
+    private val landLoreSetButton = (Material.PAPER * 1).apply {
+        this.displayName("방문자 통계")
+        this.lore = listOf(
+            "지역 목록에서 보이게 할 설명을 설정합니다.",
+            "색 채팅을 이용할 수 있으며",
+            "\'\\n\'을 이용하여 줄바꿈을 할 수 있습니다.",
+            "최대 3줄까지 설정할 수 있습니다."
+        )
+    }
+
+    private val statisticsInfo = (Material.PAINTING * 1).apply {
+        this.displayName("방문자 통계")
+        this.lore = listOf(
+            "방문자 수: ${lands.landHistory.visitorCount}"
+        )
+    }
+
+    private val welcomeMessageSetButton = (Material.MAP * 1).apply {
+        this.displayName("방문자 통계")
+        this.lore = listOf(
+            "방문자 수: ${lands.landHistory.visitorCount}"
+        )
+    }
+
 
     //First row
     private val canPVP = (Material.DIAMOND_SWORD * 1).apply { this.displayName("PVP") }
@@ -135,6 +165,9 @@ class VisitorSettingGui(private val player: Player, private val rank: Rank) : Gu
         useJukebox.apply { this.lore = listOf("상태: ${setting.useJukebox}") }
 
         inv.setItem(0, backButton)
+        inv.setItem(3, landLoreSetButton)
+        inv.setItem(4, statisticsInfo)
+        inv.setItem(5, welcomeMessageSetButton)
         inv.setItem(8, backButton)
 
         inv.setItem(9, canPVP)
@@ -190,6 +223,20 @@ class VisitorSettingGui(private val player: Player, private val rank: Rank) : Gu
         val inv = event.inventory
         when (event.rawSlot) {
             0, 8 -> player.openSettingGui(rank)//Back button
+            3 -> {
+                loreChatMap[player.uniqueId] = 0
+                player.sendMessage("원하는 문장을 채팅창에 입력해주세요.".infoFormat())
+                player.sendMessage("색 채팅을 이용할 수 있으며,'\\n'을 이용하여 줄바꿈을 할 수 있습니다.".infoFormat())
+                player.sendMessage("최대 3줄까지 설정할 수 있습니다.".infoFormat())
+                player.closeInventory()
+            }
+            5 -> {
+                welcomeMessageChatSet.add(player.uniqueId)
+                player.sendMessage("원하는 문장을 채팅창에 입력해주세요.".infoFormat())
+                player.sendMessage("색 채팅을 이용할 수 있으며,'\\n'을 이용하여 줄바꿈을 할 수 있습니다.".infoFormat())
+                player.sendMessage("한줄만 사용 가능합니다.".infoFormat())
+                player.closeInventory()
+            }
             //First row
             9 -> {
                 setting.canPVP = !setting.canPVP

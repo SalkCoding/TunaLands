@@ -86,7 +86,7 @@ class MainGui(private val player: Player, private val rank: Rank) : GuiInterface
 
         task = Bukkit.getScheduler().runTaskTimerAsynchronously(tunaLands, Runnable {
             //Expired
-            if (expired < 1000) {
+            if (expired < 1000 || !lands.enable) {
                 player.sendMessage("Protect expired! All of your lands are going to be unprotected!".warnFormat())
                 player.sendMessage("If you want to reactivate protection, refill fuels.".warnFormat())
 
@@ -218,7 +218,7 @@ class MainGui(private val player: Player, private val rank: Rank) : GuiInterface
                 player.openUserListGui(rank)
             }
             51 -> {
-                player.openBanListGui(rank)
+                player.openBanListGui(false, rank)
             }
         }
 
@@ -259,15 +259,15 @@ class MainGui(private val player: Player, private val rank: Rank) : GuiInterface
 
             val timeLore = lore[1].split(" ")[0]
             val time = timeRegex.find(timeLore)!!.value.toInt()
-            lands.expiredMillisecond += when (measureRegex.find(timeLore)!!.value) {
-                "분" -> {
-                    time * 60000
-                }
-                "시간" -> {
-                    time * 3600000
-                }
+            //Expired refresh
+            if (!lands.enable)
+                lands.expiredMillisecond = System.currentTimeMillis()
+
+            lands.expiredMillisecond += (fuel.amount * time * when (measureRegex.find(timeLore)!!.value) {
+                "분" -> 60000
+                "시간" -> 3600000
                 else -> 0
-            }
+            })
         }
     }
 }

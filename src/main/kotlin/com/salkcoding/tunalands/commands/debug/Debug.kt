@@ -19,7 +19,7 @@ class Debug : CommandExecutor {
             args[0] == "info" && args.size == 2 -> {
                 val name = args[1]
                 val list = landManager.getPlayerLandList(Bukkit.getOfflinePlayer(name).uniqueId)
-                if (list != null) sender.sendMessage("Lands of $name: ${list.joinToString(separator = ", ")}".infoFormat())
+                if (list != null) sender.sendMessage("$name 소유의 땅 목록: ${list.joinToString(separator = ", ")}".infoFormat())
                 else sender.sendMessage("")
                 return true
             }
@@ -28,7 +28,7 @@ class Debug : CommandExecutor {
                 if (player != null) {
                     landManager.buyLand(player, player.location.block)
                 } else {
-                    sender.sendMessage("You can't use this command on Console".errorFormat())
+                    sender.sendMessage("콘솔에서는 사용 불가능한 명령어입니다.".errorFormat())
                 }
                 return true
             }
@@ -37,7 +37,7 @@ class Debug : CommandExecutor {
                 if (player != null) {
                     landManager.sellLand(player, player.chunk)
                 } else {
-                    sender.sendMessage("You can't use this command on Console".errorFormat())
+                    sender.sendMessage("콘솔에서는 사용 불가능한 명령어입니다.".errorFormat())
                 }
                 return true
             }

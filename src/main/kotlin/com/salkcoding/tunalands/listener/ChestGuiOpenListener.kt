@@ -26,11 +26,11 @@ class ChestGuiOpenListener : Listener {
             val chunk = block.chunk
             val lands = landManager.getLandsWithChunk(chunk) ?: return
             val upCore = lands.upCore
-            if (!block.isSameLocation(upCore.world, upCore.x, upCore.y, upCore.z)) return
+            if (!block.isSameLocation(upCore.world.name, upCore.blockX, upCore.blockY, upCore.blockZ)) return
             event.isCancelled = true
             when (val rank = lands.memberMap[player.uniqueId]!!.rank) {
-                Rank.MEMBER -> player.sendMessage("You don't have a permission to access setting gui".errorFormat())
-                else -> player.openMainGui(rank)
+                Rank.OWNER, Rank.DELEGATOR, Rank.MEMBER -> player.openMainGui(rank)
+                else -> player.sendMessage("권한이 없습니다.".errorFormat())
             }
         }
     }

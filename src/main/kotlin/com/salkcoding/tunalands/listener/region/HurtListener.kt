@@ -22,9 +22,8 @@ class HurtListener : Listener {
         val victimSetting = when (lands.memberMap[victim.uniqueId]!!.rank) {
             Rank.MEMBER -> lands.memberSetting
             Rank.PARTTIMEJOB -> lands.partTimeJobSetting
-            Rank.VISITOR -> lands.visitorSetting
-            else -> null
-        } ?: return
+            else -> lands.visitorSetting
+        }
 
         if (!victimSetting.canHurt)
             event.isCancelled = true

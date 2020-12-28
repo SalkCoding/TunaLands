@@ -18,6 +18,8 @@ import org.bukkit.inventory.Inventory
 
 class DelegatorSettingGui(private val player: Player, private val rank: Rank) : GuiInterface {
 
+    private val lands = landManager.getPlayerLands(player.uniqueId)!!
+
     private val setSpawnVisitor = (Material.NETHER_STAR * 1).apply { this.displayName("방문자 스폰 설정") }
     private val setPartTimeJobSetting = (Material.BOOK * 1).apply { this.displayName("알바 설정 수정") }
     private val setMemberSetting = (Material.PAINTING * 1).apply { this.displayName("멤버 설정 수정") }
@@ -27,7 +29,7 @@ class DelegatorSettingGui(private val player: Player, private val rank: Rank) : 
     private val setRegionSpawn = (Material.EMERALD * 1).apply { this.displayName("지역 스폰 설정") }
 
     override fun render(inv: Inventory) {
-        val setting = landManager.getLandDelegatorSetting(player.uniqueId)!!
+        val setting = lands.delegatorSetting
 
         //First row
         setSpawnVisitor.apply { this.lore = listOf("상태: ${setting.setSpawnVisitor}") }
@@ -52,7 +54,7 @@ class DelegatorSettingGui(private val player: Player, private val rank: Rank) : 
 
     override fun onClick(event: InventoryClickEvent) {
         event.isCancelled = true
-        val setting = landManager.getLandDelegatorSetting(player.uniqueId)!!
+        val setting = lands.delegatorSetting
         val inv = event.inventory
         when (event.rawSlot) {
             0, 8 -> player.openSettingGui(rank)//Back button

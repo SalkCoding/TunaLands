@@ -19,7 +19,7 @@ class PVPListener : Listener {
         damager = if (damager is Projectile)
             damager.shooter as? Player ?: return
         else
-            damager as Player
+            damager as? Player ?: return
 
         val lands = landManager.getLandsWithChunk(damager.chunk) ?: return
         if (!lands.enable) return
@@ -27,12 +27,11 @@ class PVPListener : Listener {
         val damagerSetting = when (lands.memberMap[damager.uniqueId]!!.rank) {
             Rank.MEMBER -> lands.memberSetting
             Rank.PARTTIMEJOB -> lands.partTimeJobSetting
-            Rank.VISITOR -> lands.visitorSetting
-            else -> null
-        } ?: return
+            else -> lands.visitorSetting
+        }
 
         if (!damagerSetting.canPVP) {
-            damager.sendMessage("You don't have a permission!".errorFormat())
+            damager.sendMessage("권한이 없습니다.".errorFormat())
             event.isCancelled = true
         }
     }

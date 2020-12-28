@@ -26,24 +26,24 @@ class TunaLands : JavaPlugin() {
 
         val handler = LandCommandHandler()
         handler.register("accept", Accept())
+        handler.register("alba", Alba())
         handler.register("ban", Ban())
         handler.register("banlist", BanList())
         handler.register("cancel", Cancel())
-        handler.register("coop", Coop())
         handler.register("delete", Delete())
         handler.register("demote", Demote())
+        handler.register("deny", Deny())
+        handler.register("hego", Hego())
         handler.register("help", Help())
         handler.register("invite", Invite())
         handler.register("kick", Kick())
         handler.register("leave", Leave())
         handler.register("promote", Promote())
-        handler.register("reject", Reject())
         handler.register("setleader", SetLeader())
         handler.register("setspawn", SetSpawn())
         handler.register("spawn", Spawn())
         handler.register("unban", Unban())
         handler.register("visit", Visit())
-        handler.register("vote", Vote())
 
         handler.register("debug", Debug())
 
@@ -68,16 +68,17 @@ class TunaLands : JavaPlugin() {
         server.pluginManager.registerEvents(ShearListener(), this)
         server.pluginManager.registerEvents(ThrowListener(), this)
 
+        server.pluginManager.registerEvents(ChatListener(), this)
         server.pluginManager.registerEvents(ChestGuiOpenListener(), this)
         server.pluginManager.registerEvents(CoreListener(), this)
         server.pluginManager.registerEvents(FlagListener(), this)
         server.pluginManager.registerEvents(InventoryClickListener(), this)
         server.pluginManager.registerEvents(InventoryCloseListener(), this)
         server.pluginManager.registerEvents(InventoryDragListener(), this)
+        server.pluginManager.registerEvents(QuitListener(), this)
 
         if (chunkDebug) {
             logger.warning("Chunk debug mode is enabled.".consoleFormat())
-            logger.warning("It may cause ConcurrentModificationException.".consoleFormat())
             server.scheduler.runTaskTimer(this, Runnable {
                 landManager.debug()
             }, 20, 20)
@@ -89,6 +90,7 @@ class TunaLands : JavaPlugin() {
     }
 
     override fun onDisable() {
+        landManager.shutdown()
         guiManager.allClose()
         logger.warning("All guis are closed".consoleFormat())
 

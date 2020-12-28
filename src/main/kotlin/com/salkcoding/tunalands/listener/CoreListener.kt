@@ -23,8 +23,10 @@ class CoreListener : Listener {
             if (coreBlock.type == configuration.protect.coreBlock) {
                 val player = event.player
 
-                val lands = landManager.getLandsWithChunk(chest.chunk)
-                if (lands != null) return
+                if (landManager.getPlayerLands(player.uniqueId) != null
+                    || landManager.getLandsWithChunk(chest.chunk) != null
+                )
+                    return
 
                 landManager.buyLand(player, chest, coreBlock)
             }
@@ -47,10 +49,10 @@ class CoreListener : Listener {
                 val upCore = lands.upCore
                 val downCore = lands.downCore
 
-                if (block.isSameLocation(upCore.world, upCore.x, upCore.y, upCore.z) ||
-                    block.isSameLocation(downCore.world, downCore.x, downCore.y, downCore.z)
+                if (block.isSameLocation(upCore.world.name, upCore.blockX, upCore.blockY, upCore.blockZ) ||
+                    block.isSameLocation(downCore.world.name, downCore.blockX, downCore.blockY, downCore.blockZ)
                 ) {
-                    player.sendMessage("You can't break core or core of chest".warnFormat())
+                    player.sendMessage("코어 블럭과 코어 창고는 부술 수 없습니다.".warnFormat())
                     event.isCancelled = true
                 }
             }

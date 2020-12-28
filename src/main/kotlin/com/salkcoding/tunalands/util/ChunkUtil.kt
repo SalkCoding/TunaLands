@@ -17,3 +17,7 @@ fun Chunk.isMeetOtherChunk(chunkList: List<String>): Boolean {
             (right in chunkList) or
             (bottom in chunkList)
 }
+
+fun Chunk.isSameChunk(other: Chunk): Boolean {
+    return (this.world.name == other.world.name && this.x == other.x && this.z == other.z)
+}

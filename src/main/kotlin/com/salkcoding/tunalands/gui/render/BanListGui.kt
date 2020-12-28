@@ -19,7 +19,8 @@ import org.bukkit.inventory.meta.SkullMeta
 import java.util.*
 import kotlin.math.min
 
-class BanListGui(private val player: Player, private val rank: Rank) : GuiInterface {
+class BanListGui(private val player: Player, private val callByCommand: Boolean, private val rank: Rank) :
+    GuiInterface {
 
     private val lands: Lands = landManager.getPlayerLands(player.uniqueId)!!
     private lateinit var playerList: MutableList<UUID>
@@ -91,13 +92,13 @@ class BanListGui(private val player: Player, private val rank: Rank) : GuiInterf
             val head = (Material.PLAYER_HEAD * 1).apply {
                 val meta = this.itemMeta as SkullMeta
                 val entry = Bukkit.getOfflinePlayer(playerList[start + i])
-                val memberData = lands.memberMap[entry.uniqueId]!!
+                val banData = lands.banMap[entry.uniqueId]!!
                 val date = Calendar.getInstance()
-                date.timeInMillis = memberData.lastLogin
+                date.timeInMillis = banData.banned
                 meta.owningPlayer = entry
                 meta.setDisplayName(entry.name)
                 meta.lore = listOf(
-                    "권한: ${memberData.rank}",
+                    "UUID: ${banData.uuid}",
                     "추방 일자: ${
                         date.get(Calendar.YEAR)
                     }/${
@@ -125,11 +126,13 @@ class BanListGui(private val player: Player, private val rank: Rank) : GuiInterf
 
     override fun onClick(event: InventoryClickEvent) {
         event.isCancelled = true
-        //TODO sort and button
         when (event.rawSlot) {
             //Back button
             0, 8 -> {
-                player.openMainGui(rank)
+                if (callByCommand)
+                    player.closeInventory()
+                else
+                    player.openMainGui(rank)
             }
             //Hopper(Sorting way change)
             3, 5 -> {
@@ -161,9 +164,9 @@ class BanListGui(private val player: Player, private val rank: Rank) : GuiInterf
     }
 }
 
-fun Player.openBanListGui(rank: Rank) {
+fun Player.openBanListGui(callByCommand: Boolean, rank: Rank) {
     val inventory = Bukkit.createInventory(null, 54, "Ban list GUI")
-    val gui = BanListGui(this, rank)
+    val gui = BanListGui(this, callByCommand, rank)
     gui.render(inventory)
 
     val view = this.openInventory(inventory)!!

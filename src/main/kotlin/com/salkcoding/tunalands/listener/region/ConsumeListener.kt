@@ -22,12 +22,11 @@ class ConsumeListener : Listener {
         val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
             Rank.MEMBER -> lands.memberSetting
             Rank.PARTTIMEJOB -> lands.partTimeJobSetting
-            Rank.VISITOR -> lands.visitorSetting
-            else -> null
-        } ?: return
+            else -> lands.visitorSetting
+        }
 
         if (setting.useMilk) {
-            player.sendMessage("You don't have a permission!".errorFormat())
+            player.sendMessage("권한이 없습니다.".errorFormat())
             event.isCancelled = true
         }
     }
