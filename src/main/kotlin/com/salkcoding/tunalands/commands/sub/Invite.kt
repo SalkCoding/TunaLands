@@ -33,9 +33,19 @@ class Invite : CommandExecutor {
                                     player.sendMessage("존재하지 않는 유저입니다.".errorFormat())
                                     return true
                                 }
+                                val targetLands = landManager.getPlayerLands(target.uniqueId)
+                                if (targetLands != null) {
+                                    player.sendMessage("해당 플레이어는 땅에 소속되어있습니다.".errorFormat())
+                                    return true
+                                }
 
                                 if (target.uniqueId == player.uniqueId) {
                                     player.sendMessage("자신을 초대할 수는 없습니다.".errorFormat())
+                                    return true
+                                }
+
+                                if (target.uniqueId in lands.banMap) {
+                                    player.sendMessage("밴 당한 유저는 초대하실 수 없습니다.".errorFormat())
                                     return true
                                 }
 

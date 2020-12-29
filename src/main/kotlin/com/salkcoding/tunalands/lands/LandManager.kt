@@ -55,10 +55,17 @@ class LandManager {
 
     fun getPlayerLands(playerUUID: UUID): Lands? {
         playerLandMap.forEach { (_, lands) ->
-            if (playerUUID in lands.memberMap
-                && lands.memberMap.containsKey(playerUUID)
-            ) {
-                return lands
+            if (playerUUID in lands.memberMap) return lands
+        }
+        return null
+    }
+
+    fun getVisitorLands(playerUUID: UUID): Lands? {
+        playerLandMap.forEach { (_, lands) ->
+            if (playerUUID in lands.memberMap) {
+                if (lands.memberMap[playerUUID]!!.rank == Rank.VISITOR) {
+                    return lands
+                }
             }
         }
         return null
@@ -66,11 +73,7 @@ class LandManager {
 
     fun getPlayerLandList(playerUUID: UUID): List<String>? {
         playerLandMap.forEach { (_, lands) ->
-            if (playerUUID in lands.memberMap
-                && lands.memberMap.containsKey(playerUUID)
-            ) {
-                return lands.landList
-            }
+            if (playerUUID in lands.memberMap) return lands.landList
         }
         return null
     }
@@ -215,17 +218,17 @@ class LandManager {
             val blockX: Int = c.x shl 4
             val blockZ: Int = c.z shl 4
 
-            var location = c.world.getHighestBlockAt(blockX, blockZ).location.add(0.0, 2.0, 0.0)
-            location.world.spawnParticle(Particle.REDSTONE, location, 10, Particle.DustOptions(Color.RED, 5f))
+            var location = c.world.getHighestBlockAt(blockX, blockZ).location.add(0.0, 5.0, 0.0)
+            location.world.spawnParticle(Particle.FIREWORKS_SPARK, location, 0, .0, .0, .0, .0, null, true)
 
-            location = c.world.getHighestBlockAt(blockX, blockZ + 15).location.add(0.0, 2.0, 0.0)
-            location.world.spawnParticle(Particle.REDSTONE, location, 10, Particle.DustOptions(Color.RED, 5f))
+            location = c.world.getHighestBlockAt(blockX, blockZ + 16).location.add(0.0, 5.0, 0.0)
+            location.world.spawnParticle(Particle.FIREWORKS_SPARK, location, 0, .0, .0, .0, .0, null, true)
 
-            location = c.world.getHighestBlockAt(blockX + 15, blockZ).location.add(0.0, 2.0, 0.0)
-            location.world.spawnParticle(Particle.REDSTONE, location, 10, Particle.DustOptions(Color.RED, 5f))
+            location = c.world.getHighestBlockAt(blockX + 16, blockZ).location.add(0.0, 5.0, 0.0)
+            location.world.spawnParticle(Particle.FIREWORKS_SPARK, location, 0, .0, .0, .0, .0, null, true)
 
-            location = c.world.getHighestBlockAt(blockX + 15, blockZ + 15).location.add(0.0, 2.0, 0.0)
-            location.world.spawnParticle(Particle.REDSTONE, location, 10, Particle.DustOptions(Color.RED, 5f))
+            location = c.world.getHighestBlockAt(blockX + 16, blockZ + 16).location.add(0.0, 5.0, 0.0)
+            location.world.spawnParticle(Particle.FIREWORKS_SPARK, location, 0, .0, .0, .0, .0, null, true)
         }
     }
 }

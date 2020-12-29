@@ -21,24 +21,27 @@ class ThrowListener : Listener {
         val lands = landManager.getLandsWithChunk(player.chunk) ?: return
         if (!lands.enable) return
 
-        val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
-            Rank.MEMBER -> lands.memberSetting
-            Rank.PARTTIMEJOB -> lands.partTimeJobSetting
-            else -> lands.visitorSetting
-        }
+        if (player.uniqueId in lands.memberMap) {
+            val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
+                Rank.OWNER, Rank.DELEGATOR -> return
+                Rank.MEMBER -> lands.memberSetting
+                Rank.PARTTIMEJOB -> lands.partTimeJobSetting
+                Rank.VISITOR -> lands.visitorSetting
+            }
 
-        val mainType = player.inventory.itemInMainHand.type
-        val offType = player.inventory.itemInOffHand.type
-        when {
-            mainType == Material.EGG || offType == Material.EGG -> {
-                if (setting.throwEgg)
-                    event.isCancelled = true
+            val mainType = player.inventory.itemInMainHand.type
+            val offType = player.inventory.itemInOffHand.type
+            when {
+                mainType == Material.EGG || offType == Material.EGG -> {
+                    if (setting.throwEgg)
+                        event.isCancelled = true
+                }
+                mainType == Material.FISHING_ROD || offType == Material.FISHING_ROD -> {
+                    if (setting.canFishing)
+                        event.isCancelled = true
+                }
             }
-            mainType == Material.FISHING_ROD || offType == Material.FISHING_ROD -> {
-                if (setting.canFishing)
-                    event.isCancelled = true
-            }
-        }
+        } else event.isCancelled = true
 
         if (event.useItemInHand() == Event.Result.DENY)
             player.sendMessage("권한이 없습니다.".errorFormat())

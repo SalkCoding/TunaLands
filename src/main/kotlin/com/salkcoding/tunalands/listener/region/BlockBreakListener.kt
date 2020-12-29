@@ -23,44 +23,47 @@ class BlockBreakListener : Listener {
         if (!landManager.isProtectedLand(chunk)) return
 
         val block = event.block
-        val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
-            Rank.MEMBER -> lands.memberSetting
-            Rank.PARTTIMEJOB -> lands.partTimeJobSetting
-            else -> lands.visitorSetting
-        }
+        if (player.uniqueId in lands.memberMap) {
+            val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
+                Rank.OWNER, Rank.DELEGATOR -> return
+                Rank.MEMBER -> lands.memberSetting
+                Rank.PARTTIMEJOB -> lands.partTimeJobSetting
+                Rank.VISITOR -> lands.visitorSetting
+            }
 
-        when (block.type) {
-            Material.WHEAT,
-            Material.POTATOES,
-            Material.CARROTS,
-            Material.BEETROOTS,
-            Material.NETHER_WART,
-            Material.COCOA,
-            Material.MELON,
-            Material.MELON_STEM,
-            Material.PUMPKIN,
-            Material.PUMPKIN_STEM,
-            Material.CACTUS,
-            Material.SUGAR_CANE,
-            Material.CHORUS_PLANT,
-            Material.CHORUS_FLOWER,
-            Material.BAMBOO,
-            Material.BAMBOO_SAPLING,
-            Material.KELP,
-            Material.KELP_PLANT
-            -> {
-                if (!setting.canHarvest)
-                    event.isCancelled = true
+            when (block.type) {
+                Material.WHEAT,
+                Material.POTATOES,
+                Material.CARROTS,
+                Material.BEETROOTS,
+                Material.NETHER_WART,
+                Material.COCOA,
+                Material.MELON,
+                Material.MELON_STEM,
+                Material.PUMPKIN,
+                Material.PUMPKIN_STEM,
+                Material.CACTUS,
+                Material.SUGAR_CANE,
+                Material.CHORUS_PLANT,
+                Material.CHORUS_FLOWER,
+                Material.BAMBOO,
+                Material.BAMBOO_SAPLING,
+                Material.KELP,
+                Material.KELP_PLANT
+                -> {
+                    if (!setting.canHarvest)
+                        event.isCancelled = true
+                }
+                Material.ITEM_FRAME -> {
+                    if (!setting.breakItemFrame)
+                        event.isCancelled = true
+                }
+                else -> {
+                    if (!setting.breakBlock)
+                        event.isCancelled = true
+                }
             }
-            Material.ITEM_FRAME -> {
-                if (!setting.breakItemFrame)
-                    event.isCancelled = true
-            }
-            else -> {
-                if (!setting.breakBlock)
-                    event.isCancelled = true
-            }
-        }
+        } else event.isCancelled = true
 
         if (event.isCancelled)
             player.sendMessage("권한이 없습니다.".errorFormat())

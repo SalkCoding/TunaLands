@@ -10,6 +10,7 @@ import com.salkcoding.tunalands.util.backButton
 import com.salkcoding.tunalands.util.times
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
@@ -57,7 +58,10 @@ class DelegatorSettingGui(private val player: Player, private val rank: Rank) : 
         val setting = lands.delegatorSetting
         val inv = event.inventory
         when (event.rawSlot) {
-            0, 8 -> player.openSettingGui(rank)//Back button
+            0, 8 -> {
+                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
+                player.openSettingGui(rank)//Back button
+            }
             //First row
             9 -> {
                 setting.setSpawnVisitor = !setting.setSpawnVisitor
@@ -65,6 +69,7 @@ class DelegatorSettingGui(private val player: Player, private val rank: Rank) : 
                     this.lore = listOf("상태: ${setting.setSpawnVisitor}")
                     inv.setItem(9, this)
                 }
+                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             10 -> {
                 setting.setPartTimeJobSetting = !setting.setPartTimeJobSetting
@@ -72,6 +77,7 @@ class DelegatorSettingGui(private val player: Player, private val rank: Rank) : 
                     this.lore = listOf("상태: ${setting.setPartTimeJobSetting}")
                     inv.setItem(10, this)
                 }
+                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             11 -> {
                 setting.setMemberSetting = !setting.setMemberSetting
@@ -79,6 +85,7 @@ class DelegatorSettingGui(private val player: Player, private val rank: Rank) : 
                     this.lore = listOf("상태: ${setting.setMemberSetting}")
                     inv.setItem(11, this)
                 }
+                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             12 -> {
                 setting.setVisitorSetting = !setting.setVisitorSetting
@@ -86,6 +93,7 @@ class DelegatorSettingGui(private val player: Player, private val rank: Rank) : 
                     this.lore = listOf("상태: ${setting.setVisitorSetting}")
                     inv.setItem(12, this)
                 }
+                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             13 -> {
                 setting.setRegionSetting = !setting.setRegionSetting
@@ -93,6 +101,7 @@ class DelegatorSettingGui(private val player: Player, private val rank: Rank) : 
                     this.lore = listOf("상태: ${setting.setRegionSetting}")
                     inv.setItem(13, this)
                 }
+                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             14 -> {
                 setting.setVisitorBan = !setting.setVisitorBan
@@ -100,6 +109,7 @@ class DelegatorSettingGui(private val player: Player, private val rank: Rank) : 
                     this.lore = listOf("상태: ${setting.setVisitorBan}")
                     inv.setItem(14, this)
                 }
+                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             15 -> {
                 setting.setRegionSpawn = !setting.setRegionSpawn
@@ -107,6 +117,7 @@ class DelegatorSettingGui(private val player: Player, private val rank: Rank) : 
                     this.lore = listOf("상태: ${setting.setRegionSpawn}")
                     inv.setItem(15, this)
                 }
+                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
         }
     }

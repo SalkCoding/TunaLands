@@ -18,16 +18,20 @@ class PickupItemListener : Listener {
         if (!lands.enable) return
 
         val player = event.entity as? Player ?: return
-        val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
-            Rank.MEMBER -> lands.memberSetting
-            Rank.PARTTIMEJOB -> lands.partTimeJobSetting
-            else -> lands.visitorSetting
-        }
+        if (player.uniqueId in lands.memberMap) {
+            val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
+                Rank.OWNER, Rank.DELEGATOR -> return
+                Rank.MEMBER -> lands.memberSetting
+                Rank.PARTTIMEJOB -> lands.partTimeJobSetting
+                Rank.VISITOR -> lands.visitorSetting
+            }
 
-        if (!setting.pickupItem) {
+            if (!setting.pickupItem)
+                event.isCancelled = true
+        } else event.isCancelled = true
+
+        if (event.isCancelled)
             player.sendMessage("권한이 없습니다.".errorFormat())
-            event.isCancelled = true
-        }
     }
 
 }
