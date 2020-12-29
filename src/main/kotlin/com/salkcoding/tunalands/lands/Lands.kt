@@ -18,14 +18,10 @@ class Lands(
     var open = false
     var lore = mutableListOf(
         "${ownerName}의 땅입니다.",
-        "ㅎㅇ",
-        "ㅂㅇ"
+        "",
+        ""
     )
-    var welcomeMessage = mutableListOf(
-        "${ownerName}의 땅입니다.",
-        "ㅎㅇ",
-        "ㅂㅂ"
-    )
+    var welcomeMessage = "${ownerName}의 땅입니다."
 
     var memberSpawn = upCore
     var visitorSpawn = upCore
@@ -35,8 +31,15 @@ class Lands(
     val delegatorSetting = DelegatorSetting()
     val partTimeJobSetting = LandSetting()
 
+    val visitorMap = mutableMapOf<UUID, VisitorData>()
+
     val memberMap = mutableMapOf<UUID, MemberData>()
     val banMap = mutableMapOf<UUID, BanData>()
+
+    data class VisitorData(
+        val uuid: UUID,
+        val visit: Long
+    )
 
     data class MemberData(
         val uuid: UUID,

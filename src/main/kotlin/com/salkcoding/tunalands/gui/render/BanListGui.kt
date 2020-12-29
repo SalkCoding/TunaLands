@@ -10,7 +10,6 @@ import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.*
 import org.bukkit.Bukkit
 import org.bukkit.Material
-import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
@@ -130,7 +129,6 @@ class BanListGui(private val player: Player, private val callByCommand: Boolean,
         when (event.rawSlot) {
             //Back button
             0, 8 -> {
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
                 if (callByCommand)
                     player.closeInventory()
                 else
@@ -138,7 +136,6 @@ class BanListGui(private val player: Player, private val callByCommand: Boolean,
             }
             //Hopper(Sorting way change)
             3, 5 -> {
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
                 sortWay++
                 if (sortWay > 1)
                     sortWay = 0
@@ -146,7 +143,6 @@ class BanListGui(private val player: Player, private val callByCommand: Boolean,
             }
             //Previous
             9 -> {
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
                 if (currentPage > 0) {
                     currentPage--
                     pageRender(event.inventory)
@@ -154,7 +150,6 @@ class BanListGui(private val player: Player, private val callByCommand: Boolean,
             }
             //Next
             17 -> {
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
                 val start = currentPage * 36
                 if ((playerList.size - start) > 36) {
                     currentPage++

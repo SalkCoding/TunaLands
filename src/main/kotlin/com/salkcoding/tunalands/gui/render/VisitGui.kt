@@ -135,35 +135,35 @@ class VisitGui(private val player: Player) : GuiInterface {
             val entry = Bukkit.getOfflinePlayer(uuid)
             val lands = landMap[uuid]!!
 
-            val head = (Material.PLAYER_HEAD * 1).apply {
-                val meta = this.itemMeta as SkullMeta
-                val created = Calendar.getInstance()
-                created.timeInMillis = lands.landHistory.createdMillisecond
-                meta.owningPlayer = entry
-                meta.setDisplayName(entry.name)
-                val lore = mutableListOf(
-                    "공개 여부: ${
-                        when (lands.open) {
-                            true -> "공개"
-                            false -> "비공개"
-                        }
-                    }",
-                    "멤버 수: ${lands.memberMap.size}",
-                    "방문자 수: ${lands.landHistory.visitorCount}",
-                    "생성일: ${created.get(Calendar.YEAR)}/${created.get(Calendar.MONTH) + 1}/${created.get(Calendar.DATE)}",
-                )
-                (0 until lands.lore.size).forEach { i ->
-                    lore.add(i, lands.lore[i])
+            //Player hasn't to be a member of his/her land and also not a visitor of his/her land
+            if (player.uniqueId !in landMap[uuid]!!.memberMap && player.uniqueId !in landMap[uuid]!!.visitorMap) {
+                val head = (Material.PLAYER_HEAD * 1).apply {
+                    val meta = this.itemMeta as SkullMeta
+                    val created = Calendar.getInstance()
+                    created.timeInMillis = lands.landHistory.createdMillisecond
+                    meta.owningPlayer = entry
+                    meta.setDisplayName(entry.name)
+                    val lore = mutableListOf(
+                        "공개 여부: ${
+                            when (lands.enable) {
+                                true -> "공개"
+                                false -> "비공개"
+                            }
+                        }",
+                        "멤버 수: ${lands.memberMap.size}",
+                        "방문자 수: ${lands.landHistory.visitorCount}",
+                        "생성일: ${created.get(Calendar.YEAR)}/${created.get(Calendar.MONTH) + 1}/${created.get(Calendar.DATE)}",
+                    )
+                    if (lands.enable) {
+                        lore.add("")
+                        lore.add("클릭하여 이동할 수 있습니다.")
+                    }
+                    meta.lore = lore
+                    this.itemMeta = meta
                 }
-                if (lands.enable) {
-                    lore.add("")
-                    lore.add("클릭하여 이동할 수 있습니다.")
-                }
-                meta.lore = lore
-                this.itemMeta = meta
+                //Start index is 18 because of decorations
+                inv.setItem(i + 18, head)
             }
-            //Start index is 18 because of decorations
-            inv.setItem(i + 18, head)
         }
 
         if (currentPage < 1)
@@ -208,39 +208,19 @@ class VisitGui(private val player: Player) : GuiInterface {
             }
             in 18..53 -> {
                 val index = (currentPage * 36) + (event.rawSlot - 18)
-                if (index >= landList.size) return
-
-                val lands = landMap[landList[index]] ?: return
+                val lands = landMap[landList[index]]!!
                 val uuid = player.uniqueId
-                if (uuid in lands.memberMap) {
-                    player.sendMessage("자신이 소속되어있는 땅에는 방문할 수 없습니다.".errorFormat())
-                    return
-                }
-
-                if (uuid in lands.memberMap) {
-                    player.sendMessage("이미 방문 중입니다.".errorFormat())
-                    return
-                }
-
                 if (!lands.banMap.containsKey(uuid)) {
-                    if (lands.open || player.isOp) {
-                        val current = System.currentTimeMillis()
-                        lands.memberMap[uuid] = Lands.MemberData(
-                            uuid,
-                            Rank.VISITOR,
-                            current,
-                            current
-                        )
+                    lands.visitorMap[uuid] = Lands.VisitorData(
+                        uuid,
+                        System.currentTimeMillis()
+                    )
 
-                        player.closeInventory()
-                        lands.welcomeMessage.forEach { welcomeMessage ->
-                            player.sendMessage(welcomeMessage)
-                        }
-                        player.teleportAsync(lands.visitorSpawn)
-                        lands.landHistory.visitorCount++
-                    }
+                    player.closeInventory()
+                    player.teleportAsync(lands.visitorSpawn)
+                    lands.landHistory.visitorCount++
                 } else {
-                    player.sendMessage("${lands.ownerName}의 땅에서 밴되었기 때문에 방문할 수 없습니다.".errorFormat())
+                    player.sendMessage("You banned from ${lands.ownerName}'s land")
                 }
             }
         }

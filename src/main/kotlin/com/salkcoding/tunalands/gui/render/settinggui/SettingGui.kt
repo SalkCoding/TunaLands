@@ -10,7 +10,6 @@ import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.times
 import org.bukkit.Bukkit
 import org.bukkit.Material
-import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
@@ -59,36 +58,26 @@ class SettingGui(private val player: Player, private val rank: Rank) : GuiInterf
         event.isCancelled = true
         when (event.rawSlot) {
             0 -> {
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
                 player.openMainGui(rank)
             }
             2 -> {
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
                 player.openVisitorSettingGui(rank)
             }
             3 -> {
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
                 player.openMemberSettingGui(rank)
             }
             4 -> {
                 when (rank) {
-                    Rank.OWNER, Rank.DELEGATOR -> {
-                        player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
-                        player.openDelegatorSettingGui(rank)
-                    }
-                    else -> {
-                        player.playSound(player.location, Sound.ENTITY_VILLAGER_NO, 0.5f, 1.0f)
-                        player.sendMessage("You don't have a permission to access".errorFormat())
-                    }
+                    Rank.OWNER, Rank.DELEGATOR -> player.openDelegatorSettingGui(rank)
+                    else -> player.sendMessage("You don't have a permission to access".errorFormat())
                 }
             }
             6 -> {
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
                 player.openPartTimeJobSettingGui(rank)
             }
-            7 -> {
-                player.playSound(player.location, Sound.ENTITY_VILLAGER_NO, 0.5f, 1.0f)
-            }
+            /*7 -> {
+                TODO("NOT implemented")
+            }*/
         }
     }
 

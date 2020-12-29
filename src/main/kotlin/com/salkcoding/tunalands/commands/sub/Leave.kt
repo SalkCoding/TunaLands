@@ -17,8 +17,7 @@ class Leave : CommandExecutor {
             label == "leave" && args.isEmpty() -> {
                 val player = sender as? Player
                 if (player != null) {
-                    val lands =
-                        landManager.getVisitorLands(player.uniqueId) ?: landManager.getPlayerLands(player.uniqueId)
+                    val lands = landManager.getPlayerLands(player.uniqueId)
                     if (lands != null) {
                         val data = lands.memberMap[player.uniqueId]!!
                         if (data.rank == Rank.OWNER) {
@@ -33,7 +32,7 @@ class Leave : CommandExecutor {
                             val administration = Bukkit.getPlayer(uuid) ?: return@forEach
                             administration.sendMessage("${player.name}이/가 땅을 떠났습니다.".warnFormat())
                         }
-                    } else player.sendMessage("어느 땅에도 소속되어있지 않습니다.".errorFormat())
+                    } else player.sendMessage("해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat())
                 } else sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
                 return true
             }

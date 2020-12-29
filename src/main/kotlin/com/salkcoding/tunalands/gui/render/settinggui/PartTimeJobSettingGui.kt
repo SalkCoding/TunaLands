@@ -9,7 +9,6 @@ import com.salkcoding.tunalands.util.backButton
 import com.salkcoding.tunalands.util.times
 import org.bukkit.Bukkit
 import org.bukkit.Material
-import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
@@ -187,10 +186,7 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
         val setting = lands.partTimeJobSetting
         val inv = event.inventory
         when (event.rawSlot) {
-            0, 8 -> {
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
-                player.openSettingGui(rank)//Back button
-            }
+            0, 8 -> player.openSettingGui(rank)//Back button
             //First row
             9 -> {
                 setting.canPVP = !setting.canPVP
@@ -198,7 +194,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.canPVP}")
                     inv.setItem(9, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             10 -> {
                 setting.breakBlock = !setting.breakBlock
@@ -206,7 +201,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.breakBlock}")
                     inv.setItem(10, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             11 -> {
                 setting.placeBlock = !setting.placeBlock
@@ -214,7 +208,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.placeBlock}")
                     inv.setItem(11, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             12 -> {
                 setting.canHurt = !setting.canHurt
@@ -222,7 +215,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.canHurt}")
                     inv.setItem(12, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             13 -> {
                 setting.pickupExp = !setting.pickupExp
@@ -230,7 +222,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.pickupExp}")
                     inv.setItem(13, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             14 -> {
                 setting.pickupItem = !setting.pickupItem
@@ -238,7 +229,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.pickupItem}")
                     inv.setItem(14, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             15 -> {
                 setting.dropItem = !setting.dropItem
@@ -246,7 +236,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.dropItem}")
                     inv.setItem(15, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             16 -> {
                 setting.openChest = !setting.openChest
@@ -254,7 +243,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.openChest}")
                     inv.setItem(16, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             17 -> {
                 setting.eatCake = !setting.eatCake
@@ -262,7 +250,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.eatCake}")
                     inv.setItem(17, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             //Second row
             18 -> {
@@ -271,7 +258,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.useCircuit}")
                     inv.setItem(18, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             19 -> {
                 setting.useLever = !setting.useLever
@@ -279,7 +265,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.useLever}")
                     inv.setItem(19, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             20 -> {
                 setting.useButton = !setting.useButton
@@ -287,7 +272,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.useButton}")
                     inv.setItem(20, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             21 -> {
                 setting.usePressureSensor = !setting.usePressureSensor
@@ -295,7 +279,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.usePressureSensor}")
                     inv.setItem(21, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             22 -> {
                 setting.useDoor = !setting.useDoor
@@ -303,7 +286,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.useDoor}")
                     inv.setItem(22, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             23 -> {
                 setting.useTrapdoor = !setting.useTrapdoor
@@ -311,7 +293,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.useTrapdoor}")
                     inv.setItem(23, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             24 -> {
                 setting.useFenceGate = !setting.useFenceGate
@@ -319,7 +300,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.useFenceGate}")
                     inv.setItem(24, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             25 -> {
                 setting.useHopper = !setting.useHopper
@@ -327,7 +307,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.useHopper}")
                     inv.setItem(25, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             26 -> {
                 setting.useDispenserAndDropper = !setting.useDispenserAndDropper
@@ -335,7 +314,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.useDispenserAndDropper}")
                     inv.setItem(26, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             //Third row
             27 -> {
@@ -344,7 +322,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.useCraftTable}")
                     inv.setItem(27, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             28 -> {
                 setting.useFurnace = !setting.useFurnace
@@ -352,7 +329,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.useFurnace}")
                     inv.setItem(28, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             29 -> {
                 setting.useBed = !setting.useBed
@@ -360,7 +336,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.useBed}")
                     inv.setItem(29, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             30 -> {
                 setting.useEnchantingTable = !setting.useEnchantingTable
@@ -368,7 +343,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.useEnchantingTable}")
                     inv.setItem(30, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             31 -> {
                 setting.useAnvil = !setting.useAnvil
@@ -376,7 +350,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.useAnvil}")
                     inv.setItem(31, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             32 -> {
                 setting.useCauldron = !setting.useCauldron
@@ -384,7 +357,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.useCauldron}")
                     inv.setItem(32, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             33 -> {
                 setting.useBrewingStand = !setting.useBrewingStand
@@ -392,7 +364,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.useBrewingStand}")
                     inv.setItem(33, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             34 -> {
                 setting.useBeacon = !setting.useBeacon
@@ -400,7 +371,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.useBeacon}")
                     inv.setItem(34, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             35 -> {
                 setting.useArmorStand = !setting.useArmorStand
@@ -408,7 +378,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.useArmorStand}")
                     inv.setItem(35, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             //Fourth row
             36 -> {
@@ -417,7 +386,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.canSow}")
                     inv.setItem(36, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             37 -> {
                 setting.canHarvest = !setting.canHarvest
@@ -425,7 +393,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.canHarvest}")
                     inv.setItem(37, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             38 -> {
                 setting.canBreed = !setting.canBreed
@@ -433,7 +400,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.canBreed}")
                     inv.setItem(38, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             39 -> {
                 setting.useBucket = !setting.useBucket
@@ -441,7 +407,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.useBucket}")
                     inv.setItem(39, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             40 -> {
                 setting.useMilk = !setting.useMilk
@@ -449,7 +414,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.useMilk}")
                     inv.setItem(40, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             41 -> {
                 setting.throwEgg = !setting.throwEgg
@@ -457,7 +421,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.throwEgg}")
                     inv.setItem(41, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             42 -> {
                 setting.useShears = !setting.useShears
@@ -465,7 +428,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.useShears}")
                     inv.setItem(42, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             43 -> {
                 setting.useFlintAndSteel = !setting.useFlintAndSteel
@@ -473,7 +435,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.useFlintAndSteel}")
                     inv.setItem(43, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             44 -> {
                 setting.canRuinFarmland = !setting.canRuinFarmland
@@ -481,7 +442,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.canRuinFarmland}")
                     inv.setItem(44, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             //Fifth row
             45 -> {
@@ -490,7 +450,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.useMinecart}")
                     inv.setItem(45, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             46 -> {
                 setting.canFishing = !setting.canFishing
@@ -498,7 +457,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.canFishing}")
                     inv.setItem(46, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             47 -> {
                 setting.useBoat = !setting.useBoat
@@ -506,7 +464,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.useBoat}")
                     inv.setItem(47, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             48 -> {
                 setting.canRiding = !setting.canRiding
@@ -514,7 +471,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.canRiding}")
                     inv.setItem(48, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             49 -> {
                 setting.useChestedHorse = !setting.useChestedHorse
@@ -522,7 +478,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.useChestedHorse}")
                     inv.setItem(49, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             50 -> {
                 setting.useLead = !setting.useLead
@@ -530,7 +485,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.useLead}")
                     inv.setItem(50, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             51 -> {
                 setting.breakItemFrame = !setting.breakItemFrame
@@ -538,7 +492,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.breakItemFrame}")
                     inv.setItem(51, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             52 -> {
                 setting.useNoteBlock = !setting.useNoteBlock
@@ -546,7 +499,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.useNoteBlock}")
                     inv.setItem(52, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             53 -> {
                 setting.useJukebox = !setting.useJukebox
@@ -554,7 +506,6 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
                     this.lore = listOf("상태: ${setting.useJukebox}")
                     inv.setItem(53, this)
                 }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
         }
     }

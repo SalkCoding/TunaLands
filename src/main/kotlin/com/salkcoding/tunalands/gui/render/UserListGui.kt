@@ -39,7 +39,6 @@ class UserListGui(private val player: Player, private val rank: Rank) : GuiInter
             var delegatorCount = 0
             var memberCount = 0
             var partTimeJobCount = 0
-            var visitorCount = 0
             lands.memberMap.forEach { (uuid, data) ->
                 if (Bukkit.getOfflinePlayer(uuid).isOnline)
                     onlineCount++
@@ -47,7 +46,6 @@ class UserListGui(private val player: Player, private val rank: Rank) : GuiInter
                     Rank.DELEGATOR -> delegatorCount++
                     Rank.MEMBER -> memberCount++
                     Rank.PARTTIMEJOB -> partTimeJobCount++
-                    Rank.VISITOR -> visitorCount++
                     else -> return@forEach
                 }
             }
@@ -56,7 +54,7 @@ class UserListGui(private val player: Player, private val rank: Rank) : GuiInter
                 "관리 대리인: ${delegatorCount}명",
                 "멤버: ${memberCount}명",
                 "알바: ${partTimeJobCount}명",
-                "방문자: ${visitorCount}명"
+                "방문자: ${lands.visitorMap.size}명"
             )
         }
 
@@ -119,14 +117,10 @@ class UserListGui(private val player: Player, private val rank: Rank) : GuiInter
             }
             4 -> {
                 //Visitor sorting
-                playerList = lands.memberMap.keys.sortedByDescending {
-                    val data = lands.memberMap[it]!!
-                    if (data.rank == Rank.VISITOR) {
-                        lands.memberMap[it]!!.lastLogin
-                    } else {
-                        0
-                    }
+                playerList = lands.visitorMap.keys.sortedByDescending {
+                    lands.visitorMap[it]!!.visit
                 }.toMutableList()
+                playerList.addAll(lands.memberMap.keys)
                 "방문자"
             }
             else -> ""

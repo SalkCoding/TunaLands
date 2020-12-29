@@ -201,33 +201,23 @@ class MainGui(private val player: Player, private val rank: Rank) : GuiInterface
                         event.inventory.setItem(47, lockButton)
                     }
                     else -> {
-                        player.playSound(player.location, Sound.ENTITY_VILLAGER_NO, 0.5f, 1.0f)
                         player.sendMessage("You don't have a permission to access".errorFormat())
                     }
                 }
             }
             48 -> {
                 when (rank) {
-                    Rank.OWNER, Rank.DELEGATOR -> {
-                        player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
-                        player.openSettingGui(rank)
-                    }
-                    else -> {
-                        player.playSound(player.location, Sound.ENTITY_VILLAGER_NO, 0.5f, 1.0f)
-                        player.sendMessage("You don't have a permission to access".errorFormat())
-                    }
+                    Rank.OWNER, Rank.DELEGATOR -> player.openSettingGui(rank)
+                    else -> player.sendMessage("You don't have a permission to access".errorFormat())
                 }
             }
             49 -> {
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
                 player.openShopGui(rank)
             }
             50 -> {
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
                 player.openUserListGui(rank)
             }
             51 -> {
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
                 player.openBanListGui(false, rank)
             }
         }

@@ -18,19 +18,16 @@ class ConsumeListener : Listener {
         val player = event.player
         val lands = landManager.getLandsWithChunk(player.chunk) ?: return
         if (!lands.enable) return
-        if (player.uniqueId in lands.memberMap) {
-            val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
-                Rank.OWNER, Rank.DELEGATOR -> return
-                Rank.MEMBER -> lands.memberSetting
-                Rank.PARTTIMEJOB -> lands.partTimeJobSetting
-                Rank.VISITOR -> lands.visitorSetting
-            }
 
-            if (setting.useMilk)
-                event.isCancelled = true
-        } else event.isCancelled = true
+        val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
+            Rank.MEMBER -> lands.memberSetting
+            Rank.PARTTIMEJOB -> lands.partTimeJobSetting
+            else -> lands.visitorSetting
+        }
 
-        if (event.isCancelled)
+        if (setting.useMilk) {
             player.sendMessage("권한이 없습니다.".errorFormat())
+            event.isCancelled = true
+        }
     }
 }

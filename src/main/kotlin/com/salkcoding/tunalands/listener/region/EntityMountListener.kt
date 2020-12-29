@@ -19,34 +19,32 @@ class EntityMountListener : Listener {
         if (!lands.enable) return
 
         val player = event.entity as? Player ?: return
-        if (player.uniqueId in lands.memberMap) {
-            val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
-                Rank.OWNER, Rank.DELEGATOR -> return
-                Rank.MEMBER -> lands.memberSetting
-                Rank.PARTTIMEJOB -> lands.partTimeJobSetting
-                Rank.VISITOR -> lands.visitorSetting
-            }
 
-            when (event.mount.type) {
-                EntityType.MINECART -> {
-                    if (setting.useMinecart)
-                        event.isCancelled = true
-                }
-                EntityType.BOAT -> {
-                    if (setting.useBoat)
-                        event.isCancelled = true
-                }
-                EntityType.PIG,
-                EntityType.STRIDER,
-                EntityType.DONKEY,
-                EntityType.MULE,
-                EntityType.HORSE -> {
-                    if (setting.canRiding)
-                        event.isCancelled = true
-                }
-                else -> return
+        val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
+            Rank.MEMBER -> lands.memberSetting
+            Rank.PARTTIMEJOB -> lands.partTimeJobSetting
+            else -> lands.visitorSetting
+        }
+
+        when (event.mount.type) {
+            EntityType.MINECART -> {
+                if (setting.useMinecart)
+                    event.isCancelled = true
             }
-        } else event.isCancelled = true
+            EntityType.BOAT -> {
+                if (setting.useBoat)
+                    event.isCancelled = true
+            }
+            EntityType.PIG,
+            EntityType.STRIDER,
+            EntityType.DONKEY,
+            EntityType.MULE,
+            EntityType.HORSE -> {
+                if (setting.canRiding)
+                    event.isCancelled = true
+            }
+            else -> return
+        }
 
         if (event.isCancelled)
             player.sendMessage("권한이 없습니다.".errorFormat())

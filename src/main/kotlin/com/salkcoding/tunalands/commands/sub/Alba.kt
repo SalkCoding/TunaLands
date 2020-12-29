@@ -35,11 +35,6 @@ class Alba : CommandExecutor {
                                     return true
                                 }
 
-                                if (target.uniqueId in lands.banMap) {
-                                    player.sendMessage("밴 당한 유저는 초대하실 수 없습니다.".errorFormat())
-                                    return true
-                                }
-
                                 player.sendMessage("${target.name}에게 알바로 채용하겠다는 의사를 보냈습니다.".infoFormat())
                                 target.sendMessage("${player.name}이/가 당신을 ${lands.ownerName}의 알바로 채용하고자 합니다.".infoFormat())
                                 target.sendMessage("수락하시려면, /ld accept를 거부하시려면, /ld deny을 입력해주세요.".infoFormat())

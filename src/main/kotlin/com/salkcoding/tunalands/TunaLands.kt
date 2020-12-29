@@ -16,16 +16,13 @@ const val chunkDebug = true
 lateinit var tunaLands: TunaLands
 lateinit var configuration: Config
 
-lateinit var guiManager: GuiManager
-lateinit var landManager: LandManager
+val guiManager = GuiManager()
+val landManager = LandManager()
 
 class TunaLands : JavaPlugin() {
 
     override fun onEnable() {
         tunaLands = this
-
-        guiManager = GuiManager()
-        landManager = LandManager()
 
         val handler = LandCommandHandler()
         handler.register("accept", Accept())
@@ -84,7 +81,7 @@ class TunaLands : JavaPlugin() {
             logger.warning("Chunk debug mode is enabled.".consoleFormat())
             server.scheduler.runTaskTimer(this, Runnable {
                 landManager.debug()
-            }, 20, 5)
+            }, 20, 20)
         }
 
         configRead()

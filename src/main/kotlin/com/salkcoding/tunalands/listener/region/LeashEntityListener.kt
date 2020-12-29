@@ -17,19 +17,15 @@ class LeashEntityListener : Listener {
         if (!lands.enable) return
 
         val player = event.player
-        if (player.uniqueId in lands.memberMap) {
-            val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
-                Rank.OWNER, Rank.DELEGATOR -> return
-                Rank.MEMBER -> lands.memberSetting
-                Rank.PARTTIMEJOB -> lands.partTimeJobSetting
-                Rank.VISITOR -> lands.visitorSetting
-            }
+        val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
+            Rank.MEMBER -> lands.memberSetting
+            Rank.PARTTIMEJOB -> lands.partTimeJobSetting
+            else -> lands.visitorSetting
+        }
 
-            if (!setting.useLead)
-                event.isCancelled = true
-        } else event.isCancelled = true
-
-        if (event.isCancelled)
+        if (!setting.useLead) {
             player.sendMessage("권한이 없습니다.".errorFormat())
+            event.isCancelled = true
+        }
     }
 }
