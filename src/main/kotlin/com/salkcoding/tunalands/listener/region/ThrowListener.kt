@@ -3,44 +3,40 @@ package com.salkcoding.tunalands.listener.region
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
-import org.bukkit.Material
-import org.bukkit.event.Event
+import org.bukkit.entity.EntityType
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.event.block.Action
-import org.bukkit.event.player.PlayerInteractEvent
+import org.bukkit.event.entity.ProjectileLaunchEvent
 
 class ThrowListener : Listener {
 
     @EventHandler
-    fun onThrow(event: PlayerInteractEvent) {
-        if (event.useItemInHand() == Event.Result.DENY) return
-        if (event.action != Action.RIGHT_CLICK_BLOCK && event.action != Action.RIGHT_CLICK_AIR) return
+    fun onEggThrow(event: ProjectileLaunchEvent) {
+        if (event.isCancelled) return
 
-        val player = event.player
+        val player = event.entity.shooter as? Player ?: return
         val lands = landManager.getLandsWithChunk(player.chunk) ?: return
         if (!lands.enable) return
 
-        val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
-            Rank.MEMBER -> lands.memberSetting
-            Rank.PARTTIMEJOB -> lands.partTimeJobSetting
-            else -> lands.visitorSetting
+        when (event.entity.type) {
+            EntityType.EGG -> {
+                if (player.uniqueId in lands.memberMap) {
+                    val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
+                        Rank.OWNER, Rank.DELEGATOR -> return
+                        Rank.MEMBER -> lands.memberSetting
+                        Rank.PARTTIMEJOB -> lands.partTimeJobSetting
+                        Rank.VISITOR -> lands.visitorSetting
+                    }
+
+                    if (setting.throwEgg)
+                        event.isCancelled = true
+                } else event.isCancelled = true
+            }
+            else -> return
         }
 
-        val mainType = player.inventory.itemInMainHand.type
-        val offType = player.inventory.itemInOffHand.type
-        when {
-            mainType == Material.EGG || offType == Material.EGG -> {
-                if (setting.throwEgg)
-                    event.isCancelled = true
-            }
-            mainType == Material.FISHING_ROD || offType == Material.FISHING_ROD -> {
-                if (setting.canFishing)
-                    event.isCancelled = true
-            }
-        }
-
-        if (event.useItemInHand() == Event.Result.DENY)
-            player.sendMessage("권한이 없습니다.".errorFormat())
+        if (event.isCancelled)
+            player.sendMessage("권한이 없습니다!".errorFormat())
     }
 }

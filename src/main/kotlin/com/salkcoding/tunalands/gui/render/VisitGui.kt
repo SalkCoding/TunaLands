@@ -9,6 +9,7 @@ import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.*
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
@@ -135,35 +136,35 @@ class VisitGui(private val player: Player) : GuiInterface {
             val entry = Bukkit.getOfflinePlayer(uuid)
             val lands = landMap[uuid]!!
 
-            //Player hasn't to be a member of his/her land and also not a visitor of his/her land
-            if (player.uniqueId !in landMap[uuid]!!.memberMap && player.uniqueId !in landMap[uuid]!!.visitorMap) {
-                val head = (Material.PLAYER_HEAD * 1).apply {
-                    val meta = this.itemMeta as SkullMeta
-                    val created = Calendar.getInstance()
-                    created.timeInMillis = lands.landHistory.createdMillisecond
-                    meta.owningPlayer = entry
-                    meta.setDisplayName(entry.name)
-                    val lore = mutableListOf(
-                        "공개 여부: ${
-                            when (lands.enable) {
-                                true -> "공개"
-                                false -> "비공개"
-                            }
-                        }",
-                        "멤버 수: ${lands.memberMap.size}",
-                        "방문자 수: ${lands.landHistory.visitorCount}",
-                        "생성일: ${created.get(Calendar.YEAR)}/${created.get(Calendar.MONTH) + 1}/${created.get(Calendar.DATE)}",
-                    )
-                    if (lands.enable) {
-                        lore.add("")
-                        lore.add("클릭하여 이동할 수 있습니다.")
-                    }
-                    meta.lore = lore
-                    this.itemMeta = meta
+            val head = (Material.PLAYER_HEAD * 1).apply {
+                val meta = this.itemMeta as SkullMeta
+                val created = Calendar.getInstance()
+                created.timeInMillis = lands.landHistory.createdMillisecond
+                meta.owningPlayer = entry
+                meta.setDisplayName(entry.name)
+                val lore = mutableListOf(
+                    "공개 여부: ${
+                        when (lands.open) {
+                            true -> "공개"
+                            false -> "비공개"
+                        }
+                    }",
+                    "멤버 수: ${lands.memberMap.size}",
+                    "방문자 수: ${lands.landHistory.visitorCount}",
+                    "생성일: ${created.get(Calendar.YEAR)}/${created.get(Calendar.MONTH) + 1}/${created.get(Calendar.DATE)}",
+                )
+                (0 until lands.lore.size).forEach { i ->
+                    lore.add(i, lands.lore[i])
                 }
-                //Start index is 18 because of decorations
-                inv.setItem(i + 18, head)
+                if (lands.enable) {
+                    lore.add("")
+                    lore.add("클릭하여 이동할 수 있습니다.")
+                }
+                meta.lore = lore
+                this.itemMeta = meta
             }
+            //Start index is 18 because of decorations
+            inv.setItem(i + 18, head)
         }
 
         if (currentPage < 1)
@@ -182,10 +183,12 @@ class VisitGui(private val player: Player) : GuiInterface {
         when (event.rawSlot) {
             //Back button
             0, 8 -> {
+                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
                 player.closeInventory()
             }
             //Hopper(Sorting way change)
             3, 5 -> {
+                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
                 sortWay++
                 if (sortWay > 5)
                     sortWay = 0
@@ -195,6 +198,7 @@ class VisitGui(private val player: Player) : GuiInterface {
             9 -> {
                 if (currentPage > 0) {
                     currentPage--
+                    player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
                     pageRender(event.inventory)
                 }
             }
@@ -203,24 +207,50 @@ class VisitGui(private val player: Player) : GuiInterface {
                 val start = currentPage * 36
                 if ((landList.size - start) > 36) {
                     currentPage++
+                    player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
                     pageRender(event.inventory)
                 }
             }
             in 18..53 -> {
-                val index = (currentPage * 36) + (event.rawSlot - 18)
-                val lands = landMap[landList[index]]!!
-                val uuid = player.uniqueId
-                if (!lands.banMap.containsKey(uuid)) {
-                    lands.visitorMap[uuid] = Lands.VisitorData(
-                        uuid,
-                        System.currentTimeMillis()
-                    )
 
-                    player.closeInventory()
-                    player.teleportAsync(lands.visitorSpawn)
-                    lands.landHistory.visitorCount++
+                val index = (currentPage * 36) + (event.rawSlot - 18)
+                if (index >= landList.size) return
+
+                val lands = landMap[landList[index]] ?: return
+                val uuid = player.uniqueId
+                if (uuid in lands.memberMap) {
+                    player.playSound(player.location, Sound.ENTITY_VILLAGER_NO, 0.5f, 1.0f)
+                    player.sendMessage("자신이 소속되어있는 땅에는 방문할 수 없습니다!".errorFormat())
+                    return
+                }
+
+                if (uuid in lands.memberMap) {
+                    player.playSound(player.location, Sound.ENTITY_VILLAGER_NO, 0.5f, 1.0f)
+                    player.sendMessage("이미 방문 중입니다!".errorFormat())
+                    return
+                }
+
+                if (!lands.banMap.containsKey(uuid)) {
+                    if (lands.open || player.isOp) {
+                        val current = System.currentTimeMillis()
+                        lands.memberMap[uuid] = Lands.MemberData(
+                            uuid,
+                            Rank.VISITOR,
+                            current,
+                            current
+                        )
+
+                        player.closeInventory()
+                        lands.welcomeMessage.forEach { welcomeMessage ->
+                            player.sendMessage(welcomeMessage)
+                        }
+                        player.teleportAsync(lands.visitorSpawn)
+                        lands.landHistory.visitorCount++
+                        player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
+                    }
                 } else {
-                    player.sendMessage("You banned from ${lands.ownerName}'s land")
+                    player.playSound(player.location, Sound.ENTITY_VILLAGER_NO, 0.5f, 1.0f)
+                    player.sendMessage("${lands.ownerName}의 땅에서 밴되었기 때문에 방문할 수 없습니다!".errorFormat())
                 }
             }
         }

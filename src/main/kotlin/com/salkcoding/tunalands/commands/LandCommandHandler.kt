@@ -1,14 +1,10 @@
 package com.salkcoding.tunalands.commands
 
-import com.salkcoding.tunalands.gui.render.openMainGui
-import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.util.consoleFormat
-import com.salkcoding.tunalands.util.errorFormat
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
-import org.bukkit.entity.Player
 
 class LandCommandHandler : CommandExecutor {
 

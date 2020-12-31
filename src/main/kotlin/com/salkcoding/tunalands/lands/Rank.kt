@@ -1,7 +1,7 @@
 package com.salkcoding.tunalands.lands
 
 enum class Rank {
-    OWNER, DELEGATOR, PARTTIMEJOB, MEMBER;
+    OWNER, DELEGATOR, PARTTIMEJOB, MEMBER, VISITOR;
 
     override fun toString(): String {
         return when (this) {
@@ -9,6 +9,7 @@ enum class Rank {
             DELEGATOR -> "관리 대리인"
             PARTTIMEJOB -> "알바"
             MEMBER -> "멤버"
+            VISITOR -> "방문자"
         }
     }
 }

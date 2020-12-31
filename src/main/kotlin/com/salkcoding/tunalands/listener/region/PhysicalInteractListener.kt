@@ -22,34 +22,37 @@ class PhysicalInteractListener : Listener {
         if (!lands.enable) return
 
         val player = event.player
-        val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
-            Rank.MEMBER -> lands.memberSetting
-            Rank.PARTTIMEJOB -> lands.partTimeJobSetting
-            else -> lands.visitorSetting
-        }
+        if (player.uniqueId in lands.memberMap) {
+            val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
+                Rank.OWNER, Rank.DELEGATOR -> return
+                Rank.MEMBER -> lands.memberSetting
+                Rank.PARTTIMEJOB -> lands.partTimeJobSetting
+                Rank.VISITOR -> lands.visitorSetting
+            }
 
-        when (block.type) {
-            Material.STONE_PRESSURE_PLATE,
-            Material.OAK_PRESSURE_PLATE,
-            Material.SPRUCE_PRESSURE_PLATE,
-            Material.BIRCH_PRESSURE_PLATE,
-            Material.JUNGLE_PRESSURE_PLATE,
-            Material.ACACIA_PRESSURE_PLATE,
-            Material.DARK_OAK_PRESSURE_PLATE,
-            Material.CRIMSON_PRESSURE_PLATE,
-            Material.WARPED_PRESSURE_PLATE,
-            Material.POLISHED_BLACKSTONE_PRESSURE_PLATE -> {
-                if (!setting.usePressureSensor)
-                    event.isCancelled = true
+            when (block.type) {
+                Material.STONE_PRESSURE_PLATE,
+                Material.OAK_PRESSURE_PLATE,
+                Material.SPRUCE_PRESSURE_PLATE,
+                Material.BIRCH_PRESSURE_PLATE,
+                Material.JUNGLE_PRESSURE_PLATE,
+                Material.ACACIA_PRESSURE_PLATE,
+                Material.DARK_OAK_PRESSURE_PLATE,
+                Material.CRIMSON_PRESSURE_PLATE,
+                Material.WARPED_PRESSURE_PLATE,
+                Material.POLISHED_BLACKSTONE_PRESSURE_PLATE -> {
+                    if (!setting.usePressureSensor)
+                        event.isCancelled = true
+                }
+                Material.FARMLAND -> {
+                    if (!setting.canRuinFarmland)
+                        event.isCancelled = true
+                }
+                else -> return
             }
-            Material.FARMLAND -> {
-                if (!setting.canRuinFarmland)
-                    event.isCancelled = true
-            }
-            else -> return
-        }
+        } else event.isCancelled = true
 
         if (event.useInteractedBlock() == Event.Result.DENY)
-            player.sendMessage("권한이 없습니다.".errorFormat())
+            player.sendMessage("권한이 없습니다!".errorFormat())
     }
 }

@@ -9,10 +9,7 @@ import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.tunaLands
-import com.salkcoding.tunalands.util.blackPane
-import com.salkcoding.tunalands.util.errorFormat
-import com.salkcoding.tunalands.util.times
-import com.salkcoding.tunalands.util.warnFormat
+import com.salkcoding.tunalands.util.*
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound
@@ -20,12 +17,9 @@ import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryAction
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
-import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.inventory.Inventory
-import org.bukkit.inventory.ItemStack
 import org.bukkit.scheduler.BukkitTask
 import java.util.*
-import kotlin.math.floor
 
 class MainGui(private val player: Player, private val rank: Rank) : GuiInterface {
 
@@ -37,6 +31,39 @@ class MainGui(private val player: Player, private val rank: Rank) : GuiInterface
     }
 
     private val lockButton = (Material.IRON_DOOR * 1)
+
+    private val renderList = listOf(
+        //First row
+        blackPane,
+        blackPane,
+        blackPane,
+        blackPane,
+        null,
+        blackPane,
+        blackPane,
+        blackPane,
+        blackPane,
+        //Second row
+        blackPane,
+        settingButton,
+        shopButton,
+        blackPane,
+        totalInfoIcon,
+        blackPane,
+        userListButton,
+        banListButton,
+        blackPane,
+        //Third row
+        blackPane,
+        blackPane,
+        blackPane,
+        blackPane,
+        lockButton,
+        blackPane,
+        blackPane,
+        blackPane,
+        blackPane
+    )
 
     //Static
     companion object {
@@ -75,20 +102,16 @@ class MainGui(private val player: Player, private val rank: Rank) : GuiInterface
     lateinit var task: BukkitTask
 
     override fun render(inv: Inventory) {
-        for (i in 0..9) {
-            inv.setItem(i, blackPane)
-        }
-
         val landHistory = lands.landHistory
         val created = Calendar.getInstance()
         created.timeInMillis = landHistory.createdMillisecond
-        var expired = lands.expiredMillisecond - System.currentTimeMillis()
 
         task = Bukkit.getScheduler().runTaskTimerAsynchronously(tunaLands, Runnable {
+            val expired = lands.expiredMillisecond - System.currentTimeMillis()
             //Expired
             if (expired < 1000 || !lands.enable) {
-                player.sendMessage("Protect expired! All of your lands are going to be unprotected!".warnFormat())
-                player.sendMessage("If you want to reactivate protection, refill fuels.".warnFormat())
+                player.sendMessage("보호 기간이 만료되어, 지역 보호가 비활성화됩니다!".warnFormat())
+                player.sendMessage("재활성화를 하시려면, 연료를 넣어주세요!".warnFormat())
 
                 totalInfoIcon.apply {
                     this.lore = listOf(
@@ -104,7 +127,6 @@ class MainGui(private val player: Player, private val rank: Rank) : GuiInterface
                 return@Runnable
             }
             //Not expired
-            expired -= 1000
             totalInfoIcon.apply {
                 this.lore = listOf(
                     "남은 연료: ${
@@ -122,7 +144,7 @@ class MainGui(private val player: Player, private val rank: Rank) : GuiInterface
                 )
             }
             Bukkit.getScheduler().runTask(tunaLands, Runnable {
-                inv.setItem(4, totalInfoIcon)
+                inv.setItem(13, totalInfoIcon)
             })
         }, 0, 20)
 
@@ -146,19 +168,8 @@ class MainGui(private val player: Player, private val rank: Rank) : GuiInterface
             )
         }
 
-        inv.setItem(4, totalInfoIcon)
-        for (i in 17..45 step 9) {
-            inv.setItem(i, blackPane)
-            inv.setItem(i + 1, blackPane)
-        }
-        inv.setItem(46, blackPane)
-        inv.setItem(47, lockButton)
-        inv.setItem(48, settingButton)
-        inv.setItem(49, shopButton)
-        inv.setItem(50, userListButton)
-        inv.setItem(51, banListButton)
-        inv.setItem(52, blackPane)
-        inv.setItem(53, blackPane)
+        for (i in renderList.indices)
+            inv.setItem(i, renderList[i])
     }
 
     override fun onClick(event: InventoryClickEvent) {
@@ -168,7 +179,62 @@ class MainGui(private val player: Player, private val rank: Rank) : GuiInterface
 
         val clicked = event.rawSlot
         when (clicked) {
-            47 -> {
+            4 -> {
+                event.isCancelled = false
+                if (event.action != InventoryAction.PLACE_ALL
+                    && event.action != InventoryAction.PLACE_ONE
+                    && event.action != InventoryAction.PLACE_SOME
+                )
+                    return
+                Bukkit.getScheduler().runTaskLater(tunaLands, Runnable {
+                    val fuel = event.inventory.getItem(4) ?: return@Runnable
+                    val lore = fuel.lore ?: return@Runnable
+                    if (lore.size != 2) return@Runnable
+                    if (fuel.itemMeta.displayName != "연료") return@Runnable
+
+                    val timeLore = lore[1].split(" ")[0]
+                    val time = timeRegex.find(timeLore)!!.value.toInt()
+                    //Expired refresh
+                    if (!lands.enable)
+                        lands.expiredMillisecond = System.currentTimeMillis()
+
+                    val measure = measureRegex.find(timeLore)!!.value
+                    lands.expiredMillisecond += (fuel.amount * time * when (measure) {
+                        "분" -> 60000
+                        "시간" -> 3600000
+                        else -> 0
+                    })
+
+                    player.sendMessage("${time * fuel.amount}${measure}이 추가되었습니다!".infoFormat())
+                    event.inventory.setItem(4, null)
+                    //화악 타오르는듯한 소리
+                }, 2)
+            }
+            10 -> {
+                when (rank) {
+                    Rank.OWNER, Rank.DELEGATOR -> {
+                        player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
+                        player.openSettingGui(rank)
+                    }
+                    else -> {
+                        player.playSound(player.location, Sound.ENTITY_VILLAGER_NO, 0.5f, 1.0f)
+                        player.sendMessage("권한이 없습니다!".errorFormat())
+                    }
+                }
+            }
+            11 -> {
+                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
+                player.openShopGui(rank)
+            }
+            15 -> {
+                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
+                player.openUserListGui(rank)
+            }
+            16 -> {
+                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
+                player.openBanListGui(false, rank)
+            }
+            22 -> {
                 when (rank) {
                     Rank.OWNER, Rank.DELEGATOR -> {
                         lockButton.apply {
@@ -198,82 +264,28 @@ class MainGui(private val player: Player, private val rank: Rank) : GuiInterface
                                 }"
                             )
                         }
-                        event.inventory.setItem(47, lockButton)
+                        event.inventory.setItem(22, lockButton)
                     }
                     else -> {
-                        player.sendMessage("You don't have a permission to access".errorFormat())
+                        player.playSound(player.location, Sound.ENTITY_VILLAGER_NO, 0.5f, 1.0f)
+                        player.sendMessage("권한이 없습니다!".errorFormat())
                     }
                 }
             }
-            48 -> {
-                when (rank) {
-                    Rank.OWNER, Rank.DELEGATOR -> player.openSettingGui(rank)
-                    else -> player.sendMessage("You don't have a permission to access".errorFormat())
-                }
-            }
-            49 -> {
-                player.openShopGui(rank)
-            }
-            50 -> {
-                player.openUserListGui(rank)
-            }
-            51 -> {
-                player.openBanListGui(false, rank)
-            }
         }
 
-        when (event.action) {
-            InventoryAction.PICKUP_ALL, InventoryAction.PICKUP_ONE, InventoryAction.PICKUP_SOME -> {
-                if (event.clickedInventory == player.openInventory.topInventory)
-                    return
-            }
-            InventoryAction.COLLECT_TO_CURSOR -> {
-                return
-            }
-            InventoryAction.PLACE_ALL, InventoryAction.PLACE_ONE, InventoryAction.PLACE_SOME -> {//Ignore
-            }
-            else -> {
-                if (clicked < 54) return
-            }
-        }
-
-        event.isCancelled = false
+        if (clicked >= 27)
+            event.isCancelled = false
     }
 
     override fun onClose(event: InventoryCloseEvent) {
         task.cancel()
         guiManager.guiMap.remove(event.view)
-
-        val inv = event.inventory
-        val fuelList = mutableListOf<ItemStack>()
-        for (i in 1..4) {
-            for (j in 1..7) {
-                fuelList.add(inv.getItem((i * 9) + j) ?: continue)
-            }
-        }
-
-        for (fuel in fuelList) {
-            val lore = fuel.lore ?: continue
-            if (lore.size != 2) continue
-            if (fuel.itemMeta.displayName != "연료") continue
-
-            val timeLore = lore[1].split(" ")[0]
-            val time = timeRegex.find(timeLore)!!.value.toInt()
-            //Expired refresh
-            if (!lands.enable)
-                lands.expiredMillisecond = System.currentTimeMillis()
-
-            lands.expiredMillisecond += (fuel.amount * time * when (measureRegex.find(timeLore)!!.value) {
-                "분" -> 60000
-                "시간" -> 3600000
-                else -> 0
-            })
-        }
     }
 }
 
 fun Player.openMainGui(rank: Rank) {
-    val inventory = Bukkit.createInventory(null, 54, "Main GUI")
+    val inventory = Bukkit.createInventory(null, 27, "Main GUI")
     val gui = MainGui(this, rank)
     gui.render(inventory)
 

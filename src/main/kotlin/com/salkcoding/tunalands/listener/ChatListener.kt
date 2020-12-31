@@ -1,7 +1,7 @@
 package com.salkcoding.tunalands.listener
 
 import com.salkcoding.tunalands.gui.render.settinggui.loreChatMap
-import com.salkcoding.tunalands.gui.render.settinggui.welcomeMessageChatSet
+import com.salkcoding.tunalands.gui.render.settinggui.welcomeMessageChatMap
 import com.salkcoding.tunalands.landManager
 import org.bukkit.ChatColor
 import org.bukkit.event.EventHandler
@@ -18,6 +18,10 @@ class ChatListener : Listener {
         val uuid = player.uniqueId
         if (uuid in loreChatMap) {
             val count = loreChatMap[uuid]!!
+            if (count >= 3) {
+                loreChatMap.remove(uuid)
+                return
+            }
             val lands = landManager.getPlayerLands(uuid) ?: return
             val lore =
                 when (event.message) {
@@ -26,23 +30,27 @@ class ChatListener : Listener {
                 }
             lands.lore[count] = lore
 
-            if (count + 1 >= 3)
-                loreChatMap.remove(uuid)
-            else {
-                loreChatMap.replace(uuid, count + 1)
-                player.sendMessage("설명 ${count + 1}번째 줄: $lore")
-                event.isCancelled = true
+
+            loreChatMap.replace(uuid, count + 1)
+            player.sendMessage("설명 ${count + 1}번째 줄: $lore")
+            event.isCancelled = true
+        } else if (uuid in welcomeMessageChatMap) {
+            val count = welcomeMessageChatMap[uuid]!!
+            if (count >= 3) {
+                welcomeMessageChatMap.remove(uuid)
+                return
             }
-        } else if (uuid in welcomeMessageChatSet) {
             val lands = landManager.getPlayerLands(uuid) ?: return
             val lore =
                 when (event.message) {
                     "\\n" -> ""
                     else -> ChatColor.translateAlternateColorCodes('&', event.message)
                 }
+            lands.welcomeMessage[count] = lore
 
-            lands.welcomeMessage = lore
-            welcomeMessageChatSet.remove(uuid)
+            welcomeMessageChatMap.replace(uuid, count + 1)
+            player.sendMessage("설명 ${count + 1}번째 줄: $lore")
+            event.isCancelled = true
         }
     }
 }

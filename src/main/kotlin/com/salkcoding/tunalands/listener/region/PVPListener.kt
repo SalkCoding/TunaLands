@@ -23,16 +23,19 @@ class PVPListener : Listener {
 
         val lands = landManager.getLandsWithChunk(damager.chunk) ?: return
         if (!lands.enable) return
+        if (damager.uniqueId in lands.memberMap) {
+            val damagerSetting = when (lands.memberMap[damager.uniqueId]!!.rank) {
+                Rank.OWNER, Rank.DELEGATOR -> return
+                Rank.MEMBER -> lands.memberSetting
+                Rank.PARTTIMEJOB -> lands.partTimeJobSetting
+                Rank.VISITOR -> lands.visitorSetting
+            }
 
-        val damagerSetting = when (lands.memberMap[damager.uniqueId]!!.rank) {
-            Rank.MEMBER -> lands.memberSetting
-            Rank.PARTTIMEJOB -> lands.partTimeJobSetting
-            else -> lands.visitorSetting
-        }
+            if (!damagerSetting.canPVP)
+                event.isCancelled = true
+        } else event.isCancelled = true
 
-        if (!damagerSetting.canPVP) {
-            damager.sendMessage("권한이 없습니다.".errorFormat())
-            event.isCancelled = true
-        }
+        if (event.isCancelled)
+            damager.sendMessage("권한이 없습니다!".errorFormat())
     }
 }

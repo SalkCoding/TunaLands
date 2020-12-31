@@ -1,10 +1,8 @@
 package com.salkcoding.tunalands.commands.sub
 
 import com.salkcoding.tunalands.landManager
-import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
-import com.salkcoding.tunalands.util.infoFormat
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender

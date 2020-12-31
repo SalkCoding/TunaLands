@@ -30,7 +30,7 @@ class GuiManager {
 
     fun allClose() {
         guiMap.forEach { (view, _) ->
-            view.player.sendMessage("Your GUI was closed by administration.".warnFormat())
+            view.player.sendMessage("관리자에의해 GUI가 강제 종료되었습니다.".warnFormat())
             view.close()
         }
     }

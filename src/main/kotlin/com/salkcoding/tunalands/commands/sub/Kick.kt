@@ -1,12 +1,9 @@
 package com.salkcoding.tunalands.commands.sub
 
 import com.salkcoding.tunalands.landManager
-import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
-import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
-import com.salkcoding.tunalands.util.warnFormat
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -26,7 +23,7 @@ class Kick : CommandExecutor {
                             Rank.OWNER, Rank.DELEGATOR -> {
                                 val target = Bukkit.getPlayer(args[0])
                                 if (target == null) {
-                                    player.sendMessage("존재하지 않는 유저입니다.".errorFormat())
+                                    player.sendMessage("존재하지 않는 유저입니다!".errorFormat())
                                     return true
                                 }
 
@@ -48,7 +45,7 @@ class Kick : CommandExecutor {
                                 } else player.sendMessage("${target.name}은/는 당신의 땅에 소속되어있지 않습니다.".errorFormat())
                             }
                             else -> {
-                                player.sendMessage("권한이 없습니다.".errorFormat())
+                                player.sendMessage("권한이 없습니다!".errorFormat())
                                 return true
                             }
                         }

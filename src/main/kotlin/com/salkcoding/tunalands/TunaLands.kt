@@ -16,13 +16,16 @@ const val chunkDebug = true
 lateinit var tunaLands: TunaLands
 lateinit var configuration: Config
 
-val guiManager = GuiManager()
-val landManager = LandManager()
+lateinit var guiManager: GuiManager
+lateinit var landManager: LandManager
 
 class TunaLands : JavaPlugin() {
 
     override fun onEnable() {
         tunaLands = this
+
+        guiManager = GuiManager()
+        landManager = LandManager()
 
         val handler = LandCommandHandler()
         handler.register("accept", Accept())
@@ -59,6 +62,7 @@ class TunaLands : JavaPlugin() {
         server.pluginManager.registerEvents(ConsumeListener(), this)
         server.pluginManager.registerEvents(DropItemListener(), this)
         server.pluginManager.registerEvents(EntityMountListener(), this)
+        server.pluginManager.registerEvents(FishingListener(), this)
         server.pluginManager.registerEvents(HurtListener(), this)
         server.pluginManager.registerEvents(LeashEntityListener(), this)
         server.pluginManager.registerEvents(PhysicalInteractListener(), this)
@@ -71,6 +75,7 @@ class TunaLands : JavaPlugin() {
         server.pluginManager.registerEvents(ChatListener(), this)
         server.pluginManager.registerEvents(ChestGuiOpenListener(), this)
         server.pluginManager.registerEvents(CoreListener(), this)
+        server.pluginManager.registerEvents(ExplodeListener(), this)
         server.pluginManager.registerEvents(FlagListener(), this)
         server.pluginManager.registerEvents(InventoryClickListener(), this)
         server.pluginManager.registerEvents(InventoryCloseListener(), this)
@@ -81,7 +86,7 @@ class TunaLands : JavaPlugin() {
             logger.warning("Chunk debug mode is enabled.".consoleFormat())
             server.scheduler.runTaskTimer(this, Runnable {
                 landManager.debug()
-            }, 20, 20)
+            }, 20, 5)
         }
 
         configRead()

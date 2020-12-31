@@ -4,8 +4,6 @@ import br.com.devsrsouza.kotlinbukkitapi.extensions.item.displayName
 import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.guiManager
-import com.salkcoding.tunalands.landManager
-import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.backButton
 import com.salkcoding.tunalands.util.blackPane
@@ -16,7 +14,6 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
-import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.inventory.Inventory
 
 class ShopGui(private val player: Player, private val rank: Rank) : GuiInterface {
@@ -118,7 +115,7 @@ class ShopGui(private val player: Player, private val rank: Rank) : GuiInterface
                         player.giveOrDrop(takeFlag)
                     }
                     else -> {
-                        player.sendMessage("You don't have a permission to buy")
+                        player.sendMessage("권한이 없습니다!")
                     }
                 }
             }
@@ -128,7 +125,7 @@ class ShopGui(private val player: Player, private val rank: Rank) : GuiInterface
                         player.giveOrDrop(releaseFlag)
                     }
                     else -> {
-                        player.sendMessage("You don't have a permission to buy")
+                        player.sendMessage("권한이 없습니다!")
                     }
                 }
             }

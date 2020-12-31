@@ -9,10 +9,10 @@ import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.*
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
-import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.meta.SkullMeta
 import java.util.*
@@ -39,6 +39,7 @@ class UserListGui(private val player: Player, private val rank: Rank) : GuiInter
             var delegatorCount = 0
             var memberCount = 0
             var partTimeJobCount = 0
+            var visitorCount = 0
             lands.memberMap.forEach { (uuid, data) ->
                 if (Bukkit.getOfflinePlayer(uuid).isOnline)
                     onlineCount++
@@ -46,6 +47,7 @@ class UserListGui(private val player: Player, private val rank: Rank) : GuiInter
                     Rank.DELEGATOR -> delegatorCount++
                     Rank.MEMBER -> memberCount++
                     Rank.PARTTIMEJOB -> partTimeJobCount++
+                    Rank.VISITOR -> visitorCount++
                     else -> return@forEach
                 }
             }
@@ -54,7 +56,7 @@ class UserListGui(private val player: Player, private val rank: Rank) : GuiInter
                 "관리 대리인: ${delegatorCount}명",
                 "멤버: ${memberCount}명",
                 "알바: ${partTimeJobCount}명",
-                "방문자: ${lands.visitorMap.size}명"
+                "방문자: ${visitorCount}명"
             )
         }
 
@@ -117,10 +119,14 @@ class UserListGui(private val player: Player, private val rank: Rank) : GuiInter
             }
             4 -> {
                 //Visitor sorting
-                playerList = lands.visitorMap.keys.sortedByDescending {
-                    lands.visitorMap[it]!!.visit
+                playerList = lands.memberMap.keys.sortedByDescending {
+                    val data = lands.memberMap[it]!!
+                    if (data.rank == Rank.VISITOR) {
+                        lands.memberMap[it]!!.lastLogin
+                    } else {
+                        0
+                    }
                 }.toMutableList()
-                playerList.addAll(lands.memberMap.keys)
                 "방문자"
             }
             else -> ""
@@ -189,10 +195,12 @@ class UserListGui(private val player: Player, private val rank: Rank) : GuiInter
         when (event.rawSlot) {
             //Back button
             0, 8 -> {
+                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
                 player.openMainGui(rank)
             }
             //Hopper(Sorting way change)
             3, 5 -> {
+                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
                 sortWay++
                 if (sortWay > 4)
                     sortWay = 0
@@ -202,6 +210,7 @@ class UserListGui(private val player: Player, private val rank: Rank) : GuiInter
             9 -> {
                 if (currentPage > 0) {
                     currentPage--
+                    player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
                     pageRender(event.inventory)
                 }
             }
@@ -210,6 +219,7 @@ class UserListGui(private val player: Player, private val rank: Rank) : GuiInter
                 val start = currentPage * 36
                 if ((playerList.size - start) > 36) {
                     currentPage++
+                    player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
                     pageRender(event.inventory)
                 }
             }

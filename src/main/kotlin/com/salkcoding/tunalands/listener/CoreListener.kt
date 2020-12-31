@@ -18,7 +18,7 @@ class CoreListener : Listener {
         if (event.isCancelled) return
 
         val chest = event.block
-        if (chest.type == Material.CHEST) {
+        if (chest.type == Material.CHEST && event.player.isSneaking) {
             val coreBlock = chest.getRelative(0, -1, 0)
             if (coreBlock.type == configuration.protect.coreBlock) {
                 val player = event.player

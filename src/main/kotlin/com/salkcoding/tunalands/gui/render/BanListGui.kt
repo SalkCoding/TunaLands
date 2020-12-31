@@ -1,7 +1,6 @@
 package com.salkcoding.tunalands.gui.render
 
 import br.com.devsrsouza.kotlinbukkitapi.extensions.item.displayName
-import com.salkcoding.tunalands.commands.sub.BanList
 import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.guiManager
 import com.salkcoding.tunalands.landManager
@@ -10,10 +9,10 @@ import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.*
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
-import org.bukkit.event.inventory.InventoryDragEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.meta.SkullMeta
 import java.util.*
@@ -129,6 +128,7 @@ class BanListGui(private val player: Player, private val callByCommand: Boolean,
         when (event.rawSlot) {
             //Back button
             0, 8 -> {
+                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
                 if (callByCommand)
                     player.closeInventory()
                 else
@@ -136,6 +136,7 @@ class BanListGui(private val player: Player, private val callByCommand: Boolean,
             }
             //Hopper(Sorting way change)
             3, 5 -> {
+                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
                 sortWay++
                 if (sortWay > 1)
                     sortWay = 0
@@ -145,6 +146,7 @@ class BanListGui(private val player: Player, private val callByCommand: Boolean,
             9 -> {
                 if (currentPage > 0) {
                     currentPage--
+                    player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
                     pageRender(event.inventory)
                 }
             }
@@ -153,6 +155,7 @@ class BanListGui(private val player: Player, private val callByCommand: Boolean,
                 val start = currentPage * 36
                 if ((playerList.size - start) > 36) {
                     currentPage++
+                    player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
                     pageRender(event.inventory)
                 }
             }

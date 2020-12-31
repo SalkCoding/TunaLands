@@ -24,40 +24,43 @@ class BlockPlaceListener : Listener {
 
         val block = event.block
         //Block break following rank
-        val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
-            Rank.MEMBER -> lands.memberSetting
-            Rank.PARTTIMEJOB -> lands.partTimeJobSetting
-            else -> lands.visitorSetting
-        }
+        if (player.uniqueId in lands.memberMap) {
+            val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
+                Rank.OWNER, Rank.DELEGATOR -> return
+                Rank.MEMBER -> lands.memberSetting
+                Rank.PARTTIMEJOB -> lands.partTimeJobSetting
+                Rank.VISITOR -> lands.visitorSetting
+            }
 
-        when (block.type) {
-            Material.WHEAT,
-            Material.POTATOES,
-            Material.CARROTS,
-            Material.BEETROOTS,
-            Material.NETHER_WART,
-            Material.COCOA,
-            Material.MELON_STEM,
-            Material.PUMPKIN_STEM,
-            Material.CACTUS,
-            Material.SUGAR_CANE,
-            Material.CHORUS_FLOWER,
-            Material.BAMBOO_SAPLING,
-            Material.KELP -> {
-                if (!setting.canSow)
-                    event.isCancelled = true
+            when (block.type) {
+                Material.WHEAT,
+                Material.POTATOES,
+                Material.CARROTS,
+                Material.BEETROOTS,
+                Material.NETHER_WART,
+                Material.COCOA,
+                Material.MELON_STEM,
+                Material.PUMPKIN_STEM,
+                Material.CACTUS,
+                Material.SUGAR_CANE,
+                Material.CHORUS_FLOWER,
+                Material.BAMBOO_SAPLING,
+                Material.KELP -> {
+                    if (!setting.canSow)
+                        event.isCancelled = true
+                }
+                Material.FIRE -> {
+                    if (!setting.useFlintAndSteel)
+                        event.isCancelled = true
+                }
+                else -> {
+                    if (!setting.placeBlock)
+                        event.isCancelled = true
+                }
             }
-            Material.FIRE -> {
-                if (!setting.useFlintAndSteel)
-                    event.isCancelled = true
-            }
-            else -> {
-                if (!setting.placeBlock)
-                    event.isCancelled = true
-            }
-        }
+        } else event.isCancelled = true
 
         if (event.isCancelled)
-            player.sendMessage("권한이 없습니다.".errorFormat())
+            player.sendMessage("권한이 없습니다!".errorFormat())
     }
 }

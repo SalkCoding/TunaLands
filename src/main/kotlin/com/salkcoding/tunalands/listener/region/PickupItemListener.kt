@@ -2,13 +2,18 @@ package com.salkcoding.tunalands.listener.region
 
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
+import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.errorFormat
+import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityPickupItemEvent
+import java.util.*
 
 class PickupItemListener : Listener {
+
+    private val messageSet = mutableSetOf<UUID>()
 
     @EventHandler
     fun onPickupItem(event: EntityPickupItemEvent) {
@@ -18,15 +23,24 @@ class PickupItemListener : Listener {
         if (!lands.enable) return
 
         val player = event.entity as? Player ?: return
-        val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
-            Rank.MEMBER -> lands.memberSetting
-            Rank.PARTTIMEJOB -> lands.partTimeJobSetting
-            else -> lands.visitorSetting
-        }
+        if (player.uniqueId in lands.memberMap) {
+            val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
+                Rank.OWNER, Rank.DELEGATOR -> return
+                Rank.MEMBER -> lands.memberSetting
+                Rank.PARTTIMEJOB -> lands.partTimeJobSetting
+                Rank.VISITOR -> lands.visitorSetting
+            }
 
-        if (!setting.pickupItem) {
-            player.sendMessage("권한이 없습니다.".errorFormat())
-            event.isCancelled = true
+            if (!setting.pickupItem)
+                event.isCancelled = true
+        } else event.isCancelled = true
+
+        if (event.isCancelled && player.uniqueId !in messageSet) {
+            messageSet.add(player.uniqueId)
+            player.sendMessage("권한이 없습니다!".errorFormat())
+            Bukkit.getScheduler().runTaskLater(tunaLands, Runnable {
+                messageSet.remove(player.uniqueId)
+            }, 100)
         }
     }
 
