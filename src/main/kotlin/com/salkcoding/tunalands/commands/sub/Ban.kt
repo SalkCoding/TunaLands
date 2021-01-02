@@ -3,6 +3,7 @@ package com.salkcoding.tunalands.commands.sub
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
+import com.salkcoding.tunalands.lands.recordLeft
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
 import org.bukkit.Bukkit
@@ -42,6 +43,8 @@ class Ban : CommandExecutor {
                                     }
                                     lands.memberMap.remove(target.uniqueId)
                                 }
+                                target.recordLeft()
+
                                 //Else ban another player
                                 player.sendMessage("${target.name}을/를 밴하였습니다.".infoFormat())
                                 target.sendMessage("${lands.ownerName}의 땅에서 ${player.name}에 의해 밴당하셨습니다.".infoFormat())

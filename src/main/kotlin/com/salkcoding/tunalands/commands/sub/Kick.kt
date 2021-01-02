@@ -2,6 +2,7 @@ package com.salkcoding.tunalands.commands.sub
 
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
+import com.salkcoding.tunalands.lands.recordLeft
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
 import org.bukkit.Bukkit
@@ -39,6 +40,7 @@ class Kick : CommandExecutor {
                                         return true
                                     }
                                     lands.memberMap.remove(target.uniqueId)
+                                    target.recordLeft()
 
                                     player.sendMessage("${target.name}을/를 쫓아냈습니다.".infoFormat())
                                     target.sendMessage("${player.name}이/가 당신을 ${lands.ownerName}의 땅에서 당신을 쫓아냈습니다.".infoFormat())

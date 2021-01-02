@@ -2,6 +2,8 @@ package com.salkcoding.tunalands.commands.sub
 
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
+import com.salkcoding.tunalands.lands.canRejoin
+import com.salkcoding.tunalands.lands.getRejoinCooldown
 import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
@@ -35,7 +37,23 @@ class Invite : CommandExecutor {
                                 }
                                 val targetLands = landManager.getPlayerLands(target.uniqueId)
                                 if (targetLands != null) {
-                                    player.sendMessage("해당 플레이어는 땅에 소속되어있습니다.".errorFormat())
+                                    player.sendMessage("해당 플레이어는 이미 땅에 소속되어있습니다.".errorFormat())
+                                    return true
+                                }
+
+                                if (!target.canRejoin()) {
+                                    val rejoin = target.getRejoinCooldown()!! - System.currentTimeMillis()
+                                    player.sendMessage(
+                                        "해당 플레이어는 ${
+                                            rejoin / 86400000
+                                        }일 ${
+                                            (rejoin / 3600000) % 24
+                                        }시간 ${
+                                            (rejoin / 60000) % 60
+                                        }분 ${
+                                            (rejoin / 1000) % 60
+                                        }초가 지나야 초대를 받을 수 있습니다.".errorFormat()
+                                    )
                                     return true
                                 }
 

@@ -2,6 +2,7 @@ package com.salkcoding.tunalands.commands.sub
 
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
+import com.salkcoding.tunalands.lands.recordLeft
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
 import com.salkcoding.tunalands.util.warnFormat
@@ -29,6 +30,8 @@ class Leave : CommandExecutor {
                         lands.memberMap.remove(player.uniqueId)
 
                         player.sendMessage("${lands.ownerName}의 땅을 떠났습니다.".infoFormat())
+                        player.recordLeft()
+
                         lands.memberMap.forEach { (uuid, _) ->
                             val administration = Bukkit.getPlayer(uuid) ?: return@forEach
                             administration.sendMessage("${player.name}이/가 땅을 떠났습니다.".warnFormat())

@@ -12,6 +12,7 @@ import org.bukkit.Material
 import org.bukkit.plugin.java.JavaPlugin
 
 const val chunkDebug = true
+const val subChannelName = "tunaLands"
 
 lateinit var tunaLands: TunaLands
 lateinit var configuration: Config
@@ -91,6 +92,8 @@ class TunaLands : JavaPlugin() {
 
         configRead()
 
+        server.messenger.incomingChannels
+
         logger.info("Plugin is now enabled".consoleFormat())
     }
 
@@ -137,7 +140,7 @@ class TunaLands : JavaPlugin() {
         val limitWorld = config.getStringList("limitWorld")
         logger.info(limitWorld.toString())
 
-        configuration = Config(protect, flag, limitWorld)
+        configuration = Config(protect, flag, command, limitWorld)
     }
 
 }
@@ -145,6 +148,7 @@ class TunaLands : JavaPlugin() {
 data class Config(
     val protect: Protect,
     val flag: Flag,
+    val command: Command,
     val limitWorld: List<String>
 ) {
 

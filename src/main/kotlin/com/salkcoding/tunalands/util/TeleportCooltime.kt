@@ -1,0 +1,101 @@
+package com.salkcoding.tunalands.util
+
+import com.salkcoding.tunalands.tunaLands
+import org.bukkit.*
+import org.bukkit.entity.Player
+import org.bukkit.event.player.PlayerTeleportEvent
+import org.bukkit.potion.PotionEffect
+import org.bukkit.potion.PotionEffectType
+import org.bukkit.scheduler.BukkitTask
+import java.util.*
+import java.util.concurrent.ConcurrentHashMap
+
+object TeleportCooltime {
+
+    private val timerMap = ConcurrentHashMap<UUID, CoolTimer>()
+
+    fun addPlayer(player: Player, to: Location, cooldownTick: Long, callback: Runnable?, isAsync: Boolean) {
+        player.closeInventory()
+
+        var timer = timerMap[player.uniqueId]
+        timer?.stop()
+        timer = timer ?: CoolTimer(player, to, cooldownTick, callback, isAsync)
+
+        timerMap.remove(player.uniqueId)
+
+        timerMap[player.uniqueId] = timer
+        timer.task = Bukkit.getScheduler().runTaskTimerAsynchronously(tunaLands, timer, 1, 4)
+    }
+
+    internal class CoolTimer(
+        private val player: Player,
+        private val to: Location,
+        private var cooldownTick: Long,
+        private val callback: Runnable?,
+        private val isAsync: Boolean
+    ) : Runnable {
+        private var last: Location = player.location
+        lateinit var task: BukkitTask
+
+        init {
+            if (player.isOnline) player.addPotionEffect(
+                PotionEffect(
+                    PotionEffectType.SLOW,
+                    (cooldownTick + 10).toInt(),
+                    100,
+                    false,
+                    false,
+                    false
+                )
+            )
+        }
+
+        override fun run() {
+            if (!player.isOnline || player.isDead) {
+                stop()
+                return
+            }
+            if (cooldownTick < 0) {
+                player.sendMessage("이동중입니다.".infoFormat())
+                player.teleportAsync(to, PlayerTeleportEvent.TeleportCause.COMMAND)
+                player.world.playSound(player.location, Sound.ENTITY_ENDERMAN_TELEPORT, 0.5f, 1f)
+                if (callback != null) {
+                    if (isAsync) Bukkit.getScheduler().runTaskAsynchronously(tunaLands, callback)
+                    else Bukkit.getScheduler().runTask(tunaLands, callback)
+                }
+                stop()
+                return
+            } else {
+                player.sendTitle(
+                    "${ChatColor.GOLD}텔레포트 중입니다...",
+                    "${ChatColor.GRAY}이동 ${String.format("%.1f", cooldownTick / 20f)}초 전...",
+                    0,
+                    20,
+                    10
+                )
+                player.world.spawnParticle(Particle.PORTAL, player.location, 5)
+            }
+
+            if (last.world.name != player.location.world.name) {
+                stop()
+                return
+            }
+
+            if (last.distance(player.location) > 1) {
+                player.sendMessage("텔레포트 중 이동하셔서 텔레포트가 취소됩니다.".warnFormat())
+                stop()
+                return
+            }
+            cooldownTick -= 4
+        }
+
+        fun stop() {
+            task.cancel()
+            if (player.isOnline) Bukkit.getScheduler().runTask(tunaLands, Runnable {
+                player.removePotionEffect(
+                    PotionEffectType.SLOW
+                )
+            })
+        }
+    }
+}

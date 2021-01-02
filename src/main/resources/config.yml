@@ -11,8 +11,8 @@ flag:
 command:
   cooldown: #Tick
     rejoin: 5184000 #3d
-    visit: 200 #10s
-    spawn: 200 #10s
+    visit: 100 #5s
+    spawn: 100 #5s
   price:
     setSpawnPrice: 10
 

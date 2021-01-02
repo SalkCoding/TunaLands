@@ -1,6 +1,7 @@
 package com.salkcoding.tunalands.gui.render
 
 import br.com.devsrsouza.kotlinbukkitapi.extensions.item.displayName
+import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.guiManager
 import com.salkcoding.tunalands.landManager
@@ -244,9 +245,15 @@ class VisitGui(private val player: Player) : GuiInterface {
                         lands.welcomeMessage.forEach { welcomeMessage ->
                             player.sendMessage(welcomeMessage)
                         }
-                        player.teleportAsync(lands.visitorSpawn)
                         lands.landHistory.visitorCount++
                         player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
+                        TeleportCooltime.addPlayer(
+                            player,
+                            lands.visitorSpawn,
+                            configuration.command.visitCooldown,
+                            null,
+                            false
+                        )
                     }
                 } else {
                     player.playSound(player.location, Sound.ENTITY_VILLAGER_NO, 0.5f, 1.0f)

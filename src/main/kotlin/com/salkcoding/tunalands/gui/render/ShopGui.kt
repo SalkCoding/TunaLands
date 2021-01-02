@@ -30,7 +30,7 @@ class ShopGui(private val player: Player, private val rank: Rank) : GuiInterface
         val releaseFlag = (Material.RED_BANNER * 1).apply {
             this.displayName("제거 깃발")
             this.lore = listOf(
-                "가격: ${configuration.flag.takeFlagPrice}캔",
+                "가격: ${configuration.flag.releaseFlagPrice}캔",
                 "제거하고 싶은 지역에 설치하여 제거할 수 있는 깃발입니다."
             )
         }

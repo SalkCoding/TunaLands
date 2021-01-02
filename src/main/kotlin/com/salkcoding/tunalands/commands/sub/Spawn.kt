@@ -1,7 +1,10 @@
 package com.salkcoding.tunalands.commands.sub
 
+import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
+import com.salkcoding.tunalands.tunaLands
+import com.salkcoding.tunalands.util.TeleportCooltime
 import com.salkcoding.tunalands.util.errorFormat
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -18,11 +21,11 @@ class Spawn : CommandExecutor {
                     val lands = landManager.getPlayerLands(uuid)
                     if (lands != null) {
                         val data = lands.memberMap[uuid]!!
-                        when (data.rank) {
-                            Rank.OWNER, Rank.DELEGATOR, Rank.MEMBER -> player.teleportAsync(lands.memberSpawn)
-                            else -> player.teleportAsync(lands.visitorSpawn)
+                        val spawn = when (data.rank) {
+                            Rank.OWNER, Rank.DELEGATOR, Rank.MEMBER -> lands.memberSpawn
+                            else -> lands.visitorSpawn
                         }
-                        //TODO Cooldown system
+                        TeleportCooltime.addPlayer(player,spawn, configuration.command.spawnCooldown,null,false)
                     } else player.sendMessage("해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat())
                 } else sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
                 return true
