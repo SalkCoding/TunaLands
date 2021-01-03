@@ -19,7 +19,21 @@ class SetSpawn : CommandExecutor {
                     if (lands != null) {
                         val data = lands.memberMap[player.uniqueId]!!
                         when (data.rank) {
-                            Rank.OWNER, Rank.DELEGATOR -> {
+                            Rank.OWNER -> {
+                                when (args[0]) {
+                                    "main" -> lands.memberSpawn = player.location
+                                    "visitor" -> lands.visitorSpawn = player.location
+                                    else -> return false
+                                }
+                                //TODO paying code
+                                player.sendMessage("해당 위치를 스폰으로 설정하였습니다.".infoFormat())
+                            }
+                            Rank.DELEGATOR -> {
+                                if (!lands.delegatorSetting.canSetSpawn) {
+                                    player.sendMessage("권한이 없습니다!".errorFormat())
+                                    return true
+                                }
+
                                 when (args[0]) {
                                     "main" -> lands.memberSpawn = player.location
                                     "visitor" -> lands.visitorSpawn = player.location

@@ -7,37 +7,34 @@ import java.util.*
 
 class Lands(
     var ownerName: String,
-    //val ownerUUID: UUID,
+    val ownerUUID: UUID,
     val landList: MutableList<String>,
     val landHistory: LandHistory,
     val upCore: Location, //Chest
     val downCore: Location, //Core block
-    var expiredMillisecond: Long
-) {
-    var enable = true
-    var open = false
-    var lore = mutableListOf(
+    var expiredMillisecond: Long,
+
+    var enable: Boolean = true,
+    var open: Boolean = false,
+    var lore: MutableList<String> = mutableListOf(
         "${ownerName}의 땅입니다.",
         "ㅎㅇ",
         "ㅂㅇ"
-    )
-    var welcomeMessage = mutableListOf(
+    ),
+    var welcomeMessage: MutableList<String> = mutableListOf(
         "${ownerName}의 땅입니다.",
         "ㅎㅇ",
         "ㅂㅂ"
-    )
-
-    var memberSpawn = upCore
-    var visitorSpawn = upCore
-
-    val visitorSetting = LandSetting()
-    val memberSetting = LandSetting()
-    val delegatorSetting = DelegatorSetting()
-    val partTimeJobSetting = LandSetting()
-
-    val memberMap = mutableMapOf<UUID, MemberData>()
-    val banMap = mutableMapOf<UUID, BanData>()
-
+    ),
+    var memberSpawn: Location = upCore,
+    var visitorSpawn: Location = upCore,
+    val visitorSetting: LandSetting = LandSetting(),
+    val partTimeJobSetting: LandSetting = LandSetting(),
+    val memberSetting: LandSetting = LandSetting(),
+    val delegatorSetting: DelegatorSetting = DelegatorSetting(),
+    val memberMap: MutableMap<UUID, MemberData> = mutableMapOf(),
+    val banMap: MutableMap<UUID, BanData> = mutableMapOf(),
+) {
     data class MemberData(
         val uuid: UUID,
         var rank: Rank,
@@ -56,7 +53,7 @@ class Lands(
     )
 
     data class ChunkInfo(
-        var owner: String,
+        var ownerName: String,
         var ownerUUID: UUID,
         val worldName: String,
         val xChunk: Int,

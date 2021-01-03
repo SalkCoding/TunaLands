@@ -1,5 +1,7 @@
 package com.salkcoding.tunalands.lands
 
+import com.salkcoding.tunalands.io.JsonReader
+import com.salkcoding.tunalands.io.JsonWriter
 import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.*
 import org.bukkit.*
@@ -11,9 +13,10 @@ import java.util.concurrent.ConcurrentHashMap
 
 class LandManager {
 
+
     private val landMap = ConcurrentHashMap<String, Lands.ChunkInfo>()
-    private val playerLandMap = ConcurrentHashMap<UUID, Lands>()
-    private val task: BukkitTask = Bukkit.getScheduler().runTaskTimerAsynchronously(tunaLands, Runnable {
+    private val playerLandMap = JsonReader.loadPlayerLandMap()
+    private val task = Bukkit.getScheduler().runTaskTimerAsynchronously(tunaLands, Runnable {
         playerLandMap.forEach { (_, lands) ->
             if (lands.enable) {
                 val expired = lands.expiredMillisecond
@@ -24,8 +27,27 @@ class LandManager {
         }
     }, 100, 100)
 
-    fun shutdown() {
+    init {
+        playerLandMap.forEach { (_, lands) ->
+            lands.landList.forEach { query ->
+                val split = query.split(":")
+                val xChunk = split[0].toInt()
+                val zChunk = split[1].toInt()
+                landMap[query] = Lands.ChunkInfo(
+                    lands.ownerName,
+                    lands.ownerUUID,
+                    lands.upCore.world.name,//Core world and chunk world are matched
+                    xChunk,
+                    zChunk
+                )
+            }
+        }
+    }
+
+    fun close() {
         task.cancel()
+
+        JsonWriter.savePlayerLandMap()
     }
 
     fun deleteLands(owner: Player) {
@@ -40,7 +62,7 @@ class LandManager {
         val lands = playerLandMap[oldOwner.uniqueId]!!
         lands.landList.forEach { query ->
             val info = landMap[query]!!
-            info.owner = newOwner.name
+            info.ownerName = newOwner.name
             info.ownerUUID = newOwner.uniqueId
         }
     }
@@ -98,7 +120,7 @@ class LandManager {
         val chunk = flag.chunk
         val query = chunk.toQuery()
         if (landMap.containsKey(query)) {
-            player.sendMessage("${landMap[query]!!.owner}가 이미 구매한 땅입니다.".errorFormat())
+            player.sendMessage("${landMap[query]!!.ownerName}가 이미 구매한 땅입니다.".errorFormat())
         } else {
             //Additional buying
             val uuid = player.uniqueId
@@ -140,7 +162,7 @@ class LandManager {
         val chunk = upCore.chunk
         val query = chunk.toQuery()
         if (landMap.containsKey(query)) {
-            player.sendMessage("${landMap[query]!!.owner}가 이미 구매한 땅입니다.".errorFormat())
+            player.sendMessage("${landMap[query]!!.ownerName}가 이미 구매한 땅입니다.".errorFormat())
         } else {
             //First buy
             val uuid = player.uniqueId
@@ -151,7 +173,7 @@ class LandManager {
                 playerLandMap[uuid] =
                     Lands(
                         player.name,
-                        //uuid,
+                        uuid,
                         mutableListOf(query),
                         Lands.LandHistory(
                             0,
@@ -204,7 +226,7 @@ class LandManager {
                     })
                 }
                 else -> {
-                    player.sendMessage("${landMap[query]!!.owner}의 땅 소유자와 관리 대리인만 해당 땅을 제거할 수 있습니다.".warnFormat())
+                    player.sendMessage("${landMap[query]!!.ownerName}의 땅 소유자와 관리 대리인만 해당 땅을 제거할 수 있습니다.".warnFormat())
                 }
             }
         } else {

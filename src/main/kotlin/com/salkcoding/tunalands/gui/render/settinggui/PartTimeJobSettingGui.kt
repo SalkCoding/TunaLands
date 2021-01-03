@@ -4,6 +4,7 @@ import br.com.devsrsouza.kotlinbukkitapi.extensions.item.displayName
 import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.guiManager
 import com.salkcoding.tunalands.landManager
+import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.backButton
 import com.salkcoding.tunalands.util.times
@@ -15,9 +16,8 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.Inventory
 
-class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) : GuiInterface {
-
-    private val lands = landManager.getPlayerLands(player.uniqueId)!!
+class PartTimeJobSettingGui(private val player: Player, private val lands: Lands, private val rank: Rank) :
+    GuiInterface {
 
     //First row
     private val canPVP = (Material.DIAMOND_SWORD * 1).apply { this.displayName("PVP") }
@@ -189,7 +189,7 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
         when (event.rawSlot) {
             0, 8 -> {
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
-                player.openSettingGui(rank)//Back button
+                player.openSettingGui(lands, rank)//Back button
             }
             //First row
             9 -> {
@@ -564,9 +564,9 @@ class PartTimeJobSettingGui(private val player: Player, private val rank: Rank) 
     }
 }
 
-fun Player.openPartTimeJobSettingGui(rank: Rank) {
+fun Player.openPartTimeJobSettingGui(lands: Lands, rank: Rank) {
     val inventory = Bukkit.createInventory(null, 54, "알바 설정")
-    val gui = PartTimeJobSettingGui(this, rank)
+    val gui = PartTimeJobSettingGui(this, lands, rank)
     gui.render(inventory)
 
     val view = this.openInventory(inventory)!!

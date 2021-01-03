@@ -1,5 +1,6 @@
 package com.salkcoding.tunalands
 
+import com.salkcoding.tunalands.bungee.IncomingListener
 import com.salkcoding.tunalands.commands.LandCommandHandler
 import com.salkcoding.tunalands.commands.debug.Debug
 import com.salkcoding.tunalands.commands.sub.*
@@ -12,7 +13,7 @@ import org.bukkit.Material
 import org.bukkit.plugin.java.JavaPlugin
 
 const val chunkDebug = true
-const val subChannelName = "tunaLands"
+const val channelName = "TunaLands"
 
 lateinit var tunaLands: TunaLands
 lateinit var configuration: Config
@@ -92,13 +93,14 @@ class TunaLands : JavaPlugin() {
 
         configRead()
 
-        server.messenger.incomingChannels
+        /*server.messenger.registerOutgoingPluginChannel(this, channelName)
+        server.messenger.registerIncomingPluginChannel(this, channelName, IncomingListener())*/
 
         logger.info("Plugin is now enabled".consoleFormat())
     }
 
     override fun onDisable() {
-        landManager.shutdown()
+        landManager.close()
         guiManager.allClose()
         logger.warning("All guis are closed".consoleFormat())
 
@@ -110,8 +112,10 @@ class TunaLands : JavaPlugin() {
         saveDefaultConfig()
 
         //Protect
+        val serverName = config.getString("serverName")!!
         val configProtect = config.getConfigurationSection("protect")!!
         val protect = Config.Protect(
+            configProtect.getString("serverName")!!,
             Material.valueOf(configProtect.getString("coreBlock")!!),
             configProtect.getInt("createPrice"),
             configProtect.getInt("baseMaxExtendCount"),
@@ -140,12 +144,13 @@ class TunaLands : JavaPlugin() {
         val limitWorld = config.getStringList("limitWorld")
         logger.info(limitWorld.toString())
 
-        configuration = Config(protect, flag, command, limitWorld)
+        configuration = Config(serverName, protect, flag, command, limitWorld)
     }
 
 }
 
 data class Config(
+    val serverName: String,
     val protect: Protect,
     val flag: Flag,
     val command: Command,
@@ -153,6 +158,7 @@ data class Config(
 ) {
 
     data class Protect(
+        val serverName: String,
         val coreBlock: Material,
         val createPrice: Int,
         val baseMaxExtendCount: Int,

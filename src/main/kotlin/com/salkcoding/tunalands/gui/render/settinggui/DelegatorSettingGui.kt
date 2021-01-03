@@ -4,6 +4,7 @@ import br.com.devsrsouza.kotlinbukkitapi.extensions.item.displayName
 import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.guiManager
 import com.salkcoding.tunalands.landManager
+import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.backButton
 import com.salkcoding.tunalands.util.times
@@ -15,40 +16,35 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.Inventory
 
-class DelegatorSettingGui(private val player: Player, private val rank: Rank) : GuiInterface {
+class DelegatorSettingGui(private val player: Player, private val lands: Lands, private val rank: Rank) : GuiInterface {
 
-    private val lands = landManager.getPlayerLands(player.uniqueId)!!
-
-    private val setSpawnVisitor = (Material.NETHER_STAR * 1).apply { this.displayName("방문자 스폰 설정") }
-    private val setPartTimeJobSetting = (Material.BOOK * 1).apply { this.displayName("알바 설정 수정") }
-    private val setMemberSetting = (Material.PAINTING * 1).apply { this.displayName("멤버 설정 수정") }
-    private val setVisitorSetting = (Material.GRASS_BLOCK * 1).apply { this.displayName("방문자 설정 수정") }
-    private val setRegionSetting = (Material.IRON_DOOR * 1).apply { this.displayName("지역 설정 수정") }
-    private val setVisitorBan = (Material.CRIMSON_SIGN * 1).apply { this.displayName("방문자 밴 관리") }
-    private val setRegionSpawn = (Material.EMERALD * 1).apply { this.displayName("지역 스폰 설정") }
-
+    private val canSetVisitorSetting = (Material.NETHER_STAR * 1).apply { this.displayName("방문자 권한 설정 권한") }
+    private val canSetPartTimeJobSetting = (Material.BOOK * 1).apply { this.displayName("알바 권한 설정 권한") }
+    private val canSetMemberSetting = (Material.PAINTING * 1).apply { this.displayName("멤버 권한 설정 권한") }
+    private val canSetRegionSetting = (Material.GRASS_BLOCK * 1).apply { this.displayName("지역 설정 권한") }
+    private val canSetSpawn = (Material.IRON_DOOR * 1).apply { this.displayName("스폰 설정 권한") }
+    private val canBan = (Material.CRIMSON_SIGN * 1).apply { this.displayName("밴 권한") }
     override fun render(inv: Inventory) {
         val setting = lands.delegatorSetting
 
         //First row
-        setSpawnVisitor.apply { this.lore = listOf("상태: ${setting.setSpawnVisitor}") }
-        setPartTimeJobSetting.apply { this.lore = listOf("상태: ${setting.setPartTimeJobSetting}") }
-        setMemberSetting.apply { this.lore = listOf("상태: ${setting.setMemberSetting}") }
-        setVisitorSetting.apply { this.lore = listOf("상태: ${setting.setVisitorSetting}") }
-        setRegionSetting.apply { this.lore = listOf("상태: ${setting.setRegionSetting}") }
-        setVisitorBan.apply { this.lore = listOf("상태: ${setting.setVisitorBan}") }
-        setRegionSpawn.apply { this.lore = listOf("상태: ${setting.setRegionSpawn}") }
+
+        canSetVisitorSetting.apply { this.lore = listOf("상태: ${setting.canSetVisitorSetting}") }
+        canSetPartTimeJobSetting.apply { this.lore = listOf("상태: ${setting.canSetPartTimeJobSetting}") }
+        canSetMemberSetting.apply { this.lore = listOf("상태: ${setting.canSetMemberSetting}") }
+        canSetRegionSetting.apply { this.lore = listOf("상태: ${setting.canSetRegionSetting}") }
+        canSetSpawn.apply { this.lore = listOf("상태: ${setting.canSetSpawn}") }
+        canBan.apply { this.lore = listOf("상태: ${setting.canBan}") }
 
         inv.setItem(0, backButton)
         inv.setItem(8, backButton)
 
-        inv.setItem(9, setSpawnVisitor)
-        inv.setItem(10, setPartTimeJobSetting)
-        inv.setItem(11, setMemberSetting)
-        inv.setItem(12, setVisitorSetting)
-        inv.setItem(13, setRegionSetting)
-        inv.setItem(14, setVisitorBan)
-        inv.setItem(15, setRegionSpawn)
+        inv.setItem(9, canSetVisitorSetting)
+        inv.setItem(10, canSetPartTimeJobSetting)
+        inv.setItem(11, canSetMemberSetting)
+        inv.setItem(12, canSetRegionSetting)
+        inv.setItem(13, canSetSpawn)
+        inv.setItem(14, canBan)
     }
 
     override fun onClick(event: InventoryClickEvent) {
@@ -58,62 +54,54 @@ class DelegatorSettingGui(private val player: Player, private val rank: Rank) : 
         when (event.rawSlot) {
             0, 8 -> {
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
-                player.openSettingGui(rank)//Back button
+                player.openSettingGui(lands, rank)//Back button
             }
             //First row
             9 -> {
-                setting.setSpawnVisitor = !setting.setSpawnVisitor
-                setSpawnVisitor.apply {
-                    this.lore = listOf("상태: ${setting.setSpawnVisitor}")
+                setting.canSetVisitorSetting = !setting.canSetVisitorSetting
+                canSetVisitorSetting.apply {
+                    this.lore = listOf("상태: ${setting.canSetVisitorSetting}")
                     inv.setItem(9, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             10 -> {
-                setting.setPartTimeJobSetting = !setting.setPartTimeJobSetting
-                setPartTimeJobSetting.apply {
-                    this.lore = listOf("상태: ${setting.setPartTimeJobSetting}")
+                setting.canSetPartTimeJobSetting = !setting.canSetPartTimeJobSetting
+                canSetPartTimeJobSetting.apply {
+                    this.lore = listOf("상태: ${setting.canSetPartTimeJobSetting}")
                     inv.setItem(10, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             11 -> {
-                setting.setMemberSetting = !setting.setMemberSetting
-                setMemberSetting.apply {
-                    this.lore = listOf("상태: ${setting.setMemberSetting}")
+                setting.canSetMemberSetting = !setting.canSetMemberSetting
+                canSetMemberSetting.apply {
+                    this.lore = listOf("상태: ${setting.canSetMemberSetting}")
                     inv.setItem(11, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             12 -> {
-                setting.setVisitorSetting = !setting.setVisitorSetting
-                setVisitorSetting.apply {
-                    this.lore = listOf("상태: ${setting.setVisitorSetting}")
+                setting.canSetRegionSetting = !setting.canSetRegionSetting
+                canSetRegionSetting.apply {
+                    this.lore = listOf("상태: ${setting.canSetRegionSetting}")
                     inv.setItem(12, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             13 -> {
-                setting.setRegionSetting = !setting.setRegionSetting
-                setRegionSetting.apply {
-                    this.lore = listOf("상태: ${setting.setRegionSetting}")
+                setting.canSetSpawn = !setting.canSetSpawn
+                canSetSpawn.apply {
+                    this.lore = listOf("상태: ${setting.canSetSpawn}")
                     inv.setItem(13, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
             14 -> {
-                setting.setVisitorBan = !setting.setVisitorBan
-                setVisitorBan.apply {
-                    this.lore = listOf("상태: ${setting.setVisitorBan}")
+                setting.canBan = !setting.canBan
+                canBan.apply {
+                    this.lore = listOf("상태: ${setting.canBan}")
                     inv.setItem(14, this)
-                }
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
-            }
-            15 -> {
-                setting.setRegionSpawn = !setting.setRegionSpawn
-                setRegionSpawn.apply {
-                    this.lore = listOf("상태: ${setting.setRegionSpawn}")
-                    inv.setItem(15, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
             }
@@ -125,9 +113,9 @@ class DelegatorSettingGui(private val player: Player, private val rank: Rank) : 
     }
 }
 
-fun Player.openDelegatorSettingGui(rank: Rank) {
+fun Player.openDelegatorSettingGui(lands: Lands, rank: Rank) {
     val inventory = Bukkit.createInventory(null, 18, "관리대리인 설정")
-    val gui = DelegatorSettingGui(this, rank)
+    val gui = DelegatorSettingGui(this, lands, rank)
     gui.render(inventory)
 
     val view = this.openInventory(inventory)!!

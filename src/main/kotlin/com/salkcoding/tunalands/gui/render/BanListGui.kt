@@ -18,10 +18,13 @@ import org.bukkit.inventory.meta.SkullMeta
 import java.util.*
 import kotlin.math.min
 
-class BanListGui(private val player: Player, private val callByCommand: Boolean, private val rank: Rank) :
-    GuiInterface {
+class BanListGui(
+    private val player: Player,
+    private val lands: Lands,
+    private val callByCommand: Boolean,
+    private val rank: Rank
+) : GuiInterface {
 
-    private val lands: Lands = landManager.getPlayerLands(player.uniqueId)!!
     private lateinit var playerList: MutableList<UUID>
 
     private val sortButton = (Material.HOPPER * 1).apply {
@@ -132,7 +135,7 @@ class BanListGui(private val player: Player, private val callByCommand: Boolean,
                 if (callByCommand)
                     player.closeInventory()
                 else
-                    player.openMainGui(rank)
+                    player.openMainGui(lands, rank)
             }
             //Hopper(Sorting way change)
             3, 5 -> {
@@ -167,9 +170,9 @@ class BanListGui(private val player: Player, private val callByCommand: Boolean,
     }
 }
 
-fun Player.openBanListGui(callByCommand: Boolean, rank: Rank) {
+fun Player.openBanListGui(lands: Lands, callByCommand: Boolean, rank: Rank) {
     val inventory = Bukkit.createInventory(null, 54, "Ban list GUI")
-    val gui = BanListGui(this, callByCommand, rank)
+    val gui = BanListGui(this, lands, callByCommand, rank)
     gui.render(inventory)
 
     val view = this.openInventory(inventory)!!

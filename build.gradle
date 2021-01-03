@@ -19,4 +19,5 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
     compileOnly "com.destroystokyo.paper:paper-api:1.16.4-R0.1-SNAPSHOT"
     compileOnly "br.com.devsrsouza.kotlinbukkitapi:core:0.2.0-SNAPSHOT"
+    compileOnly files("C:/Users/Josangbeom/Desktop/Minecraft/Library/pogu.jar.2020-12-21.jar")
 }

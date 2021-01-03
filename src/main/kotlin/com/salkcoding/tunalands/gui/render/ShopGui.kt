@@ -4,6 +4,7 @@ import br.com.devsrsouza.kotlinbukkitapi.extensions.item.displayName
 import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.guiManager
+import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.backButton
 import com.salkcoding.tunalands.util.blackPane
@@ -16,7 +17,7 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.Inventory
 
-class ShopGui(private val player: Player, private val rank: Rank) : GuiInterface {
+class ShopGui(private val player: Player, private val lands: Lands, private val rank: Rank) : GuiInterface {
 
     companion object {
         val takeFlag = (Material.GREEN_BANNER * 1).apply {
@@ -106,7 +107,7 @@ class ShopGui(private val player: Player, private val rank: Rank) : GuiInterface
 
         when (event.rawSlot) {
             0 -> {
-                player.openMainGui(rank)
+                player.openMainGui(lands, rank)
             }
             //TODO paying code
             20 -> {
@@ -153,9 +154,9 @@ class ShopGui(private val player: Player, private val rank: Rank) : GuiInterface
 
 }
 
-fun Player.openShopGui(rank: Rank) {
+fun Player.openShopGui(lands: Lands, rank: Rank) {
     val inventory = Bukkit.createInventory(null, 54, "상점")
-    val gui = ShopGui(this, rank)
+    val gui = ShopGui(this, lands, rank)
     gui.render(inventory)
 
     val view = this.openInventory(inventory)!!

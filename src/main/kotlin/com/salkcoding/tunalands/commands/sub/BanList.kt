@@ -20,7 +20,7 @@ class BanList : CommandExecutor {
                     if (lands != null) {
                         val data = lands.memberMap[uuid]!!
                         when (data.rank) {
-                            Rank.OWNER, Rank.DELEGATOR, Rank.MEMBER -> player.openBanListGui(true, data.rank)
+                            Rank.OWNER, Rank.DELEGATOR, Rank.MEMBER -> player.openBanListGui(lands, true, data.rank)
                             else -> player.sendMessage("권한이 없습니다!".errorFormat())
                         }
                     } else player.sendMessage("해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat())

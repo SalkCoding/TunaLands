@@ -21,9 +21,7 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.scheduler.BukkitTask
 import java.util.*
 
-class MainGui(private val player: Player, private val rank: Rank) : GuiInterface {
-
-    private val lands: Lands = landManager.getPlayerLands(player.uniqueId)!!
+class MainGui(private val player: Player, private val lands: Lands, private val rank: Rank) : GuiInterface {
 
     //Dynamic
     private val totalInfoIcon = (Material.CAMPFIRE * 1).apply {
@@ -214,7 +212,7 @@ class MainGui(private val player: Player, private val rank: Rank) : GuiInterface
                 when (rank) {
                     Rank.OWNER, Rank.DELEGATOR -> {
                         player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
-                        player.openSettingGui(rank)
+                        player.openSettingGui(lands, rank)
                     }
                     else -> {
                         player.playSound(player.location, Sound.ENTITY_VILLAGER_NO, 0.5f, 1.0f)
@@ -224,15 +222,15 @@ class MainGui(private val player: Player, private val rank: Rank) : GuiInterface
             }
             11 -> {
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
-                player.openShopGui(rank)
+                player.openShopGui(lands, rank)
             }
             15 -> {
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
-                player.openUserListGui(rank)
+                player.openUserListGui(lands, rank)
             }
             16 -> {
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
-                player.openBanListGui(false, rank)
+                player.openBanListGui(lands, false, rank)
             }
             22 -> {
                 when (rank) {
@@ -284,9 +282,9 @@ class MainGui(private val player: Player, private val rank: Rank) : GuiInterface
     }
 }
 
-fun Player.openMainGui(rank: Rank) {
+fun Player.openMainGui(lands: Lands, rank: Rank) {
     val inventory = Bukkit.createInventory(null, 27, "Main GUI")
-    val gui = MainGui(this, rank)
+    val gui = MainGui(this, lands, rank)
     gui.render(inventory)
 
     val view = this.openInventory(inventory)!!

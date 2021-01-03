@@ -18,9 +18,8 @@ import org.bukkit.inventory.meta.SkullMeta
 import java.util.*
 import kotlin.math.min
 
-class UserListGui(private val player: Player, private val rank: Rank) : GuiInterface {
+class UserListGui(private val player: Player, private val lands: Lands, private val rank: Rank) : GuiInterface {
 
-    private val lands: Lands = landManager.getPlayerLands(player.uniqueId)!!
     private lateinit var playerList: MutableList<UUID>
 
     private val sortButton = (Material.HOPPER * 1).apply {
@@ -196,7 +195,7 @@ class UserListGui(private val player: Player, private val rank: Rank) : GuiInter
             //Back button
             0, 8 -> {
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
-                player.openMainGui(rank)
+                player.openMainGui(lands, rank)
             }
             //Hopper(Sorting way change)
             3, 5 -> {
@@ -231,9 +230,9 @@ class UserListGui(private val player: Player, private val rank: Rank) : GuiInter
     }
 }
 
-fun Player.openUserListGui(rank: Rank) {
+fun Player.openUserListGui(lands: Lands, rank: Rank) {
     val inventory = Bukkit.createInventory(null, 54, "User list GUI")
-    val gui = UserListGui(this, rank)
+    val gui = UserListGui(this, lands, rank)
     gui.render(inventory)
 
     val view = this.openInventory(inventory)!!

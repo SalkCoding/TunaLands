@@ -23,9 +23,7 @@ import java.util.*
 val loreChatMap = mutableMapOf<UUID, Int>()
 val welcomeMessageChatMap = mutableMapOf<UUID, Int>()
 
-class VisitorSettingGui(private val player: Player, private val rank: Rank) : GuiInterface {
-
-    private val lands: Lands = landManager.getPlayerLands(player.uniqueId)!!
+class VisitorSettingGui(private val player: Player, private val lands: Lands, private val rank: Rank) : GuiInterface {
 
     private val welcomeMessageSetButton = (Material.MAP * 1).apply {
         this.displayName("환영 메세지 설정")
@@ -238,7 +236,7 @@ class VisitorSettingGui(private val player: Player, private val rank: Rank) : Gu
         when (event.rawSlot) {
             0, 8 -> {
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
-                player.openSettingGui(rank)//Back button
+                player.openSettingGui(lands, rank)//Back button
             }
             3 -> {
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -629,9 +627,9 @@ class VisitorSettingGui(private val player: Player, private val rank: Rank) : Gu
     }
 }
 
-fun Player.openVisitorSettingGui(rank: Rank) {
+fun Player.openVisitorSettingGui(lands: Lands, rank: Rank) {
     val inventory = Bukkit.createInventory(null, 54, "방문자 설정")
-    val gui = VisitorSettingGui(this, rank)
+    val gui = VisitorSettingGui(this, lands, rank)
     gui.render(inventory)
 
     val view = this.openInventory(inventory)!!

@@ -31,7 +31,10 @@ class ChestGuiOpenListener : Listener {
             event.isCancelled = true
             if (player.uniqueId in lands.memberMap) {
                 when (val rank = lands.memberMap[player.uniqueId]!!.rank) {
-                    Rank.OWNER, Rank.DELEGATOR, Rank.MEMBER -> player.openMainGui(rank)
+                    Rank.OWNER, Rank.DELEGATOR, Rank.MEMBER -> player.openMainGui(
+                        landManager.getPlayerLands(player.uniqueId)!!,
+                        rank
+                    )
                     else -> player.sendMessage("권한이 없습니다!".errorFormat())
                 }
             } else player.sendMessage("권한이 없습니다!".errorFormat())
