@@ -4,15 +4,17 @@ import com.salkcoding.tunalands.io.JsonReader
 import com.salkcoding.tunalands.io.JsonWriter
 import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.*
-import org.bukkit.*
+import org.bukkit.Bukkit
+import org.bukkit.Chunk
+import org.bukkit.Particle
 import org.bukkit.block.Block
 import org.bukkit.entity.Player
-import org.bukkit.scheduler.BukkitTask
+import org.bukkit.inventory.ItemStack
+import java.io.File
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 class LandManager {
-
 
     private val landMap = ConcurrentHashMap<String, Lands.ChunkInfo>()
     private val playerLandMap = JsonReader.loadPlayerLandMap()
@@ -65,6 +67,18 @@ class LandManager {
             info.ownerName = newOwner.name
             info.ownerUUID = newOwner.uniqueId
         }
+        playerLandMap[newOwner.uniqueId] = lands
+        playerLandMap.remove(oldOwner.uniqueId)
+
+        Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
+            val folder = File(tunaLands.dataFolder, "userdata")
+            if (folder.exists()) {
+                val file = File(folder, "${oldOwner.uniqueId}.json")
+                if (file.exists())
+                    file.delete()
+            }
+        })
+        //TODO update POGU data
     }
 
     fun getPlayerLandMap(): ConcurrentHashMap<UUID, Lands> {
@@ -75,27 +89,46 @@ class LandManager {
         return landMap.containsKey(chunk.toQuery())
     }
 
-    fun getPlayerLands(playerUUID: UUID): Lands? {
+    //Be careful to Rank.PartiTimeJob and Rank.Visitor as not be conflicted with Rank.Owner, Rank.Delegator, Rank.Member
+    fun getPlayerLands(
+        playerUUID: UUID,
+        vararg filter: Rank = arrayOf(Rank.OWNER, Rank.DELEGATOR, Rank.MEMBER, Rank.PARTTIMEJOB, Rank.VISITOR)
+    ): Lands? {
         playerLandMap.forEach { (_, lands) ->
-            if (playerUUID in lands.memberMap) return lands
-        }
-        return null
-    }
-
-    fun getVisitorLands(playerUUID: UUID): Lands? {
-        playerLandMap.forEach { (_, lands) ->
-            if (playerUUID in lands.memberMap) {
-                if (lands.memberMap[playerUUID]!!.rank == Rank.VISITOR) {
+            if (playerUUID in lands.memberMap)
+                if (lands.memberMap[playerUUID]!!.rank in filter)
                     return lands
-                }
-            }
         }
         return null
     }
 
-    fun getPlayerLandList(playerUUID: UUID): List<String>? {
+    fun getPlayerLandsList(
+        playerUUID: UUID,
+        vararg filter: Rank = arrayOf(Rank.OWNER, Rank.DELEGATOR, Rank.MEMBER, Rank.PARTTIMEJOB, Rank.VISITOR)
+    ): List<Lands> {
+        val landsList = mutableListOf<Lands>()
         playerLandMap.forEach { (_, lands) ->
-            if (playerUUID in lands.memberMap) return lands.landList
+            if (playerUUID in lands.memberMap)
+                if (lands.memberMap[playerUUID]!!.rank in filter)
+                    landsList.add(lands)
+        }
+        return landsList
+    }
+
+    fun getPlayerLandList(
+        playerUUID: UUID,
+        vararg filter: Rank = arrayOf(
+            Rank.OWNER,
+            Rank.DELEGATOR,
+            Rank.MEMBER,
+            Rank.PARTTIMEJOB,
+            Rank.VISITOR
+        )
+    ): List<String>? {
+        playerLandMap.forEach { (_, lands) ->
+            if (playerUUID in lands.memberMap)
+                if (lands.memberMap[playerUUID]!!.rank in filter)
+                    return lands.landList
         }
         return null
     }
@@ -113,48 +146,6 @@ class LandManager {
             value
         } else {
             null
-        }
-    }
-
-    fun buyLand(player: Player, flag: Block) {
-        val chunk = flag.chunk
-        val query = chunk.toQuery()
-        if (landMap.containsKey(query)) {
-            player.sendMessage("${landMap[query]!!.ownerName}가 이미 구매한 땅입니다.".errorFormat())
-        } else {
-            //Additional buying
-            val uuid = player.uniqueId
-            val lands = this.getPlayerLands(uuid)
-            if (lands == null) {
-                player.sendMessage("코어를 먼저 만드세요!".errorFormat())
-                return
-            }
-
-            when (lands.memberMap[uuid]!!.rank) {
-                Rank.OWNER, Rank.DELEGATOR -> {
-                    if (chunk.isMeetOtherChunk(playerLandMap[uuid]!!.landList)) {
-                        playerLandMap[uuid]!!.landList.add(query)
-                        landMap[query] = Lands.ChunkInfo(player.name, uuid, chunk.world.name, chunk.x, chunk.z)
-                        Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
-                            val floodFill = playerLandMap[uuid]!!.checkFloodFill()
-                            Bukkit.getScheduler().runTask(tunaLands, Runnable {
-                                if (floodFill) {
-                                    player.sendMessage("해당 위치의 땅을 구매했습니다.".infoFormat())
-                                } else {
-                                    playerLandMap[uuid]!!.landList.remove(query)
-                                    landMap.remove(query)
-                                    player.sendMessage("땅따먹기 방지에 의해 구매가 취소되었습니다!".errorFormat())
-                                }
-                            })
-                        })
-                    } else {
-                        player.sendMessage("바로 옆에 자신의 땅이 맞닿아있어야합니다.".errorFormat())
-                    }
-                }
-                else -> {
-                    player.sendMessage("권한이 없습니다!".errorFormat())
-                }
-            }
         }
     }
 
@@ -191,44 +182,82 @@ class LandManager {
         }
     }
 
-    fun sellLand(player: Player, chunk: Chunk) {
+    fun buyLand(player: Player, flag: ItemStack, block: Block) {
+        val chunk = block.chunk
         val query = chunk.toQuery()
         if (landMap.containsKey(query)) {
-            val uuid = player.uniqueId
-            val lands = this.getPlayerLands(uuid)
+            player.sendMessage("${landMap[query]!!.ownerName}가 이미 구매한 땅입니다.".errorFormat())
+        } else {
+            //Additional buying
+            val lands = this.getPlayerLands(player.uniqueId, Rank.OWNER, Rank.DELEGATOR)
             if (lands == null) {
-                player.sendMessage("코어를 먼저 만드세요!".errorFormat())
+                player.sendMessage("땅 소유주와 관리 대리인만이 땅을 확장할 수 있습니다.".errorFormat())
                 return
             }
 
-            val info = lands.upCore
-            if (info.chunk.isSameChunk(chunk)) {
+            val ownerUUID = lands.ownerUUID
+            if (chunk.isMeetOtherChunk(playerLandMap[ownerUUID]!!.landList)) {
+                playerLandMap[ownerUUID]!!.landList.add(query)
+                landMap[query] = Lands.ChunkInfo(player.name, ownerUUID, chunk.world.name, chunk.x, chunk.z)
+                Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
+                    val floodFill = playerLandMap[ownerUUID]!!.checkFloodFill()
+                    Bukkit.getScheduler().runTask(tunaLands, Runnable {
+                        if (floodFill) {
+                            flag.amount -= 1
+                            player.sendMessage("해당 위치의 땅을 구매했습니다.".infoFormat())
+                        } else {
+                            playerLandMap[ownerUUID]!!.landList.remove(query)
+                            landMap.remove(query)
+                            player.sendMessage("땅따먹기 방지에 의해 구매가 취소되었습니다!".errorFormat())
+                        }
+                    })
+                })
+            } else {
+                player.sendMessage("바로 옆에 자신의 땅이 맞닿아있어야합니다.".errorFormat())
+            }
+        }
+    }
+
+    fun sellLand(player: Player, flag: ItemStack, block: Block) {
+        val chunk = block.chunk
+        val query = chunk.toQuery()
+        if (landMap.containsKey(query)) {
+            val chunkInfo = landMap[query]!!
+            val lands = this.getPlayerLands(chunkInfo.ownerUUID, Rank.OWNER, Rank.DELEGATOR) ?: return
+
+            val uuid = player.uniqueId
+            val core = lands.upCore
+            if (core.chunk.isSameChunk(chunk)) {
                 player.sendMessage("코어가 위치한 땅은 제거할 수 없습니다.".errorFormat())
                 return
             }
 
-            when (lands.memberMap[uuid]!!.rank) {
-                Rank.OWNER, Rank.DELEGATOR -> {
-                    val removedInfo = landMap.remove(query)!!
-                    lands.landList.remove(query)
-                    Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
-                        val floodFill = playerLandMap[uuid]!!.checkFloodFill()
-                        Bukkit.getScheduler().runTask(tunaLands, Runnable {
-                            if (floodFill) {
-                                if (lands.landList.isEmpty()) playerLandMap.remove(player.uniqueId)
-                                player.sendMessage("제거되었습니다.".infoFormat())
-                            } else {
-                                landMap[query] = removedInfo
-                                playerLandMap[uuid]!!.landList.add(query)
-                                player.sendMessage("땅따먹기 방지에 의해 제거가 취소되었습니다!".errorFormat())
-                            }
+            if (uuid in lands.memberMap) {
+                when (lands.memberMap[uuid]!!.rank) {
+                    Rank.OWNER, Rank.DELEGATOR -> {
+                        val ownerUUID = lands.ownerUUID
+                        val removedInfo = landMap.remove(query)!!
+                        lands.landList.remove(query)
+                        Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
+                            val floodFill = playerLandMap[ownerUUID]!!.checkFloodFill()
+                            Bukkit.getScheduler().runTask(tunaLands, Runnable {
+                                if (floodFill) {
+                                    if (lands.landList.isEmpty()) playerLandMap.remove(player.uniqueId)
+                                    flag.amount -= 1
+                                    player.sendMessage("제거되었습니다.".infoFormat())
+                                } else {
+                                    landMap[query] = removedInfo
+                                    playerLandMap[ownerUUID]!!.landList.add(query)
+                                    player.sendMessage("땅따먹기 방지에 의해 제거가 취소되었습니다!".errorFormat())
+                                }
+                            })
                         })
-                    })
+                    }
+                    else -> {
+                        player.sendMessage("${landMap[query]!!.ownerName}의 땅 소유자와 관리 대리인만 해당 땅을 제거할 수 있습니다.".warnFormat())
+                    }
                 }
-                else -> {
-                    player.sendMessage("${landMap[query]!!.ownerName}의 땅 소유자와 관리 대리인만 해당 땅을 제거할 수 있습니다.".warnFormat())
-                }
-            }
+            } else player.sendMessage("${chunkInfo.ownerName}의 땅입니다!".errorFormat())
         } else {
             player.sendMessage("해당 땅은 소유된 땅이 아닙니다.".warnFormat())
         }
@@ -240,16 +269,16 @@ class LandManager {
             val blockX: Int = c.x shl 4
             val blockZ: Int = c.z shl 4
 
-            var location = c.world.getHighestBlockAt(blockX, blockZ).location.add(0.0, 5.0, 0.0)
+            var location = c.world.getHighestBlockAt(blockX, blockZ).location.add(0.0, 3.0, 0.0)
             location.world.spawnParticle(Particle.FIREWORKS_SPARK, location, 0, .0, .0, .0, .0, null, true)
 
-            location = c.world.getHighestBlockAt(blockX, blockZ + 16).location.add(0.0, 5.0, 0.0)
+            location = c.world.getHighestBlockAt(blockX, blockZ + 16).location.add(0.0, 3.0, 0.0)
             location.world.spawnParticle(Particle.FIREWORKS_SPARK, location, 0, .0, .0, .0, .0, null, true)
 
-            location = c.world.getHighestBlockAt(blockX + 16, blockZ).location.add(0.0, 5.0, 0.0)
+            location = c.world.getHighestBlockAt(blockX + 16, blockZ).location.add(0.0, 3.0, 0.0)
             location.world.spawnParticle(Particle.FIREWORKS_SPARK, location, 0, .0, .0, .0, .0, null, true)
 
-            location = c.world.getHighestBlockAt(blockX + 16, blockZ + 16).location.add(0.0, 5.0, 0.0)
+            location = c.world.getHighestBlockAt(blockX + 16, blockZ + 16).location.add(0.0, 3.0, 0.0)
             location.world.spawnParticle(Particle.FIREWORKS_SPARK, location, 0, .0, .0, .0, .0, null, true)
         }
     }

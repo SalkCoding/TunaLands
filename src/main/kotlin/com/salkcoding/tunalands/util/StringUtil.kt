@@ -7,11 +7,11 @@ fun String.infoFormat(): String {
 }
 
 fun String.warnFormat(): String {
-    return "${ChatColor.WHITE}[${ChatColor.GREEN}!${ChatColor.WHITE}] ${ChatColor.RESET}$this"
+    return "${ChatColor.WHITE}[${ChatColor.YELLOW}!${ChatColor.WHITE}] ${ChatColor.RESET}$this"
 }
 
 fun String.errorFormat(): String {
-    return "${ChatColor.WHITE}[${ChatColor.GREEN}!${ChatColor.WHITE}] ${ChatColor.RESET}$this"
+    return "${ChatColor.WHITE}[${ChatColor.RED}!${ChatColor.WHITE}] ${ChatColor.RESET}$this"
 }
 
 fun String.consoleFormat(): String {

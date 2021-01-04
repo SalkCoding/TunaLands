@@ -3,6 +3,7 @@ package com.salkcoding.tunalands.listener
 import com.salkcoding.tunalands.gui.render.settinggui.loreChatMap
 import com.salkcoding.tunalands.gui.render.settinggui.welcomeMessageChatMap
 import com.salkcoding.tunalands.landManager
+import com.salkcoding.tunalands.lands.Rank
 import org.bukkit.ChatColor
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -22,7 +23,11 @@ class ChatListener : Listener {
                 loreChatMap.remove(uuid)
                 return
             }
-            val lands = landManager.getPlayerLands(uuid) ?: return
+            val lands = landManager.getPlayerLands(uuid, Rank.OWNER, Rank.DELEGATOR)
+            if (lands == null) {
+                loreChatMap.remove(player.uniqueId)
+                return
+            }
             val lore =
                 when (event.message) {
                     "\\n" -> ""
@@ -40,7 +45,11 @@ class ChatListener : Listener {
                 welcomeMessageChatMap.remove(uuid)
                 return
             }
-            val lands = landManager.getPlayerLands(uuid) ?: return
+            val lands = landManager.getPlayerLands(uuid, Rank.OWNER, Rank.DELEGATOR)
+            if (lands == null) {
+                welcomeMessageChatMap.remove(player.uniqueId)
+                return
+            }
             val lore =
                 when (event.message) {
                     "\\n" -> ""

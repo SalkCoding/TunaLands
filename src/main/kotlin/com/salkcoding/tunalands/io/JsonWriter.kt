@@ -1,13 +1,10 @@
 package com.salkcoding.tunalands.io
 
-import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.tunaLands
-import java.io.BufferedWriter
 import java.io.File
-import java.io.FileWriter
 
 object JsonWriter {
 
@@ -22,7 +19,6 @@ object JsonWriter {
                 file.createNewFile()
 
             file.bufferedWriter().use { writer ->
-                val gson = Gson()
                 val jsonObject = JsonObject()
                 val jsonLandList = JsonArray()
                 lands.landList.forEach {
@@ -79,7 +75,6 @@ object JsonWriter {
                     }
                     jsonBanMap.add(jsonMemberData)
                 }
-
 
                 val jsonSettingArray = JsonArray()
                 listOf(
@@ -165,7 +160,7 @@ object JsonWriter {
                 jsonObject.add("memberSetting", jsonSettingArray[2])
                 jsonObject.add("delegatorSetting", jsonDelegatorSetting)
 
-                writer.write(gson.toString())
+                writer.write(jsonObject.toString())
                 writer.close()
             }
         }

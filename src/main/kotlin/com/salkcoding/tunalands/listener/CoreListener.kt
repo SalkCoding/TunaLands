@@ -2,6 +2,7 @@ package com.salkcoding.tunalands.listener
 
 import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.landManager
+import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.isSameLocation
 import com.salkcoding.tunalands.util.warnFormat
 import org.bukkit.Material
@@ -23,7 +24,7 @@ class CoreListener : Listener {
             if (coreBlock.type == configuration.protect.coreBlock) {
                 val player = event.player
 
-                if (landManager.getPlayerLands(player.uniqueId) != null
+                if (landManager.getPlayerLands(player.uniqueId, Rank.OWNER, Rank.DELEGATOR, Rank.MEMBER) != null
                     || landManager.getLandsWithChunk(chest.chunk) != null
                 )
                     return

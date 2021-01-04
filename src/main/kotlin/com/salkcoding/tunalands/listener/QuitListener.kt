@@ -10,7 +10,9 @@ class QuitListener : Listener {
     @EventHandler
     fun onQuit(event: PlayerQuitEvent) {
         val player = event.player
-        val lands = landManager.getPlayerLands(player.uniqueId) ?: return
-        lands.memberMap[player.uniqueId]!!.lastLogin = System.currentTimeMillis()
+        val landsList = landManager.getPlayerLandsList(player.uniqueId)
+        landsList.forEach { lands ->
+            lands.memberMap[player.uniqueId]!!.lastLogin = System.currentTimeMillis()
+        }
     }
 }

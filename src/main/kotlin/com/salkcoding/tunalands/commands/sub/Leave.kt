@@ -19,7 +19,9 @@ class Leave : CommandExecutor {
                 val player = sender as? Player
                 if (player != null) {
                     val lands =
-                        landManager.getVisitorLands(player.uniqueId) ?: landManager.getPlayerLands(player.uniqueId)
+                        landManager.getPlayerLands(player.uniqueId, Rank.VISITOR)
+                            ?: landManager.getPlayerLands(player.uniqueId, Rank.PARTTIMEJOB)
+                            ?: landManager.getPlayerLands(player.uniqueId, Rank.OWNER, Rank.DELEGATOR, Rank.MEMBER)
                     if (lands != null) {
                         val data = lands.memberMap[player.uniqueId]!!
                         if (data.rank == Rank.OWNER) {

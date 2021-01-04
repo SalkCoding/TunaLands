@@ -2,6 +2,7 @@ package com.salkcoding.tunalands.commands.sub
 
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Lands
+import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
 import org.bukkit.command.Command
@@ -20,11 +21,16 @@ class Accept : CommandExecutor {
                     if (inviteMap.containsKey(uuid)) {
                         val data = inviteMap[uuid]!!
                         val host = data.host
-                        val lands = landManager.getPlayerLands(host.uniqueId)
+                        val lands = landManager.getPlayerLands(host.uniqueId, Rank.OWNER, Rank.DELEGATOR)
                         if (lands != null) {
                             player.sendMessage("초대를 수락했습니다.".infoFormat())
                             if (host.isOnline)
                                 host.sendMessage("${player.name}이/가 초대에 수락했습니다.".infoFormat())
+
+                            landManager.getPlayerLands(
+                                player.uniqueId,
+                                Rank.VISITOR
+                            )?.memberMap?.remove(player.uniqueId)
 
                             val present = System.currentTimeMillis()
                             lands.memberMap[uuid] = Lands.MemberData(uuid, data.targetRank, present, present)

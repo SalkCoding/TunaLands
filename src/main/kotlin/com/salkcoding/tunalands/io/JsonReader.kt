@@ -152,14 +152,16 @@ object JsonReader {
                     jsonDelegatorSetting["canSetRegionSetting"].asBoolean,
                 )
 
+                val upCore = locationList[0]
+                val downCore = Location(upCore.world, upCore.x, upCore.y - 1, upCore.z)
                 playerLandMap[ownerUUID] =
                     Lands(
                         ownerName,
                         ownerUUID,
                         landList,
                         landHistory,
-                        locationList[0],
-                        locationList[0].subtract(0.0, 1.0, 0.0),
+                        upCore,
+                        downCore,
                         expiredMillisecond,
                         enable,
                         open,

@@ -20,7 +20,9 @@ import java.util.*
 import kotlin.math.min
 
 class VisitGui(private val player: Player) : GuiInterface {
-    private val landMap = landManager.getPlayerLandMap()
+    private val landMap = landManager.getPlayerLandMap().filter { entry ->
+        entry.value.enable
+    }
     private lateinit var landList: MutableList<UUID>
 
     private val sortButton = (Material.HOPPER * 1).apply {
@@ -213,46 +215,68 @@ class VisitGui(private val player: Player) : GuiInterface {
                 }
             }
             in 18..53 -> {
-
                 val index = (currentPage * 36) + (event.rawSlot - 18)
                 if (index >= landList.size) return
 
                 val lands = landMap[landList[index]] ?: return
-                val uuid = player.uniqueId
-                if (uuid in lands.memberMap) {
-                    player.playSound(player.location, Sound.ENTITY_VILLAGER_NO, 0.5f, 1.0f)
-                    player.sendMessage("자신이 소속되어있는 땅에는 방문할 수 없습니다!".errorFormat())
+                if (!lands.open && !player.isOp) {
+                    player.sendMessage("땅이 비공개 상태라 방문할 수 없습니다!".errorFormat())
                     return
                 }
 
-                if (uuid in lands.memberMap) {
-                    player.playSound(player.location, Sound.ENTITY_VILLAGER_NO, 0.5f, 1.0f)
-                    player.sendMessage("이미 방문 중입니다!".errorFormat())
+                if (!lands.enable) {
+                    player.sendMessage("땅 보호가 만료되어 방문할 수 없습니다!".errorFormat())
                     return
+                }
+
+                val uuid = player.uniqueId
+                if (uuid in lands.memberMap) {
+                    val rank = lands.memberMap[uuid]!!.rank
+                    if (rank != Rank.PARTTIMEJOB) {
+                        player.playSound(player.location, Sound.ENTITY_VILLAGER_NO, 0.5f, 1.0f)
+                        player.sendMessage("자신이 소속되어있는 땅에는 방문할 수 없습니다!".errorFormat())
+                        return
+                    }
+                }
+
+                if (uuid in lands.memberMap) {
+                    val rank = lands.memberMap[uuid]!!.rank
+                    if (rank != Rank.PARTTIMEJOB) {
+                        player.playSound(player.location, Sound.ENTITY_VILLAGER_NO, 0.5f, 1.0f)
+                        player.sendMessage("이미 방문 중입니다!".errorFormat())
+                        return
+                    }
                 }
 
                 if (!lands.banMap.containsKey(uuid)) {
                     if (lands.open || player.isOp) {
+                        player.closeInventory()
+                        lands.welcomeMessage.forEach { welcomeMessage ->
+                            player.sendMessage(welcomeMessage)
+                        }
+
+                        player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
+                        player.teleportAsync(lands.visitorSpawn)
+                        /*TeleportCooltime.addPlayer(
+                            player,
+                            lands.visitorSpawn,
+                            configuration.command.visitCooldown,
+                            null,
+                            false
+                        )*/
+
+                        if (uuid in lands.memberMap) {
+                            if (lands.memberMap[uuid]!!.rank == Rank.PARTTIMEJOB)
+                                return
+                        }
+
+                        lands.landHistory.visitorCount++
                         val current = System.currentTimeMillis()
                         lands.memberMap[uuid] = Lands.MemberData(
                             uuid,
                             Rank.VISITOR,
                             current,
                             current
-                        )
-
-                        player.closeInventory()
-                        lands.welcomeMessage.forEach { welcomeMessage ->
-                            player.sendMessage(welcomeMessage)
-                        }
-                        lands.landHistory.visitorCount++
-                        player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
-                        TeleportCooltime.addPlayer(
-                            player,
-                            lands.visitorSpawn,
-                            configuration.command.visitCooldown,
-                            null,
-                            false
                         )
                     }
                 } else {

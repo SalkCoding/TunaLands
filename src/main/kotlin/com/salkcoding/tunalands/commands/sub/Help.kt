@@ -29,8 +29,12 @@ class Help : CommandExecutor {
         sender.sendMessage("/ld visit: 방문할 수 있는 땅을 GUI로 보여줍니다.".infoFormat())
         sender.sendMessage("/ld setleader (name): 해당 유저를 땅의 소유주로 만듭니다.".infoFormat())
         if (sender.isOp) {
-            sender.sendMessage("디버깅 명령어 목록".infoFormat())
-            sender.sendMessage("/ld debug info (name): 유저가 가지고 있는 땅을 보여줍니다.".warnFormat())
+            sender.sendMessage("관리자 전용 디버깅 명령어 목록".infoFormat())
+            sender.sendMessage("/ld debug set (target) (name) (rank): target 유저의 땅의 name 유저의 등급을 (rank)로 변경합니다.".warnFormat())
+            sender.sendMessage("(rank)에 NULL 입력시 kick 처럼 해당 유저를 해당 땅에서 제명시킵니다.".warnFormat())
+            sender.sendMessage("/ld debug visit (name): 해당 유저의 땅을 강제로 방문합니다.".warnFormat())
+            sender.sendMessage("/ld debug player (name): 해당 유저의 소속을 조회합니다.".warnFormat())
+            sender.sendMessage("/ld debug info (name): 해당 유저가 가지고 있는 땅을 보여줍니다.".warnFormat())
             sender.sendMessage("/ld debug buy: 해당 위치의 땅을 구매합니다.".warnFormat())
             sender.sendMessage("/ld debug info: 해당 위치의 땅을 판매합니다.".warnFormat())
         }

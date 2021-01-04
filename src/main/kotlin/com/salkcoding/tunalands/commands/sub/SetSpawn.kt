@@ -4,6 +4,7 @@ import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
+import com.salkcoding.tunalands.util.toQuery
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -15,8 +16,13 @@ class SetSpawn : CommandExecutor {
             label == "setspawn" && args.size == 1 -> {
                 val player = sender as? Player
                 if (player != null) {
-                    val lands = landManager.getPlayerLands(player.uniqueId)
+                    val lands = landManager.getPlayerLands(player.uniqueId, Rank.OWNER, Rank.DELEGATOR)
                     if (lands != null) {
+                        if(player.location.chunk.toQuery() !in lands.landList){
+                            player.sendMessage("자신의 보호된 땅 이외의 위치에서는 스폰을 설정할 수 없습니다!".errorFormat())
+                            return true
+                        }
+
                         val data = lands.memberMap[player.uniqueId]!!
                         when (data.rank) {
                             Rank.OWNER -> {
