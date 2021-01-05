@@ -14,22 +14,28 @@ class Deny : CommandExecutor {
             label == "deny" && args.isEmpty() -> {
                 val player = sender as? Player
                 if (player != null) {
-                    val uuid = player.uniqueId
-                    if (inviteMap.containsKey(uuid)) {
-                        val data = inviteMap[uuid]!!
-                        val host = data.host
-
-                        player.sendMessage("초대를 거절했습니다.".infoFormat())
-                        if (host.isOnline)
-                            host.sendMessage("${player.name}이/가 당신의 초대를 거절하였습니다.".infoFormat())
-
-                        data.task.cancel()
-                        inviteMap.remove(uuid)
-                    } else player.sendMessage("받은 초대가 없습니다.".errorFormat())
+                    work(player)
                 } else sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
                 return true
             }
         }
         return false
+    }
+
+    companion object {
+        fun work(player: Player) {
+            val uuid = player.uniqueId
+            if (inviteMap.containsKey(uuid)) {
+                val data = inviteMap[uuid]!!
+                val host = data.host
+
+                player.sendMessage("초대를 거절했습니다.".infoFormat())
+                if (host.isOnline)
+                    host.sendMessage("${player.name}이/가 당신의 초대를 거절하였습니다.".infoFormat())
+
+                data.task.cancel()
+                inviteMap.remove(uuid)
+            } else player.sendMessage("받은 초대가 없습니다.".errorFormat())
+        }
     }
 }

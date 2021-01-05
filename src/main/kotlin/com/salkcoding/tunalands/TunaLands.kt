@@ -1,6 +1,6 @@
 package com.salkcoding.tunalands
 
-import com.salkcoding.tunalands.bungee.IncomingListener
+import com.salkcoding.tunalands.bungee.listener.PlayerListListener
 import com.salkcoding.tunalands.commands.LandCommandHandler
 import com.salkcoding.tunalands.commands.debug.Debug
 import com.salkcoding.tunalands.commands.sub.*
@@ -21,6 +21,8 @@ lateinit var configuration: Config
 lateinit var guiManager: GuiManager
 lateinit var landManager: LandManager
 
+lateinit var playerListListener: PlayerListListener
+
 class TunaLands : JavaPlugin() {
 
     override fun onEnable() {
@@ -28,6 +30,8 @@ class TunaLands : JavaPlugin() {
 
         guiManager = GuiManager()
         landManager = LandManager()
+
+        playerListListener = PlayerListListener()
 
         val handler = LandCommandHandler()
         handler.register("accept", Accept())
@@ -93,8 +97,8 @@ class TunaLands : JavaPlugin() {
 
         configRead()
 
-        /*server.messenger.registerOutgoingPluginChannel(this, channelName)
-        server.messenger.registerIncomingPluginChannel(this, channelName, IncomingListener())*/
+        server.messenger.registerOutgoingPluginChannel(this, channelName)
+        server.messenger.registerIncomingPluginChannel(this, channelName, playerListListener)
 
         logger.info("Plugin is now enabled".consoleFormat())
     }

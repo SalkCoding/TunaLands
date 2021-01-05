@@ -1,12 +1,13 @@
 package com.salkcoding.tunalands.lands
 
 import com.salkcoding.tunalands.configuration
+import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import java.util.*
 
 private val leftMap = mutableMapOf<UUID, Long>()
 
-fun Player.canRejoin(): Boolean {
+fun OfflinePlayer.canRejoin(): Boolean {
     if (this.uniqueId !in leftMap)
         return true
 
@@ -16,10 +17,10 @@ fun Player.canRejoin(): Boolean {
     return present.before(left)
 }
 
-fun Player.recordLeft() {
+fun OfflinePlayer.recordLeft() {
     leftMap[this.uniqueId] = System.currentTimeMillis() + (configuration.command.rejoinCooldown * 50)
 }
 
-fun Player.getRejoinCooldown(): Long? {
+fun OfflinePlayer.getRejoinCooldown(): Long? {
     return leftMap[this.uniqueId]
 }

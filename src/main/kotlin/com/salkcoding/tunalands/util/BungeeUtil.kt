@@ -24,21 +24,21 @@ fun Player.teleportToServerAsync(serverName: String, world: String, x: Double, y
     out.writeUTF(serverName)//Server name
     out.writeUTF("Teleport") // The channel name to check if this your data
 
-    val msgbytes = ByteArrayOutputStream()
-    val msgout = DataOutputStream(msgbytes)
+    val messageBytes = ByteArrayOutputStream()
+    val messageOut = DataOutputStream(messageBytes)
     try {
-        msgout.writeUTF(world)
-        msgout.writeDouble(x)
-        msgout.writeDouble(y)
-        msgout.writeDouble(z)
+        messageOut.writeUTF(world)
+        messageOut.writeDouble(x)
+        messageOut.writeDouble(y)
+        messageOut.writeDouble(z)
     } catch (exception: IOException) {
         exception.printStackTrace()
     }
 
-    out.writeShort(msgbytes.toByteArray().size)
-    out.write(msgbytes.toByteArray())
+    out.writeShort(messageBytes.toByteArray().size)
+    out.write(messageBytes.toByteArray())
 
-    println(msgbytes.toByteArray().size)
+    println(messageBytes.toByteArray().size)
 
     this.sendPluginMessage(tunaLands, channelName, out.toByteArray())
 }

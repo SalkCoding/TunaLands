@@ -1,5 +1,6 @@
 package com.salkcoding.tunalands.commands.sub
 
+import com.salkcoding.tunalands.bungee.BungeeSender
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
@@ -15,7 +16,7 @@ class Cancel : CommandExecutor {
         when {
             label == "cancel" && args.size == 1 -> {
                 val player = sender as? Player
-                val target = Bukkit.getPlayer(args[0])
+                val target = Bukkit.getOfflinePlayerIfCached(args[0])
                 if (player != null) {
                     val lands = landManager.getPlayerLands(player.uniqueId, Rank.OWNER, Rank.DELEGATOR)
                     if (lands != null) {
@@ -27,9 +28,14 @@ class Cancel : CommandExecutor {
                         if (target.uniqueId in inviteMap) {
                             val data = inviteMap[target.uniqueId]!!
                             player.sendMessage("${data.target.name}에게 보낸 초대가 취소되었습니다.".infoFormat())
-                            if (data.target.isOnline)
-                                data.target.sendMessage("${player.name}가 ${data.host.name}에게 보낸 초대를 취소하였습니다.".errorFormat())
-
+                            if (data.target.isOnline) {
+                                data.target.player!!.sendMessage("${player.name}가 ${data.host.name}에게 보낸 초대를 취소하였습니다.".errorFormat())
+                            } else {
+                                BungeeSender.sendMessage(
+                                    target.name!!,
+                                    "${player.name}가 ${data.host.name}에게 보낸 초대를 취소하였습니다.".errorFormat()
+                                )
+                            }
                             data.task.cancel()
                             inviteMap.remove(data.target.uniqueId)
                         } else player.sendMessage("보낸 초대가 없습니다.".errorFormat())
