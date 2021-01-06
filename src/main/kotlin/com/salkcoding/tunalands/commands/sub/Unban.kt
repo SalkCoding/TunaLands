@@ -1,5 +1,6 @@
 package com.salkcoding.tunalands.commands.sub
 
+import com.salkcoding.tunalands.bungee.BungeeSender
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
@@ -24,16 +25,20 @@ class Unban : CommandExecutor {
                             return true
                         }
 
-                        val target = Bukkit.getPlayer(args[0])
-                        if (target == null) {
+                        val targetName = args[0]
+                        val targetOffline = Bukkit.getOfflinePlayerIfCached(targetName)
+                        if (targetOffline == null) {
                             player.sendMessage("존재하지 않는 유저입니다!".errorFormat())
                             return true
                         }
 
-                        player.sendMessage("${target.name}의 밴을 해제했습니다.".infoFormat())
-                        target.sendMessage("${player.name}의 땅의 밴이 해제되었습니다.".infoFormat())
+                        player.sendMessage("${targetName}의 밴을 해제했습니다.".infoFormat())
+                        if (targetOffline.isOnline)
+                            targetOffline.player!!.sendMessage("${player.name}의 땅의 밴이 해제되었습니다.".infoFormat())
+                        else
+                            BungeeSender.sendMessage(targetName, "${player.name}의 땅의 밴이 해제되었습니다.".infoFormat())
 
-                        lands.banMap.remove(target.uniqueId)
+                        lands.banMap.remove(targetOffline.uniqueId)
                     } else player.sendMessage("해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat())
                 } else sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
                 return true

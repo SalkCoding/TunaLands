@@ -1,5 +1,6 @@
 package com.salkcoding.tunalands
 
+import com.salkcoding.tunalands.bungee.listener.CommandListener
 import com.salkcoding.tunalands.bungee.listener.PlayerListListener
 import com.salkcoding.tunalands.commands.LandCommandHandler
 import com.salkcoding.tunalands.commands.debug.Debug
@@ -86,7 +87,7 @@ class TunaLands : JavaPlugin() {
         server.pluginManager.registerEvents(InventoryClickListener(), this)
         server.pluginManager.registerEvents(InventoryCloseListener(), this)
         server.pluginManager.registerEvents(InventoryDragListener(), this)
-        server.pluginManager.registerEvents(QuitListener(), this)
+        server.pluginManager.registerEvents(PlayerConnectListener(), this)
 
         if (chunkDebug) {
             logger.warning("Chunk debug mode is enabled.".consoleFormat())
@@ -98,6 +99,8 @@ class TunaLands : JavaPlugin() {
         configRead()
 
         server.messenger.registerOutgoingPluginChannel(this, channelName)
+
+        server.messenger.registerIncomingPluginChannel(this, channelName, CommandListener())
         server.messenger.registerIncomingPluginChannel(this, channelName, playerListListener)
 
         logger.info("Plugin is now enabled".consoleFormat())

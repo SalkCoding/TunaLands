@@ -35,8 +35,8 @@ class Leave : CommandExecutor {
                         player.recordLeft()
 
                         lands.memberMap.forEach { (uuid, _) ->
-                            val administration = Bukkit.getPlayer(uuid) ?: return@forEach
-                            administration.sendMessage("${player.name}이/가 땅을 떠났습니다.".warnFormat())
+                            val target = Bukkit.getPlayer(uuid) ?: return@forEach
+                            target.sendMessage("${player.name}이/가 땅을 떠났습니다.".warnFormat())
                         }
                     } else player.sendMessage("어느 땅에도 소속되어있지 않습니다.".errorFormat())
                 } else sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())

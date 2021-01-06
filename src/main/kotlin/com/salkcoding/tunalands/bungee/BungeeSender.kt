@@ -24,16 +24,34 @@ object BungeeSender {
     }
 
     fun sendVisitList(targetPlayer: String, playerLandMap: Map<UUID, Lands>) {
+        /*
+        * ForwardToPlayer
+        * targetPlayer: String
+        * Channel: TunaLands, Sub channel: Visit
+        * Arguments
+        * playerLandMap -> (uuid, enable, open, memberSize, visitorCount, createdMillisecond)
+        */
         val out = ByteStreams.newDataOutput()
         out.writeUTF("ForwardToPlayer")
         out.writeUTF(targetPlayer)
-        out.writeUTF("BanList")
+        out.writeUTF("Visit")
 
         val messageBytes = ByteArrayOutputStream()
         val messageOut = DataOutputStream(messageBytes)
         try {
             playerLandMap.forEach { (_, data) ->
-                //TODO write code here
+                messageOut.writeUTF(data.ownerUUID.toString())
+                messageOut.writeBoolean(data.enable)
+                messageOut.writeBoolean(data.open)
+                messageOut.writeInt(data.memberMap.size)
+                messageOut.writeLong(data.landHistory.visitorCount)
+                messageOut.writeLong(data.landHistory.createdMillisecond)
+                data.lore.forEach {
+                    messageOut.writeUTF(it)
+                }
+                data.welcomeMessage.forEach {
+                    messageOut.writeUTF(it)
+                }
             }
         } catch (exception: IOException) {
             exception.printStackTrace()
@@ -46,6 +64,13 @@ object BungeeSender {
     }
 
     fun sendBanList(targetPlayer: String, banMap: Map<UUID, Lands.BanData>) {
+        /*
+        * ForwardToPlayer
+        * targetPlayer: String
+        * Channel: TunaLands, Sub channel: BanList
+        * Arguments
+        * banMap -> (uuid, banned)
+        */
         val out = ByteStreams.newDataOutput()
         out.writeUTF("ForwardToPlayer")
         out.writeUTF(targetPlayer)

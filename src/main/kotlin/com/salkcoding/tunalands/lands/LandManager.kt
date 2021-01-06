@@ -6,6 +6,7 @@ import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.*
 import org.bukkit.Bukkit
 import org.bukkit.Chunk
+import org.bukkit.OfflinePlayer
 import org.bukkit.Particle
 import org.bukkit.block.Block
 import org.bukkit.entity.Player
@@ -60,11 +61,11 @@ class LandManager {
         playerLandMap.remove(owner.uniqueId)
     }
 
-    fun changeChunksOwner(oldOwner: Player, newOwner: Player) {
+    fun changeChunksOwner(oldOwner: OfflinePlayer, newOwner: OfflinePlayer) {
         val lands = playerLandMap[oldOwner.uniqueId]!!
         lands.landList.forEach { query ->
             val info = landMap[query]!!
-            info.ownerName = newOwner.name
+            info.ownerName = newOwner.name!!
             info.ownerUUID = newOwner.uniqueId
         }
         playerLandMap[newOwner.uniqueId] = lands
