@@ -246,4 +246,4 @@ limitWorld:
 }
 ```
 
-#[More informations](https://www.notion.so/TunaLands-f59f1a4d81284124b6af32ff5aa6fc2a)
+[More informations](https://www.notion.so/TunaLands-f59f1a4d81284124b6af32ff5aa6fc2a)
