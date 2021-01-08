@@ -90,7 +90,7 @@ class BanListGui(
         val start = currentPage * 36
         val length = min(playerList.size - start, 36)
 
-        for (i in start until length) {
+        for (i in 0 until length) {
             val head = (Material.PLAYER_HEAD * 1).apply {
                 val meta = this.itemMeta as SkullMeta
                 val entry = Bukkit.getOfflinePlayer(playerList[start + i])

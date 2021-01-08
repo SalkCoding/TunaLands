@@ -53,7 +53,7 @@ class LandManager {
         JsonWriter.savePlayerLandMap()
     }
 
-    fun deleteLands(owner: Player) {
+    fun deleteLands(owner: OfflinePlayer) {
         val lands = playerLandMap[owner.uniqueId]!!
         lands.landList.forEach { query ->
             landMap.remove(query)

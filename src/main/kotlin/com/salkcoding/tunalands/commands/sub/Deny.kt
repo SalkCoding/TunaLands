@@ -1,6 +1,6 @@
 package com.salkcoding.tunalands.commands.sub
 
-import com.salkcoding.tunalands.bungee.BungeeSender
+import com.salkcoding.tunalands.bungeeApi
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
 import org.bukkit.command.Command
@@ -32,9 +32,9 @@ class Deny : CommandExecutor {
 
                 player.sendMessage("초대를 거절했습니다.".infoFormat())
                 if (host.isOnline)
-                    host.sendMessage("${player.name}이/가 당신의 초대를 거절하였습니다.".infoFormat())
+                    host.player!!.sendMessage("${player.name}이/가 당신의 초대를 거절하였습니다.".infoFormat())
                 else
-                    BungeeSender.sendMessage(host.name, "${player.name}이/가 당신의 초대를 거절하였습니다.".infoFormat())
+                    bungeeApi.sendMessage(host.name, "${player.name}이/가 당신의 초대를 거절하였습니다.".infoFormat())
 
                 data.task.cancel()
                 inviteMap.remove(uuid)

@@ -3,7 +3,6 @@ package com.salkcoding.tunalands.lands
 import org.bukkit.Bukkit
 import org.bukkit.Chunk
 import org.bukkit.Location
-import java.io.Serializable
 import java.util.*
 
 class Lands(
@@ -35,7 +34,7 @@ class Lands(
     val delegatorSetting: DelegatorSetting = DelegatorSetting(),
     val memberMap: MutableMap<UUID, MemberData> = mutableMapOf(),
     val banMap: MutableMap<UUID, BanData> = mutableMapOf(),
-) : Serializable {
+) {
     data class MemberData(
         val uuid: UUID,
         var rank: Rank,

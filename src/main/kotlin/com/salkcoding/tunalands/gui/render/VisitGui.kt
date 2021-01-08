@@ -134,7 +134,7 @@ class VisitGui(private val player: Player) : GuiInterface {
         val start = currentPage * 36
         val length = min(landList.size - start, 36)
 
-        for (i in start until length) {
+        for (i in 0 until length) {
             val uuid = landList[start + i]
             val entry = Bukkit.getOfflinePlayer(uuid)
             val lands = landMap[uuid]!!

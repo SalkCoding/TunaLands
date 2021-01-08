@@ -1,20 +1,21 @@
 package com.salkcoding.tunalands
 
-import com.salkcoding.tunalands.bungee.listener.CommandListener
-import com.salkcoding.tunalands.bungee.listener.PlayerListListener
+import com.salkcoding.tunalands.bungee.PlayerListListener
 import com.salkcoding.tunalands.commands.LandCommandHandler
 import com.salkcoding.tunalands.commands.debug.Debug
 import com.salkcoding.tunalands.commands.sub.*
-import com.salkcoding.tunalands.listener.*
 import com.salkcoding.tunalands.gui.GuiManager
 import com.salkcoding.tunalands.lands.LandManager
+import com.salkcoding.tunalands.listener.*
 import com.salkcoding.tunalands.listener.region.*
 import com.salkcoding.tunalands.util.consoleFormat
+import io.github.leonardosnt.bungeechannelapi.BungeeChannelApi
 import org.bukkit.Material
 import org.bukkit.plugin.java.JavaPlugin
 
+
 const val chunkDebug = true
-const val channelName = "TunaLands"
+const val channelName = "tunalands:main"
 
 lateinit var tunaLands: TunaLands
 lateinit var configuration: Config
@@ -23,6 +24,8 @@ lateinit var guiManager: GuiManager
 lateinit var landManager: LandManager
 
 lateinit var playerListListener: PlayerListListener
+
+lateinit var bungeeApi: BungeeChannelApi
 
 class TunaLands : JavaPlugin() {
 
@@ -33,6 +36,9 @@ class TunaLands : JavaPlugin() {
         landManager = LandManager()
 
         playerListListener = PlayerListListener()
+
+        bungeeApi = BungeeChannelApi.of(this)
+
 
         val handler = LandCommandHandler()
         handler.register("accept", Accept())
@@ -97,11 +103,6 @@ class TunaLands : JavaPlugin() {
         }
 
         configRead()
-
-        server.messenger.registerOutgoingPluginChannel(this, channelName)
-
-        server.messenger.registerIncomingPluginChannel(this, channelName, CommandListener())
-        server.messenger.registerIncomingPluginChannel(this, channelName, playerListListener)
 
         logger.info("Plugin is now enabled".consoleFormat())
     }

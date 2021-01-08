@@ -1,6 +1,6 @@
 package com.salkcoding.tunalands.listener
 
-import com.salkcoding.tunalands.bungee.listener.proxyPlayerSet
+import com.salkcoding.tunalands.bungee.proxyPlayerSet
 import com.salkcoding.tunalands.landManager
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener

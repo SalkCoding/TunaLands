@@ -1,4 +1,4 @@
-package com.salkcoding.tunalands.bungee.listener;
+package com.salkcoding.tunalands.bungee;
 
 import com.salkcoding.tunalands.channelName
 import com.salkcoding.tunalands.util.toDataInputStream

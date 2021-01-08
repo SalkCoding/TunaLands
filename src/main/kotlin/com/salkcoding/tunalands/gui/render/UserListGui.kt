@@ -3,7 +3,6 @@ package com.salkcoding.tunalands.gui.render
 import br.com.devsrsouza.kotlinbukkitapi.extensions.item.displayName
 import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.guiManager
-import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.*
@@ -149,7 +148,7 @@ class UserListGui(private val player: Player, private val lands: Lands, private 
         val start = currentPage * 36
         val length = min(playerList.size - start, 36)
 
-        for (i in start until length) {
+        for (i in 0 until length) {
             val head = (Material.PLAYER_HEAD * 1).apply {
                 val meta = this.itemMeta as SkullMeta
                 val entry = Bukkit.getOfflinePlayer(playerList[start + i])
