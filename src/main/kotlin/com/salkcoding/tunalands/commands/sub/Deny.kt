@@ -3,10 +3,13 @@ package com.salkcoding.tunalands.commands.sub
 import com.salkcoding.tunalands.bungeeApi
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
+import org.bukkit.Bukkit
+import org.bukkit.OfflinePlayer
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import java.util.*
 
 class Deny : CommandExecutor {
 
@@ -24,21 +27,44 @@ class Deny : CommandExecutor {
     }
 
     companion object {
-        fun work(player: Player) {
-            val uuid = player.uniqueId
-            if (inviteMap.containsKey(uuid)) {
-                val data = inviteMap[uuid]!!
-                val host = data.host
 
-                player.sendMessage("초대를 거절했습니다.".infoFormat())
-                if (host.isOnline)
-                    host.player!!.sendMessage("${player.name}이/가 당신의 초대를 거절하였습니다.".infoFormat())
-                else
-                    bungeeApi.sendMessage(host.name, "${player.name}이/가 당신의 초대를 거절하였습니다.".infoFormat())
+        fun work(uuid: UUID) {
+            val offlinePlayer = Bukkit.getOfflinePlayer(uuid)
+            work(offlinePlayer)
+        }
 
-                data.task.cancel()
-                inviteMap.remove(uuid)
-            } else player.sendMessage("받은 초대가 없습니다.".errorFormat())
+        private fun work(offlinePlayer: OfflinePlayer) {
+            val uuid = offlinePlayer.uniqueId
+            if (offlinePlayer.isOnline) {
+                val player = offlinePlayer.player!!
+                if (inviteMap.containsKey(uuid)) {
+                    val data = inviteMap[uuid]!!
+                    val host = data.host
+
+                    player.sendMessage("초대를 거절했습니다.".infoFormat())
+                    if (host.isOnline)
+                        host.player!!.sendMessage("${player.name}이/가 당신의 초대를 거절하였습니다.".infoFormat())
+                    else
+                        bungeeApi.sendMessage(host.name, "${player.name}이/가 당신의 초대를 거절하였습니다.".infoFormat())
+
+                    data.task.cancel()
+                    inviteMap.remove(uuid)
+                } else player.sendMessage("받은 초대가 없습니다.".errorFormat())
+            } else {
+                if (inviteMap.containsKey(uuid)) {
+                    val data = inviteMap[uuid]!!
+                    val host = data.host
+
+                    bungeeApi.sendMessage(offlinePlayer.name, "초대를 거절했습니다.".infoFormat())
+                    if (host.isOnline)
+                        host.player!!.sendMessage("${offlinePlayer.name}이/가 당신의 초대를 거절하였습니다.".infoFormat())
+                    else
+                        bungeeApi.sendMessage(host.name, "${offlinePlayer.name}이/가 당신의 초대를 거절하였습니다.".infoFormat())
+
+                    data.task.cancel()
+                    inviteMap.remove(uuid)
+                } else bungeeApi.sendMessage(offlinePlayer.name, "받은 초대가 없습니다.".errorFormat())
+            }
         }
     }
 }

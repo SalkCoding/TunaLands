@@ -32,7 +32,8 @@ class Leave : CommandExecutor {
     companion object {
 
         fun work(uuid: UUID) {
-
+            val player = Bukkit.getOfflinePlayer(uuid)
+            work(player)
         }
 
         private fun work(offlinePlayer: OfflinePlayer) {

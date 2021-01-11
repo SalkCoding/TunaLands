@@ -1,30 +1,22 @@
 package com.salkcoding.tunalands.bungee;
 
-import com.salkcoding.tunalands.channelName
 import com.salkcoding.tunalands.util.toDataInputStream
+import io.github.leonardosnt.bungeechannelapi.BungeeChannelApi
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
-import org.bukkit.plugin.messaging.PluginMessageListener
 import java.util.*
 
 val proxyPlayerSet = mutableSetOf<UUID>()
 
-class PlayerListListener : PluginMessageListener {
+class PlayerListListener : BungeeChannelApi.ForwardConsumer {
 
-    override fun onPluginMessageReceived(channel: String, player: Player, message: ByteArray) {
-        if (channel != channelName) return
-
-        val inMessage = message.toDataInputStream()
-        val subChannel = inMessage.readUTF()
-        val len = inMessage.readShort()
-        val byteArray = ByteArray(len.toInt())
-        inMessage.readFully(byteArray)
-        val result = byteArray.toDataInputStream()
+    override fun accept(channel: String, player: Player, data: ByteArray) {
+        val result = data.toDataInputStream()
         val uuid = UUID.fromString(result.readUTF())
-        when (subChannel) {//SubChannel
-            "PlayerJoin" -> proxyPlayerSet.add(uuid)
-            "PlayerQuit" -> {
-                Bukkit.getPlayer(uuid) ?: return
+        when (channel) {//SubChannel
+            "tunalands-playerjoin" -> proxyPlayerSet.add(uuid)
+            "tunalands-playerquit" -> {
+                if (Bukkit.getPlayer(uuid) != null) return
                 proxyPlayerSet.remove(uuid)
             }
         }

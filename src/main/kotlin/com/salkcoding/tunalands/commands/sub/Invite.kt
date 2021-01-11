@@ -18,8 +18,6 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.scheduler.BukkitTask
 import java.util.*
-import java.util.stream.Collectors
-
 
 val inviteMap = mutableMapOf<UUID, InviteData>()
 

@@ -23,7 +23,7 @@ class VisitGui(private val player: Player) : GuiInterface {
     private val landMap = landManager.getPlayerLandMap().filter { entry ->
         entry.value.enable
     }
-    private lateinit var landList: MutableList<UUID>
+    private lateinit var landList: List<UUID>
 
     private val sortButton = (Material.HOPPER * 1).apply {
         this.displayName("정렬 방법 선택")
@@ -68,7 +68,7 @@ class VisitGui(private val player: Player) : GuiInterface {
                 //Default sorting
                 landList = landMap.keys.sortedByDescending {
                     landMap[it]!!.landHistory.createdMillisecond
-                }.toMutableList()
+                }
                 "기본"
             }
             1 -> {
@@ -77,7 +77,7 @@ class VisitGui(private val player: Player) : GuiInterface {
                     landMap[it]!!.landHistory.createdMillisecond
                 }.filter {
                     landMap[it]!!.enable
-                }.toMutableList()
+                }
                 "공개 지역"
             }
             2 -> {
@@ -86,7 +86,7 @@ class VisitGui(private val player: Player) : GuiInterface {
                     landMap[it]!!.landHistory.createdMillisecond
                 }.filter {
                     !landMap[it]!!.enable
-                }.toMutableList()
+                }
                 "비공개 지역"
             }
             3 -> {
@@ -95,21 +95,21 @@ class VisitGui(private val player: Player) : GuiInterface {
                     landMap[it]!!.landHistory.createdMillisecond
                 }.filter {
                     landMap[it]!!.memberMap.size == 1
-                }.toMutableList()
+                }
                 "혼자"
             }
             4 -> {
                 //Member count sorting
                 landList = landMap.keys.sortedByDescending {
                     landMap[it]!!.memberMap.size
-                }.toMutableList()
+                }
                 "멤버 수"
             }
             5 -> {
                 //Visitor count sorting
                 landList = landMap.keys.sortedByDescending {
                     landMap[it]!!.landHistory.visitorCount
-                }.toMutableList()
+                }
                 "방문자 수"
             }
             else -> ""
@@ -159,7 +159,7 @@ class VisitGui(private val player: Player) : GuiInterface {
                 (0 until lands.lore.size).forEach { i ->
                     lore.add(i, lands.lore[i])
                 }
-                if (lands.enable) {
+                if (lands.open) {
                     lore.add("")
                     lore.add("클릭하여 이동할 수 있습니다.")
                 }
@@ -256,27 +256,27 @@ class VisitGui(private val player: Player) : GuiInterface {
                         }
 
                         player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
-                        player.teleportAsync(lands.visitorSpawn)
-                        /*TeleportCooltime.addPlayer(
+                        //player.teleportAsync(lands.visitorSpawn)
+                        TeleportCooltime.addPlayer(
                             player,
                             lands.visitorSpawn,
                             configuration.command.visitCooldown,
-                            null,
-                            false
-                        )*/
+                            {
+                                if (uuid in lands.memberMap) {
+                                    if (lands.memberMap[uuid]!!.rank == Rank.PARTTIMEJOB)
+                                        return@addPlayer
+                                }
 
-                        if (uuid in lands.memberMap) {
-                            if (lands.memberMap[uuid]!!.rank == Rank.PARTTIMEJOB)
-                                return
-                        }
-
-                        lands.landHistory.visitorCount++
-                        val current = System.currentTimeMillis()
-                        lands.memberMap[uuid] = Lands.MemberData(
-                            uuid,
-                            Rank.VISITOR,
-                            current,
-                            current
+                                lands.landHistory.visitorCount++
+                                val current = System.currentTimeMillis()
+                                lands.memberMap[uuid] = Lands.MemberData(
+                                    uuid,
+                                    Rank.VISITOR,
+                                    current,
+                                    current
+                                )
+                            },
+                            true
                         )
                     }
                 } else {

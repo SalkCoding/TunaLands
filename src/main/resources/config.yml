@@ -1,7 +1,6 @@
-serverName: "server"
+serverName: "lobby"
 
 protect:
-  serverName: "server"
   coreBlock: "DIAMOND_BLOCK" #Not ID, Material
   createPrice: 10
   baseMaxExtendCount: 5

@@ -7,29 +7,20 @@
 
 package io.github.leonardosnt.bungeechannelapi;
 
-import java.net.InetSocketAddress;
-import java.util.ArrayDeque;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Queue;
-import java.util.WeakHashMap;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.BiFunction;
-
+import com.google.common.collect.Iterables;
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.messaging.Messenger;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
-import com.google.common.collect.Iterables;
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
+import java.net.InetSocketAddress;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.BiFunction;
 
 import static com.salkcoding.tunalands.TunaLandsKt.channelName;
 
@@ -67,7 +58,7 @@ public class BungeeChannelApi {
   public BungeeChannelApi(Plugin plugin) {
     this.plugin = Objects.requireNonNull(plugin, "plugin cannot be null");
     this.callbackMap = new HashMap<>();
-    
+
     // Prevent dev's from registering multiple channel listeners,
     // by unregistering the old instance.
     synchronized (registeredInstances) {
@@ -97,16 +88,16 @@ public class BungeeChannelApi {
   /**
    * Set a listener for all 'forwarded' messages in a specific subchannel.
    *
-   * @param channelName the subchannel name
+   * @param subChannelName the sub channel name
    * @param listener the listener
    * @see <a href="https://www.spigotmc.org/wiki/bukkit-bungee-plugin-messaging-channel/#forward">https://www.spigotmc.org/wiki/bukkit-bungee-plugin-messaging-channel/#forward</a>
    */
-  public void registerForwardListener(String channelName, ForwardConsumer listener) {
+  public void registerForwardListener(String subChannelName, ForwardConsumer listener) {
     if (forwardListeners == null) {
       forwardListeners = new HashMap<>();
     }
     synchronized (forwardListeners) {
-      forwardListeners.put(channelName, listener);
+      forwardListeners.put(subChannelName, listener);
     }
   }
 
@@ -358,17 +349,17 @@ public class BungeeChannelApi {
    *        ALL to send to every server (except the one sending the plugin message),
    *        or ONLINE to send to every server that's online (except the one sending the plugin message).
    *
-   * @param channelName Subchannel for plugin usage.
+   * @param subChannel Sub channel for plugin usage.
    * @param data data to send.
    * @throws IllegalArgumentException if there is no players online.
    */
-  public void forward(String server, String channelName, byte[] data) {
+  public void forward(String server, String subChannel, byte[] data) {
     Player player = getFirstPlayer();
 
     ByteArrayDataOutput output = ByteStreams.newDataOutput();
     output.writeUTF("Forward");
     output.writeUTF(server);
-    output.writeUTF(channelName);
+    output.writeUTF(subChannel);
     output.writeShort(data.length);
     output.write(data);
     player.sendPluginMessage(this.plugin, channelName, output.toByteArray());
@@ -378,17 +369,17 @@ public class BungeeChannelApi {
    * Send a custom plugin message to specific player.
    *
    * @param playerName the name of the player to send to.
-   * @param channelName Subchannel for plugin usage.
+   * @param subChannel Sub channel for plugin usage.
    * @param data data to send.
    * @throws IllegalArgumentException if there is no players online.
    */
-  public void forwardToPlayer(String playerName, String channelName, byte[] data) {
+  public void forwardToPlayer(String playerName, String subChannel, byte[] data) {
     Player player = getFirstPlayer();
 
     ByteArrayDataOutput output = ByteStreams.newDataOutput();
     output.writeUTF("ForwardToPlayer");
     output.writeUTF(playerName);
-    output.writeUTF(channelName);
+    output.writeUTF(subChannel);
     output.writeShort(data.length);
     output.write(data);
     player.sendPluginMessage(this.plugin, channelName, output.toByteArray());
@@ -405,7 +396,7 @@ public class BungeeChannelApi {
       Queue<CompletableFuture<?>> callbacks;
 
       if (subchannel.equals("PlayerCount") || subchannel.equals("PlayerList") ||
-          subchannel.equals("UUIDOther") || subchannel.equals("ServerIP")) {
+              subchannel.equals("UUIDOther") || subchannel.equals("ServerIP")) {
         String identifier = input.readUTF(); // Server/player name
         callbacks = callbackMap.get(subchannel + "-" + identifier);
 

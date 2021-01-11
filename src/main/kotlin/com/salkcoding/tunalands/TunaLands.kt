@@ -1,5 +1,6 @@
 package com.salkcoding.tunalands
 
+import com.salkcoding.tunalands.bungee.CommandListener
 import com.salkcoding.tunalands.bungee.PlayerListListener
 import com.salkcoding.tunalands.commands.LandCommandHandler
 import com.salkcoding.tunalands.commands.debug.Debug
@@ -15,15 +16,13 @@ import org.bukkit.plugin.java.JavaPlugin
 
 
 const val chunkDebug = true
-const val channelName = "tunalands:main"
+const val channelName = "BungeeCord"
 
 lateinit var tunaLands: TunaLands
 lateinit var configuration: Config
 
 lateinit var guiManager: GuiManager
 lateinit var landManager: LandManager
-
-lateinit var playerListListener: PlayerListListener
 
 lateinit var bungeeApi: BungeeChannelApi
 
@@ -35,9 +34,12 @@ class TunaLands : JavaPlugin() {
         guiManager = GuiManager()
         landManager = LandManager()
 
-        playerListListener = PlayerListListener()
-
         bungeeApi = BungeeChannelApi.of(this)
+        val playerListListener = PlayerListListener()
+        bungeeApi.registerForwardListener("PlayerJoin", playerListListener)
+        bungeeApi.registerForwardListener("PlayerQuit", playerListListener)
+        //Global listener
+        bungeeApi.registerForwardListener(CommandListener())
 
 
         val handler = LandCommandHandler()
@@ -121,6 +123,7 @@ class TunaLands : JavaPlugin() {
 
         //Protect
         val serverName = config.getString("serverName")!!
+        logger.info("serverName: $serverName")
         val configProtect = config.getConfigurationSection("protect")!!
         val protect = Config.Protect(
             configProtect.getString("serverName")!!,
@@ -129,14 +132,14 @@ class TunaLands : JavaPlugin() {
             configProtect.getInt("baseMaxExtendCount"),
             configProtect.getInt("baseLimitExtendPrice")
         )
-        logger.info(protect.toString())
+        logger.info("protect: ${protect.toString().consoleFormat()}}")
         //Flag
         val configFlag = config.getConfigurationSection("flag")!!
         val flag = Config.Flag(
             configFlag.getInt("takeFlagPrice"),
             configFlag.getInt("releaseFlagPrice")
         )
-        logger.info(flag.toString())
+        logger.info("flag: ${flag.toString().consoleFormat()}")
         //Command
         val configCommand = config.getConfigurationSection("command")!!
         val cooldownSection = configCommand.getConfigurationSection("cooldown")!!
@@ -147,10 +150,10 @@ class TunaLands : JavaPlugin() {
             cooldownSection.getLong("spawn"),
             priceSection.getInt("setSpawnPrice")
         )
-        logger.info(command.toString())
+        logger.info("command: ${command.toString().consoleFormat()}")
         //Limit worlds
         val limitWorld = config.getStringList("limitWorld")
-        logger.info(limitWorld.toString())
+        logger.info("limitWorld: ${limitWorld.toString().consoleFormat()}")
 
         configuration = Config(serverName, protect, flag, command, limitWorld)
     }

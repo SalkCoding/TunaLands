@@ -19,7 +19,7 @@ import kotlin.math.min
 
 class UserListGui(private val player: Player, private val lands: Lands, private val rank: Rank) : GuiInterface {
 
-    private lateinit var playerList: MutableList<UUID>
+    private lateinit var playerList: List<UUID>
 
     private val sortButton = (Material.HOPPER * 1).apply {
         this.displayName("정렬 방법 선택")
@@ -76,7 +76,7 @@ class UserListGui(private val player: Player, private val lands: Lands, private 
                 //Default sorting
                 playerList = lands.memberMap.keys.sortedByDescending {
                     lands.memberMap[it]!!.lastLogin
-                }.toMutableList()
+                }
                 "기본"
             }
             1 -> {
@@ -88,7 +88,7 @@ class UserListGui(private val player: Player, private val lands: Lands, private 
                     } else {
                         0
                     }
-                }.toMutableList()
+                }
                 "관리 대리인"
             }
             2 -> {
@@ -100,7 +100,7 @@ class UserListGui(private val player: Player, private val lands: Lands, private 
                     } else {
                         0
                     }
-                }.toMutableList()
+                }
                 "멤버"
             }
             3 -> {
@@ -112,7 +112,7 @@ class UserListGui(private val player: Player, private val lands: Lands, private 
                     } else {
                         0
                     }
-                }.toMutableList()
+                }
                 "알바"
             }
             4 -> {
@@ -124,7 +124,7 @@ class UserListGui(private val player: Player, private val lands: Lands, private 
                     } else {
                         0
                     }
-                }.toMutableList()
+                }
                 "방문자"
             }
             else -> ""

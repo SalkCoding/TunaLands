@@ -3,7 +3,6 @@ package com.salkcoding.tunalands.gui.render
 import br.com.devsrsouza.kotlinbukkitapi.extensions.item.displayName
 import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.guiManager
-import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.*
@@ -25,7 +24,7 @@ class BanListGui(
     private val rank: Rank
 ) : GuiInterface {
 
-    private lateinit var playerList: MutableList<UUID>
+    private lateinit var playerList: List<UUID>
 
     private val sortButton = (Material.HOPPER * 1).apply {
         this.displayName("정렬 방법 선택")
@@ -62,14 +61,14 @@ class BanListGui(
                 //Default sorting
                 playerList = lands.banMap.keys.sortedBy {
                     lands.banMap[it]!!.banned
-                }.toMutableList()
+                }
                 "기본"
             }
             1 -> {
                 //Descending sorting
                 playerList = lands.banMap.keys.sortedByDescending {
                     lands.banMap[it]!!.banned
-                }.toMutableList()
+                }
                 "오래된 순"
             }
             else -> ""

@@ -5,7 +5,6 @@ import br.com.devsrsouza.kotlinbukkitapi.extensions.player.playSound
 import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.gui.render.settinggui.openSettingGui
 import com.salkcoding.tunalands.guiManager
-import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.tunaLands
@@ -25,7 +24,7 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
 
     //Dynamic
     private val totalInfoIcon = (Material.CAMPFIRE * 1).apply {
-        this.displayName("${player.name}의 지역")
+        this.displayName("${lands.ownerName}의 지역")
     }
 
     private val lockButton = (Material.IRON_DOOR * 1)

@@ -2,7 +2,6 @@ package com.salkcoding.tunalands.lands
 
 import com.salkcoding.tunalands.configuration
 import org.bukkit.OfflinePlayer
-import org.bukkit.entity.Player
 import java.util.*
 
 private val leftMap = mutableMapOf<UUID, Long>()

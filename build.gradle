@@ -8,16 +8,16 @@ version "1.0.0-SNAPSHOT"
 repositories {
     mavenCentral()
     maven {
+        name = "KotlinBukkitAPI"
         url "http://nexus.devsrsouza.com.br/repository/maven-public/"
     }
     maven {
-        url "https://papermc.io/repo/repository/maven-public/"
+        url "https://repo.pl3x.net/"
     }
 }
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
-    compileOnly "com.destroystokyo.paper:paper-api:1.16.4-R0.1-SNAPSHOT"
     compileOnly "br.com.devsrsouza.kotlinbukkitapi:core:0.2.0-SNAPSHOT"
-    compileOnly files("C:/Users/Josangbeom/Desktop/Minecraft/Library/pogu.jar.2020-12-21.jar")
+    compileOnly "net.pl3x.purpur:purpur-api:1.16.4-R0.1-SNAPSHOT"
 }

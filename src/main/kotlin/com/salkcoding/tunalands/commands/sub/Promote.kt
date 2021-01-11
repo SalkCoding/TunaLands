@@ -30,7 +30,8 @@ class Promote : CommandExecutor {
     companion object {
 
         fun work(uuid: UUID, targetName: String) {
-
+            val offlinePlayer = Bukkit.getOfflinePlayer(uuid)
+            work(offlinePlayer, targetName)
         }
 
         private fun work(offlinePlayer: OfflinePlayer, targetName: String) {

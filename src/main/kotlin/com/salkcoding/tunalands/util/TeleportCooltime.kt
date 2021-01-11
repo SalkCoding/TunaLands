@@ -19,12 +19,12 @@ object TeleportCooltime {
 
         var timer = timerMap[player.uniqueId]
         timer?.stop()
-        timer = timer ?: CoolTimer(player, to, cooldownTick, callback, isAsync)
+        timer = CoolTimer(player, to, cooldownTick, callback, isAsync)
 
         timerMap.remove(player.uniqueId)
 
         timerMap[player.uniqueId] = timer
-        timer.task = Bukkit.getScheduler().runTaskTimerAsynchronously(tunaLands, timer, 1, 4)
+        timer.task = Bukkit.getScheduler().runTaskTimerAsynchronously(tunaLands, timer, 1, 2)
     }
 
     internal class CoolTimer(
@@ -57,8 +57,10 @@ object TeleportCooltime {
             }
             if (cooldownTick < 0) {
                 player.sendMessage("이동중입니다.".infoFormat())
-                player.teleportAsync(to, PlayerTeleportEvent.TeleportCause.COMMAND)
                 player.world.playSound(player.location, Sound.ENTITY_ENDERMAN_TELEPORT, 0.5f, 1f)
+                Bukkit.getScheduler().runTask(tunaLands, Runnable {
+                    player.teleportAsync(to, PlayerTeleportEvent.TeleportCause.COMMAND)
+                })
                 if (callback != null) {
                     if (isAsync) Bukkit.getScheduler().runTaskAsynchronously(tunaLands, callback)
                     else Bukkit.getScheduler().runTask(tunaLands, callback)
@@ -86,11 +88,12 @@ object TeleportCooltime {
                 stop()
                 return
             }
-            cooldownTick -= 4
+            cooldownTick -= 2
         }
 
         fun stop() {
             task.cancel()
+            timerMap.remove(player.uniqueId)
             if (player.isOnline) Bukkit.getScheduler().runTask(tunaLands, Runnable {
                 player.removePotionEffect(
                     PotionEffectType.SLOW
