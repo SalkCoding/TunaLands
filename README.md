@@ -4,7 +4,7 @@
 * Kotlin 1.4.10 + Gradle
 
 ## Testing environment
-* [yatopia-1.16.4-paperclip-b17](https://yatopiamc.org)
+* [purpurclip-1.16.4-950](https://github.com/pl3xgaming/Purpur)
 * [GraalVM CE 20.3.0 (openjdk 11.0.9)](https://www.graalvm.org)
 * JVM Memory 512MB ~ 2GB
 
