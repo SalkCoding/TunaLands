@@ -1,6 +1,7 @@
 package com.salkcoding.tunalands.gui.render
 
 import br.com.devsrsouza.kotlinbukkitapi.extensions.item.displayName
+import com.salkcoding.tunalands.bungeeApi
 import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.guiManager
@@ -256,7 +257,6 @@ class VisitGui(private val player: Player) : GuiInterface {
                         }
 
                         player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
-                        //player.teleportAsync(lands.visitorSpawn)
                         TeleportCooltime.addPlayer(
                             player,
                             lands.visitorSpawn,
@@ -275,8 +275,19 @@ class VisitGui(private val player: Player) : GuiInterface {
                                     current,
                                     current
                                 )
+
+                                lands.memberMap.forEach { (uuid, _) ->
+                                    val member = Bukkit.getOfflinePlayer(uuid)
+                                    if (member.isOnline) {
+                                        member.player!!.sendMessage("${player.name}님이 땅에 방문했습니다.".infoFormat())
+                                    } else {
+                                        bungeeApi.sendMessage(
+                                            member.name, "${player.name}님이 땅에 방문했습니다.".infoFormat()
+                                        )
+                                    }
+                                }
                             },
-                            true
+                            false
                         )
                     }
                 } else {

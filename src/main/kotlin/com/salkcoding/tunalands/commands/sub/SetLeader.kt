@@ -58,7 +58,6 @@ class SetLeader : CommandExecutor {
                             Rank.DELEGATOR, Rank.MEMBER -> {
                                 if (targetOffline.isOnline) {
                                     val target = targetOffline.player!!
-                                    lands.ownerName = target.name
                                     landManager.changeChunksOwner(player, target)
 
                                     targetData.rank = Rank.OWNER

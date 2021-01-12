@@ -93,10 +93,9 @@ class Invite : CommandExecutor {
                         return
                     }
 
-                    player.sendMessage("${targetName}에게 멤버 초대장를 보냈습니다.".infoFormat())
-
                     //Online in current server
                     if (targetOffline.isOnline) {
+                        player.sendMessage("${targetName}에게 멤버 초대장를 보냈습니다.".infoFormat())
                         val target = targetOffline.player!!
                         target.sendMessage("${player.name}이/가 당신을 ${lands.ownerName}의 멤버로 초대했습니다.".infoFormat())
                         target.sendMessage("수락하시려면, /ld accept를 거부하시려면, /ld deny을 입력해주세요.".infoFormat())
@@ -114,6 +113,7 @@ class Invite : CommandExecutor {
                             )
                     } else {//Target is not online or in proxy server
                         if (targetUUID in proxyPlayerSet) {//In proxy server
+                            player.sendMessage("${targetName}에게 멤버 초대장를 보냈습니다.".infoFormat())
                             bungeeApi.sendMessage(
                                 targetName,
                                 "${player.name}이/가 당신을 ${lands.ownerName}의 멤버로 초대했습니다.".infoFormat()

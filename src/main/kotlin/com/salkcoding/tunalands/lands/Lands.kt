@@ -7,7 +7,7 @@ import java.util.*
 
 class Lands(
     var ownerName: String,
-    val ownerUUID: UUID,
+    var ownerUUID: UUID,
     val landList: MutableList<String>,
     val landHistory: LandHistory,
     val upCore: Location, //Chest

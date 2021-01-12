@@ -2,6 +2,8 @@ package com.salkcoding.tunalands
 
 import com.salkcoding.tunalands.bungee.CommandListener
 import com.salkcoding.tunalands.bungee.PlayerListListener
+import com.salkcoding.tunalands.bungee.ReloadListener
+import com.salkcoding.tunalands.bungee.proxyPlayerSet
 import com.salkcoding.tunalands.commands.LandCommandHandler
 import com.salkcoding.tunalands.commands.debug.Debug
 import com.salkcoding.tunalands.commands.sub.*
@@ -11,8 +13,12 @@ import com.salkcoding.tunalands.listener.*
 import com.salkcoding.tunalands.listener.region.*
 import com.salkcoding.tunalands.util.consoleFormat
 import io.github.leonardosnt.bungeechannelapi.BungeeChannelApi
+import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.plugin.java.JavaPlugin
+import java.io.ByteArrayOutputStream
+import java.io.DataOutputStream
+import java.io.IOException
 
 
 const val chunkDebug = true
@@ -36,10 +42,28 @@ class TunaLands : JavaPlugin() {
 
         bungeeApi = BungeeChannelApi.of(this)
         val playerListListener = PlayerListListener()
-        bungeeApi.registerForwardListener("PlayerJoin", playerListListener)
-        bungeeApi.registerForwardListener("PlayerQuit", playerListListener)
+        bungeeApi.registerForwardListener("tunalands-playerjoin", playerListListener)
+        bungeeApi.registerForwardListener("tunalands-playerquit", playerListListener)
+        bungeeApi.registerForwardListener("tunalands-reload", ReloadListener())
         //Global listener
         bungeeApi.registerForwardListener(CommandListener())
+
+        //For reload
+        server.onlinePlayers.forEach {
+            proxyPlayerSet.add(it.uniqueId)
+        }
+
+        Bukkit.getScheduler().runTaskAsynchronously(this, Runnable {
+            val messageBytes = ByteArrayOutputStream()
+            val messageOut = DataOutputStream(messageBytes)
+            try {
+                messageOut.writeUTF(configuration.serverName)
+            } catch (exception: IOException) {
+                exception.printStackTrace()
+            }
+
+            bungeeApi.forward("ALL", "tunalands-reload", messageBytes.toByteArray())
+        })
 
 
         val handler = LandCommandHandler()
@@ -126,7 +150,6 @@ class TunaLands : JavaPlugin() {
         logger.info("serverName: $serverName")
         val configProtect = config.getConfigurationSection("protect")!!
         val protect = Config.Protect(
-            configProtect.getString("serverName")!!,
             Material.valueOf(configProtect.getString("coreBlock")!!),
             configProtect.getInt("createPrice"),
             configProtect.getInt("baseMaxExtendCount"),
@@ -157,7 +180,6 @@ class TunaLands : JavaPlugin() {
 
         configuration = Config(serverName, protect, flag, command, limitWorld)
     }
-
 }
 
 data class Config(
@@ -169,7 +191,6 @@ data class Config(
 ) {
 
     data class Protect(
-        val serverName: String,
         val coreBlock: Material,
         val createPrice: Int,
         val baseMaxExtendCount: Int,

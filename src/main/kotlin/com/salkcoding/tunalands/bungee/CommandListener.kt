@@ -10,6 +10,7 @@ import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.consoleFormat
 import com.salkcoding.tunalands.util.errorFormat
+import com.salkcoding.tunalands.util.infoFormat
 import io.github.leonardosnt.bungeechannelapi.BungeeChannelApi
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -24,19 +25,22 @@ class CommandListener : BungeeChannelApi.ForwardConsumer {
     override fun accept(channel: String, receiver: Player, data: ByteArray) {
         //Sub channel
         val inMessage = ByteStreams.newDataInput(data)
-        val uuid = UUID.fromString(inMessage.readUTF())
         when (channel) {
             "tunalands-accept" -> {
+                val uuid = UUID.fromString(inMessage.readUTF())
                 Accept.work(uuid)
             }
             "tunalands-alba" -> {
+                val uuid = UUID.fromString(inMessage.readUTF())
                 Alba.work(uuid, inMessage.readUTF())
             }
             "tunalands-ban" -> {
+                val uuid = UUID.fromString(inMessage.readUTF())
                 Ban.work(uuid, inMessage.readUTF())
             }
             "tunalands-banlist" -> {
                 Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
+                    val uuid = UUID.fromString(inMessage.readUTF())
                     val name = inMessage.readUTF()
                     val lands = landManager.getPlayerLands(uuid, Rank.OWNER, Rank.DELEGATOR, Rank.MEMBER)
                     if (lands != null) {
@@ -67,37 +71,48 @@ class CommandListener : BungeeChannelApi.ForwardConsumer {
                 })
             }
             "tunalands-cancel" -> {
+                val uuid = UUID.fromString(inMessage.readUTF())
                 Cancel.work(uuid, inMessage.readUTF())
             }
             "tunalands-delete" -> {
+                val uuid = UUID.fromString(inMessage.readUTF())
                 Delete.work(uuid)
             }
             "tunalands-demote" -> {
+                val uuid = UUID.fromString(inMessage.readUTF())
                 Demote.work(uuid, inMessage.readUTF())
             }
             "tunalands-deny" -> {
+                val uuid = UUID.fromString(inMessage.readUTF())
                 Deny.work(uuid)
             }
             "tunalands-hego" -> {
+                val uuid = UUID.fromString(inMessage.readUTF())
                 Hego.work(uuid, inMessage.readUTF())
             }
             "tunalands-invite" -> {
+                val uuid = UUID.fromString(inMessage.readUTF())
                 Invite.work(uuid, inMessage.readUTF())
             }
             "tunalands-kick" -> {
+                val uuid = UUID.fromString(inMessage.readUTF())
                 Kick.work(uuid, inMessage.readUTF())
             }
             "tunalands-leave" -> {
+                val uuid = UUID.fromString(inMessage.readUTF())
                 Leave.work(uuid)
             }
             "tunalands-promote" -> {
+                val uuid = UUID.fromString(inMessage.readUTF())
                 Promote.work(uuid, inMessage.readUTF())
             }
             "tunalands-setleader" -> {
+                val uuid = UUID.fromString(inMessage.readUTF())
                 SetLeader.work(uuid, inMessage.readUTF())
             }
             "tunalands-spawn" -> {
                 Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
+                    val uuid = UUID.fromString(inMessage.readUTF())
                     val name = inMessage.readUTF()
                     val serverName = inMessage.readUTF()
                     val lands = landManager.getPlayerLands(uuid, Rank.OWNER, Rank.DELEGATOR, Rank.MEMBER)
@@ -117,19 +132,24 @@ class CommandListener : BungeeChannelApi.ForwardConsumer {
                 })
             }
             "tunalands-spawn-teleport" -> {
-                val player = Bukkit.getPlayer(uuid)
-                if (player != null) {
-                    val lands = landManager.getPlayerLands(uuid, Rank.OWNER, Rank.DELEGATOR, Rank.MEMBER)
-                    if (lands != null) {
-                        player.teleportAsync(lands.memberSpawn)
-                    }
-                }
+                Bukkit.getScheduler().runTaskLater(tunaLands, Runnable {
+                    val uuid = UUID.fromString(inMessage.readUTF())
+                    val player = Bukkit.getPlayer(uuid)
+                    if (player != null) {
+                        val lands = landManager.getPlayerLands(uuid, Rank.OWNER, Rank.DELEGATOR, Rank.MEMBER)
+                        if (lands != null) {
+                            player.teleportAsync(lands.memberSpawn)
+                        } else tunaLands.logger.warning("$uuid requested $channel but lands instance is null")
+                    } else tunaLands.logger.warning("$uuid requested $channel but player instance is null")
+                }, 15)
             }
             "tunalands-unban" -> {
+                val uuid = UUID.fromString(inMessage.readUTF())
                 Unban.work(uuid, inMessage.readUTF())
             }
             "tunalands-visit" -> {
                 Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
+                    val uuid = UUID.fromString(inMessage.readUTF())
                     val serverName = inMessage.readUTF()
                     val landMap = landManager.getPlayerLandMap().filter {
                         it.value.enable
@@ -165,6 +185,7 @@ class CommandListener : BungeeChannelApi.ForwardConsumer {
             }
             "tunalands-visit-connect" -> {
                 Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
+                    val uuid = UUID.fromString(inMessage.readUTF())
                     val name = inMessage.readUTF()
                     val serverName = inMessage.readUTF()
                     val targetUUID = UUID.fromString(inMessage.readUTF())
@@ -217,33 +238,47 @@ class CommandListener : BungeeChannelApi.ForwardConsumer {
                 })
             }
             "tunalands-visit-teleport" -> {
-                val player = Bukkit.getPlayer(uuid)
-                val targetUUID = UUID.fromString(inMessage.readUTF())
-                val lands = landManager.getPlayerLands(targetUUID, Rank.OWNER)
-                if (player != null) {
-                    if (lands != null) {
-                        val visitorSpawn = lands.visitorSpawn
-                        player.teleportAsync(visitorSpawn)
+                Bukkit.getScheduler().runTaskLater(tunaLands, Runnable {
+                    val uuid = UUID.fromString(inMessage.readUTF())
+                    val player = Bukkit.getPlayer(uuid)
+                    val targetUUID = UUID.fromString(inMessage.readUTF())
+                    val lands = landManager.getPlayerLands(targetUUID, Rank.OWNER)
+                    if (player != null) {
+                        if (lands != null) {
+                            val visitorSpawn = lands.visitorSpawn
+                            player.teleportAsync(visitorSpawn)
 
-                        lands.welcomeMessage.forEach {
-                            player.sendMessage(it)
-                        }
+                            lands.welcomeMessage.forEach {
+                                player.sendMessage(it)
+                            }
 
-                        if (uuid in lands.memberMap) {
-                            if (lands.memberMap[uuid]!!.rank == Rank.PARTTIMEJOB)
-                                return
-                        }
+                            if (uuid in lands.memberMap) {
+                                if (lands.memberMap[uuid]!!.rank == Rank.PARTTIMEJOB)
+                                    return@Runnable
+                            }
 
-                        lands.landHistory.visitorCount++
-                        val current = System.currentTimeMillis()
-                        lands.memberMap[uuid] = Lands.MemberData(
-                            uuid,
-                            Rank.VISITOR,
-                            current,
-                            current
-                        )
-                    } else tunaLands.logger.warning("$uuid requested $channel but lands object is null".consoleFormat())
-                } else tunaLands.logger.warning("$uuid requested $channel but player object is null".consoleFormat())
+                            lands.landHistory.visitorCount++
+                            val current = System.currentTimeMillis()
+                            lands.memberMap[uuid] = Lands.MemberData(
+                                uuid,
+                                Rank.VISITOR,
+                                current,
+                                current
+                            )
+
+                            lands.memberMap.forEach { (uuid, _) ->
+                                val member = Bukkit.getOfflinePlayer(uuid)
+                                if (member.isOnline) {
+                                    member.player!!.sendMessage("${player.name}님이 땅에 방문했습니다.".infoFormat())
+                                } else {
+                                    bungeeApi.sendMessage(
+                                        member.name, "${player.name}님이 땅에 방문했습니다.".infoFormat()
+                                    )
+                                }
+                            }
+                        } else tunaLands.logger.warning("$uuid requested $channel but lands instance is null".consoleFormat())
+                    } else tunaLands.logger.warning("$uuid requested $channel but player instance is null".consoleFormat())
+                }, 15)
             }
         }
     }

@@ -52,7 +52,7 @@ class Demote : CommandExecutor {
                     val targetOfflineData = lands.memberMap[targetOffline.uniqueId]
                     if (targetOfflineData != null) {
                         when (targetOfflineData.rank) {
-                            Rank.MEMBER -> {
+                            Rank.DELEGATOR -> {
                                 targetOfflineData.rank = Rank.MEMBER
 
                                 if (targetOffline.isOnline)
@@ -86,7 +86,7 @@ class Demote : CommandExecutor {
                     val targetOfflineData = lands.memberMap[targetOffline.uniqueId]
                     if (targetOfflineData != null) {
                         when (targetOfflineData.rank) {
-                            Rank.MEMBER -> {
+                            Rank.DELEGATOR -> {
                                 targetOfflineData.rank = Rank.MEMBER
 
                                 if (targetOffline.isOnline)

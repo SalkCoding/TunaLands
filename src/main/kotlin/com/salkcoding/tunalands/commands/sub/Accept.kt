@@ -46,10 +46,23 @@ class Accept : CommandExecutor {
                     val lands = landManager.getPlayerLands(host.uniqueId, Rank.OWNER, Rank.DELEGATOR)
                     if (lands != null) {
                         player.sendMessage("초대를 수락했습니다.".infoFormat())
-                        if (host.isOnline)
-                            host.player!!.sendMessage("${player.name}이/가 초대를 수락했습니다.".infoFormat())
-                        else
-                            bungeeApi.sendMessage(host.name, "${player.name}이/가 초대를 수락했습니다.".infoFormat())
+
+                        val rankString = when (data.targetRank) {
+                            Rank.MEMBER -> "멤버"
+                            Rank.PARTTIMEJOB -> "알바"
+                            else -> "null"
+                        }
+
+                        lands.memberMap.forEach { (uuid, _) ->
+                            val member = Bukkit.getOfflinePlayer(uuid)
+                            if (member.isOnline) {
+                                member.player!!.sendMessage("${player.name}님이 ${rankString}로 땅에 가입되었습니다.".infoFormat())
+                            } else {
+                                bungeeApi.sendMessage(
+                                    member.name, "${player.name}님이 ${rankString}로 땅에 가입되었습니다.".infoFormat()
+                                )
+                            }
+                        }
 
                         landManager.getPlayerLands(
                             player.uniqueId,
@@ -69,10 +82,23 @@ class Accept : CommandExecutor {
                     val lands = landManager.getPlayerLands(host.uniqueId, Rank.OWNER, Rank.DELEGATOR)
                     if (lands != null) {
                         bungeeApi.sendMessage(offlinePlayer.name, "초대를 수락했습니다.".infoFormat())
-                        if (host.isOnline)
-                            host.player!!.sendMessage("${offlinePlayer.name}이/가 초대를 수락했습니다.".infoFormat())
-                        else
-                            bungeeApi.sendMessage(host.name, "${offlinePlayer.name}이/가 초대를 수락했습니다.".infoFormat())
+
+                        val rankString = when (data.targetRank) {
+                            Rank.MEMBER -> "멤버"
+                            Rank.PARTTIMEJOB -> "알바"
+                            else -> "null"
+                        }
+
+                        lands.memberMap.forEach { (uuid, _) ->
+                            val member = Bukkit.getOfflinePlayer(uuid)
+                            if (member.isOnline) {
+                                member.player!!.sendMessage("${offlinePlayer.name}님이 ${rankString}로 땅에 가입되었습니다.".infoFormat())
+                            } else {
+                                bungeeApi.sendMessage(
+                                    member.name, "${offlinePlayer.name}님이 ${rankString}로 땅에 가입되었습니다.".infoFormat()
+                                )
+                            }
+                        }
 
                         landManager.getPlayerLands(
                             offlinePlayer.uniqueId,

@@ -1,5 +1,6 @@
 package com.salkcoding.tunalands.lands
 
+import br.com.devsrsouza.kotlinbukkitapi.extensions.server.player
 import com.salkcoding.tunalands.io.JsonReader
 import com.salkcoding.tunalands.io.JsonWriter
 import com.salkcoding.tunalands.tunaLands
@@ -62,21 +63,23 @@ class LandManager {
     }
 
     fun changeChunksOwner(oldOwner: OfflinePlayer, newOwner: OfflinePlayer) {
-        val lands = playerLandMap[oldOwner.uniqueId]!!
+        val lands = playerLandMap.remove(oldOwner.uniqueId)!!
+        lands.ownerName = newOwner.name!!
+        lands.ownerUUID = newOwner.uniqueId
         lands.landList.forEach { query ->
             val info = landMap[query]!!
-            info.ownerName = newOwner.name!!
-            info.ownerUUID = newOwner.uniqueId
+            info.ownerName = lands.ownerName
+            info.ownerUUID = lands.ownerUUID
         }
-        playerLandMap[newOwner.uniqueId] = lands
-        playerLandMap.remove(oldOwner.uniqueId)
+        playerLandMap[lands.ownerUUID] = lands
 
         Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
             val folder = File(tunaLands.dataFolder, "userdata")
             if (folder.exists()) {
                 val file = File(folder, "${oldOwner.uniqueId}.json")
-                if (file.exists())
-                    file.delete()
+                if (file.exists()){
+                    file.renameTo(File(folder, "${newOwner.uniqueId}.json"))
+                }
             }
         })
         //TODO update POGU data

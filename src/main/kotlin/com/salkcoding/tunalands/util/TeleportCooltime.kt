@@ -38,7 +38,7 @@ object TeleportCooltime {
         lateinit var task: BukkitTask
 
         init {
-            if (player.isOnline) player.addPotionEffect(
+            if (player.isOnline && !player.isOp) player.addPotionEffect(
                 PotionEffect(
                     PotionEffectType.SLOW,
                     (cooldownTick + 10).toInt(),
@@ -55,7 +55,7 @@ object TeleportCooltime {
                 stop()
                 return
             }
-            if (cooldownTick < 0) {
+            if (cooldownTick < 0 || player.isOp) {
                 player.sendMessage("이동중입니다.".infoFormat())
                 player.world.playSound(player.location, Sound.ENTITY_ENDERMAN_TELEPORT, 0.5f, 1f)
                 Bukkit.getScheduler().runTask(tunaLands, Runnable {
