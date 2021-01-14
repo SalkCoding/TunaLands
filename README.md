@@ -2,10 +2,9 @@
 
 ## Devloping environment
 * IntelliJ IDEA 2020.3.1 (Ultimate Edition)
-* Build #IU-203.6682.168, built on December 29, 2020
 * Runtime version: 11.0.9.1+11-b1145.63 amd64
 * Kotlin 14.1.0
-* Gradle
+* Gradle 6.7
 
 ## Testing environment
 * Windows 10 Home
