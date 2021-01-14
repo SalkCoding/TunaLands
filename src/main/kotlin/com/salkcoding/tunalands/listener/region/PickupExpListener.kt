@@ -14,7 +14,6 @@ class PickupExpListener : Listener {
         if (event.isCancelled) return
 
         val lands = landManager.getLandsWithChunk(event.experienceOrb.chunk) ?: return
-        if (!lands.enable) return
 
         val player = event.player
         if (player.uniqueId in lands.memberMap) {

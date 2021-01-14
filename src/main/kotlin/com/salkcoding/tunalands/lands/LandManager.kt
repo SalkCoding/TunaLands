@@ -22,12 +22,10 @@ class LandManager {
     private val playerLandMap = JsonReader.loadPlayerLandMap()
     private val task = Bukkit.getScheduler().runTaskTimerAsynchronously(tunaLands, Runnable {
         playerLandMap.forEach { (_, lands) ->
-            if (lands.enable) {
-                val expired = lands.expiredMillisecond
-                val present = System.currentTimeMillis()
-                if (present > expired)
-                    lands.enable = false
-            }
+            val expired = lands.expiredMillisecond
+            val present = System.currentTimeMillis()
+            if (present > expired)
+                deleteLands(lands.ownerUUID, lands.ownerName)
         }
     }, 100, 100)
 
@@ -55,12 +53,16 @@ class LandManager {
     }
 
     fun deleteLands(owner: OfflinePlayer) {
-        val lands = playerLandMap[owner.uniqueId]!!
+        deleteLands(owner.uniqueId, owner.name!!)
+    }
+
+    fun deleteLands(ownerUUID: UUID, ownerName: String) {
+        val lands = playerLandMap[ownerUUID]!!
         lands.landList.forEach { query ->
             landMap.remove(query)
         }
-        playerLandMap.remove(owner.uniqueId)
-        database.deleteAll(owner.uniqueId, owner.name!!)
+        playerLandMap.remove(ownerUUID)
+        database.deleteAll(ownerUUID, ownerName)
     }
 
     fun changeChunksOwner(oldOwner: OfflinePlayer, newOwner: OfflinePlayer) {
@@ -206,7 +208,7 @@ class LandManager {
             val ownerUUID = lands.ownerUUID
             if (chunk.isMeetOtherChunk(playerLandMap[ownerUUID]!!.landList)) {
                 playerLandMap[ownerUUID]!!.landList.add(query)
-                val chunkInfo = Lands.ChunkInfo(player.name, ownerUUID, chunk.world.name, chunk.x, chunk.z)
+                val chunkInfo = Lands.ChunkInfo(lands.ownerName, ownerUUID, chunk.world.name, chunk.x, chunk.z)
                 landMap[query] = chunkInfo
                 Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
                     val floodFill = playerLandMap[ownerUUID]!!.checkFloodFill()

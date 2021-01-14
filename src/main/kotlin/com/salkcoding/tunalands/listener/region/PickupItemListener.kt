@@ -20,7 +20,6 @@ class PickupItemListener : Listener {
         if (event.isCancelled) return
 
         val lands = landManager.getLandsWithChunk(event.item.chunk) ?: return
-        if (!lands.enable) return
 
         val player = event.entity as? Player ?: return
         if (player.uniqueId in lands.memberMap) {

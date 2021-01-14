@@ -17,7 +17,6 @@ class ThrowListener : Listener {
 
         val player = event.entity.shooter as? Player ?: return
         val lands = landManager.getLandsWithChunk(player.chunk) ?: return
-        if (!lands.enable) return
 
         when (event.entity.type) {
             EntityType.EGG -> {

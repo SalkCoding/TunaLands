@@ -16,7 +16,6 @@ class BreedListener : Listener {
         val entity = event.entity
 
         val lands = landManager.getLandsWithChunk(entity.chunk) ?: return
-        if (!lands.enable) return
 
         val player = event.breeder as? Player ?: return
         if (player.uniqueId in lands.memberMap) {

@@ -16,7 +16,6 @@ class ChestedHorseListener : Listener {
 
         val entity = event.rightClicked as? ChestedHorse ?: return
         val lands = landManager.getLandsWithChunk(entity.chunk) ?: return
-        if (!lands.enable) return
 
         val player = event.player
         if (player.uniqueId in lands.memberMap) {

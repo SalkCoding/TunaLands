@@ -144,7 +144,6 @@ object JsonWriter {
                 jsonObject.addProperty("ownerName", lands.ownerName)
                 jsonObject.addProperty("ownerUUID", lands.ownerUUID.toString())
                 jsonObject.addProperty("expiredMillisecond", lands.expiredMillisecond)
-                jsonObject.addProperty("enable", lands.enable)
                 jsonObject.addProperty("open", lands.open)
                 jsonObject.add("landList", jsonLandList)
                 jsonObject.add("landHistory", jsonLandHistory)

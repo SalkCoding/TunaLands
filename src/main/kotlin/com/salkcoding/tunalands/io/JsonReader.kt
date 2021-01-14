@@ -28,7 +28,6 @@ object JsonReader {
                 val ownerName = jsonObject["ownerName"].asString
                 val ownerUUID = UUID.fromString(jsonObject["ownerUUID"].asString)
                 val expiredMillisecond = jsonObject["expiredMillisecond"].asLong
-                val enable = jsonObject["enable"].asBoolean
                 val open = jsonObject["open"].asBoolean
                 val landList = mutableListOf<String>()
                 jsonObject["landList"].asJsonArray.forEach {
@@ -163,7 +162,6 @@ object JsonReader {
                         upCore,
                         downCore,
                         expiredMillisecond,
-                        enable,
                         open,
                         lore,
                         welcomeMessage,

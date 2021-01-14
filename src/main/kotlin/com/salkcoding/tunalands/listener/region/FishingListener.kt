@@ -15,7 +15,6 @@ class FishingListener : Listener {
 
         val player = event.player
         val lands = landManager.getLandsWithChunk(player.chunk) ?: return
-        if (!lands.enable) return
 
         if (player.uniqueId in lands.memberMap) {
             val setting = when (lands.memberMap[player.uniqueId]!!.rank) {

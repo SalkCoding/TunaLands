@@ -21,9 +21,7 @@ import java.util.*
 import kotlin.math.min
 
 class VisitGui(private val player: Player) : GuiInterface {
-    private val landMap = landManager.getPlayerLandMap().filter { entry ->
-        entry.value.enable
-    }
+    private val landMap = landManager.getPlayerLandMap()
     private lateinit var landList: List<UUID>
 
     private val sortButton = (Material.HOPPER * 1).apply {
@@ -76,8 +74,6 @@ class VisitGui(private val player: Player) : GuiInterface {
                 //Public sorting
                 landList = landMap.keys.sortedByDescending {
                     landMap[it]!!.landHistory.createdMillisecond
-                }.filter {
-                    landMap[it]!!.enable
                 }
                 "공개 지역"
             }
@@ -85,8 +81,6 @@ class VisitGui(private val player: Player) : GuiInterface {
                 //Private sorting
                 landList = landMap.keys.sortedByDescending {
                     landMap[it]!!.landHistory.createdMillisecond
-                }.filter {
-                    !landMap[it]!!.enable
                 }
                 "비공개 지역"
             }
@@ -222,11 +216,6 @@ class VisitGui(private val player: Player) : GuiInterface {
                 val lands = landMap[landList[index]] ?: return
                 if (!lands.open && !player.isOp) {
                     player.sendMessage("땅이 비공개 상태라 방문할 수 없습니다!".errorFormat())
-                    return
-                }
-
-                if (!lands.enable) {
-                    player.sendMessage("땅 보호가 만료되어 방문할 수 없습니다!".errorFormat())
                     return
                 }
 

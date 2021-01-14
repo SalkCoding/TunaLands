@@ -5,6 +5,7 @@ import br.com.devsrsouza.kotlinbukkitapi.extensions.player.playSound
 import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.gui.render.settinggui.openSettingGui
 import com.salkcoding.tunalands.guiManager
+import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.tunaLands
@@ -106,20 +107,10 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
         task = Bukkit.getScheduler().runTaskTimerAsynchronously(tunaLands, Runnable {
             val expired = lands.expiredMillisecond - System.currentTimeMillis()
             //Expired
-            if (expired < 1000 || !lands.enable) {
+            if (expired < 1000) {
                 player.sendMessage("보호 기간이 만료되어, 지역 보호가 비활성화됩니다!".warnFormat())
-                player.sendMessage("재활성화를 하시려면, 연료를 넣어주세요!".warnFormat())
-
-                totalInfoIcon.apply {
-                    this.lore = listOf(
-                        "보호: 비활성화",
-                        "점유한 지역: ${lands.landList.size}개",
-                        "멤버 수: ${lands.memberMap.size}명",
-                        "생성일: ${created.get(Calendar.YEAR)}/${created.get(Calendar.MONTH) + 1}/${created.get(Calendar.DATE)}"
-                    )
-                }
-                if (lands.enable)
-                    lands.enable = false
+                player.closeInventory()
+                landManager.deleteLands(lands.ownerUUID, lands.ownerName)
                 task.cancel()
                 return@Runnable
             }
@@ -192,8 +183,7 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                     val timeLore = lore[1].split(" ")[0]
                     val time = timeRegex.find(timeLore)!!.value.toInt()
                     //Expired refresh
-                    if (!lands.enable)
-                        lands.expiredMillisecond = System.currentTimeMillis()
+                    lands.expiredMillisecond = System.currentTimeMillis()
 
                     val measure = measureRegex.find(timeLore)!!.value
                     lands.expiredMillisecond += (fuel.amount * time * when (measure) {

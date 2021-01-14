@@ -17,7 +17,6 @@ class BlockBreakListener : Listener {
 
         val chunk = event.block.chunk
         val lands = landManager.getLandsWithChunk(chunk) ?: return
-        if (!lands.enable) return
 
         val player = event.player
         if (!landManager.isProtectedLand(chunk)) return

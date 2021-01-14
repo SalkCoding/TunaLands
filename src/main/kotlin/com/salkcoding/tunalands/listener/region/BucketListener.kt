@@ -16,7 +16,6 @@ class BucketListener : Listener {
         val block = event.blockClicked
 
         val lands = landManager.getLandsWithChunk(block.chunk) ?: return
-        if (!lands.enable) return
 
         val player = event.player
         if (player.uniqueId in lands.memberMap) {
@@ -41,7 +40,6 @@ class BucketListener : Listener {
         val block = event.blockClicked
 
         val lands = landManager.getLandsWithChunk(block.chunk) ?: return
-        if (!lands.enable) return
 
         val player = event.player
         if (player.uniqueId in lands.memberMap) {

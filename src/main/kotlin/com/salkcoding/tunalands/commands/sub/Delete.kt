@@ -7,6 +7,7 @@ import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
 import org.bukkit.Bukkit
+import org.bukkit.Material
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -43,9 +44,8 @@ class Delete : CommandExecutor {
                     if (lands.memberMap.size == 1) {
                         val upCore = lands.upCore
                         val downCore = lands.downCore
-                        //Destroy core naturally
-                        upCore.block.breakNaturally()
-                        downCore.block.breakNaturally()
+                        upCore.block.type = Material.AIR
+                        downCore.block.type = Material.AIR
 
                         landManager.deleteLands(player)
 
@@ -68,8 +68,8 @@ class Delete : CommandExecutor {
                         val upCore = lands.upCore
                         val downCore = lands.downCore
                         //Destroy core naturally
-                        upCore.block.breakNaturally()
-                        downCore.block.breakNaturally()
+                        upCore.block.type = Material.AIR
+                        downCore.block.type = Material.AIR
 
                         landManager.deleteLands(offlinePlayer)
 

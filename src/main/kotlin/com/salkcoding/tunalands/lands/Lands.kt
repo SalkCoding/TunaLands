@@ -14,7 +14,6 @@ class Lands(
     val downCore: Location, //Core block
     var expiredMillisecond: Long,
 
-    var enable: Boolean = true,
     var open: Boolean = false,
     var lore: MutableList<String> = mutableListOf(
         "${ownerName}의 땅입니다.",

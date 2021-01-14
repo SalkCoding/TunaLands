@@ -151,9 +151,7 @@ class CommandListener : BungeeChannelApi.ForwardConsumer {
                 Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
                     val uuid = UUID.fromString(inMessage.readUTF())
                     val serverName = inMessage.readUTF()
-                    val landMap = landManager.getPlayerLandMap().filter {
-                        it.value.enable
-                    }
+                    val landMap = landManager.getPlayerLandMap()
                     val landList = landMap.keys.toList()
                     //Page is index, i is indices step 36
                     //Send list page by page
@@ -193,11 +191,6 @@ class CommandListener : BungeeChannelApi.ForwardConsumer {
                     if (lands != null) {
                         if (!lands.open) {
                             bungeeApi.sendMessage(name, "땅이 비공개 상태라 방문할 수 없습니다!".errorFormat())
-                            return@Runnable
-                        }
-
-                        if (!lands.enable) {
-                            bungeeApi.sendMessage(name, "땅 보호가 만료되어 방문할 수 없습니다!".errorFormat())
                             return@Runnable
                         }
 

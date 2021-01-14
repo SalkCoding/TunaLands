@@ -22,7 +22,7 @@ class PVPListener : Listener {
             damager as? Player ?: return
 
         val lands = landManager.getLandsWithChunk(damager.chunk) ?: return
-        if (!lands.enable) return
+
         if (damager.uniqueId in lands.memberMap) {
             val damagerSetting = when (lands.memberMap[damager.uniqueId]!!.rank) {
                 Rank.OWNER, Rank.DELEGATOR -> return

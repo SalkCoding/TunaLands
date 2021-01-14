@@ -23,13 +23,13 @@ class Database {
         hikari = HikariDataSource(hikariConfig)
 
         //Create table
-        val query = "CREATE TABLE IF NOT EXIST tunalands_landlist (" +
-                "uuid VARCHAR(36) NOT NULL," +
-                "name VARCHAR(16) NOT NULL," +
-                "x INT(10) NOT NULL," +
-                "z INT(10) NOT NULL" +
+        val query = "CREATE TABLE IF NOT EXISTS tunalands_landlist (" +
+                "`uuid` VARCHAR(36) NOT NULL," +
+                "`name` VARCHAR(16) NOT NULL," +
+                "`x` INT(10) NOT NULL," +
+                "`z` INT(10) NOT NULL" +
                 ")" +
-                "COMMENT='Data set of Chunk coordinate x, y.'" +
+                "COMMENT='Data set of Chunk coordinate x, z.'" +
                 "COLLATE='utf8_general_ci'" +
                 "ENGINE=InnoDB" +
                 ";"
@@ -40,7 +40,7 @@ class Database {
     fun insert(chunkInfo: Lands.ChunkInfo) {
         Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
             val query =
-                "INSERT INTO tunalands_landlist VALUES(${chunkInfo.ownerUUID}, ${chunkInfo.ownerName}, ${chunkInfo.xChunk}, ${chunkInfo.zChunk})"
+                "INSERT INTO tunalands_landlist VALUES('${chunkInfo.ownerUUID}', '${chunkInfo.ownerName}', ${chunkInfo.xChunk}, ${chunkInfo.zChunk})"
             val prestate = hikari.connection.prepareStatement(query)
             prestate.executeUpdate()
         })
@@ -49,7 +49,7 @@ class Database {
     fun delete(chunkInfo: Lands.ChunkInfo) {
         Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
             val query =
-                "DELETE FROM tunalands_landlist WHERE uuid=${chunkInfo.ownerUUID} AND name=${chunkInfo.ownerName} AND x=${chunkInfo.xChunk} AND z=${chunkInfo.xChunk}"
+                "DELETE FROM tunalands_landlist WHERE `uuid`='${chunkInfo.ownerUUID}' AND `name`='${chunkInfo.ownerName}' AND `x`=${chunkInfo.xChunk} AND `z`=${chunkInfo.zChunk}"
             val prestate = hikari.connection.prepareStatement(query)
             prestate.executeUpdate()
         })
@@ -58,7 +58,7 @@ class Database {
     fun deleteAll(uuid: UUID, name: String) {
         Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
             val query =
-                "DELETE FROM tunalands_landlist WHERE uuid=${uuid} AND name=${name}"
+                "DELETE FROM tunalands_landlist WHERE `uuid`='${uuid}' AND `name`='${name}'"
             val prestate = hikari.connection.prepareStatement(query)
             prestate.executeUpdate()
         })
@@ -68,8 +68,8 @@ class Database {
         Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
             val query =
                 "UPDATE tunalands_landlist " +
-                        "SET uuid=${newUUID} AND name=${newName}" +
-                        "WHERE uuid=${oldUUID} AND name=${oldName}"
+                        "SET `uuid`='${newUUID}', `name`='${newName}' " +
+                        "WHERE `uuid`='${oldUUID}' AND `name`='${oldName}'"
             val prestate = hikari.connection.prepareStatement(query)
             prestate.executeUpdate()
         })
