@@ -1,45 +1,82 @@
 # TunaLands
 
-## Developing environment
-* Kotlin 1.4.10 + Gradle
+## Devloping environment
+* IntelliJ IDEA 2020.3.1 (Ultimate Edition)
+* Build #IU-203.6682.168, built on December 29, 2020
+* Runtime version: 11.0.9.1+11-b1145.63 amd64
+* Kotlin 14.1.0
+* Gradle
 
 ## Testing environment
+* Windows 10 Home
 * [purpurclip-1.16.4-950](https://github.com/pl3xgaming/Purpur)
 * [GraalVM CE 20.3.0 (openjdk 11.0.9)](https://www.graalvm.org)
-* JVM Memory 512MB ~ 2GB
+* JVM Memory 512MB ~ 2GB (No GUI)
 
 ## Dependencies
 * kotlin-stdlib
 * [purpurclip-1.16.4-950](https://github.com/pl3xgaming/Purpur)
-* [kotlinbukkitapi 0.2.0-SNAPSHOT](http://jenkins.devsrsouza.com.br/job/KotlinBukkitAPI/)
+* [kotlinbukkitapi 0.2.0-SNAPSHOT](https://github.com/DevSrSouza/KotlinBukkitAPI)
+* [Vault 1.7.3](https://github.com/MilkBowl/Vault)
+* [HikariCP 3.4.5](https://github.com/brettwooldridge/HikariCP)
 
-# File format
+# Data format
+
+## Database
+
+```
+CREATE TABLE `tunalands_landlist` (
+	`uuid` VARCHAR(36) NOT NULL COLLATE 'utf8_general_ci',
+	`name` VARCHAR(16) NOT NULL COLLATE 'utf8_general_ci',
+	`x` INT(10) NOT NULL,
+	`z` INT(10) NOT NULL
+)
+COMMENT='Data set of Chunk coordinate x, y.'
+COLLATE='utf8_general_ci'
+ENGINE=InnoDB
+;
+```
 
 ## Configuration format(YMAL)
 ```
-serverName: "server"
+serverName: "lobby"
+
+database:
+  name: 'test'
+  ip: 'localhost'
+  port: 3306
+  username: 'root'
+  password: 'test'
+  encoding: 'utf-8'
 
 protect:
-  coreBlock: DIAMOND_BLOCK #Not ID, Material
+  coreBlock: "DIAMOND_BLOCK" #Not ID, But Material
   createPrice: 10
   baseMaxExtendCount: 5
   baseLimitExtendPrice: 5
 
 flag:
-	takeFlagPrice: 10
-  removeFlagPrice: 5
+  takeFlagPrice: 10
+  releaseFlagPrice: 5
+
+fuel:
+  m30: 30
+  h1: 50
+  h6: 290
+  h12: 570
+  h24: 1100
 
 command:
   cooldown: #Tick
     rejoin: 5184000 #3d
-    visit: 200 #10s
-    spawn: 200 #10s
+    visit: 100 #5s
+    spawn: 100 #5s
   price:
     setSpawnPrice: 10
 
 limitWorld:
-    - world_nether
-    - world_the_end
+  - world_nether
+  - world_the_end
 ```
 
 ## Save format(Json)

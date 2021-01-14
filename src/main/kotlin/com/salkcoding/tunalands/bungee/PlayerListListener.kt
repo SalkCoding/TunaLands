@@ -1,5 +1,6 @@
 package com.salkcoding.tunalands.bungee;
 
+import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.toDataInputStream
 import io.github.leonardosnt.bungeechannelapi.BungeeChannelApi
 import org.bukkit.Bukkit
@@ -16,8 +17,10 @@ class PlayerListListener : BungeeChannelApi.ForwardConsumer {
         when (channel) {//SubChannel
             "tunalands-playerjoin" -> proxyPlayerSet.add(uuid)
             "tunalands-playerquit" -> {
-                if (Bukkit.getPlayer(uuid) != null) return
-                proxyPlayerSet.remove(uuid)
+                Bukkit.getScheduler().runTaskLater(tunaLands, Runnable {
+                    if (Bukkit.getPlayer(uuid) == null)
+                        proxyPlayerSet.remove(uuid)
+                }, 5)
             }
         }
     }

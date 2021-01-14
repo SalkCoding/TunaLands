@@ -7,11 +7,11 @@ import com.salkcoding.tunalands.bungee.proxyPlayerSet
 import com.salkcoding.tunalands.commands.LandCommandHandler
 import com.salkcoding.tunalands.commands.debug.Debug
 import com.salkcoding.tunalands.commands.sub.*
+import com.salkcoding.tunalands.database.Database
 import com.salkcoding.tunalands.gui.GuiManager
 import com.salkcoding.tunalands.lands.LandManager
 import com.salkcoding.tunalands.listener.*
 import com.salkcoding.tunalands.listener.region.*
-import com.salkcoding.tunalands.util.consoleFormat
 import io.github.leonardosnt.bungeechannelapi.BungeeChannelApi
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -19,6 +19,7 @@ import org.bukkit.plugin.java.JavaPlugin
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 import java.io.IOException
+import net.milkbowl.vault.economy.Economy
 
 
 const val chunkDebug = true
@@ -26,11 +27,11 @@ const val channelName = "BungeeCord"
 
 lateinit var tunaLands: TunaLands
 lateinit var configuration: Config
-
 lateinit var guiManager: GuiManager
 lateinit var landManager: LandManager
-
 lateinit var bungeeApi: BungeeChannelApi
+lateinit var economy: Economy
+lateinit var database: Database
 
 class TunaLands : JavaPlugin() {
 
@@ -39,6 +40,7 @@ class TunaLands : JavaPlugin() {
 
         guiManager = GuiManager()
         landManager = LandManager()
+        database = Database()
 
         bungeeApi = BungeeChannelApi.of(this)
         val playerListListener = PlayerListListener()
@@ -122,7 +124,7 @@ class TunaLands : JavaPlugin() {
         server.pluginManager.registerEvents(PlayerConnectListener(), this)
 
         if (chunkDebug) {
-            logger.warning("Chunk debug mode is enabled.".consoleFormat())
+            logger.warning("Chunk debug mode is enabled.")
             server.scheduler.runTaskTimer(this, Runnable {
                 landManager.debug()
             }, 20, 5)
@@ -130,21 +132,32 @@ class TunaLands : JavaPlugin() {
 
         configRead()
 
-        logger.info("Plugin is now enabled".consoleFormat())
+        logger.info("Plugin is now enabled")
     }
 
     override fun onDisable() {
         landManager.close()
+        database.close()
         guiManager.allClose()
-        logger.warning("All guis are closed".consoleFormat())
+        logger.warning("All guis are closed")
 
-        logger.warning("All of chunks are now unprotected".consoleFormat())
-        logger.warning("Plugin is now disabled".consoleFormat())
+        logger.warning("All of chunks are now unprotected")
+        logger.warning("Plugin is now disabled")
     }
 
     private fun configRead() {
         saveDefaultConfig()
-
+        //DataBase
+        val databaseConfig = config.getConfigurationSection("database")!!
+        val database = Config.Database(
+            databaseConfig.getString("name")!!,
+            databaseConfig.getString("ip")!!,
+            databaseConfig.getInt("port"),
+            databaseConfig.getString("username")!!,
+            databaseConfig.getString("password")!!,
+            databaseConfig.getString("encoding")!!
+        )
+        logger.info("database: $database")
         //Protect
         val serverName = config.getString("serverName")!!
         logger.info("serverName: $serverName")
@@ -155,14 +168,24 @@ class TunaLands : JavaPlugin() {
             configProtect.getInt("baseMaxExtendCount"),
             configProtect.getInt("baseLimitExtendPrice")
         )
-        logger.info("protect: ${protect.toString().consoleFormat()}}")
+        logger.info("protect: $protect")
         //Flag
         val configFlag = config.getConfigurationSection("flag")!!
         val flag = Config.Flag(
             configFlag.getInt("takeFlagPrice"),
             configFlag.getInt("releaseFlagPrice")
         )
-        logger.info("flag: ${flag.toString().consoleFormat()}")
+        logger.info("flag: $flag")
+        //Fuel
+        val configFuel = config.getConfigurationSection("fuel")!!
+        val fuel = Config.Fuel(
+            configFuel.getInt("m30"),
+            configFuel.getInt("h1"),
+            configFuel.getInt("h6"),
+            configFuel.getInt("h12"),
+            configFuel.getInt("h24"),
+        )
+        logger.info("fuel: $fuel")
         //Command
         val configCommand = config.getConfigurationSection("command")!!
         val cooldownSection = configCommand.getConfigurationSection("cooldown")!!
@@ -173,22 +196,46 @@ class TunaLands : JavaPlugin() {
             cooldownSection.getLong("spawn"),
             priceSection.getInt("setSpawnPrice")
         )
-        logger.info("command: ${command.toString().consoleFormat()}")
+        logger.info("command: $command")
         //Limit worlds
         val limitWorld = config.getStringList("limitWorld")
-        logger.info("limitWorld: ${limitWorld.toString().consoleFormat()}")
+        logger.info("limitWorld: $limitWorld")
 
-        configuration = Config(serverName, protect, flag, command, limitWorld)
+        configuration = Config(database, serverName, protect, flag, fuel, command, limitWorld)
+
+        if (!setupEconomy()) {
+            logger.warning("[${description.name}] - Disabled due to no Vault dependency found!")
+            server.pluginManager.disablePlugin(this)
+            return
+        }
+    }
+
+    private fun setupEconomy(): Boolean {
+        if (server.pluginManager.getPlugin("Vault") == null) return false
+        val rsp = server.servicesManager.getRegistration(Economy::class.java) ?: return false
+        economy = rsp.provider
+        return true
     }
 }
 
 data class Config(
+    val dataBase: Database,
     val serverName: String,
     val protect: Protect,
     val flag: Flag,
+    val fuel: Fuel,
     val command: Command,
     val limitWorld: List<String>
 ) {
+
+    data class Database constructor(
+        val name: String,
+        val ip: String,
+        val port: Int,
+        val username: String,
+        val password: String,
+        val encoding: String
+    )
 
     data class Protect(
         val coreBlock: Material,
@@ -200,6 +247,14 @@ data class Config(
     data class Flag(
         val takeFlagPrice: Int,
         val releaseFlagPrice: Int
+    )
+
+    data class Fuel(
+        val m30: Int,
+        val h1: Int,
+        val h6: Int,
+        val h12: Int,
+        val h24: Int
     )
 
     data class Command(

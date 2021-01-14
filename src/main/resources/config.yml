@@ -1,7 +1,15 @@
 serverName: "lobby"
 
+database:
+  name: 'test'
+  ip: 'localhost'
+  port: 3306
+  username: 'root'
+  password: 'test'
+  encoding: 'utf-8'
+
 protect:
-  coreBlock: "DIAMOND_BLOCK" #Not ID, Material
+  coreBlock: "DIAMOND_BLOCK" #Not ID, But Material
   createPrice: 10
   baseMaxExtendCount: 5
   baseLimitExtendPrice: 5
@@ -9,6 +17,13 @@ protect:
 flag:
   takeFlagPrice: 10
   releaseFlagPrice: 5
+
+fuel:
+  m30: 30
+  h1: 50
+  h6: 290
+  h12: 570
+  h24: 1100
 
 command:
   cooldown: #Tick
@@ -19,5 +34,5 @@ command:
     setSpawnPrice: 10
 
 limitWorld:
-    - world_nether
-    - world_the_end
+  - world_nether
+  - world_the_end

@@ -14,6 +14,5 @@ class ReloadListener : BungeeChannelApi.ForwardConsumer {
         for (i in 1..size) {
             proxyPlayerSet.add(UUID.fromString(inMessage.readUTF()))
         }
-        tunaLands.logger.info("UUID $size were accepted")
     }
 }

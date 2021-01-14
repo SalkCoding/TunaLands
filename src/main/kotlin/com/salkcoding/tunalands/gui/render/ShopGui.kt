@@ -2,14 +2,12 @@ package com.salkcoding.tunalands.gui.render
 
 import br.com.devsrsouza.kotlinbukkitapi.extensions.item.displayName
 import com.salkcoding.tunalands.configuration
+import com.salkcoding.tunalands.economy
 import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.guiManager
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
-import com.salkcoding.tunalands.util.backButton
-import com.salkcoding.tunalands.util.blackPane
-import com.salkcoding.tunalands.util.giveOrDrop
-import com.salkcoding.tunalands.util.times
+import com.salkcoding.tunalands.util.*
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -39,7 +37,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
         private val fuel30Minutes = (Material.PAPER * 1).apply {
             this.displayName("연료")
             this.lore = listOf(
-                "가격: ${30}캔",
+                "가격: ${configuration.fuel.m30}캔",
                 "30분 동안 유지되는 연료이다."
             )
         }
@@ -47,7 +45,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
         private val fuel1Hour = (Material.PAPER * 1).apply {
             this.displayName("연료")
             this.lore = listOf(
-                "가격: ${50}캔",
+                "가격: ${configuration.fuel.h1}캔",
                 "1시간 동안 유지되는 연료이다."
             )
         }
@@ -55,7 +53,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
         private val fuel6Hours = (Material.PAPER * 1).apply {
             this.displayName("연료")
             this.lore = listOf(
-                "가격: ${290}캔",
+                "가격: ${configuration.fuel.h6}캔",
                 "6시간 동안 유지되는 연료이다."
             )
         }
@@ -63,7 +61,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
         private val fuel12Hours = (Material.PAPER * 1).apply {
             this.displayName("연료")
             this.lore = listOf(
-                "가격: ${570}캔",
+                "가격: ${configuration.fuel.h12}캔",
                 "12시간 동안 유지되는 연료이다."
             )
         }
@@ -71,7 +69,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
         private val fuel24Hours = (Material.PAPER * 1).apply {
             this.displayName("연료")
             this.lore = listOf(
-                "가격: ${1100}캔",
+                "가격: ${configuration.fuel.h24}캔",
                 "24시간 동안 유지되는 연료이다."
             )
         }
@@ -109,10 +107,16 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
             0 -> {
                 player.openMainGui(lands, rank)
             }
-            //TODO paying code
             20 -> {
                 when (rank) {
                     Rank.OWNER, Rank.DELEGATOR -> {
+                        val price = configuration.flag.takeFlagPrice.toDouble()
+                        if (player.hasEnoughMoney(price)) {
+                            player.sendMessage("캔이 부족합니다.".errorFormat())
+                            return
+                        }
+                        economy.withdrawPlayer(player, price)
+
                         player.giveOrDrop(takeFlag)
                     }
                     else -> {
@@ -123,6 +127,13 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
             21 -> {
                 when (rank) {
                     Rank.OWNER, Rank.DELEGATOR -> {
+                        val price = configuration.flag.releaseFlagPrice.toDouble()
+                        if (player.hasEnoughMoney(price)) {
+                            player.sendMessage("캔이 부족합니다.".errorFormat())
+                            return
+                        }
+                        economy.withdrawPlayer(player, price)
+
                         player.giveOrDrop(releaseFlag)
                     }
                     else -> {
@@ -131,18 +142,53 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 }
             }
             29 -> {
+                val price = configuration.fuel.m30.toDouble()
+                if (player.hasEnoughMoney(price)) {
+                    player.sendMessage("캔이 부족합니다.".errorFormat())
+                    return
+                }
+                economy.withdrawPlayer(player, price)
+
                 player.giveOrDrop(fuel30Minutes)
             }
             30 -> {
+                val price = configuration.fuel.h1.toDouble()
+                if (player.hasEnoughMoney(price)) {
+                    player.sendMessage("캔이 부족합니다.".errorFormat())
+                    return
+                }
+                economy.withdrawPlayer(player, price)
+
                 player.giveOrDrop(fuel1Hour)
             }
             31 -> {
+                val price = configuration.fuel.h6.toDouble()
+                if (player.hasEnoughMoney(price)) {
+                    player.sendMessage("캔이 부족합니다.".errorFormat())
+                    return
+                }
+                economy.withdrawPlayer(player, price)
+
                 player.giveOrDrop(fuel6Hours)
             }
             32 -> {
+                val price = configuration.fuel.h12.toDouble()
+                if (player.hasEnoughMoney(price)) {
+                    player.sendMessage("캔이 부족합니다.".errorFormat())
+                    return
+                }
+                economy.withdrawPlayer(player, price)
+
                 player.giveOrDrop(fuel12Hours)
             }
             33 -> {
+                val price = configuration.fuel.h24.toDouble()
+                if (player.hasEnoughMoney(price)) {
+                    player.sendMessage("캔이 부족합니다.".errorFormat())
+                    return
+                }
+                economy.withdrawPlayer(player, price)
+
                 player.giveOrDrop(fuel24Hours)
             }
         }

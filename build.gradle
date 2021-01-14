@@ -11,13 +11,12 @@ repositories {
         name = "KotlinBukkitAPI"
         url "http://nexus.devsrsouza.com.br/repository/maven-public/"
     }
-    maven {
-        url "https://repo.pl3x.net/"
-    }
+    maven { url "https://repo.pl3x.net/" }
 }
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
     compileOnly "br.com.devsrsouza.kotlinbukkitapi:core:0.2.0-SNAPSHOT"
     compileOnly "net.pl3x.purpur:purpur-api:1.16.4-R0.1-SNAPSHOT"
+    compile 'com.zaxxer:HikariCP:3.4.5'
 }

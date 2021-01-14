@@ -1,6 +1,6 @@
 package com.salkcoding.tunalands.lands
 
-import br.com.devsrsouza.kotlinbukkitapi.extensions.server.player
+import com.salkcoding.tunalands.database
 import com.salkcoding.tunalands.io.JsonReader
 import com.salkcoding.tunalands.io.JsonWriter
 import com.salkcoding.tunalands.tunaLands
@@ -60,6 +60,7 @@ class LandManager {
             landMap.remove(query)
         }
         playerLandMap.remove(owner.uniqueId)
+        database.deleteAll(owner.uniqueId, owner.name!!)
     }
 
     fun changeChunksOwner(oldOwner: OfflinePlayer, newOwner: OfflinePlayer) {
@@ -73,16 +74,17 @@ class LandManager {
         }
         playerLandMap[lands.ownerUUID] = lands
 
+        database.replaceAll(oldOwner.uniqueId, oldOwner.name!!, newOwner.uniqueId, newOwner.name!!)
+
         Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
             val folder = File(tunaLands.dataFolder, "userdata")
             if (folder.exists()) {
                 val file = File(folder, "${oldOwner.uniqueId}.json")
-                if (file.exists()){
+                if (file.exists()) {
                     file.renameTo(File(folder, "${newOwner.uniqueId}.json"))
                 }
             }
         })
-        //TODO update POGU data
     }
 
     fun getPlayerLandMap(): ConcurrentHashMap<UUID, Lands> {
@@ -180,7 +182,9 @@ class LandManager {
                     ).apply {
                         this.memberMap[uuid] = Lands.MemberData(uuid, Rank.OWNER, now, now)
                     }
-                landMap[query] = Lands.ChunkInfo(player.name, uuid, chunk.world.name, chunk.x, chunk.z)
+                val chunkInfo = Lands.ChunkInfo(player.name, uuid, chunk.world.name, chunk.x, chunk.z)
+                landMap[query] = chunkInfo
+                database.insert(chunkInfo)
                 player.sendMessage("해당 위치의 땅을 구매했습니다.".infoFormat())
             }
         }
@@ -202,12 +206,14 @@ class LandManager {
             val ownerUUID = lands.ownerUUID
             if (chunk.isMeetOtherChunk(playerLandMap[ownerUUID]!!.landList)) {
                 playerLandMap[ownerUUID]!!.landList.add(query)
-                landMap[query] = Lands.ChunkInfo(player.name, ownerUUID, chunk.world.name, chunk.x, chunk.z)
+                val chunkInfo = Lands.ChunkInfo(player.name, ownerUUID, chunk.world.name, chunk.x, chunk.z)
+                landMap[query] = chunkInfo
                 Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
                     val floodFill = playerLandMap[ownerUUID]!!.checkFloodFill()
                     Bukkit.getScheduler().runTask(tunaLands, Runnable {
                         if (floodFill) {
                             flag.amount -= 1
+                            database.insert(chunkInfo)
                             player.sendMessage("해당 위치의 땅을 구매했습니다.".infoFormat())
                         } else {
                             playerLandMap[ownerUUID]!!.landList.remove(query)
@@ -248,6 +254,7 @@ class LandManager {
                                 if (floodFill) {
                                     if (lands.landList.isEmpty()) playerLandMap.remove(player.uniqueId)
                                     flag.amount -= 1
+                                    database.delete(removedInfo)
                                     player.sendMessage("제거되었습니다.".infoFormat())
                                 } else {
                                     landMap[query] = removedInfo
