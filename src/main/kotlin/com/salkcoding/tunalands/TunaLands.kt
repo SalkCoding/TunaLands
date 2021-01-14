@@ -40,7 +40,6 @@ class TunaLands : JavaPlugin() {
 
         guiManager = GuiManager()
         landManager = LandManager()
-        database = Database()
 
         bungeeApi = BungeeChannelApi.of(this)
         val playerListListener = PlayerListListener()
@@ -131,6 +130,8 @@ class TunaLands : JavaPlugin() {
         }
 
         configRead()
+
+        database = Database()
 
         logger.info("Plugin is now enabled")
     }
