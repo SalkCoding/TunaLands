@@ -6,11 +6,13 @@ import com.salkcoding.tunalands.tunaLands
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import org.bukkit.Bukkit
+import java.sql.Connection
+import java.sql.SQLException
 import java.util.*
 
 class Database {
 
-    private val hikari: HikariDataSource
+    private var hikari: HikariDataSource
 
     init {
         val hikariConfig = HikariConfig()
@@ -33,59 +35,114 @@ class Database {
                 "COLLATE='utf8_general_ci'" +
                 "ENGINE=InnoDB" +
                 ";"
-        val prestate = hikari.connection.prepareStatement(query)
-        prestate.executeUpdate()
+        val connection = hikari.connection
+        try {
+            val prestate = connection.prepareStatement(query)
+            try {
+                prestate.executeUpdate()
+            } catch (e: SQLException) {
+                e.printStackTrace()
+            } finally {
+                prestate.close()
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        } finally {
+            connection.close()
+        }
     }
 
     fun insert(chunkInfo: Lands.ChunkInfo) {
         Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
-            val query =
-                "INSERT INTO tunalands_landlist VALUES(?, ?, ?, ?)"
-            val prestate = hikari.connection.prepareStatement(query)
-            prestate.setString(1, chunkInfo.ownerUUID.toString())
-            prestate.setString(2, chunkInfo.ownerName)
-            prestate.setInt(3, chunkInfo.xChunk)
-            prestate.setInt(4, chunkInfo.zChunk)
-            prestate.executeUpdate()
+            val connection = hikari.connection
+            try {
+                val prestate = connection.prepareStatement("INSERT INTO tunalands_landlist VALUES(?, ?, ?, ?)")
+                try {
+                    prestate.setString(1, chunkInfo.ownerUUID.toString())
+                    prestate.setString(2, chunkInfo.ownerName)
+                    prestate.setInt(3, chunkInfo.xChunk)
+                    prestate.setInt(4, chunkInfo.zChunk)
+                    prestate.executeUpdate()
+                } catch (e: SQLException) {
+                    e.printStackTrace()
+                } finally {
+                    prestate.close()
+                }
+            } catch (e: SQLException) {
+                e.printStackTrace()
+            } finally {
+                connection.close()
+            }
         })
     }
 
     fun delete(chunkInfo: Lands.ChunkInfo) {
         Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
-            val query =
-                "DELETE FROM tunalands_landlist WHERE `uuid`=? AND `name`=? AND `x`=? AND `z`=?"
-            val prestate = hikari.connection.prepareStatement(query)
-            prestate.setString(1, chunkInfo.ownerUUID.toString())
-            prestate.setString(2, chunkInfo.ownerName)
-            prestate.setInt(3, chunkInfo.xChunk)
-            prestate.setInt(4, chunkInfo.zChunk)
-            prestate.executeUpdate()
+            val connection = hikari.connection
+            try {
+                val prestate = connection.prepareStatement("DELETE FROM tunalands_landlist WHERE `uuid`=? AND `name`=? AND `x`=? AND `z`=?")
+                try {
+                    prestate.setString(1, chunkInfo.ownerUUID.toString())
+                    prestate.setString(2, chunkInfo.ownerName)
+                    prestate.setInt(3, chunkInfo.xChunk)
+                    prestate.setInt(4, chunkInfo.zChunk)
+                    prestate.executeUpdate()
+                } catch (e: SQLException) {
+                    e.printStackTrace()
+                } finally {
+                    prestate.close()
+                }
+            } catch (e: SQLException) {
+                e.printStackTrace()
+            } finally {
+                connection.close()
+            }
         })
     }
 
     fun deleteAll(uuid: UUID, name: String) {
         Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
-            val query =
-                "DELETE FROM tunalands_landlist WHERE `uuid`=? AND `name`=?"
-            val prestate = hikari.connection.prepareStatement(query)
-            prestate.setString(1, uuid.toString())
-            prestate.setString(2, name)
-            prestate.executeUpdate()
+            val connection = hikari.connection
+            try {
+                val prestate = connection.prepareStatement("DELETE FROM tunalands_landlist WHERE `uuid`=? AND `name`=?")
+                try {
+                    prestate.setString(1, uuid.toString())
+                    prestate.setString(2, name)
+                    prestate.executeUpdate()
+                } catch (e: SQLException) {
+                    e.printStackTrace()
+                } finally {
+                    prestate.close()
+                }
+            } catch (e: SQLException) {
+                e.printStackTrace()
+            } finally {
+                connection.close()
+            }
         })
     }
 
     fun replaceAll(oldUUID: UUID, oldName: String, newUUID: UUID, newName: String) {
         Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
-            val query =
-                "UPDATE tunalands_landlist " +
-                        "SET `uuid`=?, `name`=? " +
-                        "WHERE `uuid`=? AND name`=?"
-            val prestate = hikari.connection.prepareStatement(query)
-            prestate.setString(1, newUUID.toString())
-            prestate.setString(2, newName)
-            prestate.setString(3, oldUUID.toString())
-            prestate.setString(4, oldName)
-            prestate.executeUpdate()
+            val connection = hikari.connection
+            try {
+                val prestate = connection.prepareStatement("UPDATE tunalands_landlist SET `uuid`=?, `name`=? WHERE `uuid`=? AND name`=?")
+                try {
+                    prestate.setString(1, newUUID.toString())
+                    prestate.setString(2, newName)
+                    prestate.setString(3, oldUUID.toString())
+                    prestate.setString(4, oldName)
+                    prestate.executeUpdate()
+                } catch (e: SQLException) {
+                    e.printStackTrace()
+                } finally {
+                    prestate.close()
+                }
+            } catch (e: SQLException) {
+                e.printStackTrace()
+            } finally {
+                connection.close()
+            }
         })
     }
 
