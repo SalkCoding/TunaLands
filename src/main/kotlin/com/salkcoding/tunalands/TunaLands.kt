@@ -8,6 +8,8 @@ import com.salkcoding.tunalands.commands.LandCommandHandler
 import com.salkcoding.tunalands.commands.debug.Debug
 import com.salkcoding.tunalands.commands.sub.*
 import com.salkcoding.tunalands.database.Database
+import com.salkcoding.tunalands.display.DisplayChunkListener
+import com.salkcoding.tunalands.display.DisplayManager
 import com.salkcoding.tunalands.gui.GuiManager
 import com.salkcoding.tunalands.lands.LandManager
 import com.salkcoding.tunalands.listener.*
@@ -29,6 +31,7 @@ lateinit var tunaLands: TunaLands
 lateinit var configuration: Config
 lateinit var guiManager: GuiManager
 lateinit var landManager: LandManager
+lateinit var displayManager: DisplayManager
 lateinit var bungeeApi: BungeeChannelApi
 lateinit var economy: Economy
 lateinit var database: Database
@@ -40,6 +43,7 @@ class TunaLands : JavaPlugin() {
 
         guiManager = GuiManager()
         landManager = LandManager()
+        displayManager = DisplayManager()
 
         bungeeApi = BungeeChannelApi.of(this)
         val playerListListener = PlayerListListener()
@@ -65,7 +69,6 @@ class TunaLands : JavaPlugin() {
 
             bungeeApi.forward("ALL", "tunalands-reload", messageBytes.toByteArray())
         })
-
 
         val handler = LandCommandHandler()
         handler.register("accept", Accept())
@@ -114,6 +117,7 @@ class TunaLands : JavaPlugin() {
 
         server.pluginManager.registerEvents(ChatListener(), this)
         server.pluginManager.registerEvents(ChestGuiOpenListener(), this)
+        server.pluginManager.registerEvents(DisplayChunkListener(), this)
         server.pluginManager.registerEvents(CoreListener(), this)
         server.pluginManager.registerEvents(ExplodeListener(), this)
         server.pluginManager.registerEvents(FlagListener(), this)

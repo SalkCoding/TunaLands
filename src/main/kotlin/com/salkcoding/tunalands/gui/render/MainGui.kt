@@ -107,11 +107,10 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
         task = Bukkit.getScheduler().runTaskTimerAsynchronously(tunaLands, Runnable {
             val expired = lands.expiredMillisecond - System.currentTimeMillis()
             //Expired
-            if (expired < 1000) {
+            if (expired < 1000) {//Just close, DO NOT DELETE DATA OR BLOCK HERE
                 player.sendMessage("보호 기간이 만료되어, 지역 보호가 비활성화됩니다!".warnFormat())
-                player.closeInventory()
-                landManager.deleteLands(lands.ownerUUID, lands.ownerName)
                 task.cancel()
+                Bukkit.getScheduler().runTask(tunaLands, Runnable(player::closeInventory))
                 return@Runnable
             }
             //Not expired
@@ -194,7 +193,7 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
 
                     player.sendMessage("${time * fuel.amount}${measure}이 추가되었습니다!".infoFormat())
                     event.inventory.setItem(4, null)
-                    //화악 타오르는듯한 소리
+                    //TODO 화악 타오르는듯한 소리
                 }, 2)
             }
             10 -> {

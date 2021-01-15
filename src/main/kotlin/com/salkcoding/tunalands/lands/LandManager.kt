@@ -1,6 +1,7 @@
 package com.salkcoding.tunalands.lands
 
 import com.salkcoding.tunalands.database
+import com.salkcoding.tunalands.displayManager
 import com.salkcoding.tunalands.io.JsonReader
 import com.salkcoding.tunalands.io.JsonWriter
 import com.salkcoding.tunalands.tunaLands
@@ -58,6 +59,7 @@ class LandManager {
 
     fun deleteLands(ownerUUID: UUID, ownerName: String) {
         val lands = playerLandMap[ownerUUID]!!
+        displayManager.removeDisplayInChunk(lands.upCore.chunk)
         lands.landList.forEach { query ->
             landMap.remove(query)
         }
@@ -100,7 +102,7 @@ class LandManager {
     //Be careful to Rank.PartiTimeJob and Rank.Visitor as not be conflicted with Rank.Owner, Rank.Delegator, Rank.Member
     fun getPlayerLands(
         playerUUID: UUID,
-        vararg filter: Rank = arrayOf(Rank.OWNER, Rank.DELEGATOR, Rank.MEMBER, Rank.PARTTIMEJOB, Rank.VISITOR)
+        vararg filter: Rank = arrayOf(*Rank.values())
     ): Lands? {
         playerLandMap.forEach { (_, lands) ->
             if (playerUUID in lands.memberMap)
@@ -112,7 +114,7 @@ class LandManager {
 
     fun getPlayerLandsList(
         playerUUID: UUID,
-        vararg filter: Rank = arrayOf(Rank.OWNER, Rank.DELEGATOR, Rank.MEMBER, Rank.PARTTIMEJOB, Rank.VISITOR)
+        vararg filter: Rank = arrayOf(*Rank.values())
     ): List<Lands> {
         val landsList = mutableListOf<Lands>()
         playerLandMap.forEach { (_, lands) ->
@@ -125,13 +127,7 @@ class LandManager {
 
     fun getPlayerLandList(
         playerUUID: UUID,
-        vararg filter: Rank = arrayOf(
-            Rank.OWNER,
-            Rank.DELEGATOR,
-            Rank.MEMBER,
-            Rank.PARTTIMEJOB,
-            Rank.VISITOR
-        )
+        vararg filter: Rank = arrayOf(*Rank.values())
     ): List<String>? {
         playerLandMap.forEach { (_, lands) ->
             if (playerUUID in lands.memberMap)
@@ -168,25 +164,28 @@ class LandManager {
             if (!playerLandMap.containsKey(uuid)) {
                 val now = System.currentTimeMillis()
                 val expired = Calendar.getInstance()
-                expired.add(Calendar.MINUTE, 30)//30 Minutes(Temp value)
-                playerLandMap[uuid] =
-                    Lands(
-                        player.name,
-                        uuid,
-                        mutableListOf(query),
-                        Lands.LandHistory(
-                            0,
-                            now
-                        ),
-                        upCore.location,
-                        downCore.location,
-                        expired.timeInMillis
-                    ).apply {
-                        this.memberMap[uuid] = Lands.MemberData(uuid, Rank.OWNER, now, now)
-                    }
+                expired.add(Calendar.SECOND, 10)//1 Day
+                val lands = Lands(
+                    player.name,
+                    uuid,
+                    mutableListOf(query),
+                    Lands.LandHistory(
+                        0,
+                        now
+                    ),
+                    upCore.location,
+                    downCore.location,
+                    expired.timeInMillis
+                ).apply {
+                    this.memberMap[uuid] = Lands.MemberData(uuid, Rank.OWNER, now, now)
+                }
+                playerLandMap[uuid] = lands
                 val chunkInfo = Lands.ChunkInfo(player.name, uuid, chunk.world.name, chunk.x, chunk.z)
                 landMap[query] = chunkInfo
                 database.insert(chunkInfo)
+                val location = lands.upCore.toCenterLocation()
+                location.y += 1
+                displayManager.createDisplay(location, lands)
                 player.sendMessage("해당 위치의 땅을 구매했습니다.".infoFormat())
             }
         }

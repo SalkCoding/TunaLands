@@ -6,13 +6,12 @@ import com.salkcoding.tunalands.tunaLands
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import org.bukkit.Bukkit
-import java.sql.Connection
 import java.sql.SQLException
 import java.util.*
 
 class Database {
 
-    private var hikari: HikariDataSource
+    private val hikari: HikariDataSource
 
     init {
         val hikariConfig = HikariConfig()
