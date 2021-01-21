@@ -164,7 +164,7 @@ class LandManager {
             if (!playerLandMap.containsKey(uuid)) {
                 val now = System.currentTimeMillis()
                 val expired = Calendar.getInstance()
-                expired.add(Calendar.SECOND, 10)//1 Day
+                expired.add(Calendar.DATE, 1)//1 Day
                 val lands = Lands(
                     player.name,
                     uuid,
@@ -183,9 +183,7 @@ class LandManager {
                 val chunkInfo = Lands.ChunkInfo(player.name, uuid, chunk.world.name, chunk.x, chunk.z)
                 landMap[query] = chunkInfo
                 database.insert(chunkInfo)
-                val location = lands.upCore.toCenterLocation()
-                location.y += 1
-                displayManager.createDisplay(location, lands)
+                displayManager.createDisplay(lands)
                 player.sendMessage("해당 위치의 땅을 구매했습니다.".infoFormat())
             }
         }

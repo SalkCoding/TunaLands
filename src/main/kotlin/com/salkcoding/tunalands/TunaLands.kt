@@ -14,18 +14,17 @@ import com.salkcoding.tunalands.gui.GuiManager
 import com.salkcoding.tunalands.lands.LandManager
 import com.salkcoding.tunalands.listener.*
 import com.salkcoding.tunalands.listener.region.*
-import io.github.leonardosnt.bungeechannelapi.BungeeChannelApi
+import com.salkcoding.tunalands.bungee.channelapi.BungeeChannelApi
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 import java.io.IOException
-import net.milkbowl.vault.economy.Economy
+import com.salkcoding.tunalands.vault.economy.Economy
 
 
 const val chunkDebug = true
-const val channelName = "BungeeCord"
 
 lateinit var tunaLands: TunaLands
 lateinit var configuration: Config
@@ -141,6 +140,7 @@ class TunaLands : JavaPlugin() {
     }
 
     override fun onDisable() {
+        displayManager.deleteAll()
         landManager.close()
         database.close()
         guiManager.allClose()

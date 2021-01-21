@@ -21,9 +21,7 @@ class DisplayChunkListener : Listener {
             val coreChunk = lands.upCore.chunk
             //Core chunk
             if (chunk.isSameChunk(coreChunk)) {
-                val location = lands.upCore.toCenterLocation()
-                location.y += 1
-                displayManager.createDisplay(location, lands)
+                displayManager.createDisplay(lands)
             }
         }
     }

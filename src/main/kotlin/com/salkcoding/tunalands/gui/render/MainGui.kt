@@ -2,6 +2,7 @@ package com.salkcoding.tunalands.gui.render
 
 import br.com.devsrsouza.kotlinbukkitapi.extensions.item.displayName
 import br.com.devsrsouza.kotlinbukkitapi.extensions.player.playSound
+import com.salkcoding.tunalands.displayManager
 import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.gui.render.settinggui.openSettingGui
 import com.salkcoding.tunalands.guiManager
@@ -115,16 +116,19 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
             }
             //Not expired
             totalInfoIcon.apply {
+                val days = expired / 86400000
+                val hours = (expired / 3600000) % 24
+                val minutes = (expired / 60000) % 60
+                val seconds = (expired / 1000) % 60
+                val fuel = when {
+                    days > 0 -> "남은 연료: ${days}일 ${hours}시간 ${minutes}분 ${seconds}초"
+                    hours > 0 -> "남은 연료: ${hours}시간 ${minutes}분 ${seconds}초"
+                    minutes > 0 -> "남은 연료: ${minutes}분 ${seconds}초"
+                    seconds > 0 -> "남은 연료: ${seconds}초"
+                    else -> "NULL"
+                }
                 this.lore = listOf(
-                    "남은 연료: ${
-                        expired / 86400000
-                    }일 ${
-                        (expired / 3600000) % 24
-                    }시간 ${
-                        (expired / 60000) % 60
-                    }분 ${
-                        (expired / 1000) % 60
-                    }초",
+                    fuel,
                     "점유한 지역: ${lands.landList.size}개",
                     "멤버 수: ${lands.memberMap.size}명",
                     "생성일: ${created.get(Calendar.YEAR)}/${created.get(Calendar.MONTH) + 1}/${created.get(Calendar.DATE)}"
@@ -277,4 +281,5 @@ fun Player.openMainGui(lands: Lands, rank: Rank) {
 
     val view = this.openInventory(inventory)!!
     guiManager.guiMap[view] = gui
+    displayManager.createDisplay(lands)
 }

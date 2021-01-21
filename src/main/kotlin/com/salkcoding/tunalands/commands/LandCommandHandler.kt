@@ -1,7 +1,5 @@
 package com.salkcoding.tunalands.commands
 
-import com.salkcoding.tunalands.util.consoleFormat
-import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -15,7 +13,6 @@ class LandCommandHandler : CommandExecutor {
         val lowerCase = command.toLowerCase()
         if (lowerCase !in commandMap) {
             commandMap[lowerCase] = executor
-            Bukkit.getLogger().info("Command $lowerCase registered".consoleFormat())
         } else
             throw IllegalArgumentException("Command: $lowerCase is already registered.")
     }

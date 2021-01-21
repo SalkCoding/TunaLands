@@ -16,11 +16,15 @@ class DisplayManager {
     //Chunk query
     private val displayMap = mutableMapOf<String, Display>()
 
-    fun createDisplay(location: Location, lands: Lands) {
+    fun createDisplay(lands: Lands) {
+        val location = lands.upCore.toCenterLocation()
+        location.y += 1
+        val query = location.chunk.toQuery()
+        if (query in displayMap) return
+
         val hologram = HologramsAPI.createHologram(tunaLands, location)
         hologram.appendTextLine("${lands.ownerName}의 지역")
         hologram.appendTextLine("남은 연료: NULL")
-        val query = location.chunk.toQuery()
         val created = Calendar.getInstance()
         created.timeInMillis = lands.landHistory.createdMillisecond
         val task = Bukkit.getScheduler().runTaskTimerAsynchronously(tunaLands, Runnable {
@@ -41,17 +45,16 @@ class DisplayManager {
             } else {
                 Bukkit.getScheduler().runTask(tunaLands, Runnable {
                     hologram.removeLine(1)
-                    hologram.appendTextLine(
-                        "남은 연료: ${
-                            expired / 86400000
-                        }일 ${
-                            (expired / 3600000) % 24
-                        }시간 ${
-                            (expired / 60000) % 60
-                        }분 ${
-                            (expired / 1000) % 60
-                        }초"
-                    )
+                    val days = expired / 86400000
+                    val hours = (expired / 3600000) % 24
+                    val minutes = (expired / 60000) % 60
+                    val seconds = (expired / 1000) % 60
+                    when {
+                        days > 0 -> hologram.appendTextLine("남은 연료: ${days}일 ${hours}시간 ${minutes}분 ${seconds}초")
+                        hours > 0 -> hologram.appendTextLine("남은 연료: ${hours}시간 ${minutes}분 ${seconds}초")
+                        minutes > 0 -> hologram.appendTextLine("남은 연료: ${minutes}분 ${seconds}초")
+                        seconds > 0 -> hologram.appendTextLine("남은 연료: ${seconds}초")
+                    }
                 })
             }
         }, 5, 20)
@@ -62,6 +65,13 @@ class DisplayManager {
         val query = chunk.toQuery()
         if (query in displayMap) {
             val display = displayMap[query]!!
+            display.task.cancel()
+            display.hologram.delete()
+        }
+    }
+
+    fun deleteAll() {
+        displayMap.forEach { (_, display) ->
             display.task.cancel()
             display.hologram.delete()
         }

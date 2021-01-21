@@ -1,6 +1,7 @@
 package com.salkcoding.tunalands.bungee
 
 import com.google.common.io.ByteStreams
+import com.salkcoding.tunalands.bungee.channelapi.BungeeChannelApi
 import com.salkcoding.tunalands.bungeeApi
 import com.salkcoding.tunalands.commands.sub.*
 import com.salkcoding.tunalands.configuration
@@ -8,10 +9,8 @@ import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.tunaLands
-import com.salkcoding.tunalands.util.consoleFormat
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
-import io.github.leonardosnt.bungeechannelapi.BungeeChannelApi
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.io.ByteArrayOutputStream
@@ -269,8 +268,8 @@ class CommandListener : BungeeChannelApi.ForwardConsumer {
                                     )
                                 }
                             }
-                        } else tunaLands.logger.warning("$uuid requested $channel but lands instance is null".consoleFormat())
-                    } else tunaLands.logger.warning("$uuid requested $channel but player instance is null".consoleFormat())
+                        } else tunaLands.logger.warning("$uuid requested $channel but lands instance is null")
+                    } else tunaLands.logger.warning("$uuid requested $channel but player instance is null")
                 }, 15)
             }
         }

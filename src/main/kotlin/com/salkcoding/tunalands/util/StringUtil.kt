@@ -13,7 +13,3 @@ fun String.warnFormat(): String {
 fun String.errorFormat(): String {
     return "${ChatColor.WHITE}[${ChatColor.RED}!${ChatColor.WHITE}] ${ChatColor.RESET}$this"
 }
-
-fun String.consoleFormat(): String {
-    return "[TunaLands] $this"
-}

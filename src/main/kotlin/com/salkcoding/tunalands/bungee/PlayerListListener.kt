@@ -1,8 +1,8 @@
 package com.salkcoding.tunalands.bungee;
 
+import com.salkcoding.tunalands.bungee.channelapi.BungeeChannelApi
 import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.toDataInputStream
-import io.github.leonardosnt.bungeechannelapi.BungeeChannelApi
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.util.*

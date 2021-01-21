@@ -1,8 +1,7 @@
 package com.salkcoding.tunalands.bungee
 
 import com.google.common.io.ByteStreams
-import com.salkcoding.tunalands.tunaLands
-import io.github.leonardosnt.bungeechannelapi.BungeeChannelApi
+import com.salkcoding.tunalands.bungee.channelapi.BungeeChannelApi
 import org.bukkit.entity.Player
 import java.util.*
 
