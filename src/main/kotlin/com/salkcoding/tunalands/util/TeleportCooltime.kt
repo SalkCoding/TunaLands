@@ -34,7 +34,7 @@ object TeleportCooltime {
         private val callback: Runnable?,
         private val isAsync: Boolean
     ) : Runnable {
-        private var last: Location = player.location
+        private val last: Location = player.location
         lateinit var task: BukkitTask
 
         init {
@@ -78,12 +78,7 @@ object TeleportCooltime {
                 player.world.spawnParticle(Particle.PORTAL, player.location, 5)
             }
 
-            if (last.world.name != player.location.world.name) {
-                stop()
-                return
-            }
-
-            if (last.distance(player.location) > 1) {
+            if (last == player.location) {
                 player.sendMessage("텔레포트 중 이동하셔서 텔레포트가 취소됩니다.".warnFormat())
                 stop()
                 return

@@ -1,9 +1,6 @@
 package com.salkcoding.tunalands
 
 import com.salkcoding.tunalands.bungee.CommandListener
-import com.salkcoding.tunalands.bungee.PlayerListListener
-import com.salkcoding.tunalands.bungee.ReloadListener
-import com.salkcoding.tunalands.bungee.proxyPlayerSet
 import com.salkcoding.tunalands.commands.LandCommandHandler
 import com.salkcoding.tunalands.commands.debug.Debug
 import com.salkcoding.tunalands.commands.sub.*
@@ -22,6 +19,8 @@ import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 import java.io.IOException
 import com.salkcoding.tunalands.vault.economy.Economy
+import me.baiks.bukkitlinked.BukkitLinked
+import me.baiks.bukkitlinked.api.BukkitLinkedAPI
 
 
 const val chunkDebug = true
@@ -31,6 +30,7 @@ lateinit var configuration: Config
 lateinit var guiManager: GuiManager
 lateinit var landManager: LandManager
 lateinit var displayManager: DisplayManager
+lateinit var bukkitLinkedAPI: BukkitLinkedAPI
 lateinit var bungeeApi: BungeeChannelApi
 lateinit var economy: Economy
 lateinit var database: Database
@@ -44,18 +44,16 @@ class TunaLands : JavaPlugin() {
         landManager = LandManager()
         displayManager = DisplayManager()
 
+        val bukkitLinked = server.pluginManager.getPlugin("BukkitLinked") as? BukkitLinked
+        if(bukkitLinked == null){
+            server.pluginManager.disablePlugin(this)
+            return
+        }
+        bukkitLinkedAPI = bukkitLinked.api
+
         bungeeApi = BungeeChannelApi.of(this)
-        val playerListListener = PlayerListListener()
-        bungeeApi.registerForwardListener("tunalands-playerjoin", playerListListener)
-        bungeeApi.registerForwardListener("tunalands-playerquit", playerListListener)
-        bungeeApi.registerForwardListener("tunalands-reload", ReloadListener())
         //Global listener
         bungeeApi.registerForwardListener(CommandListener())
-
-        //For reload
-        server.onlinePlayers.forEach {
-            proxyPlayerSet.add(it.uniqueId)
-        }
 
         Bukkit.getScheduler().runTaskAsynchronously(this, Runnable {
             val messageBytes = ByteArrayOutputStream()
@@ -123,7 +121,6 @@ class TunaLands : JavaPlugin() {
         server.pluginManager.registerEvents(InventoryClickListener(), this)
         server.pluginManager.registerEvents(InventoryCloseListener(), this)
         server.pluginManager.registerEvents(InventoryDragListener(), this)
-        server.pluginManager.registerEvents(PlayerConnectListener(), this)
 
         if (chunkDebug) {
             logger.warning("Chunk debug mode is enabled.")

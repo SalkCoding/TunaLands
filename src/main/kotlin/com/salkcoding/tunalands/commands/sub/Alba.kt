@@ -1,6 +1,7 @@
 package com.salkcoding.tunalands.commands.sub
 
-import com.salkcoding.tunalands.bungee.proxyPlayerSet
+
+import com.salkcoding.tunalands.bukkitLinkedAPI
 import com.salkcoding.tunalands.bungeeApi
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
@@ -39,6 +40,11 @@ class Alba : CommandExecutor {
         }
 
         private fun work(offlinePlayer: OfflinePlayer, targetName: String) {
+            val onlinePlayerSet = mutableSetOf<UUID>().apply {
+                bukkitLinkedAPI.onlinePlayersInfo.forEach {
+                    this.add(it.playerUUID)
+                }
+            }
             if (offlinePlayer.isOnline) {
                 val player = offlinePlayer.player!!
                 val lands = landManager.getPlayerLands(player.uniqueId, Rank.OWNER, Rank.DELEGATOR)
@@ -86,7 +92,7 @@ class Alba : CommandExecutor {
                                 }, 600)//Later 30 seconds
                             )
                     } else {//Target is not online or in proxy server
-                        if (targetUUID in proxyPlayerSet) {//In proxy server
+                        if (targetUUID in onlinePlayerSet) {//In proxy server
                             bungeeApi.sendMessage(
                                 targetName,
                                 "${player.name}이/가 당신을 ${lands.ownerName}의 알바로 채용하고자 합니다.".infoFormat()
@@ -156,7 +162,7 @@ class Alba : CommandExecutor {
                                 }, 600)//Later 30 seconds
                             )
                     } else {//Target is not online or in proxy server
-                        if (targetUUID in proxyPlayerSet) {//In proxy server
+                        if (targetUUID in onlinePlayerSet) {//In proxy server
                             bungeeApi.sendMessage(
                                 targetName,
                                 "${hostName}이/가 당신을 ${lands.ownerName}의 알바로 채용하고자 합니다.".infoFormat()

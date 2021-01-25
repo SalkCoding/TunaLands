@@ -1,6 +1,6 @@
 package com.salkcoding.tunalands.commands.sub
 
-import com.salkcoding.tunalands.bungee.proxyPlayerSet
+import com.salkcoding.tunalands.bukkitLinkedAPI
 import com.salkcoding.tunalands.bungeeApi
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
@@ -44,6 +44,11 @@ class Invite : CommandExecutor {
         }
 
         private fun work(offlinePlayer: OfflinePlayer, targetName: String) {
+            val onlinePlayerSet = mutableSetOf<UUID>().apply {
+                bukkitLinkedAPI.onlinePlayersInfo.forEach {
+                    this.add(it.playerUUID)
+                }
+            }
             if (offlinePlayer.isOnline) {
                 val player = offlinePlayer.player!!
                 val lands = landManager.getPlayerLands(player.uniqueId, Rank.OWNER, Rank.DELEGATOR)
@@ -112,7 +117,7 @@ class Invite : CommandExecutor {
                                 }, 600)//Later 30 seconds
                             )
                     } else {//Target is not online or in proxy server
-                        if (targetUUID in proxyPlayerSet) {//In proxy server
+                        if (targetUUID in onlinePlayerSet) {//In proxy server
                             player.sendMessage("${targetName}에게 멤버 초대장를 보냈습니다.".infoFormat())
                             bungeeApi.sendMessage(
                                 targetName,
@@ -212,7 +217,7 @@ class Invite : CommandExecutor {
                                 }, 600)//Later 30 seconds
                             )
                     } else {//Target is not online or in proxy server
-                        if (targetUUID in proxyPlayerSet) {//In proxy server
+                        if (targetUUID in onlinePlayerSet) {//In proxy server
                             bungeeApi.sendMessage(
                                 targetName,
                                 "${offlinePlayer.name}이/가 당신을 ${lands.ownerName}의 멤버로 초대했습니다.".infoFormat()
