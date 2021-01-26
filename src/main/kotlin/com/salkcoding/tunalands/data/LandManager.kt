@@ -1,5 +1,7 @@
-package com.salkcoding.tunalands.lands
+package com.salkcoding.tunalands.data
 
+import com.salkcoding.tunalands.data.lands.Lands
+import com.salkcoding.tunalands.data.lands.Rank
 import com.salkcoding.tunalands.database
 import com.salkcoding.tunalands.displayManager
 import com.salkcoding.tunalands.io.JsonReader

@@ -8,7 +8,7 @@ import com.salkcoding.tunalands.database.Database
 import com.salkcoding.tunalands.display.DisplayChunkListener
 import com.salkcoding.tunalands.display.DisplayManager
 import com.salkcoding.tunalands.gui.GuiManager
-import com.salkcoding.tunalands.lands.LandManager
+import com.salkcoding.tunalands.data.LandManager
 import com.salkcoding.tunalands.listener.*
 import com.salkcoding.tunalands.listener.region.*
 import com.salkcoding.tunalands.bungee.channelapi.BungeeChannelApi
@@ -35,6 +35,8 @@ lateinit var bungeeApi: BungeeChannelApi
 lateinit var economy: Economy
 lateinit var database: Database
 
+lateinit var currentServerName: String
+
 class TunaLands : JavaPlugin() {
 
     override fun onEnable() {
@@ -45,7 +47,7 @@ class TunaLands : JavaPlugin() {
         displayManager = DisplayManager()
 
         val bukkitLinked = server.pluginManager.getPlugin("BukkitLinked") as? BukkitLinked
-        if(bukkitLinked == null){
+        if (bukkitLinked == null) {
             server.pluginManager.disablePlugin(this)
             return
         }
@@ -56,15 +58,8 @@ class TunaLands : JavaPlugin() {
         bungeeApi.registerForwardListener(CommandListener())
 
         Bukkit.getScheduler().runTaskAsynchronously(this, Runnable {
-            val messageBytes = ByteArrayOutputStream()
-            val messageOut = DataOutputStream(messageBytes)
-            try {
-                messageOut.writeUTF(configuration.serverName)
-            } catch (exception: IOException) {
-                exception.printStackTrace()
-            }
-
-            bungeeApi.forward("ALL", "tunalands-reload", messageBytes.toByteArray())
+            val future = bungeeApi.server
+            currentServerName = future.get()
         })
 
         val handler = LandCommandHandler()
@@ -161,8 +156,6 @@ class TunaLands : JavaPlugin() {
         )
         logger.info("database: $database")
         //Protect
-        val serverName = config.getString("serverName")!!
-        logger.info("serverName: $serverName")
         val configProtect = config.getConfigurationSection("protect")!!
         val protect = Config.Protect(
             Material.valueOf(configProtect.getString("coreBlock")!!),
@@ -203,7 +196,7 @@ class TunaLands : JavaPlugin() {
         val limitWorld = config.getStringList("limitWorld")
         logger.info("limitWorld: $limitWorld")
 
-        configuration = Config(database, serverName, protect, flag, fuel, command, limitWorld)
+        configuration = Config(database, protect, flag, fuel, command, limitWorld)
 
         if (!setupEconomy()) {
             logger.warning("[${description.name}] - Disabled due to no Vault dependency found!")
@@ -222,7 +215,6 @@ class TunaLands : JavaPlugin() {
 
 data class Config(
     val dataBase: Database,
-    val serverName: String,
     val protect: Protect,
     val flag: Flag,
     val fuel: Fuel,

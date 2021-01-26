@@ -1,5 +1,3 @@
-serverName: "lobby"
-
 database:
   name: 'test'
   ip: 'localhost'

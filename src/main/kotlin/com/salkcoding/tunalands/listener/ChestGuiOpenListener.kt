@@ -2,7 +2,7 @@ package com.salkcoding.tunalands.listener
 
 import com.salkcoding.tunalands.gui.render.openMainGui
 import com.salkcoding.tunalands.landManager
-import com.salkcoding.tunalands.lands.Rank
+import com.salkcoding.tunalands.data.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.isSameLocation
 import org.bukkit.Material

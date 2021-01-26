@@ -1,6 +1,6 @@
 package com.salkcoding.tunalands.util
 
-import com.salkcoding.tunalands.lands.Lands
+import com.salkcoding.tunalands.data.lands.Lands
 
 /*
 * return

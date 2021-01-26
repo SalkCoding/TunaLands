@@ -1,14 +1,11 @@
 package com.salkcoding.tunalands.bungee
 
 import com.google.common.io.ByteStreams
+import com.salkcoding.tunalands.*
 import com.salkcoding.tunalands.bungee.channelapi.BungeeChannelApi
-import com.salkcoding.tunalands.bungeeApi
 import com.salkcoding.tunalands.commands.sub.*
-import com.salkcoding.tunalands.configuration
-import com.salkcoding.tunalands.landManager
-import com.salkcoding.tunalands.lands.Lands
-import com.salkcoding.tunalands.lands.Rank
-import com.salkcoding.tunalands.tunaLands
+import com.salkcoding.tunalands.data.lands.Lands
+import com.salkcoding.tunalands.data.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
 import org.bukkit.Bukkit
@@ -120,7 +117,7 @@ class CommandListener : BungeeChannelApi.ForwardConsumer {
                         val messageOut = DataOutputStream(messageBytes)
                         try {
                             messageOut.writeUTF(uuid.toString())
-                            messageOut.writeUTF(configuration.serverName)
+                            messageOut.writeUTF(currentServerName)
                             messageOut.writeLong(configuration.command.spawnCooldown)
                         } catch (exception: IOException) {
                             exception.printStackTrace()
@@ -216,7 +213,7 @@ class CommandListener : BungeeChannelApi.ForwardConsumer {
                                 try {
                                     messageOut.writeUTF(uuid.toString())
                                     messageOut.writeUTF(targetUUID.toString())
-                                    messageOut.writeUTF(configuration.serverName)
+                                    messageOut.writeUTF(currentServerName)
                                     messageOut.writeLong(configuration.command.visitCooldown)
                                 } catch (exception: IOException) {
                                     exception.printStackTrace()

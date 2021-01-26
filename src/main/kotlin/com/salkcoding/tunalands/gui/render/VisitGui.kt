@@ -6,8 +6,8 @@ import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.guiManager
 import com.salkcoding.tunalands.landManager
-import com.salkcoding.tunalands.lands.Lands
-import com.salkcoding.tunalands.lands.Rank
+import com.salkcoding.tunalands.data.lands.Lands
+import com.salkcoding.tunalands.data.lands.Rank
 import com.salkcoding.tunalands.util.*
 import org.bukkit.Bukkit
 import org.bukkit.Material

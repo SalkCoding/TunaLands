@@ -3,7 +3,7 @@ package com.salkcoding.tunalands.listener
 import com.salkcoding.tunalands.gui.render.settinggui.loreChatMap
 import com.salkcoding.tunalands.gui.render.settinggui.welcomeMessageChatMap
 import com.salkcoding.tunalands.landManager
-import com.salkcoding.tunalands.lands.Rank
+import com.salkcoding.tunalands.data.lands.Rank
 import org.bukkit.ChatColor
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener

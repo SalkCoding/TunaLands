@@ -1,4 +1,4 @@
-package com.salkcoding.tunalands.lands
+package com.salkcoding.tunalands.data
 
 import com.salkcoding.tunalands.configuration
 import org.bukkit.OfflinePlayer

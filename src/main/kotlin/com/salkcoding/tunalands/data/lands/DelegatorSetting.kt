@@ -1,4 +1,4 @@
-package com.salkcoding.tunalands.lands
+package com.salkcoding.tunalands.data.lands
 
 data class DelegatorSetting(
     var canSetVisitorSetting: Boolean = false,

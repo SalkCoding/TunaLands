@@ -2,7 +2,7 @@ package com.salkcoding.tunalands.commands.sub
 
 import com.salkcoding.tunalands.gui.render.openBanListGui
 import com.salkcoding.tunalands.landManager
-import com.salkcoding.tunalands.lands.Rank
+import com.salkcoding.tunalands.data.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor

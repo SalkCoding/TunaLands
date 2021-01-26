@@ -2,13 +2,12 @@ package com.salkcoding.tunalands.display
 
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI
 import com.salkcoding.tunalands.landManager
-import com.salkcoding.tunalands.lands.Lands
+import com.salkcoding.tunalands.data.lands.Lands
 import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.toQuery
 import com.salkcoding.tunalands.util.warnFormat
 import org.bukkit.Bukkit
 import org.bukkit.Chunk
-import org.bukkit.Location
 import org.bukkit.Material
 import java.util.*
 

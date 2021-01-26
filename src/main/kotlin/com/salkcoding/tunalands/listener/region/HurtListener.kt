@@ -1,7 +1,7 @@
 package com.salkcoding.tunalands.listener.region
 
 import com.salkcoding.tunalands.landManager
-import com.salkcoding.tunalands.lands.Rank
+import com.salkcoding.tunalands.data.lands.Rank
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority

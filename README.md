@@ -3,7 +3,7 @@
 ## Devloping environment
 * IntelliJ IDEA 2020.3.1 (Ultimate Edition)
 * Runtime version: 11.0.9.1+11-b1145.63 amd64
-* Kotlin 14.1.0
+* Kotlin 14.1.21
 * Gradle 6.7
 
 ## Testing environment
@@ -14,10 +14,11 @@
 
 ## Dependencies
 * kotlin-stdlib
-* [purpurclip-1.16.4-950](https://github.com/pl3xgaming/Purpur)
+* [purpurclip-1.16.5-latest](https://github.com/pl3xgaming/Purpur)
 * [kotlinbukkitapi 0.2.0-SNAPSHOT](https://github.com/DevSrSouza/KotlinBukkitAPI)
 * [Vault 1.7.3](https://github.com/MilkBowl/Vault)
 * [HikariCP 3.4.5](https://github.com/brettwooldridge/HikariCP)
+* BukkitLinkedAPI
 
 # Data format
 
@@ -38,8 +39,6 @@ ENGINE=InnoDB
 
 ## Configuration format(YMAL)
 ```
-serverName: "lobby"
-
 database:
   name: 'test'
   ip: 'localhost'

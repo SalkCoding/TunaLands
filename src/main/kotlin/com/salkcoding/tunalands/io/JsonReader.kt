@@ -1,10 +1,10 @@
 package com.salkcoding.tunalands.io
 
 import com.google.gson.JsonParser
-import com.salkcoding.tunalands.lands.DelegatorSetting
-import com.salkcoding.tunalands.lands.LandSetting
-import com.salkcoding.tunalands.lands.Lands
-import com.salkcoding.tunalands.lands.Rank
+import com.salkcoding.tunalands.data.lands.DelegatorSetting
+import com.salkcoding.tunalands.data.lands.LandSetting
+import com.salkcoding.tunalands.data.lands.Lands
+import com.salkcoding.tunalands.data.lands.Rank
 import com.salkcoding.tunalands.tunaLands
 import org.bukkit.Bukkit
 import org.bukkit.Location

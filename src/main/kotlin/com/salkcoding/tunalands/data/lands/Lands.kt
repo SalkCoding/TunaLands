@@ -1,4 +1,4 @@
-package com.salkcoding.tunalands.lands
+package com.salkcoding.tunalands.data.lands
 
 import org.bukkit.Bukkit
 import org.bukkit.Chunk

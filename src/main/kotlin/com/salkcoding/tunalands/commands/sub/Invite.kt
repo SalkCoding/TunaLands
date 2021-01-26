@@ -3,9 +3,9 @@ package com.salkcoding.tunalands.commands.sub
 import com.salkcoding.tunalands.bukkitLinkedAPI
 import com.salkcoding.tunalands.bungeeApi
 import com.salkcoding.tunalands.landManager
-import com.salkcoding.tunalands.lands.Rank
-import com.salkcoding.tunalands.lands.canRejoin
-import com.salkcoding.tunalands.lands.getRejoinCooldown
+import com.salkcoding.tunalands.data.lands.Rank
+import com.salkcoding.tunalands.data.canRejoin
+import com.salkcoding.tunalands.data.getRejoinCooldown
 import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
