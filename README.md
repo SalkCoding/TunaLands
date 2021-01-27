@@ -1,7 +1,7 @@
 # TunaLands
 
 ## Devloping environment
-* IntelliJ IDEA 2020.3.1 (Ultimate Edition)
+* IntelliJ IDEA 2020.3.2 (Ultimate Edition)
 * Runtime version: 11.0.9.1+11-b1145.63 amd64
 * Kotlin 14.1.21
 * Gradle 6.7
@@ -39,6 +39,8 @@ ENGINE=InnoDB
 
 ## Configuration format(YMAL)
 ```
+serverName: "lobby"
+
 database:
   name: 'test'
   ip: 'localhost'

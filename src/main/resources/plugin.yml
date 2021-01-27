@@ -4,7 +4,12 @@ version: 1.0.0-SNAPSHOT
 description: Protect lands with some money
 api-version: 1.16
 author: Salk_Coding
-depend: [ KotlinBukkitAPI, HolographicDisplays, Vault ]
+depend:
+  - KotlinBukkitAPI
+  - HolographicDisplays
+  - Don
+  - Vault
+  - BukkitLinked
 commands:
   land:
     description: Base command

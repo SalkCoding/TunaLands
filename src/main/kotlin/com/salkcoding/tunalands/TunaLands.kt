@@ -1,26 +1,22 @@
 package com.salkcoding.tunalands
 
 import com.salkcoding.tunalands.bungee.CommandListener
+import com.salkcoding.tunalands.bungee.channelapi.BungeeChannelApi
 import com.salkcoding.tunalands.commands.LandCommandHandler
 import com.salkcoding.tunalands.commands.debug.Debug
 import com.salkcoding.tunalands.commands.sub.*
+import com.salkcoding.tunalands.data.LandManager
 import com.salkcoding.tunalands.database.Database
 import com.salkcoding.tunalands.display.DisplayChunkListener
 import com.salkcoding.tunalands.display.DisplayManager
 import com.salkcoding.tunalands.gui.GuiManager
-import com.salkcoding.tunalands.data.LandManager
 import com.salkcoding.tunalands.listener.*
 import com.salkcoding.tunalands.listener.region.*
-import com.salkcoding.tunalands.bungee.channelapi.BungeeChannelApi
-import org.bukkit.Bukkit
-import org.bukkit.Material
-import org.bukkit.plugin.java.JavaPlugin
-import java.io.ByteArrayOutputStream
-import java.io.DataOutputStream
-import java.io.IOException
-import com.salkcoding.tunalands.vault.economy.Economy
 import me.baiks.bukkitlinked.BukkitLinked
 import me.baiks.bukkitlinked.api.BukkitLinkedAPI
+import net.milkbowl.vault.economy.Economy
+import org.bukkit.Material
+import org.bukkit.plugin.java.JavaPlugin
 
 
 const val chunkDebug = true
@@ -56,11 +52,6 @@ class TunaLands : JavaPlugin() {
         bungeeApi = BungeeChannelApi.of(this)
         //Global listener
         bungeeApi.registerForwardListener(CommandListener())
-
-        Bukkit.getScheduler().runTaskAsynchronously(this, Runnable {
-            val future = bungeeApi.server
-            currentServerName = future.get()
-        })
 
         val handler = LandCommandHandler()
         handler.register("accept", Accept())
@@ -144,6 +135,7 @@ class TunaLands : JavaPlugin() {
 
     private fun configRead() {
         saveDefaultConfig()
+        currentServerName = config.getString("serverName")!!
         //DataBase
         val databaseConfig = config.getConfigurationSection("database")!!
         val database = Config.Database(
@@ -199,7 +191,7 @@ class TunaLands : JavaPlugin() {
         configuration = Config(database, protect, flag, fuel, command, limitWorld)
 
         if (!setupEconomy()) {
-            logger.warning("[${description.name}] - Disabled due to no Vault dependency found!")
+            logger.warning("Disabled due to no Vault dependency found!")
             server.pluginManager.disablePlugin(this)
             return
         }

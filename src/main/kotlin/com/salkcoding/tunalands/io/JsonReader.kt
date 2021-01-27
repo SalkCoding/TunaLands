@@ -22,7 +22,8 @@ object JsonReader {
         val playerLandMap = ConcurrentHashMap<UUID, Lands>()
         folder.listFiles()?.forEach { file ->
             file.bufferedReader().use { reader ->
-                val jsonObject = JsonParser.parseReader(reader).asJsonObject
+                val jsonParser = JsonParser()
+                val jsonObject = jsonParser.parse(reader).asJsonObject
 
                 val ownerName = jsonObject["ownerName"].asString
                 val ownerUUID = UUID.fromString(jsonObject["ownerUUID"].asString)

@@ -78,7 +78,12 @@ object TeleportCooltime {
                 player.world.spawnParticle(Particle.PORTAL, player.location, 5)
             }
 
-            if (last == player.location) {
+            if (last.world.name != player.location.world.name) {
+                stop()
+                return
+            }
+
+            if (last.distance(player.location) > 1) {
                 player.sendMessage("텔레포트 중 이동하셔서 텔레포트가 취소됩니다.".warnFormat())
                 stop()
                 return
