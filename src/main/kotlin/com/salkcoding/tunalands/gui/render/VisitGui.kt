@@ -10,6 +10,7 @@ import com.salkcoding.tunalands.data.lands.Lands
 import com.salkcoding.tunalands.data.lands.Rank
 import com.salkcoding.tunalands.util.*
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
@@ -25,11 +26,11 @@ class VisitGui(private val player: Player) : GuiInterface {
     private lateinit var landList: List<UUID>
 
     private val sortButton = (Material.HOPPER * 1).apply {
-        this.displayName("정렬 방법 선택")
+        this.displayName("${ChatColor.WHITE}정렬 방법 선택")
     }
 
     private val statisticsInfo = (Material.PAINTING * 1).apply {
-        this.displayName("지역 통계")
+        this.displayName("${ChatColor.WHITE}지역 통계")
     }
 
     private var sortWay = 0
@@ -43,9 +44,9 @@ class VisitGui(private val player: Player) : GuiInterface {
                 else privateCount++
             }
             this.lore = listOf(
-                "지역: ${landMap.size}개",
-                "공개된 지역: ${publicCount}개",
-                "비공개된 지역: ${privateCount}개"
+                "${ChatColor.WHITE}지역: ${ChatColor.GOLD}${landMap.size}${ChatColor.WHITE}개",
+                "${ChatColor.WHITE}공개된 지역: ${ChatColor.GREEN}${publicCount}${ChatColor.WHITE}개",
+                "${ChatColor.WHITE}비공개된 지역: ${ChatColor.RED}${privateCount}${ChatColor.WHITE}개"
             )
         }
 
@@ -112,15 +113,15 @@ class VisitGui(private val player: Player) : GuiInterface {
 
         sortButton.apply {
             this.lore = listOf(
-                "현재 보기 상태: $sortLore",
-                "기본: 생성된 시간이 오래된 순서로 모든 지역의 목록을 봅니다.",
-                "공개 지역: 공개로 설정된 지역의 목록을 생성된 시간이 오래된 순서로 봅니다.",
-                "비공개 지역: 비공개로 설정된 지역의 목록을 생성된 시간이 오래된 순서로 봅니다.",
-                "혼자:  혼자 살아가는 지역들을, 생성된 시간이 오래된 순서로 봅니다.",
-                "멤버 수: 멤버가 많은 순으로 지역의 목록을 봅니다.",
-                "방문자 수: 방문자 수가 많은 순으로 지역의 목록을 봅니다.",
+                "${ChatColor.WHITE}현재 보기 상태: ${ChatColor.GOLD}$sortLore",
+                "${ChatColor.WHITE}기본: 생성된 시간이 오래된 순서로 모든 지역의 목록을 봅니다.",
+                "${ChatColor.WHITE}공개 지역: 공개로 설정된 지역의 목록을 생성된 시간이 오래된 순서로 봅니다.",
+                "${ChatColor.WHITE}비공개 지역: 비공개로 설정된 지역의 목록을 생성된 시간이 오래된 순서로 봅니다.",
+                "${ChatColor.WHITE}혼자:  혼자 살아가는 지역들을, 생성된 시간이 오래된 순서로 봅니다.",
+                "${ChatColor.WHITE}멤버 수: 멤버가 많은 순으로 지역의 목록을 봅니다.",
+                "${ChatColor.WHITE}방문자 수: 방문자 수가 많은 순으로 지역의 목록을 봅니다.",
                 "",
-                "클릭하여 정렬 방법을 변경할 수 있습니다."
+                "${ChatColor.WHITE}클릭하여 정렬 방법을 변경할 수 있습니다."
             )
         }
         inv.setItem(3, sortButton)
@@ -141,22 +142,22 @@ class VisitGui(private val player: Player) : GuiInterface {
                 meta.owningPlayer = entry
                 meta.setDisplayName(entry.name)
                 val lore = mutableListOf(
-                    "공개 여부: ${
+                    "${ChatColor.WHITE}공개 여부: ${
                         when (lands.open) {
-                            true -> "공개"
-                            false -> "비공개"
+                            true -> "${ChatColor.GREEN}공개"
+                            false -> "${ChatColor.RED}비공개"
                         }
                     }",
-                    "멤버 수: ${lands.memberMap.size}",
-                    "방문자 수: ${lands.landHistory.visitorCount}",
-                    "생성일: ${created.get(Calendar.YEAR)}/${created.get(Calendar.MONTH) + 1}/${created.get(Calendar.DATE)}",
+                    "${ChatColor.WHITE}멤버 수: ${ChatColor.GOLD}${lands.memberMap.size}",
+                    "${ChatColor.WHITE}방문자 수: ${ChatColor.GOLD}${lands.landHistory.visitorCount}",
+                    "${ChatColor.WHITE}생성일: ${ChatColor.GRAY}${created.get(Calendar.YEAR)}/${created.get(Calendar.MONTH) + 1}/${created.get(Calendar.DATE)}",
                 )
                 (0 until lands.lore.size).forEach { i ->
                     lore.add(i, lands.lore[i])
                 }
                 if (lands.open) {
                     lore.add("")
-                    lore.add("클릭하여 이동할 수 있습니다.")
+                    lore.add("${ChatColor.WHITE}클릭하여 이동할 수 있습니다.")
                 }
                 meta.lore = lore
                 this.itemMeta = meta
@@ -268,10 +269,10 @@ class VisitGui(private val player: Player) : GuiInterface {
                                 lands.memberMap.forEach { (uuid, _) ->
                                     val member = Bukkit.getOfflinePlayer(uuid)
                                     if (member.isOnline) {
-                                        member.player!!.sendMessage("${player.name}님이 땅에 방문했습니다.".infoFormat())
+                                        member.player!!.sendMessage("${ChatColor.GREEN}${player.name}${ChatColor.WHITE}님이 땅에 방문했습니다.".infoFormat())
                                     } else {
                                         bungeeApi.sendMessage(
-                                            member.name, "${player.name}님이 땅에 방문했습니다.".infoFormat()
+                                            member.name, "${ChatColor.GREEN}${player.name}${ChatColor.WHITE}님이 땅에 방문했습니다.".infoFormat()
                                         )
                                     }
                                 }
@@ -281,7 +282,7 @@ class VisitGui(private val player: Player) : GuiInterface {
                     }
                 } else {
                     player.playSound(player.location, Sound.ENTITY_VILLAGER_NO, 0.5f, 1.0f)
-                    player.sendMessage("${lands.ownerName}의 땅에서 밴되었기 때문에 방문할 수 없습니다!".errorFormat())
+                    player.sendMessage("${ChatColor.GREEN}${lands.ownerName}${ChatColor.WHITE}의 땅에서 밴되었기 때문에 방문할 수 없습니다!".errorFormat())
                 }
             }
         }
@@ -293,7 +294,7 @@ class VisitGui(private val player: Player) : GuiInterface {
 }
 
 fun Player.openVisitGui() {
-    val inventory = Bukkit.createInventory(null, 54, "User list GUI")
+    val inventory = Bukkit.createInventory(null, 54, "지역 목록")
     val gui = VisitGui(this)
     gui.render(inventory)
 

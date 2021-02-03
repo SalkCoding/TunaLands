@@ -7,7 +7,9 @@ import com.salkcoding.tunalands.data.lands.Lands
 import com.salkcoding.tunalands.data.lands.Rank
 import com.salkcoding.tunalands.util.backButton
 import com.salkcoding.tunalands.util.times
+import com.salkcoding.tunalands.util.toColoredText
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
@@ -19,117 +21,117 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
     GuiInterface {
 
     //First row
-    private val canPVP = (Material.DIAMOND_SWORD * 1).apply { this.displayName("PVP") }
-    private val breakBlock = (Material.DIAMOND_PICKAXE * 1).apply { this.displayName("블록 부수기") }
-    private val placeBlock = (Material.WHITE_CONCRETE * 1).apply { this.displayName("블록 설치") }
-    private val canHurt = (Material.RED_DYE * 1).apply { this.displayName("데미지") }
-    private val pickupExp = (Material.EXPERIENCE_BOTTLE * 1).apply { this.displayName("경험치 오브 줍기") }
-    private val pickupItem = (Material.PUMPKIN_SEEDS * 1).apply { this.displayName("아이템 줍기") }
-    private val dropItem = (Material.MELON_SEEDS * 1).apply { this.displayName("아이템 버리기") }
-    private val openChest = (Material.CHEST * 1).apply { this.displayName("창고 사용") }
-    private val eatCake = (Material.CAKE * 1).apply { this.displayName("케이크 소비") }
+    private val canPVP = (Material.DIAMOND_SWORD * 1).apply { this.displayName("${ChatColor.WHITE}PVP") }
+    private val breakBlock = (Material.DIAMOND_PICKAXE * 1).apply { this.displayName("${ChatColor.WHITE}블록 부수기") }
+    private val placeBlock = (Material.WHITE_CONCRETE * 1).apply { this.displayName("${ChatColor.WHITE}블록 설치") }
+    private val canHurt = (Material.RED_DYE * 1).apply { this.displayName("${ChatColor.WHITE}데미지") }
+    private val pickupExp = (Material.EXPERIENCE_BOTTLE * 1).apply { this.displayName("${ChatColor.WHITE}경험치 오브 줍기") }
+    private val pickupItem = (Material.PUMPKIN_SEEDS * 1).apply { this.displayName("${ChatColor.WHITE}아이템 줍기") }
+    private val dropItem = (Material.MELON_SEEDS * 1).apply { this.displayName("${ChatColor.WHITE}아이템 버리기") }
+    private val openChest = (Material.CHEST * 1).apply { this.displayName("${ChatColor.WHITE}창고 사용") }
+    private val eatCake = (Material.CAKE * 1).apply { this.displayName("${ChatColor.WHITE}케이크 소비") }
 
     //Second row
-    private val useCircuit = (Material.REPEATER * 1).apply { this.displayName("회로 조작") }
-    private val useLever = (Material.LEVER * 1).apply { this.displayName("레버 사용") }
-    private val useButton = (Material.STONE_BUTTON * 1).apply { this.displayName("버튼 사용") }
-    private val usePressureSensor = (Material.OAK_PRESSURE_PLATE * 1).apply { this.displayName("압력판 사용") }
-    private val useDoor = (Material.OAK_DOOR * 1).apply { this.displayName("문 사용") }
-    private val useTrapdoor = (Material.OAK_TRAPDOOR * 1).apply { this.displayName("다락문 사용") }
-    private val useFenceGate = (Material.OAK_FENCE_GATE * 1).apply { this.displayName("울타리 문 사용") }
-    private val useHopper = (Material.HOPPER * 1).apply { this.displayName("깔대기 사용") }
-    private val useDispenserAndDropper = (Material.DISPENSER * 1).apply { this.displayName("발사기/공급기 사용") }
+    private val useCircuit = (Material.REPEATER * 1).apply { this.displayName("${ChatColor.WHITE}회로 조작") }
+    private val useLever = (Material.LEVER * 1).apply { this.displayName("${ChatColor.WHITE}레버 사용") }
+    private val useButton = (Material.STONE_BUTTON * 1).apply { this.displayName("${ChatColor.WHITE}버튼 사용") }
+    private val usePressureSensor = (Material.OAK_PRESSURE_PLATE * 1).apply { this.displayName("${ChatColor.WHITE}압력판 사용") }
+    private val useDoor = (Material.OAK_DOOR * 1).apply { this.displayName("${ChatColor.WHITE}문 사용") }
+    private val useTrapdoor = (Material.OAK_TRAPDOOR * 1).apply { this.displayName("${ChatColor.WHITE}다락문 사용") }
+    private val useFenceGate = (Material.OAK_FENCE_GATE * 1).apply { this.displayName("${ChatColor.WHITE}울타리 문 사용") }
+    private val useHopper = (Material.HOPPER * 1).apply { this.displayName("${ChatColor.WHITE}깔대기 사용") }
+    private val useDispenserAndDropper = (Material.DISPENSER * 1).apply { this.displayName("${ChatColor.WHITE}발사기/공급기 사용") }
 
     //Third row
-    private val useCraftTable = (Material.CRAFTING_TABLE * 1).apply { this.displayName("작업대 사용") }
-    private val useFurnace = (Material.FURNACE * 1).apply { this.displayName("화로 사용") }
-    private val useBed = (Material.RED_BED * 1).apply { this.displayName("침대 사용") }
-    private val useEnchantingTable = (Material.ENCHANTING_TABLE * 1).apply { this.displayName("인첸트 테이블 사용") }
-    private val useAnvil = (Material.ANVIL * 1).apply { this.displayName("모루 사용") }
-    private val useCauldron = (Material.CAULDRON * 1).apply { this.displayName("가마솥 사용") }
-    private val useBrewingStand = (Material.BREWING_STAND * 1).apply { this.displayName("양조기 사용") }
-    private val useBeacon = (Material.BEACON * 1).apply { this.displayName("신호기 사용") }
-    private val useArmorStand = (Material.ARMOR_STAND * 1).apply { this.displayName("갑옷 거치대 사용") }
+    private val useCraftTable = (Material.CRAFTING_TABLE * 1).apply { this.displayName("${ChatColor.WHITE}작업대 사용") }
+    private val useFurnace = (Material.FURNACE * 1).apply { this.displayName("${ChatColor.WHITE}화로 사용") }
+    private val useBed = (Material.RED_BED * 1).apply { this.displayName("${ChatColor.WHITE}침대 사용") }
+    private val useEnchantingTable = (Material.ENCHANTING_TABLE * 1).apply { this.displayName("${ChatColor.WHITE}인첸트 테이블 사용") }
+    private val useAnvil = (Material.ANVIL * 1).apply { this.displayName("${ChatColor.WHITE}모루 사용") }
+    private val useCauldron = (Material.CAULDRON * 1).apply { this.displayName("${ChatColor.WHITE}가마솥 사용") }
+    private val useBrewingStand = (Material.BREWING_STAND * 1).apply { this.displayName("${ChatColor.WHITE}양조기 사용") }
+    private val useBeacon = (Material.BEACON * 1).apply { this.displayName("${ChatColor.WHITE}신호기 사용") }
+    private val useArmorStand = (Material.ARMOR_STAND * 1).apply { this.displayName("${ChatColor.WHITE}갑옷 거치대 사용") }
 
     //Fourth row
-    private val canSow = (Material.WHEAT_SEEDS * 1).apply { this.displayName("농작물 심기") }
-    private val canHarvest = (Material.DIAMOND_HOE * 1).apply { this.displayName("농작물 수확") }
-    private val canBreed = (Material.WHEAT * 1).apply { this.displayName("동물 교배") }
-    private val useBucket = (Material.BUCKET * 1).apply { this.displayName("양동이 사용") }
-    private val useMilk = (Material.MILK_BUCKET * 1).apply { this.displayName("우유 마시기") }
-    private val throwEgg = (Material.EGG * 1).apply { this.displayName("달걀 던지기") }
-    private val useShears = (Material.SHEARS * 1).apply { this.displayName("양털 깎기") }
-    private val useFlintAndSteel = (Material.FLINT_AND_STEEL * 1).apply { this.displayName("부싯돌과 부시 사용") }
-    private val canRuinFarmland = (Material.FARMLAND * 1).apply { this.displayName("짓밟기") }
+    private val canSow = (Material.WHEAT_SEEDS * 1).apply { this.displayName("${ChatColor.WHITE}농작물 심기") }
+    private val canHarvest = (Material.DIAMOND_HOE * 1).apply { this.displayName("${ChatColor.WHITE}농작물 수확") }
+    private val canBreed = (Material.WHEAT * 1).apply { this.displayName("${ChatColor.WHITE}동물 교배") }
+    private val useBucket = (Material.BUCKET * 1).apply { this.displayName("${ChatColor.WHITE}양동이 사용") }
+    private val useMilk = (Material.MILK_BUCKET * 1).apply { this.displayName("${ChatColor.WHITE}우유 마시기") }
+    private val throwEgg = (Material.EGG * 1).apply { this.displayName("${ChatColor.WHITE}달걀 던지기") }
+    private val useShears = (Material.SHEARS * 1).apply { this.displayName("${ChatColor.WHITE}양털 깎기") }
+    private val useFlintAndSteel = (Material.FLINT_AND_STEEL * 1).apply { this.displayName("${ChatColor.WHITE}부싯돌과 부시 사용") }
+    private val canRuinFarmland = (Material.FARMLAND * 1).apply { this.displayName("${ChatColor.WHITE}짓밟기") }
 
     //Fifth row
-    private val useMinecart = (Material.MINECART * 1).apply { this.displayName("마인카트 사용") }
-    private val canFishing = (Material.FISHING_ROD * 1).apply { this.displayName("낚시") }
-    private val useBoat = (Material.OAK_BOAT * 1).apply { this.displayName("배 사용") }
-    private val canRiding = (Material.SADDLE * 1).apply { this.displayName("라이딩") }
-    private val useChestedHorse = (Material.DIAMOND_HORSE_ARMOR * 1).apply { this.displayName("말 인벤토리 사용") }
-    private val useLead = (Material.LEAD * 1).apply { this.displayName("끈 사용") }
-    private val breakItemFrame = (Material.ITEM_FRAME * 1).apply { this.displayName("아이템 액자 부수기") }
-    private val useNoteBlock = (Material.NOTE_BLOCK * 1).apply { this.displayName("노트블록 사용") }
-    private val useJukebox = (Material.JUKEBOX * 1).apply { this.displayName("주크박스 사용") }
+    private val useMinecart = (Material.MINECART * 1).apply { this.displayName("${ChatColor.WHITE}마인카트 사용") }
+    private val canFishing = (Material.FISHING_ROD * 1).apply { this.displayName("${ChatColor.WHITE}낚시") }
+    private val useBoat = (Material.OAK_BOAT * 1).apply { this.displayName("${ChatColor.WHITE}배 사용") }
+    private val canRiding = (Material.SADDLE * 1).apply { this.displayName("${ChatColor.WHITE}라이딩") }
+    private val useChestedHorse = (Material.DIAMOND_HORSE_ARMOR * 1).apply { this.displayName("${ChatColor.WHITE}말 인벤토리 사용") }
+    private val useLead = (Material.LEAD * 1).apply { this.displayName("${ChatColor.WHITE}끈 사용") }
+    private val breakItemFrame = (Material.ITEM_FRAME * 1).apply { this.displayName("${ChatColor.WHITE}아이템 액자 부수기") }
+    private val useNoteBlock = (Material.NOTE_BLOCK * 1).apply { this.displayName("${ChatColor.WHITE}노트블록 사용") }
+    private val useJukebox = (Material.JUKEBOX * 1).apply { this.displayName("${ChatColor.WHITE}주크박스 사용") }
 
     override fun render(inv: Inventory) {
-        val setting = lands.partTimeJobSetting
+        val setting = lands.visitorSetting
 
         //First row
-        canPVP.apply { this.lore = listOf("상태: ${setting.canPVP}") }
-        breakBlock.apply { this.lore = listOf("상태: ${setting.breakBlock}") }
-        placeBlock.apply { this.lore = listOf("상태: ${setting.placeBlock}") }
-        canHurt.apply { this.lore = listOf("상태: ${setting.canHurt}") }
-        pickupExp.apply { this.lore = listOf("상태: ${setting.pickupExp}") }
-        pickupItem.apply { this.lore = listOf("상태: ${setting.pickupItem}") }
-        dropItem.apply { this.lore = listOf("상태: ${setting.dropItem}") }
-        openChest.apply { this.lore = listOf("상태: ${setting.openChest}") }
-        eatCake.apply { this.lore = listOf("상태: ${setting.eatCake}") }
+        canPVP.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.canPVP.toColoredText()}") }
+        breakBlock.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.breakBlock.toColoredText()}") }
+        placeBlock.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.placeBlock.toColoredText()}") }
+        canHurt.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.canHurt.toColoredText()}") }
+        pickupExp.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.pickupExp.toColoredText()}") }
+        pickupItem.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.pickupItem.toColoredText()}") }
+        dropItem.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.dropItem.toColoredText()}") }
+        openChest.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.openChest.toColoredText()}") }
+        eatCake.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.eatCake.toColoredText()}") }
 
         //Second row
-        useCircuit.apply { this.lore = listOf("상태: ${setting.useCircuit}") }
-        useLever.apply { this.lore = listOf("상태: ${setting.useLever}") }
-        useButton.apply { this.lore = listOf("상태: ${setting.useButton}") }
-        usePressureSensor.apply { this.lore = listOf("상태: ${setting.usePressureSensor}") }
-        useDoor.apply { this.lore = listOf("상태: ${setting.useDoor}") }
-        useTrapdoor.apply { this.lore = listOf("상태: ${setting.useTrapdoor}") }
-        useFenceGate.apply { this.lore = listOf("상태: ${setting.useFenceGate}") }
-        useHopper.apply { this.lore = listOf("상태: ${setting.useHopper}") }
-        useDispenserAndDropper.apply { this.lore = listOf("상태: ${setting.useDispenserAndDropper}") }
+        useCircuit.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useCircuit.toColoredText()}") }
+        useLever.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useLever.toColoredText()}") }
+        useButton.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useButton.toColoredText()}") }
+        usePressureSensor.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.usePressureSensor.toColoredText()}") }
+        useDoor.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useDoor.toColoredText()}") }
+        useTrapdoor.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useTrapdoor.toColoredText()}") }
+        useFenceGate.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useFenceGate.toColoredText()}") }
+        useHopper.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useHopper.toColoredText()}") }
+        useDispenserAndDropper.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useDispenserAndDropper.toColoredText()}") }
 
         //Third row
-        useCraftTable.apply { this.lore = listOf("상태: ${setting.useCraftTable}") }
-        useFurnace.apply { this.lore = listOf("상태: ${setting.useFurnace}") }
-        useBed.apply { this.lore = listOf("상태: ${setting.useBed}") }
-        useEnchantingTable.apply { this.lore = listOf("상태: ${setting.useEnchantingTable}") }
-        useAnvil.apply { this.lore = listOf("상태: ${setting.useAnvil}") }
-        useCauldron.apply { this.lore = listOf("상태: ${setting.useCauldron}") }
-        useBrewingStand.apply { this.lore = listOf("상태: ${setting.useBrewingStand}") }
-        useBeacon.apply { this.lore = listOf("상태: ${setting.useBeacon}") }
-        useArmorStand.apply { this.lore = listOf("상태: ${setting.useArmorStand}") }
+        useCraftTable.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useCraftTable.toColoredText()}") }
+        useFurnace.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useFurnace.toColoredText()}") }
+        useBed.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useBed.toColoredText()}") }
+        useEnchantingTable.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useEnchantingTable.toColoredText()}") }
+        useAnvil.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useAnvil.toColoredText()}") }
+        useCauldron.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useCauldron.toColoredText()}") }
+        useBrewingStand.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useBrewingStand.toColoredText()}") }
+        useBeacon.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useBeacon.toColoredText()}") }
+        useArmorStand.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useArmorStand.toColoredText()}") }
 
         //Fourth row
-        canSow.apply { this.lore = listOf("상태: ${setting.canSow}") }
-        canHarvest.apply { this.lore = listOf("상태: ${setting.canHarvest}") }
-        canBreed.apply { this.lore = listOf("상태: ${setting.canBreed}") }
-        useBucket.apply { this.lore = listOf("상태: ${setting.useBucket}") }
-        useMilk.apply { this.lore = listOf("상태: ${setting.useMilk}") }
-        throwEgg.apply { this.lore = listOf("상태: ${setting.throwEgg}") }
-        useShears.apply { this.lore = listOf("상태: ${setting.useShears}") }
-        useFlintAndSteel.apply { this.lore = listOf("상태: ${setting.useFlintAndSteel}") }
-        canRuinFarmland.apply { this.lore = listOf("상태: ${setting.canRuinFarmland}") }
+        canSow.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.canSow.toColoredText()}") }
+        canHarvest.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.canHarvest.toColoredText()}") }
+        canBreed.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.canBreed.toColoredText()}") }
+        useBucket.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useBucket.toColoredText()}") }
+        useMilk.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useMilk.toColoredText()}") }
+        throwEgg.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.throwEgg.toColoredText()}") }
+        useShears.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useShears.toColoredText()}") }
+        useFlintAndSteel.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useFlintAndSteel.toColoredText()}") }
+        canRuinFarmland.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.canRuinFarmland.toColoredText()}") }
 
         //Fifth row
-        useMinecart.apply { this.lore = listOf("상태: ${setting.useMinecart}") }
-        canFishing.apply { this.lore = listOf("상태: ${setting.canFishing}") }
-        useBoat.apply { this.lore = listOf("상태: ${setting.useBoat}") }
-        canRiding.apply { this.lore = listOf("상태: ${setting.canRiding}") }
-        useChestedHorse.apply { this.lore = listOf("상태: ${setting.useChestedHorse}") }
-        useLead.apply { this.lore = listOf("상태: ${setting.useLead}") }
-        breakItemFrame.apply { this.lore = listOf("상태: ${setting.breakItemFrame}") }
-        useNoteBlock.apply { this.lore = listOf("상태: ${setting.useNoteBlock}") }
-        useJukebox.apply { this.lore = listOf("상태: ${setting.useJukebox}") }
+        useMinecart.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useMinecart.toColoredText()}") }
+        canFishing.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.canFishing.toColoredText()}") }
+        useBoat.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useBoat.toColoredText()}") }
+        canRiding.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.canRiding.toColoredText()}") }
+        useChestedHorse.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useChestedHorse.toColoredText()}") }
+        useLead.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useLead.toColoredText()}") }
+        breakItemFrame.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.breakItemFrame.toColoredText()}") }
+        useNoteBlock.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useNoteBlock.toColoredText()}") }
+        useJukebox.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useJukebox.toColoredText()}") }
 
         inv.setItem(0, backButton)
         inv.setItem(8, backButton)
@@ -194,7 +196,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             9 -> {
                 setting.canPVP = !setting.canPVP
                 canPVP.apply {
-                    this.lore = listOf("상태: ${setting.canPVP}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.canPVP.toColoredText()}")
                     inv.setItem(9, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -202,7 +204,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             10 -> {
                 setting.breakBlock = !setting.breakBlock
                 breakBlock.apply {
-                    this.lore = listOf("상태: ${setting.breakBlock}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.breakBlock.toColoredText()}")
                     inv.setItem(10, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -210,7 +212,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             11 -> {
                 setting.placeBlock = !setting.placeBlock
                 placeBlock.apply {
-                    this.lore = listOf("상태: ${setting.placeBlock}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.placeBlock.toColoredText()}")
                     inv.setItem(11, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -218,7 +220,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             12 -> {
                 setting.canHurt = !setting.canHurt
                 canHurt.apply {
-                    this.lore = listOf("상태: ${setting.canHurt}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.canHurt.toColoredText()}")
                     inv.setItem(12, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -226,7 +228,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             13 -> {
                 setting.pickupExp = !setting.pickupExp
                 pickupExp.apply {
-                    this.lore = listOf("상태: ${setting.pickupExp}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.pickupExp.toColoredText()}")
                     inv.setItem(13, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -234,7 +236,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             14 -> {
                 setting.pickupItem = !setting.pickupItem
                 pickupItem.apply {
-                    this.lore = listOf("상태: ${setting.pickupItem}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.pickupItem.toColoredText()}")
                     inv.setItem(14, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -242,7 +244,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             15 -> {
                 setting.dropItem = !setting.dropItem
                 dropItem.apply {
-                    this.lore = listOf("상태: ${setting.dropItem}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.dropItem.toColoredText()}")
                     inv.setItem(15, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -250,7 +252,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             16 -> {
                 setting.openChest = !setting.openChest
                 openChest.apply {
-                    this.lore = listOf("상태: ${setting.openChest}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.openChest.toColoredText()}")
                     inv.setItem(16, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -258,7 +260,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             17 -> {
                 setting.eatCake = !setting.eatCake
                 eatCake.apply {
-                    this.lore = listOf("상태: ${setting.eatCake}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.eatCake.toColoredText()}")
                     inv.setItem(17, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -267,7 +269,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             18 -> {
                 setting.useCircuit = !setting.useCircuit
                 useCircuit.apply {
-                    this.lore = listOf("상태: ${setting.useCircuit}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useCircuit.toColoredText()}")
                     inv.setItem(18, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -275,7 +277,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             19 -> {
                 setting.useLever = !setting.useLever
                 useLever.apply {
-                    this.lore = listOf("상태: ${setting.useLever}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useLever.toColoredText()}")
                     inv.setItem(19, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -283,7 +285,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             20 -> {
                 setting.useButton = !setting.useButton
                 useButton.apply {
-                    this.lore = listOf("상태: ${setting.useButton}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useButton.toColoredText()}")
                     inv.setItem(20, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -291,7 +293,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             21 -> {
                 setting.usePressureSensor = !setting.usePressureSensor
                 usePressureSensor.apply {
-                    this.lore = listOf("상태: ${setting.usePressureSensor}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.usePressureSensor.toColoredText()}")
                     inv.setItem(21, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -299,7 +301,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             22 -> {
                 setting.useDoor = !setting.useDoor
                 useDoor.apply {
-                    this.lore = listOf("상태: ${setting.useDoor}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useDoor.toColoredText()}")
                     inv.setItem(22, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -307,7 +309,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             23 -> {
                 setting.useTrapdoor = !setting.useTrapdoor
                 useTrapdoor.apply {
-                    this.lore = listOf("상태: ${setting.useTrapdoor}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useTrapdoor.toColoredText()}")
                     inv.setItem(23, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -315,7 +317,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             24 -> {
                 setting.useFenceGate = !setting.useFenceGate
                 useFenceGate.apply {
-                    this.lore = listOf("상태: ${setting.useFenceGate}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useFenceGate.toColoredText()}")
                     inv.setItem(24, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -323,7 +325,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             25 -> {
                 setting.useHopper = !setting.useHopper
                 useHopper.apply {
-                    this.lore = listOf("상태: ${setting.useHopper}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useHopper.toColoredText()}")
                     inv.setItem(25, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -331,7 +333,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             26 -> {
                 setting.useDispenserAndDropper = !setting.useDispenserAndDropper
                 useDispenserAndDropper.apply {
-                    this.lore = listOf("상태: ${setting.useDispenserAndDropper}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useDispenserAndDropper.toColoredText()}")
                     inv.setItem(26, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -340,7 +342,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             27 -> {
                 setting.useCraftTable = !setting.useCraftTable
                 useCraftTable.apply {
-                    this.lore = listOf("상태: ${setting.useCraftTable}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useCraftTable.toColoredText()}")
                     inv.setItem(27, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -348,7 +350,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             28 -> {
                 setting.useFurnace = !setting.useFurnace
                 useFurnace.apply {
-                    this.lore = listOf("상태: ${setting.useFurnace}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useFurnace.toColoredText()}")
                     inv.setItem(28, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -356,7 +358,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             29 -> {
                 setting.useBed = !setting.useBed
                 useBed.apply {
-                    this.lore = listOf("상태: ${setting.useBed}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useBed.toColoredText()}")
                     inv.setItem(29, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -364,7 +366,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             30 -> {
                 setting.useEnchantingTable = !setting.useEnchantingTable
                 useEnchantingTable.apply {
-                    this.lore = listOf("상태: ${setting.useEnchantingTable}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useEnchantingTable.toColoredText()}")
                     inv.setItem(30, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -372,7 +374,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             31 -> {
                 setting.useAnvil = !setting.useAnvil
                 useAnvil.apply {
-                    this.lore = listOf("상태: ${setting.useAnvil}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useAnvil.toColoredText()}")
                     inv.setItem(31, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -380,7 +382,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             32 -> {
                 setting.useCauldron = !setting.useCauldron
                 useCauldron.apply {
-                    this.lore = listOf("상태: ${setting.useCauldron}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useCauldron.toColoredText()}")
                     inv.setItem(32, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -388,7 +390,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             33 -> {
                 setting.useBrewingStand = !setting.useBrewingStand
                 useBrewingStand.apply {
-                    this.lore = listOf("상태: ${setting.useBrewingStand}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useBrewingStand.toColoredText()}")
                     inv.setItem(33, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -396,7 +398,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             34 -> {
                 setting.useBeacon = !setting.useBeacon
                 useBeacon.apply {
-                    this.lore = listOf("상태: ${setting.useBeacon}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useBeacon.toColoredText()}")
                     inv.setItem(34, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -404,7 +406,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             35 -> {
                 setting.useArmorStand = !setting.useArmorStand
                 useArmorStand.apply {
-                    this.lore = listOf("상태: ${setting.useArmorStand}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useArmorStand.toColoredText()}")
                     inv.setItem(35, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -413,7 +415,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             36 -> {
                 setting.canSow = !setting.canSow
                 canSow.apply {
-                    this.lore = listOf("상태: ${setting.canSow}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.canSow.toColoredText()}")
                     inv.setItem(36, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -421,7 +423,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             37 -> {
                 setting.canHarvest = !setting.canHarvest
                 canHarvest.apply {
-                    this.lore = listOf("상태: ${setting.canHarvest}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.canHarvest.toColoredText()}")
                     inv.setItem(37, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -429,7 +431,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             38 -> {
                 setting.canBreed = !setting.canBreed
                 canBreed.apply {
-                    this.lore = listOf("상태: ${setting.canBreed}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.canBreed.toColoredText()}")
                     inv.setItem(38, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -437,7 +439,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             39 -> {
                 setting.useBucket = !setting.useBucket
                 useBucket.apply {
-                    this.lore = listOf("상태: ${setting.useBucket}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useBucket.toColoredText()}")
                     inv.setItem(39, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -445,7 +447,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             40 -> {
                 setting.useMilk = !setting.useMilk
                 useMilk.apply {
-                    this.lore = listOf("상태: ${setting.useMilk}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useMilk.toColoredText()}")
                     inv.setItem(40, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -453,7 +455,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             41 -> {
                 setting.throwEgg = !setting.throwEgg
                 throwEgg.apply {
-                    this.lore = listOf("상태: ${setting.throwEgg}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.throwEgg.toColoredText()}")
                     inv.setItem(41, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -461,7 +463,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             42 -> {
                 setting.useShears = !setting.useShears
                 useShears.apply {
-                    this.lore = listOf("상태: ${setting.useShears}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useShears.toColoredText()}")
                     inv.setItem(42, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -469,7 +471,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             43 -> {
                 setting.useFlintAndSteel = !setting.useFlintAndSteel
                 useFlintAndSteel.apply {
-                    this.lore = listOf("상태: ${setting.useFlintAndSteel}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useFlintAndSteel.toColoredText()}")
                     inv.setItem(43, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -477,7 +479,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             44 -> {
                 setting.canRuinFarmland = !setting.canRuinFarmland
                 canRuinFarmland.apply {
-                    this.lore = listOf("상태: ${setting.canRuinFarmland}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.canRuinFarmland.toColoredText()}")
                     inv.setItem(44, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -486,7 +488,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             45 -> {
                 setting.useMinecart = !setting.useMinecart
                 useMinecart.apply {
-                    this.lore = listOf("상태: ${setting.useMinecart}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useMinecart.toColoredText()}")
                     inv.setItem(45, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -494,7 +496,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             46 -> {
                 setting.canFishing = !setting.canFishing
                 canFishing.apply {
-                    this.lore = listOf("상태: ${setting.canFishing}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.canFishing.toColoredText()}")
                     inv.setItem(46, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -502,7 +504,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             47 -> {
                 setting.useBoat = !setting.useBoat
                 useBoat.apply {
-                    this.lore = listOf("상태: ${setting.useBoat}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useBoat.toColoredText()}")
                     inv.setItem(47, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -510,7 +512,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             48 -> {
                 setting.canRiding = !setting.canRiding
                 canRiding.apply {
-                    this.lore = listOf("상태: ${setting.canRiding}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.canRiding.toColoredText()}")
                     inv.setItem(48, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -518,7 +520,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             49 -> {
                 setting.useChestedHorse = !setting.useChestedHorse
                 useChestedHorse.apply {
-                    this.lore = listOf("상태: ${setting.useChestedHorse}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useChestedHorse.toColoredText()}")
                     inv.setItem(49, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -526,7 +528,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             50 -> {
                 setting.useLead = !setting.useLead
                 useLead.apply {
-                    this.lore = listOf("상태: ${setting.useLead}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useLead.toColoredText()}")
                     inv.setItem(50, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -534,7 +536,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             51 -> {
                 setting.breakItemFrame = !setting.breakItemFrame
                 breakItemFrame.apply {
-                    this.lore = listOf("상태: ${setting.breakItemFrame}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.breakItemFrame.toColoredText()}")
                     inv.setItem(51, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -542,7 +544,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             52 -> {
                 setting.useNoteBlock = !setting.useNoteBlock
                 useNoteBlock.apply {
-                    this.lore = listOf("상태: ${setting.useNoteBlock}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useNoteBlock.toColoredText()}")
                     inv.setItem(52, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -550,7 +552,7 @@ class PartTimeJobSettingGui(private val player: Player, private val lands: Lands
             53 -> {
                 setting.useJukebox = !setting.useJukebox
                 useJukebox.apply {
-                    this.lore = listOf("상태: ${setting.useJukebox}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useJukebox.toColoredText()}")
                     inv.setItem(53, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)

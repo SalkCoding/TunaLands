@@ -7,6 +7,7 @@ import com.salkcoding.tunalands.data.lands.Lands
 import com.salkcoding.tunalands.data.lands.Rank
 import com.salkcoding.tunalands.util.*
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
@@ -22,11 +23,11 @@ class UserListGui(private val player: Player, private val lands: Lands, private 
     private lateinit var playerList: List<UUID>
 
     private val sortButton = (Material.HOPPER * 1).apply {
-        this.displayName("정렬 방법 선택")
+        this.displayName("${ChatColor.WHITE}정렬 방법 선택")
     }
 
     private val statisticsInfo = (Material.PAINTING * 1).apply {
-        this.displayName("통계")
+        this.displayName("${ChatColor.WHITE}통계")
     }
 
     private var sortWay = 0
@@ -50,11 +51,11 @@ class UserListGui(private val player: Player, private val lands: Lands, private 
                 }
             }
             this.lore = listOf(
-                "총 인원: ${onlineCount}/${lands.memberMap.size}",
-                "관리 대리인: ${delegatorCount}명",
-                "멤버: ${memberCount}명",
-                "알바: ${partTimeJobCount}명",
-                "방문자: ${visitorCount}명"
+                "${ChatColor.WHITE}총 인원: ${ChatColor.GREEN}${onlineCount}${ChatColor.WHITE}/${ChatColor.GRAY}${lands.memberMap.size}",
+                "${ChatColor.WHITE}관리 대리인: ${ChatColor.GOLD}${delegatorCount}${ChatColor.WHITE}명",
+                "${ChatColor.WHITE}멤버: ${ChatColor.GOLD}${memberCount}${ChatColor.WHITE}명",
+                "${ChatColor.WHITE}알바: ${ChatColor.GOLD}${partTimeJobCount}${ChatColor.WHITE}명",
+                "${ChatColor.WHITE}방문자: ${ChatColor.GOLD}${visitorCount}${ChatColor.WHITE}명"
             )
         }
 
@@ -132,14 +133,14 @@ class UserListGui(private val player: Player, private val lands: Lands, private 
 
         sortButton.apply {
             this.lore = listOf(
-                "현재 보기 상태: $sortLore",
-                "기본: 모든 사용자를 최근에 입장한 순서로 봅니다.",
-                "관리 대리인: 가장 최근에 입장한 순서로 봅니다.",
-                "멤버: 가장 최근에 입장한 순서로 봅니다.",
-                "알바: 가장 최근에 입장한 순서로 봅니다.",
-                "방문자: 가장 최근에 방문한 순서로 봅니다.",
+                "${ChatColor.WHITE}현재 보기 상태: ${ChatColor.GOLD}$sortLore",
+                "${ChatColor.WHITE}기본: 모든 사용자를 최근에 입장한 순서로 봅니다.",
+                "${ChatColor.WHITE}관리 대리인: 가장 최근에 입장한 순서로 봅니다.",
+                "${ChatColor.WHITE}멤버: 가장 최근에 입장한 순서로 봅니다.",
+                "${ChatColor.WHITE}알바: 가장 최근에 입장한 순서로 봅니다.",
+                "${ChatColor.WHITE}방문자: 가장 최근에 방문한 순서로 봅니다.",
                 "",
-                "클릭하여 정렬 방법을 변경할 수 있습니다."
+                "${ChatColor.WHITE}클릭하여 정렬 방법을 변경할 수 있습니다."
             )
         }
         inv.setItem(3, sortButton)
@@ -158,8 +159,8 @@ class UserListGui(private val player: Player, private val lands: Lands, private 
                 meta.owningPlayer = entry
                 meta.setDisplayName(entry.name)
                 meta.lore = listOf(
-                    "권한: ${memberData.rank}",
-                    "최근 방문일: ${
+                    "${ChatColor.WHITE}권한: ${memberData.rank.toColoredText()}",
+                    "${ChatColor.WHITE}최근 방문일: ${ChatColor.GRAY}${
                         date.get(Calendar.YEAR)
                     }/${
                         date.get(Calendar.MONTH) + 1
@@ -230,7 +231,7 @@ class UserListGui(private val player: Player, private val lands: Lands, private 
 }
 
 fun Player.openUserListGui(lands: Lands, rank: Rank) {
-    val inventory = Bukkit.createInventory(null, 54, "User list GUI")
+    val inventory = Bukkit.createInventory(null, 54, "유저 목록")
     val gui = UserListGui(this, lands, rank)
     gui.render(inventory)
 

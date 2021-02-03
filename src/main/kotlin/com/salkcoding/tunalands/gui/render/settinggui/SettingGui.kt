@@ -10,6 +10,7 @@ import com.salkcoding.tunalands.util.backButton
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.times
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
@@ -21,28 +22,28 @@ class SettingGui(private val player: Player, private val lands: Lands, private v
 
     companion object {
         val visitorSettingButton = (Material.OAK_SIGN * 1).apply {
-            this.displayName("방문자 설정")
-            this.lore = listOf("방문자의 권한을 설정합니다.")
+            this.displayName("${ChatColor.WHITE}방문자 설정")
+            this.lore = listOf("${ChatColor.WHITE}방문자의 권한을 설정합니다.")
         }
 
         val memberSettingButton = (Material.PAINTING * 1).apply {
-            this.displayName("멤버 설정")
-            this.lore = listOf("멤버의 권한을 설정합니다.")
+            this.displayName("${ChatColor.WHITE}멤버 설정")
+            this.lore = listOf("${ChatColor.WHITE}멤버의 권한을 설정합니다.")
         }
 
         val delegatorSettingButton = (Material.ITEM_FRAME * 1).apply {
-            this.displayName("관리대리인 설정")
-            this.lore = listOf("관리대리인의 권한을 설정합니다.")
+            this.displayName("${ChatColor.WHITE}관리대리인 설정")
+            this.lore = listOf("${ChatColor.WHITE}관리대리인의 권한을 설정합니다.")
         }
 
         val partTimeJobSettingButton = (Material.NAME_TAG * 1).apply {
-            this.displayName("알바 설정")
-            this.lore = listOf("알바의 권한을 설정합니다.")
+            this.displayName("${ChatColor.WHITE}알바 설정")
+            this.lore = listOf("${ChatColor.WHITE}알바의 권한을 설정합니다.")
         }
 
         val regionSettingButton = (Material.GRASS_BLOCK * 1).apply {
-            this.displayName("지역 설정")
-            this.lore = listOf("업데이트 예정입니다.")
+            this.displayName("${ChatColor.GRAY}지역 설정")
+            this.lore = listOf("${ChatColor.GRAY}업데이트 예정입니다.")
         }
     }
 

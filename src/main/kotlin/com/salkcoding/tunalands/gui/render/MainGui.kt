@@ -11,6 +11,7 @@ import com.salkcoding.tunalands.data.lands.Rank
 import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.*
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
@@ -25,7 +26,7 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
 
     //Dynamic
     private val totalInfoIcon = (Material.CAMPFIRE * 1).apply {
-        this.displayName("${lands.ownerName}의 지역")
+        this.displayName("${ChatColor.GOLD}${lands.ownerName}${ChatColor.WHITE}의 지역")
     }
 
     private val lockButton = (Material.IRON_DOOR * 1)
@@ -66,30 +67,30 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
     //Static
     companion object {
         private val settingButton = (Material.BONE * 1).apply {
-            this.displayName("지역 관리")
+            this.displayName("${ChatColor.WHITE}지역 관리")
             this.lore = listOf(
-                "지역의 세부 설정을 변경합니다."
+                "${ChatColor.WHITE}지역의 세부 설정을 변경합니다."
             )
         }
 
         private val shopButton = (Material.HEART_OF_THE_SEA * 1).apply {
-            this.displayName("지역 상점")
+            this.displayName("${ChatColor.WHITE}지역 상점")
             this.lore = listOf(
-                "지역에 관련된 물품을 구매할 수 있습니다."
+                "${ChatColor.WHITE}지역에 관련된 물품을 구매할 수 있습니다."
             )
         }
 
         private val userListButton = (Material.WRITABLE_BOOK * 1).apply {
-            this.displayName("사용자 목록")
+            this.displayName("${ChatColor.WHITE}사용자 목록")
             this.lore = listOf(
-                "지역의 사용자 목록을 확인합니다."
+                "${ChatColor.WHITE}지역의 사용자 목록을 확인합니다."
             )
         }
 
         private val banListButton = (Material.CRIMSON_SIGN * 1).apply {
-            this.displayName("밴 목록")
+            this.displayName("${ChatColor.WHITE}밴 목록")
             this.lore = listOf(
-                "밴 목록을 확인합니다."
+                "${ChatColor.WHITE}밴 목록을 확인합니다."
             )
         }
 
@@ -120,17 +121,23 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                 val minutes = (expired / 60000) % 60
                 val seconds = (expired / 1000) % 60
                 val fuel = when {
-                    days > 0 -> "남은 연료: ${days}일 ${hours}시간 ${minutes}분 ${seconds}초"
-                    hours > 0 -> "남은 연료: ${hours}시간 ${minutes}분 ${seconds}초"
-                    minutes > 0 -> "남은 연료: ${minutes}분 ${seconds}초"
-                    seconds > 0 -> "남은 연료: ${seconds}초"
-                    else -> "NULL"
+                    days > 0 -> "${ChatColor.WHITE}남은 연료: ${days}일 ${hours}시간 ${minutes}분 ${seconds}초"
+                    hours > 0 -> "${ChatColor.WHITE}남은 연료: ${hours}시간 ${minutes}분 ${seconds}초"
+                    minutes > 0 -> "${ChatColor.WHITE}남은 연료: ${minutes}분 ${seconds}초"
+                    seconds > 0 -> "${ChatColor.WHITE}남은 연료: ${seconds}초"
+                    else -> "${ChatColor.WHITE}NULL"
                 }
                 this.lore = listOf(
                     fuel,
-                    "점유한 지역: ${lands.landList.size}개",
-                    "멤버 수: ${lands.memberMap.size}명",
-                    "생성일: ${created.get(Calendar.YEAR)}/${created.get(Calendar.MONTH) + 1}/${created.get(Calendar.DATE)}"
+                    "${ChatColor.WHITE}점유한 지역: ${ChatColor.GOLD}${lands.landList.size}${ChatColor.WHITE}개",
+                    "${ChatColor.WHITE}멤버 수: ${ChatColor.GOLD}${lands.memberMap.size}${ChatColor.WHITE}명",
+                    "${ChatColor.WHITE}생성일: ${ChatColor.GRAY}${
+                        created.get(Calendar.YEAR)
+                    }/${
+                        created.get(Calendar.MONTH) + 1
+                    }/${
+                        created.get(Calendar.DATE)
+                    }"
                 )
             }
             Bukkit.getScheduler().runTask(tunaLands, Runnable {
@@ -140,19 +147,19 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
 
         lockButton.apply {
             this.displayName(
-                "지역을 ${
+                "${ChatColor.WHITE}지역을 ${
                     when (lands.open) {
-                        true -> "비공개"
-                        false -> "공개"
+                        true -> "${ChatColor.RED}비공개"
+                        false -> "${ChatColor.GREEN}공개"
                     }
-                }로 전환"
+                }${ChatColor.WHITE}로 전환"
             )
             this.lore = listOf(
-                "지역의 공개 여부를 변경합니다.",
-                "현재 상태: ${
+                "${ChatColor.WHITE}지역의 공개 여부를 변경합니다.",
+                "${ChatColor.WHITE}현재 상태: ${
                     when (lands.open) {
-                        true -> "공개"
-                        false -> "비공개"
+                        true -> "${ChatColor.GREEN}공개"
+                        false -> "${ChatColor.RED}비공개"
                     }
                 }"
             )
@@ -178,10 +185,13 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                     return
                 Bukkit.getScheduler().runTaskLater(tunaLands, Runnable {
                     val fuel = event.inventory.getItem(4) ?: return@Runnable
+                    if (!fuel.isSimilar(ShopGui.fuel30Minutes) &&
+                        !fuel.isSimilar(ShopGui.fuel1Hour) &&
+                        !fuel.isSimilar(ShopGui.fuel6Hours) &&
+                        !fuel.isSimilar(ShopGui.fuel12Hours) &&
+                        !fuel.isSimilar(ShopGui.fuel24Hours)
+                    ) return@Runnable
                     val lore = fuel.lore ?: return@Runnable
-                    if (lore.size != 2) return@Runnable
-                    if (fuel.itemMeta.displayName != "연료") return@Runnable
-
                     val timeLore = lore[1].split(" ")[0]
                     val time = timeRegex.find(timeLore)!!.value.toInt()
                     //Expired refresh
@@ -194,7 +204,7 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                         else -> 0
                     })
 
-                    player.sendMessage("${time * fuel.amount}${measure}이 추가되었습니다!".infoFormat())
+                    player.sendMessage("${ChatColor.GOLD}${time * fuel.amount}${ChatColor.WHITE}${measure}이 추가되었습니다!".infoFormat())
                     event.inventory.setItem(4, null)
                     //TODO 화악 타오르는듯한 소리
                 }, 2)
@@ -228,27 +238,27 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                     Rank.OWNER, Rank.DELEGATOR -> {
                         lockButton.apply {
                             this.displayName(
-                                "지역을 ${
+                                "${ChatColor.WHITE}지역을 ${
                                     when (lands.open) {
                                         true -> {
                                             lands.open = false
                                             player.playSound(Sound.BLOCK_WOODEN_DOOR_CLOSE, .5f, 1f)
-                                            "공개"
+                                            "${ChatColor.GREEN}공개"
                                         }
                                         false -> {
                                             lands.open = true
                                             player.playSound(Sound.BLOCK_WOODEN_DOOR_OPEN, .5f, 1f)
-                                            "비공개"
+                                            "${ChatColor.RED}비공개"
                                         }
                                     }
                                 }로 전환"
                             )
                             this.lore = listOf(
-                                "지역의 공개 여부를 변경합니다.",
-                                "현재 상태: ${
+                                "${ChatColor.WHITE}지역의 공개 여부를 변경합니다.",
+                                "${ChatColor.WHITE}현재 상태: ${
                                     when (lands.open) {
-                                        true -> "공개"
-                                        false -> "비공개"
+                                        true -> "${ChatColor.GREEN}공개"
+                                        false -> "${ChatColor.RED}비공개"
                                     }
                                 }"
                             )
@@ -274,7 +284,7 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
 }
 
 fun Player.openMainGui(lands: Lands, rank: Rank) {
-    val inventory = Bukkit.createInventory(null, 27, "Main GUI")
+    val inventory = Bukkit.createInventory(null, 27, "TunaLands")
     val gui = MainGui(this, lands, rank)
     gui.render(inventory)
 

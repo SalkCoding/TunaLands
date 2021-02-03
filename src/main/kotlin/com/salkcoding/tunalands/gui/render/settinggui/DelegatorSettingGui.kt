@@ -7,7 +7,9 @@ import com.salkcoding.tunalands.data.lands.Lands
 import com.salkcoding.tunalands.data.lands.Rank
 import com.salkcoding.tunalands.util.backButton
 import com.salkcoding.tunalands.util.times
+import com.salkcoding.tunalands.util.toColoredText
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
@@ -17,23 +19,23 @@ import org.bukkit.inventory.Inventory
 
 class DelegatorSettingGui(private val player: Player, private val lands: Lands, private val rank: Rank) : GuiInterface {
 
-    private val canSetVisitorSetting = (Material.NETHER_STAR * 1).apply { this.displayName("방문자 권한 설정 권한") }
-    private val canSetPartTimeJobSetting = (Material.BOOK * 1).apply { this.displayName("알바 권한 설정 권한") }
-    private val canSetMemberSetting = (Material.PAINTING * 1).apply { this.displayName("멤버 권한 설정 권한") }
-    private val canSetRegionSetting = (Material.GRASS_BLOCK * 1).apply { this.displayName("지역 설정 권한") }
-    private val canSetSpawn = (Material.IRON_DOOR * 1).apply { this.displayName("스폰 설정 권한") }
-    private val canBan = (Material.CRIMSON_SIGN * 1).apply { this.displayName("밴 권한") }
+    private val canSetVisitorSetting = (Material.NETHER_STAR * 1).apply { this.displayName("${ChatColor.WHITE}방문자 권한 설정 권한") }
+    private val canSetPartTimeJobSetting = (Material.BOOK * 1).apply { this.displayName("${ChatColor.WHITE}알바 권한 설정 권한") }
+    private val canSetMemberSetting = (Material.PAINTING * 1).apply { this.displayName("${ChatColor.WHITE}멤버 권한 설정 권한") }
+    private val canSetRegionSetting = (Material.GRASS_BLOCK * 1).apply { this.displayName("${ChatColor.WHITE}지역 설정 권한") }
+    private val canSetSpawn = (Material.IRON_DOOR * 1).apply { this.displayName("${ChatColor.WHITE}스폰 설정 권한") }
+    private val canBan = (Material.CRIMSON_SIGN * 1).apply { this.displayName("${ChatColor.WHITE}밴 권한") }
     override fun render(inv: Inventory) {
         val setting = lands.delegatorSetting
 
         //First row
 
-        canSetVisitorSetting.apply { this.lore = listOf("상태: ${setting.canSetVisitorSetting}") }
-        canSetPartTimeJobSetting.apply { this.lore = listOf("상태: ${setting.canSetPartTimeJobSetting}") }
-        canSetMemberSetting.apply { this.lore = listOf("상태: ${setting.canSetMemberSetting}") }
-        canSetRegionSetting.apply { this.lore = listOf("상태: ${setting.canSetRegionSetting}") }
-        canSetSpawn.apply { this.lore = listOf("상태: ${setting.canSetSpawn}") }
-        canBan.apply { this.lore = listOf("상태: ${setting.canBan}") }
+        canSetVisitorSetting.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.canSetVisitorSetting.toColoredText()}") }
+        canSetPartTimeJobSetting.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.canSetPartTimeJobSetting.toColoredText()}") }
+        canSetMemberSetting.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.canSetMemberSetting.toColoredText()}") }
+        canSetRegionSetting.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.canSetRegionSetting.toColoredText()}") }
+        canSetSpawn.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.canSetSpawn.toColoredText()}") }
+        canBan.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.canBan.toColoredText()}") }
 
         inv.setItem(0, backButton)
         inv.setItem(8, backButton)
@@ -59,7 +61,7 @@ class DelegatorSettingGui(private val player: Player, private val lands: Lands, 
             9 -> {
                 setting.canSetVisitorSetting = !setting.canSetVisitorSetting
                 canSetVisitorSetting.apply {
-                    this.lore = listOf("상태: ${setting.canSetVisitorSetting}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.canSetVisitorSetting.toColoredText()}")
                     inv.setItem(9, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -67,7 +69,7 @@ class DelegatorSettingGui(private val player: Player, private val lands: Lands, 
             10 -> {
                 setting.canSetPartTimeJobSetting = !setting.canSetPartTimeJobSetting
                 canSetPartTimeJobSetting.apply {
-                    this.lore = listOf("상태: ${setting.canSetPartTimeJobSetting}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.canSetPartTimeJobSetting.toColoredText()}")
                     inv.setItem(10, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -75,7 +77,7 @@ class DelegatorSettingGui(private val player: Player, private val lands: Lands, 
             11 -> {
                 setting.canSetMemberSetting = !setting.canSetMemberSetting
                 canSetMemberSetting.apply {
-                    this.lore = listOf("상태: ${setting.canSetMemberSetting}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.canSetMemberSetting.toColoredText()}")
                     inv.setItem(11, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -83,7 +85,7 @@ class DelegatorSettingGui(private val player: Player, private val lands: Lands, 
             12 -> {
                 setting.canSetRegionSetting = !setting.canSetRegionSetting
                 canSetRegionSetting.apply {
-                    this.lore = listOf("상태: ${setting.canSetRegionSetting}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.canSetRegionSetting.toColoredText()}")
                     inv.setItem(12, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -91,7 +93,7 @@ class DelegatorSettingGui(private val player: Player, private val lands: Lands, 
             13 -> {
                 setting.canSetSpawn = !setting.canSetSpawn
                 canSetSpawn.apply {
-                    this.lore = listOf("상태: ${setting.canSetSpawn}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.canSetSpawn.toColoredText()}")
                     inv.setItem(13, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
@@ -99,7 +101,7 @@ class DelegatorSettingGui(private val player: Player, private val lands: Lands, 
             14 -> {
                 setting.canBan = !setting.canBan
                 canBan.apply {
-                    this.lore = listOf("상태: ${setting.canBan}")
+                    this.lore = listOf("${ChatColor.WHITE}상태: ${setting.canBan.toColoredText()}")
                     inv.setItem(14, this)
                 }
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)

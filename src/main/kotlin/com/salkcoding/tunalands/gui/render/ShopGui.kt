@@ -9,6 +9,7 @@ import com.salkcoding.tunalands.data.lands.Lands
 import com.salkcoding.tunalands.data.lands.Rank
 import com.salkcoding.tunalands.util.*
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryClickEvent
@@ -19,58 +20,58 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
 
     companion object {
         val takeFlag = (Material.GREEN_BANNER * 1).apply {
-            this.displayName("점유 깃발")
+            this.displayName("${ChatColor.GREEN}점유 ${ChatColor.WHITE}깃발")
             this.lore = listOf(
-                "가격: ${configuration.flag.takeFlagPrice}캔",
-                "늘리고 싶은 지역에 설치하여 점유할 수 있는 깃발입니다."
+                "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.flag.takeFlagPrice}캔",
+                "${ChatColor.WHITE}늘리고 싶은 지역에 설치하여 점유할 수 있는 깃발입니다."
             )
         }
 
         val releaseFlag = (Material.RED_BANNER * 1).apply {
-            this.displayName("제거 깃발")
+            this.displayName("${ChatColor.RED}제거 ${ChatColor.WHITE}깃발")
             this.lore = listOf(
-                "가격: ${configuration.flag.releaseFlagPrice}캔",
-                "제거하고 싶은 지역에 설치하여 제거할 수 있는 깃발입니다."
+                "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.flag.releaseFlagPrice}캔",
+                "${ChatColor.WHITE}제거하고 싶은 지역에 설치하여 제거할 수 있는 깃발입니다."
             )
         }
 
-        private val fuel30Minutes = (Material.PAPER * 1).apply {
-            this.displayName("연료")
+        val fuel30Minutes = (Material.PAPER * 1).apply {
+            this.displayName("${ChatColor.WHITE}연료")
             this.lore = listOf(
-                "가격: ${configuration.fuel.m30}캔",
-                "30분 동안 유지되는 연료이다."
+                "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.fuel.m30}캔",
+                "${ChatColor.WHITE}30분 동안 유지되는 연료이다."
             )
         }
 
-        private val fuel1Hour = (Material.PAPER * 1).apply {
+        val fuel1Hour = (Material.PAPER * 1).apply {
             this.displayName("연료")
             this.lore = listOf(
-                "가격: ${configuration.fuel.h1}캔",
-                "1시간 동안 유지되는 연료이다."
+                "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.fuel.h1}캔",
+                "${ChatColor.WHITE}1시간 동안 유지되는 연료이다."
             )
         }
 
-        private val fuel6Hours = (Material.PAPER * 1).apply {
+        val fuel6Hours = (Material.PAPER * 1).apply {
             this.displayName("연료")
             this.lore = listOf(
-                "가격: ${configuration.fuel.h6}캔",
-                "6시간 동안 유지되는 연료이다."
+                "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.fuel.h6}캔",
+                "${ChatColor.WHITE}6시간 동안 유지되는 연료이다."
             )
         }
 
-        private val fuel12Hours = (Material.PAPER * 1).apply {
+        val fuel12Hours = (Material.PAPER * 1).apply {
             this.displayName("연료")
             this.lore = listOf(
-                "가격: ${configuration.fuel.h12}캔",
-                "12시간 동안 유지되는 연료이다."
+                "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.fuel.h12}캔",
+                "${ChatColor.WHITE}12시간 동안 유지되는 연료이다."
             )
         }
 
-        private val fuel24Hours = (Material.PAPER * 1).apply {
+        val fuel24Hours = (Material.PAPER * 1).apply {
             this.displayName("연료")
             this.lore = listOf(
-                "가격: ${configuration.fuel.h24}캔",
-                "24시간 동안 유지되는 연료이다."
+                "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.fuel.h24}캔",
+                "${ChatColor.WHITE}24시간 동안 유지되는 연료이다."
             )
         }
     }
