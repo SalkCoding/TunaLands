@@ -100,10 +100,12 @@ class TunaLands : JavaPlugin() {
 
         server.pluginManager.registerEvents(ChatListener(), this)
         server.pluginManager.registerEvents(ChestGuiOpenListener(), this)
+        server.pluginManager.registerEvents(ChunkEffectListener(), this)
         server.pluginManager.registerEvents(DisplayChunkListener(), this)
         server.pluginManager.registerEvents(CoreListener(), this)
         server.pluginManager.registerEvents(ExplodeListener(), this)
         server.pluginManager.registerEvents(FlagListener(), this)
+        server.pluginManager.registerEvents(InOutListener(), this)
         server.pluginManager.registerEvents(InventoryClickListener(), this)
         server.pluginManager.registerEvents(InventoryCloseListener(), this)
         server.pluginManager.registerEvents(InventoryDragListener(), this)

@@ -6,8 +6,10 @@ import com.salkcoding.tunalands.data.lands.Rank
 import com.salkcoding.tunalands.data.recordLeft
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
+import com.salkcoding.tunalands.util.toColoredText
 import com.salkcoding.tunalands.util.warnFormat
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -58,7 +60,7 @@ class Leave : CommandExecutor {
 
                     lands.memberMap.forEach { (uuid, _) ->
                         val target = Bukkit.getPlayer(uuid) ?: return@forEach
-                        target.sendMessage("${player.name}이/가 땅을 떠났습니다.".warnFormat())
+                        target.sendMessage("${ChatColor.GRAY}[${data.rank.toColoredText()}${ChatColor.GRAY}] ${ChatColor.GREEN}${player.name}${ChatColor.WHITE}이/가 땅을 떠났습니다.".warnFormat())
                     }
                 } else player.sendMessage("어느 땅에도 소속되어있지 않습니다.".errorFormat())
             } else {

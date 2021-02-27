@@ -1,6 +1,25 @@
 package com.salkcoding.tunalands.util
 
 import com.salkcoding.tunalands.data.lands.Lands
+import com.salkcoding.tunalands.tunaLands
+import org.bukkit.*
+import org.bukkit.entity.Player
+
+fun World.playBuyChunkEffect(player: Player, chunk: Chunk) {
+    val effect = ChunkEffect(this, chunk, Material.LIME_TERRACOTTA)
+    effect.task = Bukkit.getScheduler().runTaskTimerAsynchronously(tunaLands, effect, 0, 1)
+    for (i in 0..2) {
+        Bukkit.getScheduler().runTaskLater(tunaLands, Runnable {
+            player.playSound(player.location, Sound.BLOCK_NOTE_BLOCK_BELL, 1f, 1f + (i * 0.5f))
+        }, i * 10L)
+    }
+}
+
+fun World.playSellChunkEffect(player: Player, chunk: Chunk) {
+    val effect = ChunkEffect(this, chunk, Material.RED_TERRACOTTA)
+    effect.task = Bukkit.getScheduler().runTaskTimerAsynchronously(tunaLands, effect, 0, 1)
+    player.playSound(player.location, Sound.ENTITY_GENERIC_EXPLODE, 0.5f, 1f)
+}
 
 /*
 * return
@@ -13,9 +32,9 @@ fun Lands.checkFloodFill(): Boolean {
     val xList = mutableListOf<Int>()
     val zList = mutableListOf<Int>()
     landList.forEach { query ->
-        val split = query.split(":")
-        xList.add(split[0].toInt())
-        zList.add(split[1].toInt())
+        val result = query.splitQuery()
+        xList.add(result.first)
+        zList.add(result.second)
     }
     val xMin = xList.minByOrNull { it }!!
     val zMin = zList.minByOrNull { it }!!

@@ -59,6 +59,8 @@ class CommandListener : BungeeChannelApi.ForwardConsumer {
                                 }
                             } catch (exception: IOException) {
                                 exception.printStackTrace()
+                            } finally {
+                                messageOut.close()
                             }
 
                             bungeeApi.forward("ALL", channel, messageBytes.toByteArray())
@@ -121,6 +123,8 @@ class CommandListener : BungeeChannelApi.ForwardConsumer {
                             messageOut.writeLong(configuration.command.spawnCooldown)
                         } catch (exception: IOException) {
                             exception.printStackTrace()
+                        } finally {
+                            messageOut.close()
                         }
 
                         bungeeApi.forward(serverName, channel, messageBytes.toByteArray())
@@ -171,6 +175,8 @@ class CommandListener : BungeeChannelApi.ForwardConsumer {
                             }
                         } catch (exception: IOException) {
                             exception.printStackTrace()
+                        } finally {
+                            messageOut.close()
                         }
 
                         bungeeApi.forward(serverName, channel, messageBytes.toByteArray())
@@ -181,11 +187,12 @@ class CommandListener : BungeeChannelApi.ForwardConsumer {
                 Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
                     val uuid = UUID.fromString(inMessage.readUTF())
                     val name = inMessage.readUTF()
+                    val isOp = inMessage.readBoolean()
                     val serverName = inMessage.readUTF()
                     val targetUUID = UUID.fromString(inMessage.readUTF())
                     val lands = landManager.getPlayerLands(targetUUID, Rank.OWNER)
                     if (lands != null) {
-                        if (!lands.open) {
+                        if (!lands.open && !isOp) {
                             bungeeApi.sendMessage(name, "땅이 비공개 상태라 방문할 수 없습니다!".errorFormat())
                             return@Runnable
                         }
@@ -207,19 +214,19 @@ class CommandListener : BungeeChannelApi.ForwardConsumer {
                         }
 
                         if (!lands.banMap.containsKey(uuid)) {
-                            if (lands.open) {
-                                val messageBytes = ByteArrayOutputStream()
-                                val messageOut = DataOutputStream(messageBytes)
-                                try {
-                                    messageOut.writeUTF(uuid.toString())
-                                    messageOut.writeUTF(targetUUID.toString())
-                                    messageOut.writeUTF(currentServerName)
-                                    messageOut.writeLong(configuration.command.visitCooldown)
-                                } catch (exception: IOException) {
-                                    exception.printStackTrace()
-                                }
-                                bungeeApi.forward(serverName, channel, messageBytes.toByteArray())
+                            val messageBytes = ByteArrayOutputStream()
+                            val messageOut = DataOutputStream(messageBytes)
+                            try {
+                                messageOut.writeUTF(uuid.toString())
+                                messageOut.writeUTF(targetUUID.toString())
+                                messageOut.writeUTF(currentServerName)
+                                messageOut.writeLong(configuration.command.visitCooldown)
+                            } catch (exception: IOException) {
+                                exception.printStackTrace()
+                            } finally {
+                                messageOut.close()
                             }
+                            bungeeApi.forward(serverName, channel, messageBytes.toByteArray())
                         } else {
                             bungeeApi.sendMessage(name, "${lands.ownerName}의 땅에서 밴되었기 때문에 방문할 수 없습니다!".errorFormat())
                         }
@@ -246,7 +253,7 @@ class CommandListener : BungeeChannelApi.ForwardConsumer {
                                     return@Runnable
                             }
 
-                            lands.landHistory.visitorCount++
+                            lands.landHistory.visitorCount += 1
                             val current = System.currentTimeMillis()
                             lands.memberMap[uuid] = Lands.MemberData(
                                 uuid,

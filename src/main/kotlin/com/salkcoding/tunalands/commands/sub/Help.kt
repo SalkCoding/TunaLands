@@ -37,6 +37,7 @@ class Help : CommandExecutor {
             sender.sendMessage("/ld debug info (name): 해당 유저가 가지고 있는 땅을 보여줍니다.".warnFormat())
             sender.sendMessage("/ld debug buy: 해당 위치의 땅을 구매합니다.".warnFormat())
             sender.sendMessage("/ld debug sell: 해당 위치의 땅을 판매합니다.".warnFormat())
+            sender.sendMessage("/ld debug delete (name): 해당 유저의 땅을 삭제합니다.".warnFormat())
         }
         return true
     }

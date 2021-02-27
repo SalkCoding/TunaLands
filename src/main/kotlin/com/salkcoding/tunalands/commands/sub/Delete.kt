@@ -9,6 +9,7 @@ import com.salkcoding.tunalands.util.infoFormat
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.OfflinePlayer
+import org.bukkit.Sound
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -48,16 +49,8 @@ class Delete : CommandExecutor {
                         downCore.block.type = Material.AIR
 
                         landManager.deleteLands(player)
-
-                        Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
-                            val folder = File(tunaLands.dataFolder, "userdata")
-                            if (folder.exists()) {
-                                val file = File(folder, "${player.uniqueId}.json")
-                                if (file.exists())
-                                    file.delete()
-                            }
-                        })
                         player.sendMessage("땅을 삭제했습니다.".infoFormat())
+                        player.playSound(player.location, Sound.ENTITY_GENERIC_EXPLODE, 0.5f, 1f)
                     } else player.sendMessage("모든 멤버가 나가기전까지는 땅을 삭제할 수 없습니다.".errorFormat())
                 } else player.sendMessage("해당 명령어는 땅 소유자만 사용가능합니다.".errorFormat())
             } else {
@@ -72,15 +65,6 @@ class Delete : CommandExecutor {
                         downCore.block.type = Material.AIR
 
                         landManager.deleteLands(offlinePlayer)
-
-                        Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
-                            val folder = File(tunaLands.dataFolder, "userdata")
-                            if (folder.exists()) {
-                                val file = File(folder, "${offlinePlayer.uniqueId}.json")
-                                if (file.exists())
-                                    file.delete()
-                            }
-                        })
                         bungeeApi.sendMessage(hostName, "땅을 삭제했습니다.".infoFormat())
                     } else bungeeApi.sendMessage(hostName, "모든 멤버가 나가기전까지는 땅을 삭제할 수 없습니다.".errorFormat())
                 } else bungeeApi.sendMessage(hostName, "해당 명령어는 땅 소유자만 사용가능합니다.".errorFormat())

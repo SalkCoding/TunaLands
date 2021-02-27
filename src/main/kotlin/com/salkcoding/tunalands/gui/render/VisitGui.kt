@@ -150,7 +150,11 @@ class VisitGui(private val player: Player) : GuiInterface {
                     }",
                     "${ChatColor.WHITE}멤버 수: ${ChatColor.GOLD}${lands.memberMap.size}",
                     "${ChatColor.WHITE}방문자 수: ${ChatColor.GOLD}${lands.landHistory.visitorCount}",
-                    "${ChatColor.WHITE}생성일: ${ChatColor.GRAY}${created.get(Calendar.YEAR)}/${created.get(Calendar.MONTH) + 1}/${created.get(Calendar.DATE)}",
+                    "${ChatColor.WHITE}생성일: ${ChatColor.GRAY}${created.get(Calendar.YEAR)}/${created.get(Calendar.MONTH) + 1}/${
+                        created.get(
+                            Calendar.DATE
+                        )
+                    }",
                 )
                 (0 until lands.lore.size).forEach { i ->
                     lore.add(i, lands.lore[i])
@@ -257,7 +261,7 @@ class VisitGui(private val player: Player) : GuiInterface {
                                         return@addPlayer
                                 }
 
-                                lands.landHistory.visitorCount++
+                                lands.landHistory.visitorCount += 1
                                 val current = System.currentTimeMillis()
                                 lands.memberMap[uuid] = Lands.MemberData(
                                     uuid,
@@ -272,7 +276,8 @@ class VisitGui(private val player: Player) : GuiInterface {
                                         member.player!!.sendMessage("${ChatColor.GREEN}${player.name}${ChatColor.WHITE}님이 땅에 방문했습니다.".infoFormat())
                                     } else {
                                         bungeeApi.sendMessage(
-                                            member.name, "${ChatColor.GREEN}${player.name}${ChatColor.WHITE}님이 땅에 방문했습니다.".infoFormat()
+                                            member.name,
+                                            "${ChatColor.GREEN}${player.name}${ChatColor.WHITE}님이 땅에 방문했습니다.".infoFormat()
                                         )
                                     }
                                 }

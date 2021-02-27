@@ -27,7 +27,7 @@ class UserListGui(private val player: Player, private val lands: Lands, private 
     }
 
     private val statisticsInfo = (Material.PAINTING * 1).apply {
-        this.displayName("${ChatColor.WHITE}통계")
+        this.displayName("${ChatColor.WHITE}인원 정보")
     }
 
     private var sortWay = 0
@@ -35,6 +35,7 @@ class UserListGui(private val player: Player, private val lands: Lands, private 
     override fun render(inv: Inventory) {
         statisticsInfo.apply {
             var onlineCount = 0
+            var ownerCount = 0
             var delegatorCount = 0
             var memberCount = 0
             var partTimeJobCount = 0
@@ -43,20 +44,25 @@ class UserListGui(private val player: Player, private val lands: Lands, private 
                 if (Bukkit.getOfflinePlayer(uuid).isOnline)
                     onlineCount++
                 when (data.rank) {
+                    Rank.OWNER -> ownerCount++
                     Rank.DELEGATOR -> delegatorCount++
                     Rank.MEMBER -> memberCount++
                     Rank.PARTTIMEJOB -> partTimeJobCount++
                     Rank.VISITOR -> visitorCount++
-                    else -> return@forEach
                 }
             }
-            this.lore = listOf(
-                "${ChatColor.WHITE}총 인원: ${ChatColor.GREEN}${onlineCount}${ChatColor.WHITE}/${ChatColor.GRAY}${lands.memberMap.size}",
-                "${ChatColor.WHITE}관리 대리인: ${ChatColor.GOLD}${delegatorCount}${ChatColor.WHITE}명",
-                "${ChatColor.WHITE}멤버: ${ChatColor.GOLD}${memberCount}${ChatColor.WHITE}명",
-                "${ChatColor.WHITE}알바: ${ChatColor.GOLD}${partTimeJobCount}${ChatColor.WHITE}명",
-                "${ChatColor.WHITE}방문자: ${ChatColor.GOLD}${visitorCount}${ChatColor.WHITE}명"
+            val lore = mutableListOf(
+                "${ChatColor.WHITE}온라인 인원: ${ChatColor.GREEN}${onlineCount}${ChatColor.WHITE}/${ChatColor.GRAY}${lands.memberMap.size}",
             )
+            when {
+                ownerCount > 0 -> lore.add("${ChatColor.WHITE}소유자: ${ChatColor.GOLD}1${ChatColor.WHITE}명")
+                delegatorCount > 0 -> lore.add("${ChatColor.WHITE}관리 대리인: ${ChatColor.GOLD}${delegatorCount}${ChatColor.WHITE}명")
+                memberCount > 0 -> lore.add("${ChatColor.WHITE}멤버: ${ChatColor.GOLD}${memberCount}${ChatColor.WHITE}명")
+                partTimeJobCount > 0 -> lore.add("${ChatColor.WHITE}알바: ${ChatColor.GOLD}${partTimeJobCount}${ChatColor.WHITE}명")
+                visitorCount > 0 -> lore.add("${ChatColor.WHITE}방문자: ${ChatColor.GOLD}${visitorCount}${ChatColor.WHITE}명")
+            }
+            this.lore = lore
+
         }
 
         inv.setItem(0, backButton)

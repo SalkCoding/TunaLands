@@ -44,7 +44,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
         }
 
         val fuel1Hour = (Material.PAPER * 1).apply {
-            this.displayName("연료")
+            this.displayName("${ChatColor.WHITE}연료")
             this.lore = listOf(
                 "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.fuel.h1}캔",
                 "${ChatColor.WHITE}1시간 동안 유지되는 연료이다."
@@ -52,7 +52,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
         }
 
         val fuel6Hours = (Material.PAPER * 1).apply {
-            this.displayName("연료")
+            this.displayName("${ChatColor.WHITE}연료")
             this.lore = listOf(
                 "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.fuel.h6}캔",
                 "${ChatColor.WHITE}6시간 동안 유지되는 연료이다."
@@ -60,7 +60,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
         }
 
         val fuel12Hours = (Material.PAPER * 1).apply {
-            this.displayName("연료")
+            this.displayName("${ChatColor.WHITE}연료")
             this.lore = listOf(
                 "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.fuel.h12}캔",
                 "${ChatColor.WHITE}12시간 동안 유지되는 연료이다."
@@ -68,7 +68,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
         }
 
         val fuel24Hours = (Material.PAPER * 1).apply {
-            this.displayName("연료")
+            this.displayName("${ChatColor.WHITE}연료")
             this.lore = listOf(
                 "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.fuel.h24}캔",
                 "${ChatColor.WHITE}24시간 동안 유지되는 연료이다."

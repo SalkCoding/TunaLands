@@ -6,6 +6,18 @@ fun Chunk.toQuery(): String {
     return "${this.x}:${this.z}"
 }
 
+fun String.splitQuery(): Pair<Int, Int> {
+    val split = this.split(":")
+    if (split.isEmpty() || split.size > 2) throw IllegalArgumentException()
+
+    try {
+        //X, Z
+        return Pair(split[0].toInt(), split[1].toInt())
+    } catch (e: NumberFormatException) {
+        throw java.lang.IllegalArgumentException("")
+    }
+}
+
 fun Chunk.isMeetOtherChunk(chunkList: List<String>): Boolean {
     val left = "${this.x + 1}:${this.z}"
     val top = "${this.x}:${this.z + 1}"

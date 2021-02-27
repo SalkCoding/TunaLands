@@ -35,15 +35,13 @@ class LandManager {
     init {
         playerLandMap.forEach { (_, lands) ->
             lands.landList.forEach { query ->
-                val split = query.split(":")
-                val xChunk = split[0].toInt()
-                val zChunk = split[1].toInt()
+                val result = query.splitQuery()
                 landMap[query] = Lands.ChunkInfo(
                     lands.ownerName,
                     lands.ownerUUID,
                     lands.upCore.world.name,//Core world and chunk world are matched
-                    xChunk,
-                    zChunk
+                    result.first,
+                    result.second
                 )
             }
         }
@@ -67,6 +65,15 @@ class LandManager {
         }
         playerLandMap.remove(ownerUUID)
         database.deleteAll(ownerUUID, ownerName)
+
+        Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
+            val folder = File(tunaLands.dataFolder, "userdata")
+            if (folder.exists()) {
+                val file = File(folder, "$ownerUUID.json")
+                if (file.exists())
+                    file.delete()
+            }
+        })
     }
 
     fun changeChunksOwner(oldOwner: OfflinePlayer, newOwner: OfflinePlayer) {
@@ -187,6 +194,7 @@ class LandManager {
                 database.insert(chunkInfo)
                 displayManager.createDisplay(lands)
                 player.sendMessage("해당 위치의 땅을 구매했습니다.".infoFormat())
+                player.world.playBuyChunkEffect(player, chunk)
             }
         }
     }
@@ -204,20 +212,20 @@ class LandManager {
                 return
             }
 
-            val ownerUUID = lands.ownerUUID
-            if (chunk.isMeetOtherChunk(playerLandMap[ownerUUID]!!.landList)) {
-                playerLandMap[ownerUUID]!!.landList.add(query)
-                val chunkInfo = Lands.ChunkInfo(lands.ownerName, ownerUUID, chunk.world.name, chunk.x, chunk.z)
+            if (chunk.isMeetOtherChunk(lands.landList)) {
+                lands.landList.add(query)
+                val chunkInfo = Lands.ChunkInfo(lands.ownerName, lands.ownerUUID, chunk.world.name, chunk.x, chunk.z)
                 landMap[query] = chunkInfo
                 Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
-                    val floodFill = playerLandMap[ownerUUID]!!.checkFloodFill()
+                    val floodFill = lands.checkFloodFill()
                     Bukkit.getScheduler().runTask(tunaLands, Runnable {
                         if (floodFill) {
                             flag.amount -= 1
                             database.insert(chunkInfo)
                             player.sendMessage("해당 위치의 땅을 구매했습니다.".infoFormat())
+                            player.world.playBuyChunkEffect(player, chunk)
                         } else {
-                            playerLandMap[ownerUUID]!!.landList.remove(query)
+                            lands.landList.remove(query)
                             landMap.remove(query)
                             player.sendMessage("땅따먹기 방지에 의해 구매가 취소되었습니다!".errorFormat())
                         }
@@ -246,20 +254,20 @@ class LandManager {
             if (uuid in lands.memberMap) {
                 when (lands.memberMap[uuid]!!.rank) {
                     Rank.OWNER, Rank.DELEGATOR -> {
-                        val ownerUUID = lands.ownerUUID
                         val removedInfo = landMap.remove(query)!!
                         lands.landList.remove(query)
                         Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
-                            val floodFill = playerLandMap[ownerUUID]!!.checkFloodFill()
+                            val floodFill = lands.checkFloodFill()
                             Bukkit.getScheduler().runTask(tunaLands, Runnable {
                                 if (floodFill) {
                                     if (lands.landList.isEmpty()) playerLandMap.remove(player.uniqueId)
                                     flag.amount -= 1
                                     database.delete(removedInfo)
                                     player.sendMessage("제거되었습니다.".infoFormat())
+                                    player.world.playSellChunkEffect(player, chunk)
                                 } else {
                                     landMap[query] = removedInfo
-                                    playerLandMap[ownerUUID]!!.landList.add(query)
+                                    lands.landList.add(query)
                                     player.sendMessage("땅따먹기 방지에 의해 제거가 취소되었습니다!".errorFormat())
                                 }
                             })

@@ -56,15 +56,18 @@ object TeleportCooltime {
                 return
             }
             if (cooldownTick < 0 || player.isOp) {
-                player.sendMessage("이동중입니다.".infoFormat())
-                player.world.playSound(player.location, Sound.ENTITY_ENDERMAN_TELEPORT, 0.5f, 1f)
-                Bukkit.getScheduler().runTask(tunaLands, Runnable {
-                    player.teleportAsync(to, PlayerTeleportEvent.TeleportCause.COMMAND)
-                })
-                if (callback != null) {
-                    if (isAsync) Bukkit.getScheduler().runTaskAsynchronously(tunaLands, callback)
-                    else Bukkit.getScheduler().runTask(tunaLands, callback)
-                }
+                //player.sendMessage("이동중입니다.".infoFormat())
+                //player.world.playSound(player.location, Sound.BLOCK_PORTAL_TRAVEL, 0.15f, 1f)
+                player.sendTitle("\ue405", "", 30, 10, 30)
+                Bukkit.getScheduler().runTaskLaterAsynchronously(tunaLands, Runnable {
+                    Bukkit.getScheduler().runTask(tunaLands, Runnable {
+                        player.teleportAsync(to, PlayerTeleportEvent.TeleportCause.COMMAND)
+                    })
+                    if (callback != null) {
+                        if (isAsync) callback.run()//Already in async thread
+                        else Bukkit.getScheduler().runTask(tunaLands, callback)
+                    }
+                }, 30)
                 stop()
                 return
             } else {

@@ -1,12 +1,14 @@
 package com.salkcoding.tunalands.display
 
 import com.gmail.filoghost.holographicdisplays.api.HologramsAPI
+import com.gmail.filoghost.holographicdisplays.api.line.TextLine
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.data.lands.Lands
 import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.toQuery
 import com.salkcoding.tunalands.util.warnFormat
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.Chunk
 import org.bukkit.Material
 import java.util.*
@@ -19,10 +21,11 @@ class DisplayManager {
         val location = lands.upCore.toCenterLocation()
         location.y += 1
         val query = location.chunk.toQuery()
+        //Prevent duplication
         if (query in displayMap) return
 
         val hologram = HologramsAPI.createHologram(tunaLands, location)
-        hologram.appendTextLine("${lands.ownerName}의 지역")
+        hologram.appendTextLine("${ChatColor.GOLD}${lands.ownerName}${ChatColor.WHITE}의 지역")
         hologram.appendTextLine("남은 연료: NULL")
         val created = Calendar.getInstance()
         created.timeInMillis = lands.landHistory.createdMillisecond
@@ -42,17 +45,18 @@ class DisplayManager {
                     display.hologram.delete()
                 })
             } else {
+                val days = expired / 86400000
+                val hours = (expired / 3600000) % 24
+                val minutes = (expired / 60000) % 60
+                val seconds = (expired / 1000) % 60
                 Bukkit.getScheduler().runTask(tunaLands, Runnable {
-                    hologram.removeLine(1)
-                    val days = expired / 86400000
-                    val hours = (expired / 3600000) % 24
-                    val minutes = (expired / 60000) % 60
-                    val seconds = (expired / 1000) % 60
+                    //Flicker prevent
+                    val line = hologram.getLine(1) as TextLine
                     when {
-                        days > 0 -> hologram.appendTextLine("남은 연료: ${days}일 ${hours}시간 ${minutes}분 ${seconds}초")
-                        hours > 0 -> hologram.appendTextLine("남은 연료: ${hours}시간 ${minutes}분 ${seconds}초")
-                        minutes > 0 -> hologram.appendTextLine("남은 연료: ${minutes}분 ${seconds}초")
-                        seconds > 0 -> hologram.appendTextLine("남은 연료: ${seconds}초")
+                        days > 0 -> line.text = "남은 연료: ${days}일 ${hours}시간 ${minutes}분 ${seconds}초"
+                        hours > 0 -> line.text = "남은 연료: ${hours}시간 ${minutes}분 ${seconds}초"
+                        minutes > 0 -> line.text = "남은 연료: ${minutes}분 ${seconds}초"
+                        seconds > 0 -> line.text = "남은 연료: ${seconds}초"
                     }
                 })
             }

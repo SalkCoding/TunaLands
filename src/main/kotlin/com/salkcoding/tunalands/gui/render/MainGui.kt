@@ -194,10 +194,8 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                     val lore = fuel.lore ?: return@Runnable
                     val timeLore = lore[1].split(" ")[0]
                     val time = timeRegex.find(timeLore)!!.value.toInt()
-                    //Expired refresh
-                    lands.expiredMillisecond = System.currentTimeMillis()
-
                     val measure = measureRegex.find(timeLore)!!.value
+
                     lands.expiredMillisecond += (fuel.amount * time * when (measure) {
                         "분" -> 60000
                         "시간" -> 3600000
@@ -205,8 +203,8 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                     })
 
                     player.sendMessage("${ChatColor.GOLD}${time * fuel.amount}${ChatColor.WHITE}${measure}이 추가되었습니다!".infoFormat())
+                    player.playSound(player.location, Sound.BLOCK_BLASTFURNACE_FIRE_CRACKLE, 2.5f, 1f)
                     event.inventory.setItem(4, null)
-                    //TODO 화악 타오르는듯한 소리
                 }, 2)
             }
             10 -> {
