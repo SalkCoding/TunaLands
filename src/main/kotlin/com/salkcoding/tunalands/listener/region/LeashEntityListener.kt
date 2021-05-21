@@ -12,6 +12,7 @@ class LeashEntityListener : Listener {
     @EventHandler
     fun onEntityInteract(event: PlayerLeashEntityEvent) {
         if (event.isCancelled) return
+        if (event.player.isOp) return
 
         val lands = landManager.getLandsWithChunk(event.entity.chunk) ?: return
 

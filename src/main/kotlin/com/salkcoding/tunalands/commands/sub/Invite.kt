@@ -103,7 +103,7 @@ class Invite : CommandExecutor {
                         player.sendMessage("${targetName}에게 멤버 초대장를 보냈습니다.".infoFormat())
                         val target = targetOffline.player!!
                         target.sendMessage("${player.name}이/가 당신을 ${lands.ownerName}의 멤버로 초대했습니다.".infoFormat())
-                        target.sendMessage("수락하시려면, /ld accept를 거부하시려면, /ld deny을 입력해주세요.".infoFormat())
+                        target.sendMessage("수락하시려면, /tl accept를 거부하시려면, /tl deny을 입력해주세요.".infoFormat())
 
                         inviteMap[target.uniqueId] =
                             InviteData(
@@ -125,7 +125,7 @@ class Invite : CommandExecutor {
                             )
                             bungeeApi.sendMessage(
                                 targetName,
-                                "수락하시려면, /ld accept를 거부하시려면, /ld deny을 입력해주세요.".infoFormat()
+                                "수락하시려면, /tl accept를 거부하시려면, /tl deny을 입력해주세요.".infoFormat()
                             )
                             val inviteData = InviteData(
                                 player,
@@ -203,7 +203,7 @@ class Invite : CommandExecutor {
                     if (targetOffline.isOnline) {
                         val target = targetOffline.player!!
                         target.sendMessage("${offlinePlayer.name}이/가 당신을 ${lands.ownerName}의 멤버로 초대했습니다.".infoFormat())
-                        target.sendMessage("수락하시려면, /ld accept를 거부하시려면, /ld deny을 입력해주세요.".infoFormat())
+                        target.sendMessage("수락하시려면, /tl accept를 거부하시려면, /tl deny을 입력해주세요.".infoFormat())
 
                         inviteMap[target.uniqueId] =
                             InviteData(
@@ -224,7 +224,7 @@ class Invite : CommandExecutor {
                             )
                             bungeeApi.sendMessage(
                                 targetName,
-                                "수락하시려면, /ld accept를 거부하시려면, /ld deny을 입력해주세요.".infoFormat()
+                                "수락하시려면, /tl accept를 거부하시려면, /tl deny을 입력해주세요.".infoFormat()
                             )
                             val inviteData = InviteData(
                                 offlinePlayer,

@@ -12,10 +12,11 @@ class PickupExpListener : Listener {
     @EventHandler
     fun onPickupExp(event: PlayerPickupExperienceEvent) {
         if (event.isCancelled) return
+        if (event.player.isOp) return
 
         val lands = landManager.getLandsWithChunk(event.experienceOrb.chunk) ?: return
-
         val player = event.player
+
         if (player.uniqueId in lands.memberMap) {
             val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
                 Rank.OWNER, Rank.DELEGATOR -> return

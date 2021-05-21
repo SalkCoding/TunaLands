@@ -1,7 +1,7 @@
 package com.salkcoding.tunalands.listener.region
 
-import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.data.lands.Rank
+import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.util.errorFormat
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -12,6 +12,7 @@ class DropItemListener : Listener {
     @EventHandler
     fun onDrop(event: PlayerDropItemEvent) {
         if (event.isCancelled) return
+        if (event.player.isOp) return
 
         val player = event.player
         val lands = landManager.getLandsWithChunk(player.chunk) ?: return

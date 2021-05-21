@@ -12,10 +12,11 @@ class ShearListener : Listener {
     @EventHandler
     fun onShear(event: PlayerShearEntityEvent) {
         if (event.isCancelled) return
+        if (event.player.isOp) return
 
         val lands = landManager.getLandsWithChunk(event.entity.chunk) ?: return
-
         val player = event.player
+
         if (player.uniqueId in lands.memberMap) {
             val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
                 Rank.OWNER, Rank.DELEGATOR -> return

@@ -18,10 +18,11 @@ class PickupItemListener : Listener {
     @EventHandler
     fun onPickupItem(event: EntityPickupItemEvent) {
         if (event.isCancelled) return
+        if (event.entity.isOp) return
 
         val lands = landManager.getLandsWithChunk(event.item.chunk) ?: return
-
         val player = event.entity as? Player ?: return
+
         if (player.uniqueId in lands.memberMap) {
             val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
                 Rank.OWNER, Rank.DELEGATOR -> return

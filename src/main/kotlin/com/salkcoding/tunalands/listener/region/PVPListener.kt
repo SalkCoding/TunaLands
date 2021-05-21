@@ -14,6 +14,7 @@ class PVPListener : Listener {
     @EventHandler
     fun onPVP(event: EntityDamageByEntityEvent) {
         if (event.isCancelled) return
+        if (event.damager.isOp) return
 
         var damager = event.damager
         damager = if (damager is Projectile)

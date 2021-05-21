@@ -15,9 +15,11 @@ class EntityMountListener : Listener {
     fun onMount(event: EntityMountEvent) {
         if (event.isCancelled) return
 
+        val player = event.entity as? Player ?: return
+        if (player.isOp) return
+
         val lands = landManager.getLandsWithChunk(event.mount.chunk) ?: return
 
-        val player = event.entity as? Player ?: return
         if (player.uniqueId in lands.memberMap) {
             val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
                 Rank.OWNER, Rank.DELEGATOR -> return

@@ -12,6 +12,7 @@ class FishingListener : Listener {
     @EventHandler
     fun onFishing(event: PlayerFishEvent) {
         if(event.isCancelled) return
+        if (event.player.isOp) return
 
         val player = event.player
         val lands = landManager.getLandsWithChunk(player.chunk) ?: return

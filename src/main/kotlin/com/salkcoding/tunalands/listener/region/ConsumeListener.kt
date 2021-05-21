@@ -14,6 +14,7 @@ class ConsumeListener : Listener {
     fun onConsume(event: PlayerItemConsumeEvent) {
         if (event.isCancelled) return
         if (event.item.type != Material.MILK_BUCKET) return
+        if (event.player.isOp) return
 
         val player = event.player
         val lands = landManager.getLandsWithChunk(player.chunk) ?: return

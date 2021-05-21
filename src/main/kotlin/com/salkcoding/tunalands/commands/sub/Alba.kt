@@ -78,7 +78,7 @@ class Alba : CommandExecutor {
                     if (targetOffline.isOnline) {
                         val target = targetOffline.player!!
                         target.sendMessage("${player.name}이/가 당신을 ${lands.ownerName}의 알바로 채용하고자 합니다.".infoFormat())
-                        target.sendMessage("수락하시려면, /ld accept를 거부하시려면, /ld deny을 입력해주세요.".infoFormat())
+                        target.sendMessage("수락하시려면, /tl accept를 거부하시려면, /tl deny을 입력해주세요.".infoFormat())
 
                         inviteMap[target.uniqueId] =
                             InviteData(
@@ -99,7 +99,7 @@ class Alba : CommandExecutor {
                             )
                             bungeeApi.sendMessage(
                                 targetName,
-                                "수락하시려면, /ld accept를 거부하시려면, /ld deny을 입력해주세요.".infoFormat()
+                                "수락하시려면, /tl accept를 거부하시려면, /tl deny을 입력해주세요.".infoFormat()
                             )
                             val inviteData = InviteData(
                                 player,
@@ -148,7 +148,7 @@ class Alba : CommandExecutor {
                     if (targetOffline.isOnline) {
                         val target = targetOffline.player!!
                         target.sendMessage("${hostName}이/가 당신을 ${lands.ownerName}의 알바로 채용하고자 합니다.".infoFormat())
-                        target.sendMessage("수락하시려면, /ld accept를 거부하시려면, /ld deny을 입력해주세요.".infoFormat())
+                        target.sendMessage("수락하시려면, /tl accept를 거부하시려면, /tl deny을 입력해주세요.".infoFormat())
 
                         inviteMap[target.uniqueId] =
                             InviteData(
@@ -169,7 +169,7 @@ class Alba : CommandExecutor {
                             )
                             bungeeApi.sendMessage(
                                 targetName,
-                                "수락하시려면, /ld accept를 거부하시려면, /ld deny을 입력해주세요.".infoFormat()
+                                "수락하시려면, /tl accept를 거부하시려면, /tl deny을 입력해주세요.".infoFormat()
                             )
                             val inviteData = InviteData(
                                 offlinePlayer,

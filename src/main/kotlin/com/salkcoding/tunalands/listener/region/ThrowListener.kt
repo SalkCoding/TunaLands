@@ -14,8 +14,9 @@ class ThrowListener : Listener {
     @EventHandler
     fun onEggThrow(event: ProjectileLaunchEvent) {
         if (event.isCancelled) return
-
         val player = event.entity.shooter as? Player ?: return
+        if (player.isOp) return
+
         val lands = landManager.getLandsWithChunk(player.chunk) ?: return
 
         when (event.entity.type) {

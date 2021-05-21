@@ -16,11 +16,12 @@ class ClickedInteractListener : Listener {
     fun onClicked(event: PlayerInteractEvent) {
         if (event.useInteractedBlock() == Event.Result.DENY) return
         if (event.action != Action.RIGHT_CLICK_BLOCK) return
+        if (event.player.isOp) return
+
         val block = event.clickedBlock!!
-
         val lands = landManager.getLandsWithChunk(block.chunk) ?: return
-
         val player = event.player
+
         if (player.uniqueId in lands.memberMap) {
             val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
                 Rank.OWNER, Rank.DELEGATOR -> return
@@ -35,14 +36,14 @@ class ClickedInteractListener : Listener {
                         event.isCancelled = true
                 }
                 Material.CHEST,
-                Material.ENDER_CHEST -> {
+                Material.ENDER_CHEST,
+                Material.TRAPPED_CHEST -> {
                     if (!setting.openChest)
                         event.isCancelled = true
                 }
                 Material.REPEATER,
                 Material.COMPARATOR,
-                Material.DAYLIGHT_DETECTOR,
-                Material.TRAPPED_CHEST -> {
+                Material.DAYLIGHT_DETECTOR -> {
                     if (!setting.useCircuit)
                         event.isCancelled = true
                 }

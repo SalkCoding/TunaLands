@@ -13,11 +13,12 @@ class BucketListener : Listener {
     @EventHandler
     fun onEmpty(event: PlayerBucketEmptyEvent) {
         if (event.isCancelled) return
+        if (event.player.isOp) return
+
         val block = event.blockClicked
-
         val lands = landManager.getLandsWithChunk(block.chunk) ?: return
-
         val player = event.player
+
         if (player.uniqueId in lands.memberMap) {
             val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
                 Rank.OWNER, Rank.DELEGATOR -> return

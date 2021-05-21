@@ -13,11 +13,12 @@ class BreedListener : Listener {
     @EventHandler
     fun onBreed(event: EntityBreedEvent) {
         if (event.isCancelled) return
+        val player = event.breeder as? Player ?: return
+        if (player.isOp) return
+
         val entity = event.entity
 
         val lands = landManager.getLandsWithChunk(entity.chunk) ?: return
-
-        val player = event.breeder as? Player ?: return
         if (player.uniqueId in lands.memberMap) {
             val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
                 Rank.OWNER, Rank.DELEGATOR -> return

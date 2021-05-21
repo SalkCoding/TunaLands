@@ -13,5 +13,5 @@ depend:
 commands:
   land:
     description: Base command
-    usage: /land help, /ld help
-    aliases: [ ld ]
+    usage: /land help, /tl help
+    aliases: [ tl ]

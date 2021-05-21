@@ -14,11 +14,18 @@ class BlockBreakListener : Listener {
     @EventHandler(priority = EventPriority.HIGH)
     fun onProtect(event: BlockBreakEvent) {
         if (event.isCancelled) return
-
-        val chunk = event.block.chunk
-        val lands = landManager.getLandsWithChunk(chunk) ?: return
+        if (event.player.isOp) return
 
         val player = event.player
+        val chunk = event.block.chunk
+        val lands = landManager.getLandsWithChunk(chunk)
+        if (lands == null) {
+            player.sendMessage("중립 지역에서는 블럭을 파괴할 수 없습니다!".errorFormat())
+            event.isCancelled = true
+            return
+        }
+
+
         if (!landManager.isProtectedLand(chunk)) return
 
         val block = event.block

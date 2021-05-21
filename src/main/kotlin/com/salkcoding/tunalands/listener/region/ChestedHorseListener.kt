@@ -13,11 +13,12 @@ class ChestedHorseListener : Listener {
     @EventHandler
     fun onChestOpen(event: PlayerInteractEntityEvent) {
         if (event.isCancelled) return
+        if (event.player.isOp) return
 
         val entity = event.rightClicked as? ChestedHorse ?: return
         val lands = landManager.getLandsWithChunk(entity.chunk) ?: return
-
         val player = event.player
+
         if (player.uniqueId in lands.memberMap) {
             val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
                 Rank.OWNER, Rank.DELEGATOR -> return

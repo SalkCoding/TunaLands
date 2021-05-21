@@ -18,7 +18,6 @@ import net.milkbowl.vault.economy.Economy
 import org.bukkit.Material
 import org.bukkit.plugin.java.JavaPlugin
 
-
 const val chunkDebug = true
 
 lateinit var tunaLands: TunaLands
@@ -98,7 +97,7 @@ class TunaLands : JavaPlugin() {
         server.pluginManager.registerEvents(ShearListener(), this)
         server.pluginManager.registerEvents(ThrowListener(), this)
 
-        server.pluginManager.registerEvents(ChatListener(), this)
+
         server.pluginManager.registerEvents(ChestGuiOpenListener(), this)
         server.pluginManager.registerEvents(ChunkEffectListener(), this)
         server.pluginManager.registerEvents(DisplayChunkListener(), this)
@@ -109,6 +108,7 @@ class TunaLands : JavaPlugin() {
         server.pluginManager.registerEvents(InventoryClickListener(), this)
         server.pluginManager.registerEvents(InventoryCloseListener(), this)
         server.pluginManager.registerEvents(InventoryDragListener(), this)
+        server.pluginManager.registerEvents(LoreChatListener(), this)
 
         if (chunkDebug) {
             logger.warning("Chunk debug mode is enabled.")

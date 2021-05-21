@@ -16,11 +16,12 @@ class PhysicalInteractListener : Listener {
     fun onPhysical(event: PlayerInteractEvent) {
         if (event.useInteractedBlock() == Event.Result.DENY) return
         if (event.action != Action.PHYSICAL) return
+        if (event.player.isOp) return
+
         val block = event.clickedBlock!!
-
         val lands = landManager.getLandsWithChunk(block.chunk) ?: return
-
         val player = event.player
+
         if (player.uniqueId in lands.memberMap) {
             val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
                 Rank.OWNER, Rank.DELEGATOR -> return

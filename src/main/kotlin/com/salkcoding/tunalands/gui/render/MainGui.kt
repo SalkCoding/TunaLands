@@ -2,12 +2,12 @@ package com.salkcoding.tunalands.gui.render
 
 import br.com.devsrsouza.kotlinbukkitapi.extensions.item.displayName
 import br.com.devsrsouza.kotlinbukkitapi.extensions.player.playSound
+import com.salkcoding.tunalands.data.lands.Lands
+import com.salkcoding.tunalands.data.lands.Rank
 import com.salkcoding.tunalands.displayManager
 import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.gui.render.settinggui.openSettingGui
 import com.salkcoding.tunalands.guiManager
-import com.salkcoding.tunalands.data.lands.Lands
-import com.salkcoding.tunalands.data.lands.Rank
 import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.*
 import org.bukkit.Bukkit
@@ -271,8 +271,35 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
             }
         }
 
-        if (clicked >= 27)
+        if (clicked >= 27) {
             event.isCancelled = false
+
+            if (event.action != InventoryAction.MOVE_TO_OTHER_INVENTORY)
+                return
+            Bukkit.getScheduler().runTaskLater(tunaLands, Runnable {
+                val fuel = event.inventory.getItem(4) ?: return@Runnable
+                if (!fuel.isSimilar(ShopGui.fuel30Minutes) &&
+                    !fuel.isSimilar(ShopGui.fuel1Hour) &&
+                    !fuel.isSimilar(ShopGui.fuel6Hours) &&
+                    !fuel.isSimilar(ShopGui.fuel12Hours) &&
+                    !fuel.isSimilar(ShopGui.fuel24Hours)
+                ) return@Runnable
+                val lore = fuel.lore ?: return@Runnable
+                val timeLore = lore[1].split(" ")[0]
+                val time = timeRegex.find(timeLore)!!.value.toInt()
+                val measure = measureRegex.find(timeLore)!!.value
+
+                lands.expiredMillisecond += (fuel.amount * time * when (measure) {
+                    "분" -> 60000
+                    "시간" -> 3600000
+                    else -> 0
+                })
+
+                player.sendMessage("${ChatColor.GOLD}${time * fuel.amount}${ChatColor.WHITE}${measure}이 추가되었습니다!".infoFormat())
+                player.playSound(player.location, Sound.BLOCK_BLASTFURNACE_FIRE_CRACKLE, 2.5f, 1f)
+                event.inventory.setItem(4, null)
+            }, 2)
+        }
     }
 
     override fun onClose(event: InventoryCloseEvent) {

@@ -14,11 +14,17 @@ class BlockPlaceListener : Listener {
     @EventHandler
     fun onProtect(event: BlockPlaceEvent) {
         if (event.isCancelled) return
-
-        val chunk = event.block.chunk
-        val lands = landManager.getLandsWithChunk(chunk) ?: return
+        if (event.player.isOp) return
 
         val player = event.player
+        val chunk = event.block.chunk
+        val lands = landManager.getLandsWithChunk(chunk)
+        if (lands == null) {
+            player.sendMessage("중립 지역에서는 블럭을 설치할 수 없습니다!".errorFormat())
+            event.isCancelled = true
+            return
+        }
+
         if (!landManager.isProtectedLand(chunk)) return
 
         val block = event.block

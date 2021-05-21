@@ -13,6 +13,7 @@ class HurtListener : Listener {
     @EventHandler(priority = EventPriority.HIGH)
     fun onHurt(event: EntityDamageByEntityEvent) {
         if (event.isCancelled) return
+        if (event.entity.isOp) return
 
         val victim = event.entity as? Player ?: return
         val lands = landManager.getLandsWithChunk(victim.chunk) ?: return

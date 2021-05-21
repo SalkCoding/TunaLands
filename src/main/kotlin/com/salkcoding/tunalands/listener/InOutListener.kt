@@ -3,6 +3,7 @@ package com.salkcoding.tunalands.listener
 import com.salkcoding.tunalands.data.lands.Rank
 import com.salkcoding.tunalands.data.recordLeft
 import com.salkcoding.tunalands.landManager
+import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
 import com.salkcoding.tunalands.util.toColoredText
 import com.salkcoding.tunalands.util.warnFormat
@@ -12,6 +13,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.util.Vector
 import java.util.*
 
 class InOutListener : Listener {
@@ -26,6 +28,13 @@ class InOutListener : Listener {
         val uuid = player.uniqueId
         val lands = landManager.getLandsWithChunk(player.chunk)
         if (lands != null) {
+            if (player.uniqueId in lands.banMap) {
+                player.sendMessage("밴 당한 지역에는 접근하실 수 없습니다!".errorFormat())
+                val newLocation = player.location.add(player.eyeLocation.direction.multiply(Vector(-2, 0, -2)))
+                player.teleportAsync(newLocation)
+                return
+            }
+
             if (uuid !in enterSet) {
                 enterSet[uuid] = lands.hashCode()
                 player.sendTitle("", "${ChatColor.GRAY}${lands.ownerName}${ChatColor.WHITE}님의 지역", 10, 20, 10)
@@ -62,6 +71,11 @@ class InOutListener : Listener {
 
     @EventHandler
     fun onQuit(event: PlayerQuitEvent) {
-        enterSet.remove(event.player.uniqueId)
+        val player = event.player
+        enterSet.remove(player.uniqueId)
+        val landsList = landManager.getPlayerLandsList(player.uniqueId)
+        landsList.forEach { lands ->
+            lands.memberMap[player.uniqueId]!!.lastLogin = System.currentTimeMillis()
+        }
     }
 }

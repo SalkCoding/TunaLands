@@ -4,15 +4,13 @@ import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.economy
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.data.lands.Rank
-import com.salkcoding.tunalands.util.errorFormat
-import com.salkcoding.tunalands.util.hasEnoughMoney
-import com.salkcoding.tunalands.util.isSameLocation
-import com.salkcoding.tunalands.util.warnFormat
+import com.salkcoding.tunalands.util.*
 import org.bukkit.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
+import org.bukkit.event.block.BlockPistonExtendEvent
 import org.bukkit.event.block.BlockPlaceEvent
 
 class CoreListener : Listener {
@@ -66,6 +64,17 @@ class CoreListener : Listener {
                     player.sendMessage("코어 블럭과 코어 창고는 부술 수 없습니다.".warnFormat())
                     event.isCancelled = true
                 }
+            }
+        }
+    }
+
+    @EventHandler
+    fun onExpanded(event: BlockPistonExtendEvent) {
+        val lands = landManager.getLandsWithChunk(event.block.chunk) ?: return
+        event.blocks.forEach {
+            if (lands.downCore == it || lands.upCore == it) {
+                event.isCancelled = true
+                return
             }
         }
     }
