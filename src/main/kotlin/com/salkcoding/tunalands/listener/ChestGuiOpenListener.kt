@@ -26,8 +26,8 @@ class ChestGuiOpenListener : Listener {
             val player = event.player
             val chunk = block.chunk
             val lands = landManager.getLandsWithChunk(chunk) ?: return
-            val upCore = lands.upCore
-            if (!block.isSameLocation(upCore.world.name, upCore.blockX, upCore.blockY, upCore.blockZ)) return
+            val upCoreLocation = lands.upCoreLocation
+            if (block.location != upCoreLocation) return
             event.isCancelled = true
             if (player.uniqueId in lands.memberMap) {
                 when (val rank = lands.memberMap[player.uniqueId]!!.rank) {

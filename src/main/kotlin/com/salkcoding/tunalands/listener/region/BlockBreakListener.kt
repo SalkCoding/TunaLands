@@ -18,6 +18,7 @@ class BlockBreakListener : Listener {
 
         val player = event.player
         val chunk = event.block.chunk
+        val block = event.block
         val lands = landManager.getLandsWithChunk(chunk)
         if (lands == null) {
             player.sendMessage("중립 지역에서는 블럭을 파괴할 수 없습니다!".errorFormat())
@@ -25,10 +26,8 @@ class BlockBreakListener : Listener {
             return
         }
 
-
         if (!landManager.isProtectedLand(chunk)) return
 
-        val block = event.block
         if (player.uniqueId in lands.memberMap) {
             val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
                 Rank.OWNER, Rank.DELEGATOR -> return

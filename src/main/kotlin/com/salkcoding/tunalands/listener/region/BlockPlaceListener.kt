@@ -5,13 +5,14 @@ import com.salkcoding.tunalands.data.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
 import org.bukkit.Material
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockPlaceEvent
 
 
 class BlockPlaceListener : Listener {
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     fun onProtect(event: BlockPlaceEvent) {
         if (event.isCancelled) return
         if (event.player.isOp) return

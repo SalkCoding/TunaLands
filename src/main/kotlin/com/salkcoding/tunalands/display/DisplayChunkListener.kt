@@ -18,7 +18,7 @@ class DisplayChunkListener : Listener {
         val chunk = event.chunk
         if (landManager.isProtectedLand(chunk)) {
             val lands = landManager.getLandsWithChunk(chunk)!!
-            val coreChunk = lands.upCore.chunk
+            val coreChunk = lands.upCoreLocation.chunk
             //Core chunk
             if (chunk.isSameChunk(coreChunk)) {
                 displayManager.createDisplay(lands)

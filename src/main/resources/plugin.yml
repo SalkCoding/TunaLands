@@ -11,7 +11,7 @@ depend:
   - Vault
   - BukkitLinked
 commands:
-  land:
+  tunaland:
     description: Base command
-    usage: /land help, /tl help
-    aliases: [ tl ]
+    usage: /tunaland help, /tl help
+    aliases: [tl]

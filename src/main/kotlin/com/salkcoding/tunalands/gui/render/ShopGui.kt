@@ -19,22 +19,6 @@ import org.bukkit.inventory.Inventory
 class ShopGui(private val player: Player, private val lands: Lands, private val rank: Rank) : GuiInterface {
 
     companion object {
-        val takeFlag = (Material.GREEN_BANNER * 1).apply {
-            this.displayName("${ChatColor.GREEN}점유 ${ChatColor.WHITE}깃발")
-            this.lore = listOf(
-                "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.flag.takeFlagPrice}캔",
-                "${ChatColor.WHITE}늘리고 싶은 지역에 설치하여 점유할 수 있는 깃발입니다."
-            )
-        }
-
-        val releaseFlag = (Material.RED_BANNER * 1).apply {
-            this.displayName("${ChatColor.RED}제거 ${ChatColor.WHITE}깃발")
-            this.lore = listOf(
-                "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.flag.releaseFlagPrice}캔",
-                "${ChatColor.WHITE}제거하고 싶은 지역에 설치하여 제거할 수 있는 깃발입니다."
-            )
-        }
-
         val fuel30Minutes = (Material.PAPER * 1).apply {
             this.displayName("${ChatColor.WHITE}연료")
             this.lore = listOf(
@@ -92,8 +76,6 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
 
         inv.setItem(0, backButton)
 
-        inv.setItem(20, takeFlag)
-        inv.setItem(21, releaseFlag)
         inv.setItem(29, fuel30Minutes)
         inv.setItem(30, fuel1Hour)
         inv.setItem(31, fuel6Hours)
@@ -108,43 +90,9 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
             0 -> {
                 player.openMainGui(lands, rank)
             }
-            20 -> {
-                when (rank) {
-                    Rank.OWNER, Rank.DELEGATOR -> {
-                        val price = configuration.flag.takeFlagPrice.toDouble()
-                        if (player.hasEnoughMoney(price)) {
-                            player.sendMessage("캔이 부족합니다.".errorFormat())
-                            return
-                        }
-                        economy.withdrawPlayer(player, price)
-
-                        player.giveOrDrop(takeFlag)
-                    }
-                    else -> {
-                        player.sendMessage("권한이 없습니다!")
-                    }
-                }
-            }
-            21 -> {
-                when (rank) {
-                    Rank.OWNER, Rank.DELEGATOR -> {
-                        val price = configuration.flag.releaseFlagPrice.toDouble()
-                        if (player.hasEnoughMoney(price)) {
-                            player.sendMessage("캔이 부족합니다.".errorFormat())
-                            return
-                        }
-                        economy.withdrawPlayer(player, price)
-
-                        player.giveOrDrop(releaseFlag)
-                    }
-                    else -> {
-                        player.sendMessage("권한이 없습니다!")
-                    }
-                }
-            }
             29 -> {
                 val price = configuration.fuel.m30.toDouble()
-                if (player.hasEnoughMoney(price)) {
+                if (player.hasNotEnoughMoney(price)) {
                     player.sendMessage("캔이 부족합니다.".errorFormat())
                     return
                 }
@@ -154,7 +102,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
             }
             30 -> {
                 val price = configuration.fuel.h1.toDouble()
-                if (player.hasEnoughMoney(price)) {
+                if (player.hasNotEnoughMoney(price)) {
                     player.sendMessage("캔이 부족합니다.".errorFormat())
                     return
                 }
@@ -164,7 +112,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
             }
             31 -> {
                 val price = configuration.fuel.h6.toDouble()
-                if (player.hasEnoughMoney(price)) {
+                if (player.hasNotEnoughMoney(price)) {
                     player.sendMessage("캔이 부족합니다.".errorFormat())
                     return
                 }
@@ -174,7 +122,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
             }
             32 -> {
                 val price = configuration.fuel.h12.toDouble()
-                if (player.hasEnoughMoney(price)) {
+                if (player.hasNotEnoughMoney(price)) {
                     player.sendMessage("캔이 부족합니다.".errorFormat())
                     return
                 }
@@ -184,7 +132,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
             }
             33 -> {
                 val price = configuration.fuel.h24.toDouble()
-                if (player.hasEnoughMoney(price)) {
+                if (player.hasNotEnoughMoney(price)) {
                     player.sendMessage("캔이 부족합니다.".errorFormat())
                     return
                 }

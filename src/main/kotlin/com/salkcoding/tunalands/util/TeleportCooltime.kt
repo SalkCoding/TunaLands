@@ -57,7 +57,7 @@ object TeleportCooltime {
             }
             if (cooldownTick < 0 || player.isOp) {
                 //player.sendMessage("이동중입니다.".infoFormat())
-                //player.world.playSound(player.location, Sound.BLOCK_PORTAL_TRAVEL, 0.15f, 1f)
+                player.playSound(player.location, Sound.BLOCK_PORTAL_TRAVEL, 0.15f, 1f)
                 player.sendTitle("\ue405", "", 30, 10, 30)
                 Bukkit.getScheduler().runTaskLaterAsynchronously(tunaLands, Runnable {
                     Bukkit.getScheduler().runTask(tunaLands, Runnable {

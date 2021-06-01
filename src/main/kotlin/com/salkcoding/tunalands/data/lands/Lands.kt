@@ -10,8 +10,8 @@ class Lands(
     var ownerUUID: UUID,
     val landList: MutableList<String>,
     val landHistory: LandHistory,
-    val upCore: Location, //Chest
-    val downCore: Location, //Core block
+    val upCoreLocation: Location, //Chest
+    val downCoreLocation: Location, //Core block
     var expiredMillisecond: Long,
 
     var open: Boolean = false,
@@ -25,8 +25,8 @@ class Lands(
         "ㅎㅇ",
         "ㅂㅂ"
     ),
-    var memberSpawn: Location = upCore,
-    var visitorSpawn: Location = upCore,
+    var memberSpawn: Location = upCoreLocation,
+    var visitorSpawn: Location = upCoreLocation,
     val visitorSetting: LandSetting = LandSetting(),
     val partTimeJobSetting: LandSetting = LandSetting(),
     val memberSetting: LandSetting = LandSetting(),

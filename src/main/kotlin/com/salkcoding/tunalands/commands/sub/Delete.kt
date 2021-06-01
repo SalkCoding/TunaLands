@@ -43,10 +43,10 @@ class Delete : CommandExecutor {
                 val lands = landManager.getPlayerLands(player.uniqueId, Rank.OWNER)
                 if (lands != null) {
                     if (lands.memberMap.size == 1) {
-                        val upCore = lands.upCore
-                        val downCore = lands.downCore
-                        upCore.block.type = Material.AIR
-                        downCore.block.type = Material.AIR
+                        val upCoreLocation = lands.upCoreLocation
+                        val downCoreLocation = lands.downCoreLocation
+                        upCoreLocation.block.type = Material.AIR
+                        downCoreLocation.block.type = Material.AIR
 
                         landManager.deleteLands(player)
                         player.sendMessage("땅을 삭제했습니다.".infoFormat())
@@ -58,11 +58,11 @@ class Delete : CommandExecutor {
                 val lands = landManager.getPlayerLands(offlinePlayer.uniqueId, Rank.OWNER)
                 if (lands != null) {
                     if (lands.memberMap.size == 1) {
-                        val upCore = lands.upCore
-                        val downCore = lands.downCore
+                        val upCoreLocation = lands.upCoreLocation
+                        val downCoreLocation = lands.downCoreLocation
                         //Destroy core naturally
-                        upCore.block.type = Material.AIR
-                        downCore.block.type = Material.AIR
+                        upCoreLocation.block.type = Material.AIR
+                        downCoreLocation.block.type = Material.AIR
 
                         landManager.deleteLands(offlinePlayer)
                         bungeeApi.sendMessage(hostName, "땅을 삭제했습니다.".infoFormat())

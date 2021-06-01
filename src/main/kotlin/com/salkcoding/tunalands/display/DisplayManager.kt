@@ -18,7 +18,7 @@ class DisplayManager {
     private val displayMap = mutableMapOf<String, Display>()
 
     fun createDisplay(lands: Lands) {
-        val location = lands.upCore.toCenterLocation()
+        val location = lands.upCoreLocation.toCenterLocation()
         location.y += 1
         val query = location.chunk.toQuery()
         //Prevent duplication
@@ -37,8 +37,8 @@ class DisplayManager {
                         val player = Bukkit.getPlayer(uuid) ?: return@forEach
                         player.sendMessage("보호 기간이 만료되어, 지역 보호가 해제됩니다.".warnFormat())
                     }
-                    lands.upCore.block.type = Material.AIR
-                    lands.downCore.block.type = Material.AIR
+                    lands.upCoreLocation.block.type = Material.AIR
+                    lands.downCoreLocation.block.type = Material.AIR
                     landManager.deleteLands(lands.ownerUUID, lands.ownerName)
                     val display = displayMap[query]!!
                     display.task.cancel()

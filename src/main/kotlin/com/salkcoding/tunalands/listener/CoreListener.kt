@@ -11,35 +11,44 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPistonExtendEvent
+import org.bukkit.event.block.BlockPistonRetractEvent
 import org.bukkit.event.block.BlockPlaceEvent
 
 class CoreListener : Listener {
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler
     fun onCorePlace(event: BlockPlaceEvent) {
         if (event.isCancelled) return
 
-        val chest = event.block
-        if (chest.type == Material.CHEST && event.player.isSneaking) {
-            val coreBlock = chest.getRelative(0, -1, 0)
-            if (coreBlock.type == configuration.protect.coreBlock) {
-                val player = event.player
-
-                if (landManager.getPlayerLands(player.uniqueId, Rank.OWNER, Rank.DELEGATOR, Rank.MEMBER) != null
-                    || landManager.getLandsWithChunk(chest.chunk) != null
-                    || coreBlock.world.name in configuration.limitWorld
-                )
-                    return
-
-                val price = configuration.protect.createPrice.toDouble()
-                if (player.hasEnoughMoney(price)) {
-                    player.sendMessage("캔이 부족합니다.".errorFormat())
-                    return
-                }
-                economy.withdrawPlayer(player, price)
-
-                landManager.buyLand(player, chest, coreBlock)
+        val placedBlock = event.block
+        val player = event.player
+        if (placedBlock.type == configuration.protect.coreBlock && player.isSneaking) {
+            if (landManager.isProtectedLand(placedBlock.chunk)){
+                player.sendMessage("다른 사람의 땅에는 코어를 만들 수 없습니다!".errorFormat())
+                event.isCancelled = true
+                return
             }
+            if (landManager.getPlayerLands(player.uniqueId) != null) {
+                player.sendMessage("이미 땅을 소유하고있습니다!".errorFormat())
+                event.isCancelled = true
+                return
+            }
+
+            val price = configuration.protect.createPrice.toDouble()
+            if (player.hasNotEnoughMoney(price)) {
+                val delta = price - economy.getBalance(player)
+                player.sendMessage("${delta}캔이 부족합니다.".errorFormat())
+                event.isCancelled = true
+                return
+            }
+            economy.withdrawPlayer(player, price)
+
+            val chest = placedBlock.getRelative(0, 1, 0)
+            chest.type = Material.CHEST
+
+            landManager.buyLand(player, chest, placedBlock)
+
+            event.isCancelled = false
         }
     }
 
@@ -55,13 +64,11 @@ class CoreListener : Listener {
             //Core protection
             val block = event.block
             if (block.type == Material.CHEST || block.type == configuration.protect.coreBlock) {
-                val upCore = lands.upCore
-                val downCore = lands.downCore
+                val upCoreLocation = lands.upCoreLocation
+                val downCoreLocation = lands.downCoreLocation
 
-                if (block.isSameLocation(upCore.world.name, upCore.blockX, upCore.blockY, upCore.blockZ) ||
-                    block.isSameLocation(downCore.world.name, downCore.blockX, downCore.blockY, downCore.blockZ)
-                ) {
-                    player.sendMessage("코어 블럭과 코어 창고는 부술 수 없습니다.".warnFormat())
+                if (block.location == upCoreLocation || block.location == downCoreLocation) {
+                    player.sendMessage("코어 블럭과 코어 창고는 부술 수 없습니다.".errorFormat())
                     event.isCancelled = true
                 }
             }
@@ -69,10 +76,21 @@ class CoreListener : Listener {
     }
 
     @EventHandler
-    fun onExpanded(event: BlockPistonExtendEvent) {
+    fun onCoreExpanded(event: BlockPistonExtendEvent) {
         val lands = landManager.getLandsWithChunk(event.block.chunk) ?: return
-        event.blocks.forEach {
-            if (lands.downCore == it || lands.upCore == it) {
+        event.blocks.forEach { block ->
+            if (lands.downCoreLocation == block.location || lands.upCoreLocation == block.location) {
+                event.isCancelled = true
+                return
+            }
+        }
+    }
+
+    @EventHandler
+    fun onCoreRetract(event: BlockPistonRetractEvent) {
+        val lands = landManager.getLandsWithChunk(event.block.chunk) ?: return
+        event.blocks.forEach { block ->
+            if (lands.downCoreLocation == block.location || lands.upCoreLocation == block.location) {
                 event.isCancelled = true
                 return
             }

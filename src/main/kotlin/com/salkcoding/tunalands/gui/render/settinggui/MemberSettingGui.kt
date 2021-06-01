@@ -34,18 +34,21 @@ class MemberSettingGui(private val player: Player, private val lands: Lands, pri
     private val useCircuit = (Material.REPEATER * 1).apply { this.displayName("${ChatColor.WHITE}회로 조작") }
     private val useLever = (Material.LEVER * 1).apply { this.displayName("${ChatColor.WHITE}레버 사용") }
     private val useButton = (Material.STONE_BUTTON * 1).apply { this.displayName("${ChatColor.WHITE}버튼 사용") }
-    private val usePressureSensor = (Material.OAK_PRESSURE_PLATE * 1).apply { this.displayName("${ChatColor.WHITE}압력판 사용") }
+    private val usePressureSensor =
+        (Material.OAK_PRESSURE_PLATE * 1).apply { this.displayName("${ChatColor.WHITE}압력판 사용") }
     private val useDoor = (Material.OAK_DOOR * 1).apply { this.displayName("${ChatColor.WHITE}문 사용") }
     private val useTrapdoor = (Material.OAK_TRAPDOOR * 1).apply { this.displayName("${ChatColor.WHITE}다락문 사용") }
     private val useFenceGate = (Material.OAK_FENCE_GATE * 1).apply { this.displayName("${ChatColor.WHITE}울타리 문 사용") }
     private val useHopper = (Material.HOPPER * 1).apply { this.displayName("${ChatColor.WHITE}깔대기 사용") }
-    private val useDispenserAndDropper = (Material.DISPENSER * 1).apply { this.displayName("${ChatColor.WHITE}발사기/공급기 사용") }
+    private val useDispenserAndDropper =
+        (Material.DISPENSER * 1).apply { this.displayName("${ChatColor.WHITE}발사기/공급기 사용") }
 
     //Third row
     private val useCraftTable = (Material.CRAFTING_TABLE * 1).apply { this.displayName("${ChatColor.WHITE}작업대 사용") }
     private val useFurnace = (Material.FURNACE * 1).apply { this.displayName("${ChatColor.WHITE}화로 사용") }
     private val useBed = (Material.RED_BED * 1).apply { this.displayName("${ChatColor.WHITE}침대 사용") }
-    private val useEnchantingTable = (Material.ENCHANTING_TABLE * 1).apply { this.displayName("${ChatColor.WHITE}인첸트 테이블 사용") }
+    private val useEnchantingTable =
+        (Material.ENCHANTING_TABLE * 1).apply { this.displayName("${ChatColor.WHITE}인첸트 테이블 사용") }
     private val useAnvil = (Material.ANVIL * 1).apply { this.displayName("${ChatColor.WHITE}모루 사용") }
     private val useCauldron = (Material.CAULDRON * 1).apply { this.displayName("${ChatColor.WHITE}가마솥 사용") }
     private val useBrewingStand = (Material.BREWING_STAND * 1).apply { this.displayName("${ChatColor.WHITE}양조기 사용") }
@@ -60,7 +63,8 @@ class MemberSettingGui(private val player: Player, private val lands: Lands, pri
     private val useMilk = (Material.MILK_BUCKET * 1).apply { this.displayName("${ChatColor.WHITE}우유 마시기") }
     private val throwEgg = (Material.EGG * 1).apply { this.displayName("${ChatColor.WHITE}달걀 던지기") }
     private val useShears = (Material.SHEARS * 1).apply { this.displayName("${ChatColor.WHITE}양털 깎기") }
-    private val useFlintAndSteel = (Material.FLINT_AND_STEEL * 1).apply { this.displayName("${ChatColor.WHITE}부싯돌과 부시 사용") }
+    private val useFlintAndSteel =
+        (Material.FLINT_AND_STEEL * 1).apply { this.displayName("${ChatColor.WHITE}부싯돌과 부시 사용") }
     private val canRuinFarmland = (Material.FARMLAND * 1).apply { this.displayName("${ChatColor.WHITE}짓밟기") }
 
     //Fifth row
@@ -68,7 +72,8 @@ class MemberSettingGui(private val player: Player, private val lands: Lands, pri
     private val canFishing = (Material.FISHING_ROD * 1).apply { this.displayName("${ChatColor.WHITE}낚시") }
     private val useBoat = (Material.OAK_BOAT * 1).apply { this.displayName("${ChatColor.WHITE}배 사용") }
     private val canRiding = (Material.SADDLE * 1).apply { this.displayName("${ChatColor.WHITE}라이딩") }
-    private val useChestedHorse = (Material.DIAMOND_HORSE_ARMOR * 1).apply { this.displayName("${ChatColor.WHITE}말 인벤토리 사용") }
+    private val useChestedHorse =
+        (Material.DIAMOND_HORSE_ARMOR * 1).apply { this.displayName("${ChatColor.WHITE}말 인벤토리 사용") }
     private val useLead = (Material.LEAD * 1).apply { this.displayName("${ChatColor.WHITE}끈 사용") }
     private val breakItemFrame = (Material.ITEM_FRAME * 1).apply { this.displayName("${ChatColor.WHITE}아이템 액자 부수기") }
     private val useNoteBlock = (Material.NOTE_BLOCK * 1).apply { this.displayName("${ChatColor.WHITE}노트블록 사용") }
@@ -92,18 +97,24 @@ class MemberSettingGui(private val player: Player, private val lands: Lands, pri
         useCircuit.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useCircuit.toColoredText()}") }
         useLever.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useLever.toColoredText()}") }
         useButton.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useButton.toColoredText()}") }
-        usePressureSensor.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.usePressureSensor.toColoredText()}") }
+        usePressureSensor.apply {
+            this.lore = listOf("${ChatColor.WHITE}상태: ${setting.usePressureSensor.toColoredText()}")
+        }
         useDoor.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useDoor.toColoredText()}") }
         useTrapdoor.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useTrapdoor.toColoredText()}") }
         useFenceGate.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useFenceGate.toColoredText()}") }
         useHopper.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useHopper.toColoredText()}") }
-        useDispenserAndDropper.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useDispenserAndDropper.toColoredText()}") }
+        useDispenserAndDropper.apply {
+            this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useDispenserAndDropper.toColoredText()}")
+        }
 
         //Third row
         useCraftTable.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useCraftTable.toColoredText()}") }
         useFurnace.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useFurnace.toColoredText()}") }
         useBed.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useBed.toColoredText()}") }
-        useEnchantingTable.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useEnchantingTable.toColoredText()}") }
+        useEnchantingTable.apply {
+            this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useEnchantingTable.toColoredText()}")
+        }
         useAnvil.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useAnvil.toColoredText()}") }
         useCauldron.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useCauldron.toColoredText()}") }
         useBrewingStand.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useBrewingStand.toColoredText()}") }
@@ -118,7 +129,9 @@ class MemberSettingGui(private val player: Player, private val lands: Lands, pri
         useMilk.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useMilk.toColoredText()}") }
         throwEgg.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.throwEgg.toColoredText()}") }
         useShears.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useShears.toColoredText()}") }
-        useFlintAndSteel.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useFlintAndSteel.toColoredText()}") }
+        useFlintAndSteel.apply {
+            this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useFlintAndSteel.toColoredText()}")
+        }
         canRuinFarmland.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.canRuinFarmland.toColoredText()}") }
 
         //Fifth row
@@ -188,6 +201,10 @@ class MemberSettingGui(private val player: Player, private val lands: Lands, pri
         val inv = event.inventory
         //First row
         when (event.rawSlot) {
+            0, 8 -> {
+                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
+                player.openSettingGui(lands, rank)//Back button
+            }
             9 -> {
                 setting.canPVP = !setting.canPVP
                 canPVP.apply {

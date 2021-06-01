@@ -12,10 +12,13 @@ import com.salkcoding.tunalands.display.DisplayManager
 import com.salkcoding.tunalands.gui.GuiManager
 import com.salkcoding.tunalands.listener.*
 import com.salkcoding.tunalands.listener.region.*
+import com.salkcoding.tunalands.recipe.ReleaseFlagRecipe
+import com.salkcoding.tunalands.recipe.TakeFlagRecipe
 import me.baiks.bukkitlinked.BukkitLinked
 import me.baiks.bukkitlinked.api.BukkitLinkedAPI
 import net.milkbowl.vault.economy.Economy
 import org.bukkit.Material
+import org.bukkit.NamespacedKey
 import org.bukkit.plugin.java.JavaPlugin
 
 const val chunkDebug = true
@@ -75,7 +78,7 @@ class TunaLands : JavaPlugin() {
 
         handler.register("debug", Debug())
 
-        getCommand("land")!!.setExecutor(handler)
+        getCommand("tunaland")!!.setExecutor(handler)
 
         server.pluginManager.registerEvents(ArmorStandListener(), this)
         server.pluginManager.registerEvents(BlockBreakListener(), this)
@@ -119,6 +122,9 @@ class TunaLands : JavaPlugin() {
 
         configRead()
 
+        TakeFlagRecipe.registerRecipe()
+        ReleaseFlagRecipe.registerRecipe()
+
         database = Database()
 
         logger.info("Plugin is now enabled")
@@ -129,6 +135,10 @@ class TunaLands : JavaPlugin() {
         landManager.close()
         database.close()
         guiManager.allClose()
+
+        server.removeRecipe(NamespacedKey(this, "take_flag"))
+        server.removeRecipe(NamespacedKey(this, "release_flag"))
+
         logger.warning("All guis are closed")
 
         logger.warning("All of chunks are now unprotected")
@@ -158,13 +168,6 @@ class TunaLands : JavaPlugin() {
             configProtect.getInt("baseLimitExtendPrice")
         )
         logger.info("protect: $protect")
-        //Flag
-        val configFlag = config.getConfigurationSection("flag")!!
-        val flag = Config.Flag(
-            configFlag.getInt("takeFlagPrice"),
-            configFlag.getInt("releaseFlagPrice")
-        )
-        logger.info("flag: $flag")
         //Fuel
         val configFuel = config.getConfigurationSection("fuel")!!
         val fuel = Config.Fuel(
@@ -190,7 +193,7 @@ class TunaLands : JavaPlugin() {
         val limitWorld = config.getStringList("limitWorld")
         logger.info("limitWorld: $limitWorld")
 
-        configuration = Config(database, protect, flag, fuel, command, limitWorld)
+        configuration = Config(database, protect, fuel, command, limitWorld)
 
         if (!setupEconomy()) {
             logger.warning("Disabled due to no Vault dependency found!")
@@ -210,7 +213,6 @@ class TunaLands : JavaPlugin() {
 data class Config(
     val dataBase: Database,
     val protect: Protect,
-    val flag: Flag,
     val fuel: Fuel,
     val command: Command,
     val limitWorld: List<String>
@@ -230,11 +232,6 @@ data class Config(
         val createPrice: Int,
         val baseMaxExtendCount: Int,
         val baseLimitExtendPrice: Int
-    )
-
-    data class Flag(
-        val takeFlagPrice: Int,
-        val releaseFlagPrice: Int
     )
 
     data class Fuel(

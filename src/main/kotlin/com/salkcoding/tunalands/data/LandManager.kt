@@ -39,7 +39,7 @@ class LandManager {
                 landMap[query] = Lands.ChunkInfo(
                     lands.ownerName,
                     lands.ownerUUID,
-                    lands.upCore.world.name,//Core world and chunk world are matched
+                    lands.upCoreLocation.world.name,//Core world and chunk world are matched
                     result.first,
                     result.second
                 )
@@ -59,7 +59,7 @@ class LandManager {
 
     fun deleteLands(ownerUUID: UUID, ownerName: String) {
         val lands = playerLandMap[ownerUUID]!!
-        displayManager.removeDisplayInChunk(lands.upCore.chunk)
+        displayManager.removeDisplayInChunk(lands.upCoreLocation.chunk)
         lands.landList.forEach { query ->
             landMap.remove(query)
         }
@@ -245,8 +245,8 @@ class LandManager {
             val lands = this.getPlayerLands(chunkInfo.ownerUUID, Rank.OWNER, Rank.DELEGATOR) ?: return
 
             val uuid = player.uniqueId
-            val core = lands.upCore
-            if (core.chunk.isSameChunk(chunk)) {
+            val coreLocation = lands.upCoreLocation
+            if (coreLocation.chunk.isSameChunk(chunk)) {
                 player.sendMessage("코어가 위치한 땅은 제거할 수 없습니다.".errorFormat())
                 return
             }

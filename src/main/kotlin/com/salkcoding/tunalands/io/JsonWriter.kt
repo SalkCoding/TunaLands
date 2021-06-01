@@ -34,7 +34,7 @@ object JsonWriter {
                 //It just saved upCore data. So when we load it, we have to calculate the downCore location.
                 val jsonLocationArray = JsonArray()
                 listOf(
-                    lands.upCore,
+                    lands.upCoreLocation,
                     lands.visitorSpawn,
                     lands.memberSpawn
                 ).forEach { location ->

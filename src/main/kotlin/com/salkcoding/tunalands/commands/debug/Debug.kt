@@ -79,8 +79,11 @@ class Debug : CommandExecutor {
             }
             args[0] == "delete" && args.size == 2 -> {
                 val target = Bukkit.getOfflinePlayer(args[1])
-                landManager.deleteLands(target)
-                sender.sendMessage("${target.name}의 땅을 삭제했습니다.".infoFormat())
+                val lands = landManager.getPlayerLands(target.uniqueId, Rank.OWNER)
+                if (lands != null) {
+                    landManager.deleteLands(target)
+                    sender.sendMessage("${target.name}의 땅을 삭제했습니다.".infoFormat())
+                } else sender.sendMessage("소속된 곳이 없습니다".infoFormat())
                 return true
             }
             args[0] == "buy" && args.size == 1 -> {

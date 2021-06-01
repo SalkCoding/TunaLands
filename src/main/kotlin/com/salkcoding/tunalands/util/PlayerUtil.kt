@@ -13,6 +13,6 @@ fun Player.giveOrDrop(item: ItemStack) {
     }
 }
 
-fun Player.hasEnoughMoney(price: Double): Boolean {
+fun Player.hasNotEnoughMoney(price: Double): Boolean {
     return economy.getBalance(this) < price
 }

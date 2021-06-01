@@ -5,7 +5,7 @@ import com.salkcoding.tunalands.economy
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.data.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
-import com.salkcoding.tunalands.util.hasEnoughMoney
+import com.salkcoding.tunalands.util.hasNotEnoughMoney
 import com.salkcoding.tunalands.util.infoFormat
 import com.salkcoding.tunalands.util.toQuery
 import org.bukkit.command.Command
@@ -27,7 +27,7 @@ class SetSpawn : CommandExecutor {
                         }
 
                         val price = configuration.command.setSpawnPrice.toDouble()
-                        if (player.hasEnoughMoney(price)) {
+                        if (player.hasNotEnoughMoney(price)) {
                             player.sendMessage("캔이 부족합니다.".errorFormat())
                             return true
                         }
