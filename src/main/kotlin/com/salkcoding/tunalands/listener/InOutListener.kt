@@ -3,10 +3,7 @@ package com.salkcoding.tunalands.listener
 import com.salkcoding.tunalands.data.lands.Rank
 import com.salkcoding.tunalands.data.recordLeft
 import com.salkcoding.tunalands.landManager
-import com.salkcoding.tunalands.util.errorFormat
-import com.salkcoding.tunalands.util.infoFormat
-import com.salkcoding.tunalands.util.toColoredText
-import com.salkcoding.tunalands.util.warnFormat
+import com.salkcoding.tunalands.util.*
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.event.EventHandler
@@ -29,7 +26,7 @@ class InOutListener : Listener {
         val lands = landManager.getLandsWithChunk(player.chunk)
         if (lands != null) {
             if (player.uniqueId in lands.banMap) {
-                player.sendMessage("밴 당한 지역에는 접근하실 수 없습니다!".errorFormat())
+                player.sendErrorTipMessage("${ChatColor.RED}밴 당한 지역에는 접근하실 수 없습니다!")
                 val newLocation = player.location.add(player.eyeLocation.direction.multiply(Vector(-2, 0, -2)))
                 player.teleportAsync(newLocation)
                 return

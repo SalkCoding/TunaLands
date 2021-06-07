@@ -315,5 +315,4 @@ fun Player.openMainGui(lands: Lands, rank: Rank) {
 
     val view = this.openInventory(inventory)!!
     guiManager.guiMap[view] = gui
-    displayManager.createDisplay(lands)
 }

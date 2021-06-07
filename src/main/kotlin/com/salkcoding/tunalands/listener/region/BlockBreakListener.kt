@@ -3,6 +3,8 @@ package com.salkcoding.tunalands.listener.region
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.data.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
+import com.salkcoding.tunalands.util.sendErrorTipMessage
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -21,7 +23,7 @@ class BlockBreakListener : Listener {
         val block = event.block
         val lands = landManager.getLandsWithChunk(chunk)
         if (lands == null) {
-            player.sendMessage("중립 지역에서는 블럭을 파괴할 수 없습니다!".errorFormat())
+            player.sendErrorTipMessage("${ChatColor.RED}중립 지역에서는 블럭을 파괴할 수 없습니다!")
             event.isCancelled = true
             return
         }
@@ -71,6 +73,6 @@ class BlockBreakListener : Listener {
         } else event.isCancelled = true
 
         if (event.isCancelled)
-            player.sendMessage("권한이 없습니다!".errorFormat())
+            player.sendErrorTipMessage("${ChatColor.RED}권한이 없습니다!")
     }
 }

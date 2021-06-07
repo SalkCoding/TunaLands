@@ -1,11 +1,8 @@
 package com.salkcoding.tunalands.gui.render
 
 import br.com.devsrsouza.kotlinbukkitapi.extensions.item.displayName
-import com.salkcoding.tunalands.bungeeApi
-import com.salkcoding.tunalands.configuration
+import com.salkcoding.tunalands.*
 import com.salkcoding.tunalands.gui.GuiInterface
-import com.salkcoding.tunalands.guiManager
-import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.data.lands.Lands
 import com.salkcoding.tunalands.data.lands.Rank
 import com.salkcoding.tunalands.util.*
@@ -129,46 +126,47 @@ class VisitGui(private val player: Player) : GuiInterface {
 
         val start = currentPage * 36
         val length = min(landList.size - start, 36)
+        Bukkit.getScheduler().runTaskAsynchronously(tunaLands,Runnable{
+            for (i in 0 until length) {
+                val uuid = landList[start + i]
+                val entry = Bukkit.getOfflinePlayer(uuid)
+                val lands = landMap[uuid]!!
 
-        for (i in 0 until length) {
-            val uuid = landList[start + i]
-            val entry = Bukkit.getOfflinePlayer(uuid)
-            val lands = landMap[uuid]!!
-
-            val head = (Material.PLAYER_HEAD * 1).apply {
-                val meta = this.itemMeta as SkullMeta
-                val created = Calendar.getInstance()
-                created.timeInMillis = lands.landHistory.createdMillisecond
-                meta.owningPlayer = entry
-                meta.setDisplayName(entry.name)
-                val lore = mutableListOf(
-                    "${ChatColor.WHITE}공개 여부: ${
-                        when (lands.open) {
-                            true -> "${ChatColor.GREEN}공개"
-                            false -> "${ChatColor.RED}비공개"
-                        }
-                    }",
-                    "${ChatColor.WHITE}멤버 수: ${ChatColor.GOLD}${lands.memberMap.size}",
-                    "${ChatColor.WHITE}방문자 수: ${ChatColor.GOLD}${lands.landHistory.visitorCount}",
-                    "${ChatColor.WHITE}생성일: ${ChatColor.GRAY}${created.get(Calendar.YEAR)}/${created.get(Calendar.MONTH) + 1}/${
-                        created.get(
-                            Calendar.DATE
-                        )
-                    }",
-                )
-                (0 until lands.lore.size).forEach { i ->
-                    lore.add(i, lands.lore[i])
+                val head = (Material.PLAYER_HEAD * 1).apply {
+                    val meta = this.itemMeta as SkullMeta
+                    val created = Calendar.getInstance()
+                    created.timeInMillis = lands.landHistory.createdMillisecond
+                    meta.owningPlayer = entry
+                    meta.setDisplayName(entry.name)
+                    val lore = mutableListOf(
+                        "${ChatColor.WHITE}공개 여부: ${
+                            when (lands.open) {
+                                true -> "${ChatColor.GREEN}공개"
+                                false -> "${ChatColor.RED}비공개"
+                            }
+                        }",
+                        "${ChatColor.WHITE}멤버 수: ${ChatColor.GOLD}${lands.memberMap.size}",
+                        "${ChatColor.WHITE}방문자 수: ${ChatColor.GOLD}${lands.landHistory.visitorCount}",
+                        "${ChatColor.WHITE}생성일: ${ChatColor.GRAY}${created.get(Calendar.YEAR)}/${created.get(Calendar.MONTH) + 1}/${
+                            created.get(
+                                Calendar.DATE
+                            )
+                        }",
+                    )
+                    (0 until lands.lore.size).forEach { i ->
+                        lore.add(i, lands.lore[i])
+                    }
+                    if (lands.open) {
+                        lore.add("")
+                        lore.add("${ChatColor.WHITE}클릭하여 이동할 수 있습니다.")
+                    }
+                    meta.lore = lore
+                    this.itemMeta = meta
                 }
-                if (lands.open) {
-                    lore.add("")
-                    lore.add("${ChatColor.WHITE}클릭하여 이동할 수 있습니다.")
-                }
-                meta.lore = lore
-                this.itemMeta = meta
+                //Start index is 18 because of decorations
+                inv.setItem(i + 18, head)
             }
-            //Start index is 18 because of decorations
-            inv.setItem(i + 18, head)
-        }
+        })
 
         if (currentPage < 1)
             inv.setItem(9, blackPane)

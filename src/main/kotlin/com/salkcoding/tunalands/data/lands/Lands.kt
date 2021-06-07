@@ -17,13 +17,13 @@ class Lands(
     var open: Boolean = false,
     var lore: MutableList<String> = mutableListOf(
         "${ownerName}의 땅입니다.",
-        "ㅎㅇ",
-        "ㅂㅇ"
+        "안녕하세요",
+        "제 땅입니다"
     ),
     var welcomeMessage: MutableList<String> = mutableListOf(
         "${ownerName}의 땅입니다.",
-        "ㅎㅇ",
-        "ㅂㅂ"
+        "어서오세요",
+        "편안히 있다가 가세요"
     ),
     var memberSpawn: Location = upCoreLocation,
     var visitorSpawn: Location = upCoreLocation,

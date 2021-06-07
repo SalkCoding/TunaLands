@@ -5,6 +5,7 @@ import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.guiManager
 import com.salkcoding.tunalands.data.lands.Lands
 import com.salkcoding.tunalands.data.lands.Rank
+import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.*
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -154,35 +155,36 @@ class UserListGui(private val player: Player, private val lands: Lands, private 
 
         val start = currentPage * 36
         val length = min(playerList.size - start, 36)
-
-        for (i in 0 until length) {
-            val head = (Material.PLAYER_HEAD * 1).apply {
-                val meta = this.itemMeta as SkullMeta
-                val entry = Bukkit.getOfflinePlayer(playerList[start + i])
-                val memberData = lands.memberMap[entry.uniqueId]!!
-                val date = Calendar.getInstance()
-                date.timeInMillis = memberData.lastLogin
-                meta.owningPlayer = entry
-                meta.setDisplayName(entry.name)
-                meta.lore = listOf(
-                    "${ChatColor.WHITE}권한: ${memberData.rank.toColoredText()}",
-                    "${ChatColor.WHITE}최근 방문일: ${ChatColor.GRAY}${
-                        date.get(Calendar.YEAR)
-                    }/${
-                        date.get(Calendar.MONTH) + 1
-                    }/${
-                        date.get(Calendar.DATE)
-                    } ${
-                        date.get(Calendar.HOUR_OF_DAY)
-                    }:${
-                        date.get(Calendar.MINUTE)
-                    }"
-                )
-                this.itemMeta = meta
+        Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
+            for (i in 0 until length) {
+                val head = (Material.PLAYER_HEAD * 1).apply {
+                    val meta = this.itemMeta as SkullMeta
+                    val entry = Bukkit.getOfflinePlayer(playerList[start + i])
+                    val memberData = lands.memberMap[entry.uniqueId]!!
+                    val date = Calendar.getInstance()
+                    date.timeInMillis = memberData.lastLogin
+                    meta.owningPlayer = entry
+                    meta.setDisplayName(entry.name)
+                    meta.lore = listOf(
+                        "${ChatColor.WHITE}권한: ${memberData.rank.toColoredText()}",
+                        "${ChatColor.WHITE}최근 방문일: ${ChatColor.GRAY}${
+                            date.get(Calendar.YEAR)
+                        }/${
+                            date.get(Calendar.MONTH) + 1
+                        }/${
+                            date.get(Calendar.DATE)
+                        } ${
+                            date.get(Calendar.HOUR_OF_DAY)
+                        }:${
+                            date.get(Calendar.MINUTE)
+                        }"
+                    )
+                    this.itemMeta = meta
+                }
+                //Start index is 18 because of decorations
+                inv.setItem(i + 18, head)
             }
-            //Start index is 18 because of decorations
-            inv.setItem(i + 18, head)
-        }
+        })
 
         if (currentPage < 1)
             inv.setItem(9, blackPane)

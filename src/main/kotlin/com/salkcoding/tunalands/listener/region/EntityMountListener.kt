@@ -3,6 +3,8 @@ package com.salkcoding.tunalands.listener.region
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.data.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
+import com.salkcoding.tunalands.util.sendErrorTipMessage
+import org.bukkit.ChatColor
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -30,11 +32,11 @@ class EntityMountListener : Listener {
 
             when (event.mount.type) {
                 EntityType.MINECART -> {
-                    if (setting.useMinecart)
+                    if (!setting.useMinecart)
                         event.isCancelled = true
                 }
                 EntityType.BOAT -> {
-                    if (setting.useBoat)
+                    if (!setting.useBoat)
                         event.isCancelled = true
                 }
                 EntityType.PIG,
@@ -42,7 +44,7 @@ class EntityMountListener : Listener {
                 EntityType.DONKEY,
                 EntityType.MULE,
                 EntityType.HORSE -> {
-                    if (setting.canRiding)
+                    if (!setting.canRiding)
                         event.isCancelled = true
                 }
                 else -> return
@@ -50,6 +52,6 @@ class EntityMountListener : Listener {
         } else event.isCancelled = true
 
         if (event.isCancelled)
-            player.sendMessage("권한이 없습니다!".errorFormat())
+            player.sendErrorTipMessage("${ChatColor.RED}권한이 없습니다!")
     }
 }

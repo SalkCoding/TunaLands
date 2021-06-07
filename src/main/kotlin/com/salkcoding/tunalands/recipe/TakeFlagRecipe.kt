@@ -24,7 +24,7 @@ object TakeFlagRecipe : RecipeRegister {
         recipe.shape("DDD", "DLD", "DDD")
 
         recipe.setIngredient('D', Material.DIAMOND)
-        recipe.setIngredient('L', Material.LAPIS_BLOCK)
+        recipe.setIngredient('L', Material.LAPIS_LAZULI)
 
         Bukkit.addRecipe(recipe)
     }

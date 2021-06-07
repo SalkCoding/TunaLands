@@ -13,6 +13,7 @@ import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.InventoryAction
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.Inventory
@@ -80,7 +81,7 @@ class MemberSettingGui(private val player: Player, private val lands: Lands, pri
     private val useJukebox = (Material.JUKEBOX * 1).apply { this.displayName("${ChatColor.WHITE}주크박스 사용") }
 
     override fun render(inv: Inventory) {
-        val setting = lands.visitorSetting
+        val setting = lands.memberSetting
 
         //First row
         canPVP.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.canPVP.toColoredText()}") }
@@ -197,6 +198,9 @@ class MemberSettingGui(private val player: Player, private val lands: Lands, pri
 
     override fun onClick(event: InventoryClickEvent) {
         event.isCancelled = true
+        if (event.action != InventoryAction.PICKUP_ALL && event.action != InventoryAction.PICKUP_HALF)
+            return
+
         val setting = lands.memberSetting
         val inv = event.inventory
         //First row

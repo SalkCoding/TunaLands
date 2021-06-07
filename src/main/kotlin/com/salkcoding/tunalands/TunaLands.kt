@@ -10,6 +10,7 @@ import com.salkcoding.tunalands.database.Database
 import com.salkcoding.tunalands.display.DisplayChunkListener
 import com.salkcoding.tunalands.display.DisplayManager
 import com.salkcoding.tunalands.gui.GuiManager
+import com.salkcoding.tunalands.io.AutoSaver
 import com.salkcoding.tunalands.listener.*
 import com.salkcoding.tunalands.listener.region.*
 import com.salkcoding.tunalands.recipe.ReleaseFlagRecipe
@@ -41,8 +42,9 @@ class TunaLands : JavaPlugin() {
         tunaLands = this
 
         guiManager = GuiManager()
-        landManager = LandManager()
         displayManager = DisplayManager()
+
+        landManager = LandManager()
 
         val bukkitLinked = server.pluginManager.getPlugin("BukkitLinked") as? BukkitLinked
         if (bukkitLinked == null) {
@@ -117,7 +119,7 @@ class TunaLands : JavaPlugin() {
             logger.warning("Chunk debug mode is enabled.")
             server.scheduler.runTaskTimer(this, Runnable {
                 landManager.debug()
-            }, 20, 5)
+            }, 20, 10)
         }
 
         configRead()
@@ -126,6 +128,8 @@ class TunaLands : JavaPlugin() {
         ReleaseFlagRecipe.registerRecipe()
 
         database = Database()
+
+        server.scheduler.runTaskTimerAsynchronously(this, AutoSaver(), 18000, 18000)
 
         logger.info("Plugin is now enabled")
     }
@@ -164,8 +168,6 @@ class TunaLands : JavaPlugin() {
         val protect = Config.Protect(
             Material.valueOf(configProtect.getString("coreBlock")!!),
             configProtect.getInt("createPrice"),
-            configProtect.getInt("baseMaxExtendCount"),
-            configProtect.getInt("baseLimitExtendPrice")
         )
         logger.info("protect: $protect")
         //Fuel
@@ -229,9 +231,7 @@ data class Config(
 
     data class Protect(
         val coreBlock: Material,
-        val createPrice: Int,
-        val baseMaxExtendCount: Int,
-        val baseLimitExtendPrice: Int
+        val createPrice: Int
     )
 
     data class Fuel(

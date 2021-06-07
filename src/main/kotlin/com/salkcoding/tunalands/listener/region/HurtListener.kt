@@ -28,6 +28,6 @@ class HurtListener : Listener {
 
             if (!victimSetting.canHurt)
                 event.isCancelled = true
-        }
+        } else event.isCancelled = true
     }
 }

@@ -3,6 +3,7 @@ package com.salkcoding.tunalands.data
 import com.salkcoding.tunalands.data.lands.Lands
 import com.salkcoding.tunalands.data.lands.Rank
 import com.salkcoding.tunalands.database
+import com.salkcoding.tunalands.display.DisplayManager
 import com.salkcoding.tunalands.displayManager
 import com.salkcoding.tunalands.io.JsonReader
 import com.salkcoding.tunalands.io.JsonWriter
@@ -23,14 +24,14 @@ class LandManager {
 
     private val landMap = ConcurrentHashMap<String, Lands.ChunkInfo>()
     private val playerLandMap = JsonReader.loadPlayerLandMap()
-    private val task = Bukkit.getScheduler().runTaskTimerAsynchronously(tunaLands, Runnable {
+    /*private val task = Bukkit.getScheduler().runTaskTimerAsynchronously(tunaLands, Runnable {
         playerLandMap.forEach { (_, lands) ->
             val expired = lands.expiredMillisecond
             val present = System.currentTimeMillis()
             if (present > expired)
                 deleteLands(lands.ownerUUID, lands.ownerName)
         }
-    }, 100, 100)
+    }, 100, 100)*/
 
     init {
         playerLandMap.forEach { (_, lands) ->
@@ -44,11 +45,12 @@ class LandManager {
                     result.second
                 )
             }
+            displayManager.createDisplay(lands)
         }
     }
 
     fun close() {
-        task.cancel()
+        //task.cancel()
 
         JsonWriter.savePlayerLandMap()
     }

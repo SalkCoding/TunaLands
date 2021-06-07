@@ -3,6 +3,8 @@ package com.salkcoding.tunalands.listener.region
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.data.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
+import com.salkcoding.tunalands.util.sendErrorTipMessage
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
@@ -167,9 +169,9 @@ class ClickedInteractListener : Listener {
                 }
                 else -> return
             }
-        }
+        } else event.isCancelled = true
 
         if (event.useInteractedBlock() == Event.Result.DENY)
-            player.sendMessage("권한이 없습니다!".errorFormat())
+            player.sendErrorTipMessage("${ChatColor.RED}권한이 없습니다!")
     }
 }

@@ -14,6 +14,7 @@ import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.InventoryAction
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.Inventory
@@ -30,7 +31,8 @@ class VisitorSettingGui(private val player: Player, private val lands: Lands, pr
             "${ChatColor.WHITE}현재 설정된 환영 메세지",
             "",
             "${ChatColor.WHITE}방문자가 지역에 방문했을 때 보여줄 메세지를 설정합니다.",
-            "${ChatColor.WHITE}색 채팅을 이용할 수 있으며, \'\\n\'을 이용하여 줄바꿈을 할 수 있습니다.",
+            "${ChatColor.WHITE}색 채팅을 이용할 수 있으며,",
+            "${ChatColor.WHITE}\'\\n\'을 이용하여 줄바꿈을 할 수 있습니다.",
             "${ChatColor.WHITE}최대 3줄까지 설정할 수 있습니다."
         )
         (0 until lands.lore.size).forEach { i ->
@@ -52,7 +54,8 @@ class VisitorSettingGui(private val player: Player, private val lands: Lands, pr
             "${ChatColor.WHITE}현재 설정된 환영 메세지",
             "",
             "${ChatColor.WHITE}지역 목록에서 보이게 할 설명을 설정합니다.",
-            "${ChatColor.WHITE}색 채팅을 이용할 수 있으며, \'\\n\'을 이용하여 줄바꿈을 할 수 있습니다.",
+            "${ChatColor.WHITE}색 채팅을 이용할 수 있으며,",
+            "${ChatColor.WHITE}\'\\n\'을 이용하여 줄바꿈을 할 수 있습니다.",
             "${ChatColor.WHITE}최대 3줄까지 설정할 수 있습니다."
         )
         (0 until lands.welcomeMessage.size).forEach { i ->
@@ -229,6 +232,9 @@ class VisitorSettingGui(private val player: Player, private val lands: Lands, pr
 
     override fun onClick(event: InventoryClickEvent) {
         event.isCancelled = true
+        if (event.action != InventoryAction.PICKUP_ALL && event.action != InventoryAction.PICKUP_HALF)
+            return
+
         val setting = lands.visitorSetting
         val inv = event.inventory
         when (event.rawSlot) {

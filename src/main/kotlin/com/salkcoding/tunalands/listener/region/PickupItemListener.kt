@@ -4,7 +4,9 @@ import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.data.lands.Rank
 import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.errorFormat
+import com.salkcoding.tunalands.util.sendErrorTipMessage
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -37,7 +39,7 @@ class PickupItemListener : Listener {
 
         if (event.isCancelled && player.uniqueId !in messageSet) {
             messageSet.add(player.uniqueId)
-            player.sendMessage("권한이 없습니다!".errorFormat())
+            player.sendErrorTipMessage("${ChatColor.RED}권한이 없습니다!")
             Bukkit.getScheduler().runTaskLater(tunaLands, Runnable {
                 messageSet.remove(player.uniqueId)
             }, 100)

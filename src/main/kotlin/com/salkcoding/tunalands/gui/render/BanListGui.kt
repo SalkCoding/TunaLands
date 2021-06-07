@@ -5,12 +5,14 @@ import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.guiManager
 import com.salkcoding.tunalands.data.lands.Lands
 import com.salkcoding.tunalands.data.lands.Rank
+import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.*
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.InventoryAction
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.Inventory
@@ -89,31 +91,32 @@ class BanListGui(
 
         val start = currentPage * 36
         val length = min(playerList.size - start, 36)
-
-        for (i in 0 until length) {
-            val head = (Material.PLAYER_HEAD * 1).apply {
-                val meta = this.itemMeta as SkullMeta
-                val entry = Bukkit.getOfflinePlayer(playerList[start + i])
-                val banData = lands.banMap[entry.uniqueId]!!
-                val date = Calendar.getInstance()
-                date.timeInMillis = banData.banned
-                meta.owningPlayer = entry
-                meta.setDisplayName(entry.name)
-                meta.lore = listOf(
-                    "${ChatColor.WHITE}UUID: ${ChatColor.GRAY}${banData.uuid}",
-                    "${ChatColor.WHITE}추방 일자: ${ChatColor.GRAY}${
-                        date.get(Calendar.YEAR)
-                    }/${
-                        date.get(Calendar.MONTH) + 1
-                    }/${
-                        date.get(Calendar.DATE)
-                    }"
-                )
-                this.itemMeta = meta
+        Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
+            for (i in 0 until length) {
+                val head = (Material.PLAYER_HEAD * 1).apply {
+                    val meta = this.itemMeta as SkullMeta
+                    val entry = Bukkit.getOfflinePlayer(playerList[start + i])
+                    val banData = lands.banMap[entry.uniqueId]!!
+                    val date = Calendar.getInstance()
+                    date.timeInMillis = banData.banned
+                    meta.owningPlayer = entry
+                    meta.setDisplayName(entry.name)
+                    meta.lore = listOf(
+                        "${ChatColor.WHITE}UUID: ${ChatColor.GRAY}${banData.uuid}",
+                        "${ChatColor.WHITE}추방 일자: ${ChatColor.GRAY}${
+                            date.get(Calendar.YEAR)
+                        }/${
+                            date.get(Calendar.MONTH) + 1
+                        }/${
+                            date.get(Calendar.DATE)
+                        }"
+                    )
+                    this.itemMeta = meta
+                }
+                //Start index is 18 because of decorations
+                inv.setItem(i + 18, head)
             }
-            //Start index is 18 because of decorations
-            inv.setItem(i + 18, head)
-        }
+        })
 
         if (currentPage < 1)
             inv.setItem(9, blackPane)
@@ -128,6 +131,7 @@ class BanListGui(
 
     override fun onClick(event: InventoryClickEvent) {
         event.isCancelled = true
+
         when (event.rawSlot) {
             //Back button
             0, 8 -> {

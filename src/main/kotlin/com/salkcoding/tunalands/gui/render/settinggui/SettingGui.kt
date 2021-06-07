@@ -14,6 +14,7 @@ import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.InventoryAction
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.Inventory
@@ -58,6 +59,9 @@ class SettingGui(private val player: Player, private val lands: Lands, private v
 
     override fun onClick(event: InventoryClickEvent) {
         event.isCancelled = true
+        if (event.action != InventoryAction.PICKUP_ALL && event.action != InventoryAction.PICKUP_HALF)
+            return
+
         val setting = lands.delegatorSetting
         when (event.rawSlot) {
             0 -> {

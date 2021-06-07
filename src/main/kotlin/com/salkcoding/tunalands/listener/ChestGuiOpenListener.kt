@@ -3,8 +3,11 @@ package com.salkcoding.tunalands.listener
 import com.salkcoding.tunalands.gui.render.openMainGui
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.data.lands.Rank
+import com.salkcoding.tunalands.displayManager
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.isSameLocation
+import com.salkcoding.tunalands.util.sendErrorTipMessage
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
@@ -35,9 +38,10 @@ class ChestGuiOpenListener : Listener {
                         lands,
                         rank
                     )
-                    else -> player.sendMessage("권한이 없습니다!".errorFormat())
+                    else -> player.sendErrorTipMessage("${ChatColor.RED}권한이 없습니다!")
                 }
-            } else player.sendMessage("권한이 없습니다!".errorFormat())
+                displayManager.createDisplay(lands)
+            } else player.sendErrorTipMessage("${ChatColor.RED}권한이 없습니다!")
         }
     }
 

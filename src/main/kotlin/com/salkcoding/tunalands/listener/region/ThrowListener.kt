@@ -3,6 +3,8 @@ package com.salkcoding.tunalands.listener.region
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.data.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
+import com.salkcoding.tunalands.util.sendErrorTipMessage
+import org.bukkit.ChatColor
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -29,7 +31,7 @@ class ThrowListener : Listener {
                         Rank.VISITOR -> lands.visitorSetting
                     }
 
-                    if (setting.throwEgg)
+                    if (!setting.throwEgg)
                         event.isCancelled = true
                 } else event.isCancelled = true
             }
@@ -37,6 +39,6 @@ class ThrowListener : Listener {
         }
 
         if (event.isCancelled)
-            player.sendMessage("권한이 없습니다!".errorFormat())
+            player.sendErrorTipMessage("${ChatColor.RED}권한이 없습니다!")
     }
 }

@@ -3,6 +3,8 @@ package com.salkcoding.tunalands.listener.region
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.data.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
+import com.salkcoding.tunalands.util.sendErrorTipMessage
+import org.bukkit.ChatColor
 import org.bukkit.entity.Player
 import org.bukkit.entity.Projectile
 import org.bukkit.event.EventHandler
@@ -37,6 +39,6 @@ class PVPListener : Listener {
         } else event.isCancelled = true
 
         if (event.isCancelled)
-            damager.sendMessage("권한이 없습니다!".errorFormat())
+            damager.sendErrorTipMessage("${ChatColor.RED}권한이 없습니다!")
     }
 }

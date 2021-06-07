@@ -5,6 +5,7 @@ import com.salkcoding.tunalands.economy
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.data.lands.Rank
 import com.salkcoding.tunalands.util.*
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -24,12 +25,12 @@ class CoreListener : Listener {
         val player = event.player
         if (placedBlock.type == configuration.protect.coreBlock && player.isSneaking) {
             if (landManager.isProtectedLand(placedBlock.chunk)){
-                player.sendMessage("다른 사람의 땅에는 코어를 만들 수 없습니다!".errorFormat())
+                player.sendErrorTipMessage("${ChatColor.RED}다른 사람의 땅에는 코어를 만들 수 없습니다!")
                 event.isCancelled = true
                 return
             }
             if (landManager.getPlayerLands(player.uniqueId) != null) {
-                player.sendMessage("이미 땅을 소유하고있습니다!".errorFormat())
+                player.sendErrorTipMessage("${ChatColor.RED}이미 땅을 소유하고있습니다!".errorFormat())
                 event.isCancelled = true
                 return
             }
@@ -37,7 +38,7 @@ class CoreListener : Listener {
             val price = configuration.protect.createPrice.toDouble()
             if (player.hasNotEnoughMoney(price)) {
                 val delta = price - economy.getBalance(player)
-                player.sendMessage("${delta}캔이 부족합니다.".errorFormat())
+                player.sendErrorTipMessage("${ChatColor.RED}${delta}캔이 부족합니다.".errorFormat())
                 event.isCancelled = true
                 return
             }
@@ -68,7 +69,7 @@ class CoreListener : Listener {
                 val downCoreLocation = lands.downCoreLocation
 
                 if (block.location == upCoreLocation || block.location == downCoreLocation) {
-                    player.sendMessage("코어 블럭과 코어 창고는 부술 수 없습니다.".errorFormat())
+                    player.sendErrorTipMessage("${ChatColor.RED}코어 블럭과 코어 창고는 부술 수 없습니다.")
                     event.isCancelled = true
                 }
             }

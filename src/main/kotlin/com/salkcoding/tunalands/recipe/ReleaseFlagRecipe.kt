@@ -23,7 +23,7 @@ object ReleaseFlagRecipe : RecipeRegister {
 
         recipe.shape("RRR", "RTR", "RRR")
 
-        recipe.setIngredient('R', Material.REDSTONE_BLOCK)
+        recipe.setIngredient('R', Material.REDSTONE)
         recipe.setIngredient('T', Material.TNT)
 
         Bukkit.addRecipe(recipe)
