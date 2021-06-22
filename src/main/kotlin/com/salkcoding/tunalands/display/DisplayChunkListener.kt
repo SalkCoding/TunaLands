@@ -28,6 +28,6 @@ class DisplayChunkListener : Listener {
 
     @EventHandler
     fun onUnload(event: ChunkUnloadEvent) {
-        displayManager.removeDisplayInChunk(event.chunk)
+        displayManager.removeDisplay(event.chunk)
     }
 }

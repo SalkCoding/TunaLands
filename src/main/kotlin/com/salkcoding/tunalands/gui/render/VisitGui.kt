@@ -3,8 +3,8 @@ package com.salkcoding.tunalands.gui.render
 import br.com.devsrsouza.kotlinbukkitapi.extensions.item.displayName
 import com.salkcoding.tunalands.*
 import com.salkcoding.tunalands.gui.GuiInterface
-import com.salkcoding.tunalands.data.lands.Lands
-import com.salkcoding.tunalands.data.lands.Rank
+import com.salkcoding.tunalands.lands.Lands
+import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.*
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -83,13 +83,11 @@ class VisitGui(private val player: Player) : GuiInterface {
                 "비공개 지역"
             }
             3 -> {
-                //Solo sorting
+                //Recommend count sorting
                 landList = landMap.keys.sortedByDescending {
-                    landMap[it]!!.landHistory.createdMillisecond
-                }.filter {
-                    landMap[it]!!.memberMap.size == 1
+                    landMap[it]!!.recommend
                 }
-                "혼자"
+                "추천 수"
             }
             4 -> {
                 //Member count sorting
@@ -105,18 +103,28 @@ class VisitGui(private val player: Player) : GuiInterface {
                 }
                 "방문자 수"
             }
+            6 -> {
+                //Solo sorting
+                landList = landMap.keys.sortedByDescending {
+                    landMap[it]!!.landHistory.createdMillisecond
+                }.filter {
+                    landMap[it]!!.memberMap.size == 1
+                }
+                "혼자 운영중인 지역"
+            }
             else -> ""
         }
 
         sortButton.apply {
             this.lore = listOf(
                 "${ChatColor.WHITE}현재 보기 상태: ${ChatColor.GOLD}$sortLore",
-                "${ChatColor.WHITE}기본: 생성된 시간이 오래된 순서로 모든 지역의 목록을 봅니다.",
-                "${ChatColor.WHITE}공개 지역: 공개로 설정된 지역의 목록을 생성된 시간이 오래된 순서로 봅니다.",
-                "${ChatColor.WHITE}비공개 지역: 비공개로 설정된 지역의 목록을 생성된 시간이 오래된 순서로 봅니다.",
-                "${ChatColor.WHITE}혼자:  혼자 살아가는 지역들을, 생성된 시간이 오래된 순서로 봅니다.",
-                "${ChatColor.WHITE}멤버 수: 멤버가 많은 순으로 지역의 목록을 봅니다.",
-                "${ChatColor.WHITE}방문자 수: 방문자 수가 많은 순으로 지역의 목록을 봅니다.",
+                "${ChatColor.WHITE}기본: 생성된 시간이 오래된 순으로 정렬합니다.",
+                "${ChatColor.WHITE}공개 지역: 공개로 설정된 지역의 목록을 생성된 시간이 오래된 순으로  정렬합니다.",
+                "${ChatColor.WHITE}비공개 지역: 비공개로 설정된 지역의 목록을 생성된 시간이 오래된 순서으로 정렬합니다.",
+                "${ChatColor.WHITE}추천 수: 추천이 많은 순으로 정렬합니다.",
+                "${ChatColor.WHITE}멤버 수: 멤버가 많은 순으로 정렬합니다.",
+                "${ChatColor.WHITE}방문자 수: 방문자 수가 많은 순으로 정렬합니다.",
+                "${ChatColor.WHITE}혼자 운영중인 지역:  혼자 운영중인 지역들을, 생성된 시간이 오래된 순으로 정렬합니다.",
                 "",
                 "${ChatColor.WHITE}클릭하여 정렬 방법을 변경할 수 있습니다."
             )
@@ -126,8 +134,8 @@ class VisitGui(private val player: Player) : GuiInterface {
 
         val start = currentPage * 36
         val length = min(landList.size - start, 36)
-        Bukkit.getScheduler().runTaskAsynchronously(tunaLands,Runnable{
-            for (i in 0 until length) {
+        for (i in 0 until length) {
+            Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
                 val uuid = landList[start + i]
                 val entry = Bukkit.getOfflinePlayer(uuid)
                 val lands = landMap[uuid]!!
@@ -137,7 +145,7 @@ class VisitGui(private val player: Player) : GuiInterface {
                     val created = Calendar.getInstance()
                     created.timeInMillis = lands.landHistory.createdMillisecond
                     meta.owningPlayer = entry
-                    meta.setDisplayName(entry.name)
+                    meta.setDisplayName(lands.landsName)
                     val lore = mutableListOf(
                         "${ChatColor.WHITE}공개 여부: ${
                             when (lands.open) {
@@ -147,6 +155,7 @@ class VisitGui(private val player: Player) : GuiInterface {
                         }",
                         "${ChatColor.WHITE}멤버 수: ${ChatColor.GOLD}${lands.memberMap.size}",
                         "${ChatColor.WHITE}방문자 수: ${ChatColor.GOLD}${lands.landHistory.visitorCount}",
+                        "${ChatColor.WHITE}추천 수: ${ChatColor.GOLD}${lands.recommend}",
                         "${ChatColor.WHITE}생성일: ${ChatColor.GRAY}${created.get(Calendar.YEAR)}/${created.get(Calendar.MONTH) + 1}/${
                             created.get(
                                 Calendar.DATE
@@ -165,8 +174,8 @@ class VisitGui(private val player: Player) : GuiInterface {
                 }
                 //Start index is 18 because of decorations
                 inv.setItem(i + 18, head)
-            }
-        })
+            })
+        }
 
         if (currentPage < 1)
             inv.setItem(9, blackPane)
@@ -191,7 +200,7 @@ class VisitGui(private val player: Player) : GuiInterface {
             3, 5 -> {
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
                 sortWay++
-                if (sortWay > 5)
+                if (sortWay > 6)
                     sortWay = 0
                 pageRender(event.inventory)
             }
@@ -217,7 +226,12 @@ class VisitGui(private val player: Player) : GuiInterface {
                 if (index >= landList.size) return
 
                 val lands = landMap[landList[index]] ?: return
-                if (!lands.open && !player.isOp) {
+                if (!lands.enable) {
+                    player.sendMessage("땅이 비활성화되어 방문할 수 없습니다!".errorFormat())
+                    return
+                }
+
+                if (!lands.open) {
                     player.sendMessage("땅이 비공개 상태라 방문할 수 없습니다!".errorFormat())
                     return
                 }
@@ -254,6 +268,13 @@ class VisitGui(private val player: Player) : GuiInterface {
                             lands.visitorSpawn,
                             configuration.command.visitCooldown,
                             {
+                                //Remove visitor data
+                                val previousLands = landManager.getPlayerLands(uuid, Rank.VISITOR)
+                                if (previousLands != null) {
+                                    previousLands.memberMap.remove(uuid)
+                                    player.sendMessage("${previousLands.ownerName}의 땅을 떠났습니다.".infoFormat())
+                                }
+
                                 if (uuid in lands.memberMap) {
                                     if (lands.memberMap[uuid]!!.rank == Rank.PARTTIMEJOB)
                                         return@addPlayer
@@ -268,17 +289,7 @@ class VisitGui(private val player: Player) : GuiInterface {
                                     current
                                 )
 
-                                lands.memberMap.forEach { (uuid, _) ->
-                                    val member = Bukkit.getOfflinePlayer(uuid)
-                                    if (member.isOnline) {
-                                        member.player!!.sendMessage("${ChatColor.GREEN}${player.name}${ChatColor.WHITE}님이 땅에 방문했습니다.".infoFormat())
-                                    } else {
-                                        bungeeApi.sendMessage(
-                                            member.name,
-                                            "${ChatColor.GREEN}${player.name}${ChatColor.WHITE}님이 땅에 방문했습니다.".infoFormat()
-                                        )
-                                    }
-                                }
+                                lands.sendMessageToOnlineMembers("${ChatColor.GREEN}${player.name}${ChatColor.WHITE}님이 땅에 방문했습니다.".infoFormat())
                             },
                             false
                         )

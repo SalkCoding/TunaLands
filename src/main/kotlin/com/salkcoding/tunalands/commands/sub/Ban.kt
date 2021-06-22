@@ -2,9 +2,9 @@ package com.salkcoding.tunalands.commands.sub
 
 import com.salkcoding.tunalands.bungeeApi
 import com.salkcoding.tunalands.landManager
-import com.salkcoding.tunalands.data.lands.Lands
-import com.salkcoding.tunalands.data.lands.Rank
-import com.salkcoding.tunalands.data.recordLeft
+import com.salkcoding.tunalands.lands.Lands
+import com.salkcoding.tunalands.lands.Rank
+import com.salkcoding.tunalands.leftManager
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
 import org.bukkit.Bukkit
@@ -17,14 +17,12 @@ import java.util.*
 
 class Ban : CommandExecutor {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        when {
-            label == "ban" && args.size == 1 -> {
-                val player = sender as? Player
-                if (player != null) {
-                    work(player, args[0])
-                } else sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
-                return true
-            }
+        if (label == "ban" && args.size == 1) {
+            val player = sender as? Player
+            if (player != null) {
+                work(player, args[0])
+            } else sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
+            return true
         }
         return false
     }
@@ -68,7 +66,7 @@ class Ban : CommandExecutor {
                         }
                         lands.memberMap.remove(targetUUID)
                     }
-                    targetOffline.recordLeft()
+                    leftManager.recordLeft(targetUUID)
 
                     //Else ban another player
                     player.sendMessage("${targetOffline.name}을/를 밴하였습니다.".infoFormat())
@@ -114,7 +112,7 @@ class Ban : CommandExecutor {
                         }
                         lands.memberMap.remove(targetUUID)
                     }
-                    targetOffline.recordLeft()
+                    leftManager.recordLeft(targetUUID)
 
                     //Else ban another player
                     bungeeApi.sendMessage(hostName, "${targetOffline.name}을/를 밴하였습니다.".infoFormat())

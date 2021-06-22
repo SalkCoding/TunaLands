@@ -1,18 +1,16 @@
-package com.salkcoding.tunalands.data
+package com.salkcoding.tunalands.lands
 
-import com.salkcoding.tunalands.data.lands.Lands
-import com.salkcoding.tunalands.data.lands.Rank
+import com.salkcoding.tunalands.alarmManager
 import com.salkcoding.tunalands.database
-import com.salkcoding.tunalands.display.DisplayManager
 import com.salkcoding.tunalands.displayManager
 import com.salkcoding.tunalands.io.JsonReader
 import com.salkcoding.tunalands.io.JsonWriter
 import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.*
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.Chunk
 import org.bukkit.OfflinePlayer
-import org.bukkit.Particle
 import org.bukkit.block.Block
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -24,14 +22,22 @@ class LandManager {
 
     private val landMap = ConcurrentHashMap<String, Lands.ChunkInfo>()
     private val playerLandMap = JsonReader.loadPlayerLandMap()
-    /*private val task = Bukkit.getScheduler().runTaskTimerAsynchronously(tunaLands, Runnable {
+    private val task = Bukkit.getScheduler().runTaskTimerAsynchronously(tunaLands, Runnable {
         playerLandMap.forEach { (_, lands) ->
             val expired = lands.expiredMillisecond
             val present = System.currentTimeMillis()
-            if (present > expired)
-                deleteLands(lands.ownerUUID, lands.ownerName)
+            if (lands.enable && present > expired) {
+                lands.sendMessageToOnlineMembers(
+                    listOf(
+                        "땅 보호 기간이 만료되어 비활성화 상태로 전환됩니다!".warnFormat(),
+                        "코어에 연료를 넣어 활성화하지 않을 경우 모든 블럭과의 상호작용이 불가능합니다!".warnFormat()
+                    )
+                )
+                displayManager.pauseDisplay(lands)
+                lands.enable = false
+            }
         }
-    }, 100, 100)*/
+    }, 100, 100)
 
     init {
         playerLandMap.forEach { (_, lands) ->
@@ -45,14 +51,10 @@ class LandManager {
                     result.second
                 )
             }
-            displayManager.createDisplay(lands)
+            val expired = lands.expiredMillisecond - System.currentTimeMillis()
+            if (expired > 0)
+                displayManager.createDisplay(lands)
         }
-    }
-
-    fun close() {
-        //task.cancel()
-
-        JsonWriter.savePlayerLandMap()
     }
 
     fun deleteLands(owner: OfflinePlayer) {
@@ -61,7 +63,7 @@ class LandManager {
 
     fun deleteLands(ownerUUID: UUID, ownerName: String) {
         val lands = playerLandMap[ownerUUID]!!
-        displayManager.removeDisplayInChunk(lands.upCoreLocation.chunk)
+        displayManager.removeDisplay(lands)
         lands.landList.forEach { query ->
             landMap.remove(query)
         }
@@ -110,7 +112,6 @@ class LandManager {
         return landMap.containsKey(chunk.toQuery())
     }
 
-    //Be careful to Rank.PartiTimeJob and Rank.Visitor as not be conflicted with Rank.Owner, Rank.Delegator, Rank.Member
     fun getPlayerLands(
         playerUUID: UUID,
         vararg filter: Rank = arrayOf(*Rank.values())
@@ -164,6 +165,14 @@ class LandManager {
         }
     }
 
+    fun isSameLandsNameExist(name: String): Boolean {
+        playerLandMap.forEach { (_, lands) ->
+            if (lands.landsName == name)
+                return true
+        }
+        return false
+    }
+
     fun buyLand(player: Player, upCore: Block, downCore: Block) {
         val chunk = upCore.chunk
         val query = chunk.toQuery()
@@ -174,8 +183,7 @@ class LandManager {
             val uuid = player.uniqueId
             if (!playerLandMap.containsKey(uuid)) {
                 val now = System.currentTimeMillis()
-                val expired = Calendar.getInstance()
-                expired.add(Calendar.DATE, 1)//1 Day
+                val expired = System.currentTimeMillis() + 86400000//1 Day
                 val lands = Lands(
                     player.name,
                     uuid,
@@ -186,7 +194,7 @@ class LandManager {
                     ),
                     upCore.location,
                     downCore.location,
-                    expired.timeInMillis
+                    expired
                 ).apply {
                     this.memberMap[uuid] = Lands.MemberData(uuid, Rank.OWNER, now, now)
                 }
@@ -195,6 +203,7 @@ class LandManager {
                 landMap[query] = chunkInfo
                 database.insert(chunkInfo)
                 displayManager.createDisplay(lands)
+                alarmManager.registerAlarm(lands)
                 player.sendMessage("해당 위치의 땅을 구매했습니다.".infoFormat())
                 player.world.playBuyChunkEffect(player, chunk)
             }
@@ -211,6 +220,11 @@ class LandManager {
             val lands = this.getPlayerLands(player.uniqueId, Rank.OWNER, Rank.DELEGATOR)
             if (lands == null) {
                 player.sendMessage("땅 소유주와 관리 대리인만이 땅을 확장할 수 있습니다.".errorFormat())
+                return
+            }
+
+            if (!lands.enable) {
+                player.sendMessage("땅을 다시 활성화 해야합니다!".errorFormat())
                 return
             }
 
@@ -245,6 +259,11 @@ class LandManager {
         if (landMap.containsKey(query)) {
             val chunkInfo = landMap[query]!!
             val lands = this.getPlayerLands(chunkInfo.ownerUUID, Rank.OWNER, Rank.DELEGATOR) ?: return
+
+            if (!lands.enable) {
+                player.sendMessage("땅을 다시 활성화 해야합니다!".errorFormat())
+                return
+            }
 
             val uuid = player.uniqueId
             val coreLocation = lands.upCoreLocation
@@ -285,23 +304,9 @@ class LandManager {
         }
     }
 
-    fun debug() {
-        landMap.entries.forEach { (_, land) ->
-            val c = land.chunk
-            val blockX: Int = c.x shl 4
-            val blockZ: Int = c.z shl 4
+    fun dispose() {
+        task.cancel()
 
-            var location = c.world.getHighestBlockAt(blockX, blockZ).location.add(0.0, 3.0, 0.0)
-            location.world.spawnParticle(Particle.FIREWORKS_SPARK, location, 0, .0, .0, .0, .0, null, true)
-
-            location = c.world.getHighestBlockAt(blockX, blockZ + 16).location.add(0.0, 3.0, 0.0)
-            location.world.spawnParticle(Particle.FIREWORKS_SPARK, location, 0, .0, .0, .0, .0, null, true)
-
-            location = c.world.getHighestBlockAt(blockX + 16, blockZ).location.add(0.0, 3.0, 0.0)
-            location.world.spawnParticle(Particle.FIREWORKS_SPARK, location, 0, .0, .0, .0, .0, null, true)
-
-            location = c.world.getHighestBlockAt(blockX + 16, blockZ + 16).location.add(0.0, 3.0, 0.0)
-            location.world.spawnParticle(Particle.FIREWORKS_SPARK, location, 0, .0, .0, .0, .0, null, true)
-        }
+        JsonWriter.savePlayerLandMap()
     }
 }

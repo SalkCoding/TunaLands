@@ -2,8 +2,8 @@ package com.salkcoding.tunalands.commands.sub
 
 import com.salkcoding.tunalands.bungeeApi
 import com.salkcoding.tunalands.landManager
-import com.salkcoding.tunalands.data.lands.Rank
-import com.salkcoding.tunalands.data.recordLeft
+import com.salkcoding.tunalands.lands.Rank
+import com.salkcoding.tunalands.leftManager
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
 import org.bukkit.Bukkit
@@ -16,14 +16,12 @@ import java.util.*
 
 class Kick : CommandExecutor {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        when {
-            label == "kick" && args.size == 1 -> {
-                val player = sender as? Player
-                if (player != null) {
-                    work(player, args[0])
-                } else sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
-                return true
-            }
+        if (label == "kick" && args.size == 1) {
+            val player = sender as? Player
+            if (player != null) {
+                work(player, args[0])
+            } else sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
+            return true
         }
         return false
     }
@@ -59,7 +57,7 @@ class Kick : CommandExecutor {
                             return
                         }
                         lands.memberMap.remove(targetUUID)
-                        targetOffline.recordLeft()
+                        leftManager.recordLeft(targetUUID)
 
                         player.sendMessage("${targetName}을/를 쫓아냈습니다.".infoFormat())
                         if (targetOffline.isOnline)
@@ -95,7 +93,7 @@ class Kick : CommandExecutor {
                             return
                         }
                         lands.memberMap.remove(targetUUID)
-                        targetOffline.recordLeft()
+                        leftManager.recordLeft(targetUUID)
 
                         bungeeApi.sendMessage(hostName, "${targetName}을/를 쫓아냈습니다.".infoFormat())
                         if (targetOffline.isOnline)

@@ -1,19 +1,17 @@
 package com.salkcoding.tunalands.listener.region
 
 import com.salkcoding.tunalands.landManager
-import com.salkcoding.tunalands.data.lands.Rank
-import com.salkcoding.tunalands.util.errorFormat
+import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.sendErrorTipMessage
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.event.EventHandler
-import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 
 class BlockBreakListener : Listener {
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler
     fun onProtect(event: BlockBreakEvent) {
         if (event.isCancelled) return
         if (event.player.isOp) return

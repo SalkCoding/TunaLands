@@ -20,6 +20,8 @@ object JsonWriter {
 
             file.bufferedWriter().use { writer ->
                 val jsonObject = JsonObject()
+
+                //Initialize data
                 val jsonLandList = JsonArray()
                 lands.landList.forEach {
                     jsonLandList.add(it)
@@ -45,7 +47,6 @@ object JsonWriter {
                         this.addProperty("z", location.z)
                     })
                 }
-
                 val jsonLore = JsonArray()
                 lands.lore.forEach {
                     jsonLore.add(it)
@@ -141,10 +142,14 @@ object JsonWriter {
                     this.addProperty("canSetRegionSetting", delegatorSetting.canSetRegionSetting)
                 }
 
+                //Write upper jsonObject
                 jsonObject.addProperty("ownerName", lands.ownerName)
                 jsonObject.addProperty("ownerUUID", lands.ownerUUID.toString())
                 jsonObject.addProperty("expiredMillisecond", lands.expiredMillisecond)
+                jsonObject.addProperty("enable", lands.enable)
                 jsonObject.addProperty("open", lands.open)
+                jsonObject.addProperty("recommend", lands.recommend)
+                jsonObject.addProperty("landsName", lands.landsName)
                 jsonObject.add("landList", jsonLandList)
                 jsonObject.add("landHistory", jsonLandHistory)
                 jsonObject.add("core", jsonLocationArray[0])

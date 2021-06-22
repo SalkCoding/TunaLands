@@ -14,14 +14,12 @@ import java.util.*
 class Deny : CommandExecutor {
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        when {
-            label == "deny" && args.isEmpty() -> {
-                val player = sender as? Player
-                if (player != null) {
-                    work(player)
-                } else sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
-                return true
-            }
+        if (label == "deny" && args.isEmpty()) {
+            val player = sender as? Player
+            if (player != null) {
+                work(player)
+            } else sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
+            return true
         }
         return false
     }

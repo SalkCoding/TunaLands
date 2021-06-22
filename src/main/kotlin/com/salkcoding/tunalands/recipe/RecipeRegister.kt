@@ -4,4 +4,6 @@ interface RecipeRegister {
 
     fun registerRecipe()
 
+    fun unregisterRecipe()
+
 }

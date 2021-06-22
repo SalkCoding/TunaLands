@@ -1,7 +1,8 @@
 package com.salkcoding.tunalands.listener.region
 
 import com.salkcoding.tunalands.landManager
-import com.salkcoding.tunalands.data.lands.Rank
+import com.salkcoding.tunalands.lands.Rank
+import com.salkcoding.tunalands.util.errorFormat
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -17,6 +18,11 @@ class HurtListener : Listener {
 
         val victim = event.entity as? Player ?: return
         val lands = landManager.getLandsWithChunk(victim.chunk) ?: return
+
+        if (!lands.enable) {
+            event.isCancelled = true
+            return
+        }
 
         if (victim.uniqueId in lands.memberMap) {
             val victimSetting = when (lands.memberMap[victim.uniqueId]!!.rank) {

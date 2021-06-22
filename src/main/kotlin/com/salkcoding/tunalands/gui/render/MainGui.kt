@@ -2,9 +2,10 @@ package com.salkcoding.tunalands.gui.render
 
 import br.com.devsrsouza.kotlinbukkitapi.extensions.item.displayName
 import br.com.devsrsouza.kotlinbukkitapi.extensions.player.playSound
-import com.salkcoding.tunalands.data.lands.Lands
-import com.salkcoding.tunalands.data.lands.Rank
+import com.salkcoding.tunalands.alarmManager
 import com.salkcoding.tunalands.displayManager
+import com.salkcoding.tunalands.lands.Lands
+import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.gui.render.settinggui.openSettingGui
 import com.salkcoding.tunalands.guiManager
@@ -25,9 +26,7 @@ import java.util.*
 class MainGui(private val player: Player, private val lands: Lands, private val rank: Rank) : GuiInterface {
 
     //Dynamic
-    private val totalInfoIcon = (Material.CAMPFIRE * 1).apply {
-        this.displayName("${ChatColor.GOLD}${lands.ownerName}${ChatColor.WHITE}의 지역")
-    }
+    private val totalInfoIcon = (Material.CAMPFIRE * 1)
 
     private val lockButton = (Material.IRON_DOOR * 1)
 
@@ -127,10 +126,12 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                     seconds > 0 -> "${ChatColor.WHITE}남은 연료: ${seconds}초"
                     else -> "${ChatColor.WHITE}NULL"
                 }
+                this.displayName(lands.landsName)
                 this.lore = listOf(
                     fuel,
                     "${ChatColor.WHITE}점유한 지역: ${ChatColor.GOLD}${lands.landList.size}${ChatColor.WHITE}개",
                     "${ChatColor.WHITE}멤버 수: ${ChatColor.GOLD}${lands.memberMap.size}${ChatColor.WHITE}명",
+                    "${ChatColor.WHITE}추천 수: ${ChatColor.GOLD}${lands.recommend}",
                     "${ChatColor.WHITE}생성일: ${ChatColor.GRAY}${
                         created.get(Calendar.YEAR)
                     }/${
@@ -195,12 +196,20 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                     val timeLore = lore[1].split(" ")[0]
                     val time = timeRegex.find(timeLore)!!.value.toInt()
                     val measure = measureRegex.find(timeLore)!!.value
-
-                    lands.expiredMillisecond += (fuel.amount * time * when (measure) {
+                    val addAmount = (fuel.amount * time * when (measure) {
                         "분" -> 60000
                         "시간" -> 3600000
                         else -> 0
                     })
+
+                    if (lands.enable) lands.expiredMillisecond += addAmount
+                    else {
+                        lands.expiredMillisecond = System.currentTimeMillis() + addAmount
+                        lands.enable = true
+                        displayManager.resumeDisplay(lands)
+                    }
+
+                    alarmManager.resetAlarm(lands)
 
                     player.sendMessage("${ChatColor.GOLD}${time * fuel.amount}${ChatColor.WHITE}${measure}이 추가되었습니다!".infoFormat())
                     player.playSound(player.location, Sound.BLOCK_BLASTFURNACE_FIRE_CRACKLE, 2.5f, 1f)
@@ -288,12 +297,20 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                 val timeLore = lore[1].split(" ")[0]
                 val time = timeRegex.find(timeLore)!!.value.toInt()
                 val measure = measureRegex.find(timeLore)!!.value
-
-                lands.expiredMillisecond += (fuel.amount * time * when (measure) {
+                val addAmount = (fuel.amount * time * when (measure) {
                     "분" -> 60000
                     "시간" -> 3600000
                     else -> 0
                 })
+
+                if (lands.enable) lands.expiredMillisecond += addAmount
+                else {
+                    lands.expiredMillisecond = System.currentTimeMillis() + addAmount
+                    lands.enable = true
+                    displayManager.resumeDisplay(lands)
+                }
+
+                alarmManager.resetAlarm(lands)
 
                 player.sendMessage("${ChatColor.GOLD}${time * fuel.amount}${ChatColor.WHITE}${measure}이 추가되었습니다!".infoFormat())
                 player.playSound(player.location, Sound.BLOCK_BLASTFURNACE_FIRE_CRACKLE, 2.5f, 1f)

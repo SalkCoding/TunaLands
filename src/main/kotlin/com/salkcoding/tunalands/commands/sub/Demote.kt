@@ -2,7 +2,7 @@ package com.salkcoding.tunalands.commands.sub
 
 import com.salkcoding.tunalands.bungeeApi
 import com.salkcoding.tunalands.landManager
-import com.salkcoding.tunalands.data.lands.Rank
+import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
 import org.bukkit.Bukkit
@@ -15,14 +15,12 @@ import java.util.*
 
 class Demote : CommandExecutor {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        when {
-            label == "demote" && args.size == 1 -> {
-                val player = sender as? Player
-                if (player != null) {
-                    work(player, args[0])
-                } else sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
-                return true
-            }
+        if (label == "demote" && args.size == 1) {
+            val player = sender as? Player
+            if (player != null) {
+                work(player, args[0])
+            } else sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
+            return true
         }
         return false
     }
@@ -74,12 +72,12 @@ class Demote : CommandExecutor {
                 if (lands != null) {
                     val targetOffline = Bukkit.getOfflinePlayerIfCached(targetName)
                     if (targetOffline == null) {
-                        bungeeApi.sendMessage(hostName,"존재하지 않는 유저입니다!".errorFormat())
+                        bungeeApi.sendMessage(hostName, "존재하지 않는 유저입니다!".errorFormat())
                         return
                     }
 
                     if (targetOffline.uniqueId == offlinePlayer.uniqueId) {
-                        bungeeApi.sendMessage(hostName,"관리 대리인만 강등이 가능합니다.".errorFormat())
+                        bungeeApi.sendMessage(hostName, "관리 대리인만 강등이 가능합니다.".errorFormat())
                         return
                     }
 
@@ -96,12 +94,12 @@ class Demote : CommandExecutor {
                                         targetName,
                                         "${hostName}이/가 당신을 멤버로 강등시켰습니다.".infoFormat()
                                     )
-                                bungeeApi.sendMessage(hostName,"${targetName}이/가 멤버로 강등되었습니다..".infoFormat())
+                                bungeeApi.sendMessage(hostName, "${targetName}이/가 멤버로 강등되었습니다..".infoFormat())
                             }
-                            else -> bungeeApi.sendMessage(hostName,"관리 대리인만 강등이 가능합니다.".errorFormat())
+                            else -> bungeeApi.sendMessage(hostName, "관리 대리인만 강등이 가능합니다.".errorFormat())
                         }
-                    } else bungeeApi.sendMessage(hostName,"${targetName}은/는 당신의 땅에 소속되어있지 않습니다.".errorFormat())
-                } else bungeeApi.sendMessage(hostName,"해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat())
+                    } else bungeeApi.sendMessage(hostName, "${targetName}은/는 당신의 땅에 소속되어있지 않습니다.".errorFormat())
+                } else bungeeApi.sendMessage(hostName, "해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat())
             }
         }
     }

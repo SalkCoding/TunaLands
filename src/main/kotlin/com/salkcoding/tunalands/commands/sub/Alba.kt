@@ -4,7 +4,7 @@ package com.salkcoding.tunalands.commands.sub
 import com.salkcoding.tunalands.bukkitLinkedAPI
 import com.salkcoding.tunalands.bungeeApi
 import com.salkcoding.tunalands.landManager
-import com.salkcoding.tunalands.data.lands.Rank
+import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
@@ -20,14 +20,12 @@ import java.util.*
 class Alba : CommandExecutor {
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        when {
-            label == "alba" && args.size == 1 -> {
-                val player = sender as? Player
-                if (player != null) {
-                    work(player, args[0])
-                } else sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
-                return true
-            }
+        if (label == "alba" && args.size == 1) {
+            val player = sender as? Player
+            if (player != null) {
+                work(player, args[0])
+            } else sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
+            return true
         }
         return false
     }

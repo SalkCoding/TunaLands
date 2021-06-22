@@ -1,7 +1,7 @@
 package com.salkcoding.tunalands.listener.region
 
 import com.salkcoding.tunalands.landManager
-import com.salkcoding.tunalands.data.lands.Rank
+import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.sendErrorTipMessage
@@ -24,6 +24,11 @@ class PickupItemListener : Listener {
 
         val lands = landManager.getLandsWithChunk(event.item.chunk) ?: return
         val player = event.entity as? Player ?: return
+        if (!lands.enable) {
+            player.sendMessage("땅을 다시 활성화 해야합니다!".errorFormat())
+            event.isCancelled = true
+            return
+        }
 
         if (player.uniqueId in lands.memberMap) {
             val setting = when (lands.memberMap[player.uniqueId]!!.rank) {

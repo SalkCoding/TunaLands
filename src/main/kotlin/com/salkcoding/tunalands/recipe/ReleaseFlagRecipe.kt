@@ -11,6 +11,8 @@ import org.bukkit.inventory.ShapedRecipe
 
 object ReleaseFlagRecipe : RecipeRegister {
 
+    private const val key = "release_flag"
+
     val releaseFlag = (Material.RED_BANNER * 1).apply {
         this.displayName("${ChatColor.RED}제거 ${ChatColor.WHITE}깃발")
         this.lore = listOf(
@@ -19,7 +21,7 @@ object ReleaseFlagRecipe : RecipeRegister {
     }
 
     override fun registerRecipe() {
-        val recipe = ShapedRecipe(NamespacedKey(tunaLands, "release_flag"), releaseFlag)
+        val recipe = ShapedRecipe(NamespacedKey(tunaLands, key), releaseFlag)
 
         recipe.shape("RRR", "RTR", "RRR")
 
@@ -27,5 +29,9 @@ object ReleaseFlagRecipe : RecipeRegister {
         recipe.setIngredient('T', Material.TNT)
 
         Bukkit.addRecipe(recipe)
+    }
+
+    override fun unregisterRecipe() {
+        tunaLands.server.removeRecipe(NamespacedKey(tunaLands, key))
     }
 }

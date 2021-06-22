@@ -3,7 +3,6 @@ package com.salkcoding.tunalands.listener
 import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.economy
 import com.salkcoding.tunalands.landManager
-import com.salkcoding.tunalands.data.lands.Rank
 import com.salkcoding.tunalands.util.*
 import org.bukkit.ChatColor
 import org.bukkit.Material
@@ -17,7 +16,7 @@ import org.bukkit.event.block.BlockPlaceEvent
 
 class CoreListener : Listener {
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     fun onCorePlace(event: BlockPlaceEvent) {
         if (event.isCancelled) return
 
@@ -29,8 +28,9 @@ class CoreListener : Listener {
                 event.isCancelled = true
                 return
             }
+
             if (landManager.getPlayerLands(player.uniqueId) != null) {
-                player.sendErrorTipMessage("${ChatColor.RED}이미 땅을 소유하고있습니다!".errorFormat())
+                player.sendErrorTipMessage("${ChatColor.RED}이미 땅을 소유하고있습니다!")
                 event.isCancelled = true
                 return
             }
@@ -38,7 +38,7 @@ class CoreListener : Listener {
             val price = configuration.protect.createPrice.toDouble()
             if (player.hasNotEnoughMoney(price)) {
                 val delta = price - economy.getBalance(player)
-                player.sendErrorTipMessage("${ChatColor.RED}${delta}캔이 부족합니다.".errorFormat())
+                player.sendErrorTipMessage("${ChatColor.RED}${delta}캔이 부족합니다.")
                 event.isCancelled = true
                 return
             }
@@ -53,7 +53,7 @@ class CoreListener : Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     fun onCoreBreak(event: BlockBreakEvent) {
         if (event.isCancelled) return
 

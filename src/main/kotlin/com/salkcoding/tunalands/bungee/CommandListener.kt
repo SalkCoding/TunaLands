@@ -4,8 +4,8 @@ import com.google.common.io.ByteStreams
 import com.salkcoding.tunalands.*
 import com.salkcoding.tunalands.bungee.channelapi.BungeeChannelApi
 import com.salkcoding.tunalands.commands.sub.*
-import com.salkcoding.tunalands.data.lands.Lands
-import com.salkcoding.tunalands.data.lands.Rank
+import com.salkcoding.tunalands.lands.Lands
+import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
 import org.bukkit.Bukkit
@@ -138,6 +138,13 @@ class CommandListener : BungeeChannelApi.ForwardConsumer {
                     if (player != null) {
                         val lands = landManager.getPlayerLands(uuid, Rank.OWNER, Rank.DELEGATOR, Rank.MEMBER)
                         if (lands != null) {
+                            //Remove visitor data
+                            val previousLands = landManager.getPlayerLands(uuid, Rank.VISITOR)
+                            if (previousLands != null) {
+                                previousLands.memberMap.remove(uuid)
+                                player.sendMessage("${previousLands.ownerName}의 땅을 떠났습니다.".infoFormat())
+                            }
+
                             player.teleportAsync(lands.memberSpawn)
                         } else tunaLands.logger.warning("$uuid requested $channel but lands instance is null")
                     } else tunaLands.logger.warning("$uuid requested $channel but player instance is null")
@@ -241,6 +248,13 @@ class CommandListener : BungeeChannelApi.ForwardConsumer {
                     val lands = landManager.getPlayerLands(targetUUID, Rank.OWNER)
                     if (player != null) {
                         if (lands != null) {
+                            //Remove visitor data
+                            val previousLands = landManager.getPlayerLands(uuid, Rank.VISITOR)
+                            if (previousLands != null) {
+                                previousLands.memberMap.remove(uuid)
+                                player.sendMessage("${previousLands.ownerName}의 땅을 떠났습니다.".infoFormat())
+                            }
+
                             val visitorSpawn = lands.visitorSpawn
                             player.teleportAsync(visitorSpawn)
 
@@ -262,8 +276,8 @@ class CommandListener : BungeeChannelApi.ForwardConsumer {
                                 current
                             )
 
-                            lands.memberMap.forEach { (uuid, _) ->
-                                val member = Bukkit.getOfflinePlayer(uuid)
+                            lands.memberMap.keys.forEach { memberUUID ->
+                                val member = Bukkit.getOfflinePlayer(memberUUID)
                                 if (member.isOnline) {
                                     member.player!!.sendMessage("${player.name}님이 땅에 방문했습니다.".infoFormat())
                                 } else {

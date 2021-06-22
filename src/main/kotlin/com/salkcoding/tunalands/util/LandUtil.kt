@@ -1,6 +1,6 @@
 package com.salkcoding.tunalands.util
 
-import com.salkcoding.tunalands.data.lands.Lands
+import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.tunaLands
 import org.bukkit.*
 import org.bukkit.entity.Player
@@ -19,6 +19,62 @@ fun World.playSellChunkEffect(player: Player, chunk: Chunk) {
     val effect = ChunkEffect(this, chunk, Material.RED_TERRACOTTA)
     effect.task = Bukkit.getScheduler().runTaskTimerAsynchronously(tunaLands, effect, 0, 1)
     player.playSound(player.location, Sound.ENTITY_GENERIC_EXPLODE, 0.5f, 1f)
+}
+
+/*
+Check borders of lands with landList
+It checks coordinates clockwise and finding edge of lands
+*/
+fun Lands.borderFinder(): List<String> {
+    val landList = this.landList
+    val borderList = mutableListOf<String>()
+    landList.forEach { chunk ->
+        val split = chunk.splitQuery()
+        val x = split.first
+        val z = split.second
+
+        val blockX = x shl 4
+        val blockZ = z shl 4
+
+        //Checking sides
+        if ("${x - 1}:$z" !in landList) {//Left side
+            val leftBottom = "${blockX}:${blockZ}"
+            if (leftBottom !in borderList)
+                borderList.add(leftBottom)
+
+            val leftTop = "${blockX}:${blockZ + 16}"
+            if (leftTop !in borderList)
+                borderList.add(leftTop)
+        }
+        if ("$x:${z + 1}" !in landList) {//Top side
+            val leftTop = "${blockX}:${blockZ + 16}"
+            if (leftTop !in borderList)
+                borderList.add(leftTop)
+
+            val rightTop = "${blockX + 16}:${blockZ + 16}"
+            if (rightTop !in borderList)
+                borderList.add(rightTop)
+        }
+        if ("${x + 1}:$z" !in landList) {//Right side
+            val rightTop = "${blockX + 16}:${blockZ + 16}"
+            if (rightTop !in borderList)
+                borderList.add(rightTop)
+
+            val rightBottom = "${blockX + 16}:${blockZ}"
+            if (rightBottom !in borderList)
+                borderList.add(rightBottom)
+        }
+        if ("$x:${z - 1}" !in landList) {//Bottom side
+            val rightBottom = "${blockX + 16}:${blockZ}"
+            if (rightBottom !in borderList)
+                borderList.add(rightBottom)
+
+            val leftBottom = "${blockX}:${blockZ}"
+            if (leftBottom !in borderList)
+                borderList.add(leftBottom)
+        }
+    }
+    return borderList
 }
 
 /*
@@ -69,7 +125,6 @@ fun Lands.checkFloodFill(): Boolean {
 Max array input almost 75x75(5625chunks).
 If pass over value then function throws StackOverFlowException
 */
-
 fun floodFill(array: Array<Array<Int>>, x: Int, y: Int, xLimit: Int, zLimit: Int) {
     if (x < 0 || y < 0) return
     if (xLimit <= x || zLimit <= y) return

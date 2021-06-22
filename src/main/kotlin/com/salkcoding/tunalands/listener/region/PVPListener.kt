@@ -1,7 +1,7 @@
 package com.salkcoding.tunalands.listener.region
 
 import com.salkcoding.tunalands.landManager
-import com.salkcoding.tunalands.data.lands.Rank
+import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.sendErrorTipMessage
 import org.bukkit.ChatColor
@@ -25,6 +25,11 @@ class PVPListener : Listener {
             damager as? Player ?: return
 
         val lands = landManager.getLandsWithChunk(damager.chunk) ?: return
+        if (!lands.enable) {
+            damager.sendMessage("땅을 다시 활성화 해야합니다!".errorFormat())
+            event.isCancelled = true
+            return
+        }
 
         if (damager.uniqueId in lands.memberMap) {
             val damagerSetting = when (lands.memberMap[damager.uniqueId]!!.rank) {

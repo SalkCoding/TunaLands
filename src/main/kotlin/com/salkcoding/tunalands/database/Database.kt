@@ -1,7 +1,7 @@
 package com.salkcoding.tunalands.database
 
 import com.salkcoding.tunalands.configuration
-import com.salkcoding.tunalands.data.lands.Lands
+import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.tunaLands
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
@@ -145,7 +145,7 @@ class Database {
         })
     }
 
-    fun close() {
+    fun dispose() {
         hikari.close()
     }
 

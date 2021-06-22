@@ -5,8 +5,8 @@ import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.economy
 import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.guiManager
-import com.salkcoding.tunalands.data.lands.Lands
-import com.salkcoding.tunalands.data.lands.Rank
+import com.salkcoding.tunalands.lands.Lands
+import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.*
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -93,7 +93,8 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
             29 -> {
                 val price = configuration.fuel.m30.toDouble()
                 if (player.hasNotEnoughMoney(price)) {
-                    player.sendMessage("캔이 부족합니다.".errorFormat())
+                    val delta = price - economy.getBalance(player)
+                    player.sendMessage("${delta}캔이 부족합니다.".errorFormat())
                     return
                 }
                 economy.withdrawPlayer(player, price)
@@ -103,7 +104,8 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
             30 -> {
                 val price = configuration.fuel.h1.toDouble()
                 if (player.hasNotEnoughMoney(price)) {
-                    player.sendMessage("캔이 부족합니다.".errorFormat())
+                    val delta = price - economy.getBalance(player)
+                    player.sendMessage("${delta}캔이 부족합니다.".errorFormat())
                     return
                 }
                 economy.withdrawPlayer(player, price)
@@ -113,7 +115,8 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
             31 -> {
                 val price = configuration.fuel.h6.toDouble()
                 if (player.hasNotEnoughMoney(price)) {
-                    player.sendMessage("캔이 부족합니다.".errorFormat())
+                    val delta = price - economy.getBalance(player)
+                    player.sendMessage("${delta}캔이 부족합니다.".errorFormat())
                     return
                 }
                 economy.withdrawPlayer(player, price)
@@ -123,7 +126,8 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
             32 -> {
                 val price = configuration.fuel.h12.toDouble()
                 if (player.hasNotEnoughMoney(price)) {
-                    player.sendMessage("캔이 부족합니다.".errorFormat())
+                    val delta = price - economy.getBalance(player)
+                    player.sendMessage("${delta}캔이 부족합니다.".errorFormat())
                     return
                 }
                 economy.withdrawPlayer(player, price)
@@ -133,7 +137,8 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
             33 -> {
                 val price = configuration.fuel.h24.toDouble()
                 if (player.hasNotEnoughMoney(price)) {
-                    player.sendMessage("캔이 부족합니다.".errorFormat())
+                    val delta = price - economy.getBalance(player)
+                    player.sendMessage("${delta}캔이 부족합니다.".errorFormat())
                     return
                 }
                 economy.withdrawPlayer(player, price)

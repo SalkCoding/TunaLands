@@ -1,12 +1,7 @@
 package com.salkcoding.tunalands.commands.sub
 
-import com.salkcoding.tunalands.bukkitLinkedAPI
-import com.salkcoding.tunalands.bungeeApi
-import com.salkcoding.tunalands.landManager
-import com.salkcoding.tunalands.data.lands.Rank
-import com.salkcoding.tunalands.data.canRejoin
-import com.salkcoding.tunalands.data.getRejoinCooldown
-import com.salkcoding.tunalands.tunaLands
+import com.salkcoding.tunalands.*
+import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
 import com.salkcoding.tunalands.util.warnFormat
@@ -24,14 +19,12 @@ val inviteMap = mutableMapOf<UUID, InviteData>()
 class Invite : CommandExecutor {
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        when {
-            label == "invite" && args.size == 1 -> {
-                val player = sender as? Player
-                if (player != null) {
-                    work(player, args[0])
-                } else sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
-                return true
-            }
+        if (label == "invite" && args.size == 1) {
+            val player = sender as? Player
+            if (player != null) {
+                work(player, args[0])
+            } else sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
+            return true
         }
         return false
     }
@@ -72,8 +65,8 @@ class Invite : CommandExecutor {
                         return
                     }
 
-                    if (!targetOffline.canRejoin()) {
-                        val rejoin = targetOffline.getRejoinCooldown()!! - System.currentTimeMillis()
+                    if (!leftManager.canRejoin(targetUUID)) {
+                        val rejoin = leftManager.getRejoinCooldown(targetUUID)!! - System.currentTimeMillis()
                         player.sendMessage(
                             "해당 플레이어는 ${
                                 rejoin / 86400000
@@ -170,8 +163,8 @@ class Invite : CommandExecutor {
                         return
                     }
 
-                    if (!targetOffline.canRejoin()) {
-                        val rejoin = targetOffline.getRejoinCooldown()!! - System.currentTimeMillis()
+                    if (!leftManager.canRejoin(targetUUID)) {
+                        val rejoin = leftManager.getRejoinCooldown(targetUUID)!! - System.currentTimeMillis()
                         bungeeApi.sendMessage(
                             hostName,
                             "해당 플레이어는 ${

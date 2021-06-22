@@ -1,9 +1,9 @@
 package com.salkcoding.tunalands.commands.sub
 
+import com.salkcoding.tunalands.alarmManager
 import com.salkcoding.tunalands.bungeeApi
 import com.salkcoding.tunalands.landManager
-import com.salkcoding.tunalands.data.lands.Rank
-import com.salkcoding.tunalands.tunaLands
+import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
 import org.bukkit.Bukkit
@@ -14,19 +14,16 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import java.io.File
 import java.util.*
 
 class Delete : CommandExecutor {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        when {
-            label == "delete" && args.isEmpty() -> {
-                val player = sender as? Player
-                if (player != null) {
-                    work(player)
-                } else sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
-                return true
-            }
+        if (label == "delete" && args.isEmpty()) {
+            val player = sender as? Player
+            if (player != null) {
+                work(player)
+            } else sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
+            return true
         }
         return false
     }
@@ -48,6 +45,7 @@ class Delete : CommandExecutor {
                         upCoreLocation.block.type = Material.AIR
                         downCoreLocation.block.type = Material.AIR
 
+                        alarmManager.unregisterAlarm(lands)
                         landManager.deleteLands(player)
                         player.sendMessage("땅을 삭제했습니다.".infoFormat())
                         player.playSound(player.location, Sound.ENTITY_GENERIC_EXPLODE, 0.5f, 1f)

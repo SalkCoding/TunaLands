@@ -3,8 +3,8 @@ package com.salkcoding.tunalands.gui.render
 import br.com.devsrsouza.kotlinbukkitapi.extensions.item.displayName
 import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.guiManager
-import com.salkcoding.tunalands.data.lands.Lands
-import com.salkcoding.tunalands.data.lands.Rank
+import com.salkcoding.tunalands.lands.Lands
+import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.*
 import org.bukkit.Bukkit
@@ -155,8 +155,8 @@ class UserListGui(private val player: Player, private val lands: Lands, private 
 
         val start = currentPage * 36
         val length = min(playerList.size - start, 36)
-        Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
-            for (i in 0 until length) {
+        for (i in 0 until length) {
+            Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
                 val head = (Material.PLAYER_HEAD * 1).apply {
                     val meta = this.itemMeta as SkullMeta
                     val entry = Bukkit.getOfflinePlayer(playerList[start + i])
@@ -183,8 +183,8 @@ class UserListGui(private val player: Player, private val lands: Lands, private 
                 }
                 //Start index is 18 because of decorations
                 inv.setItem(i + 18, head)
-            }
-        })
+            })
+        }
 
         if (currentPage < 1)
             inv.setItem(9, blackPane)

@@ -1,38 +1,46 @@
 package com.salkcoding.tunalands
 
+import com.salkcoding.tunalands.alarm.AlarmManager
+import com.salkcoding.tunalands.listener.JoinListener
+import com.salkcoding.tunalands.border.BorderManager
 import com.salkcoding.tunalands.bungee.CommandListener
 import com.salkcoding.tunalands.bungee.channelapi.BungeeChannelApi
 import com.salkcoding.tunalands.commands.LandCommandHandler
 import com.salkcoding.tunalands.commands.debug.Debug
 import com.salkcoding.tunalands.commands.sub.*
-import com.salkcoding.tunalands.data.LandManager
+import com.salkcoding.tunalands.lands.LandManager
 import com.salkcoding.tunalands.database.Database
 import com.salkcoding.tunalands.display.DisplayChunkListener
 import com.salkcoding.tunalands.display.DisplayManager
 import com.salkcoding.tunalands.gui.GuiManager
 import com.salkcoding.tunalands.io.AutoSaver
+import com.salkcoding.tunalands.lands.LeftManager
 import com.salkcoding.tunalands.listener.*
 import com.salkcoding.tunalands.listener.region.*
 import com.salkcoding.tunalands.recipe.ReleaseFlagRecipe
 import com.salkcoding.tunalands.recipe.TakeFlagRecipe
+import com.salkcoding.tunalands.vote.RecommendManager
 import me.baiks.bukkitlinked.BukkitLinked
 import me.baiks.bukkitlinked.api.BukkitLinkedAPI
 import net.milkbowl.vault.economy.Economy
 import org.bukkit.Material
-import org.bukkit.NamespacedKey
 import org.bukkit.plugin.java.JavaPlugin
 
-const val chunkDebug = true
-
 lateinit var tunaLands: TunaLands
-lateinit var configuration: Config
-lateinit var guiManager: GuiManager
+
 lateinit var landManager: LandManager
+lateinit var borderManager: BorderManager
+lateinit var guiManager: GuiManager
 lateinit var displayManager: DisplayManager
+lateinit var alarmManager: AlarmManager
+lateinit var recommendManager: RecommendManager
+lateinit var leftManager: LeftManager
+
 lateinit var bukkitLinkedAPI: BukkitLinkedAPI
 lateinit var bungeeApi: BungeeChannelApi
 lateinit var economy: Economy
 lateinit var database: Database
+lateinit var configuration: Config
 
 lateinit var currentServerName: String
 
@@ -41,10 +49,15 @@ class TunaLands : JavaPlugin() {
     override fun onEnable() {
         tunaLands = this
 
-        guiManager = GuiManager()
-        displayManager = DisplayManager()
+        configRead()
 
         landManager = LandManager()
+        borderManager = BorderManager()
+        guiManager = GuiManager()
+        displayManager = DisplayManager()
+        alarmManager = AlarmManager()
+        recommendManager = RecommendManager(configuration.recommend.reset * 50, configuration.recommend.cooldown * 50)
+        leftManager = LeftManager(configuration.command.rejoinCooldown * 50)
 
         val bukkitLinked = server.pluginManager.getPlugin("BukkitLinked") as? BukkitLinked
         if (bukkitLinked == null) {
@@ -72,6 +85,8 @@ class TunaLands : JavaPlugin() {
         handler.register("kick", Kick())
         handler.register("leave", Leave())
         handler.register("promote", Promote())
+        handler.register("recommend", Recommend())
+        handler.register("rename", Rename())
         handler.register("setleader", SetLeader())
         handler.register("setspawn", SetSpawn())
         handler.register("spawn", Spawn())
@@ -102,7 +117,6 @@ class TunaLands : JavaPlugin() {
         server.pluginManager.registerEvents(ShearListener(), this)
         server.pluginManager.registerEvents(ThrowListener(), this)
 
-
         server.pluginManager.registerEvents(ChestGuiOpenListener(), this)
         server.pluginManager.registerEvents(ChunkEffectListener(), this)
         server.pluginManager.registerEvents(DisplayChunkListener(), this)
@@ -113,16 +127,10 @@ class TunaLands : JavaPlugin() {
         server.pluginManager.registerEvents(InventoryClickListener(), this)
         server.pluginManager.registerEvents(InventoryCloseListener(), this)
         server.pluginManager.registerEvents(InventoryDragListener(), this)
+        server.pluginManager.registerEvents(JoinListener(), this)
         server.pluginManager.registerEvents(LoreChatListener(), this)
 
-        if (chunkDebug) {
-            logger.warning("Chunk debug mode is enabled.")
-            server.scheduler.runTaskTimer(this, Runnable {
-                landManager.debug()
-            }, 20, 10)
-        }
-
-        configRead()
+        server.pluginManager.registerEvents(JoinListener(), this)
 
         TakeFlagRecipe.registerRecipe()
         ReleaseFlagRecipe.registerRecipe()
@@ -135,13 +143,17 @@ class TunaLands : JavaPlugin() {
     }
 
     override fun onDisable() {
-        displayManager.deleteAll()
-        landManager.close()
-        database.close()
-        guiManager.allClose()
+        database.dispose()
 
-        server.removeRecipe(NamespacedKey(this, "take_flag"))
-        server.removeRecipe(NamespacedKey(this, "release_flag"))
+        recommendManager.dispose()
+        alarmManager.dispose()
+        displayManager.dispose()
+        guiManager.dispose()
+        borderManager.dispose()
+        landManager.dispose()
+
+        TakeFlagRecipe.unregisterRecipe()
+        ReleaseFlagRecipe.unregisterRecipe()
 
         logger.warning("All guis are closed")
 
@@ -180,6 +192,13 @@ class TunaLands : JavaPlugin() {
             configFuel.getInt("h24"),
         )
         logger.info("fuel: $fuel")
+        //Recommend
+        val configRecommend = config.getConfigurationSection("recommend")!!
+        val recommend = Config.Recommend(
+            configRecommend.getLong("reset"),
+            configRecommend.getLong("cooldown")
+        )
+        logger.info("recommend: $recommend")
         //Command
         val configCommand = config.getConfigurationSection("command")!!
         val cooldownSection = configCommand.getConfigurationSection("cooldown")!!
@@ -188,14 +207,15 @@ class TunaLands : JavaPlugin() {
             cooldownSection.getLong("rejoin"),
             cooldownSection.getLong("visit"),
             cooldownSection.getLong("spawn"),
-            priceSection.getInt("setSpawnPrice")
+            priceSection.getInt("setSpawnPrice"),
+            priceSection.getInt("renamePrice")
         )
         logger.info("command: $command")
         //Limit worlds
         val limitWorld = config.getStringList("limitWorld")
         logger.info("limitWorld: $limitWorld")
 
-        configuration = Config(database, protect, fuel, command, limitWorld)
+        configuration = Config(database, protect, fuel, recommend, command, limitWorld)
 
         if (!setupEconomy()) {
             logger.warning("Disabled due to no Vault dependency found!")
@@ -216,6 +236,7 @@ data class Config(
     val dataBase: Database,
     val protect: Protect,
     val fuel: Fuel,
+    val recommend: Recommend,
     val command: Command,
     val limitWorld: List<String>
 ) {
@@ -242,10 +263,16 @@ data class Config(
         val h24: Int
     )
 
+    data class Recommend(
+        val reset: Long,
+        val cooldown: Long
+    )
+
     data class Command(
         val rejoinCooldown: Long,
         val visitCooldown: Long,
         val spawnCooldown: Long,
-        val setSpawnPrice: Int
+        val setSpawnPrice: Int,
+        val renamePrice: Int
     )
 }

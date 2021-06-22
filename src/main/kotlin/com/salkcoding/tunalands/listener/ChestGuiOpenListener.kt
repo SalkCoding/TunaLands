@@ -2,10 +2,8 @@ package com.salkcoding.tunalands.listener
 
 import com.salkcoding.tunalands.gui.render.openMainGui
 import com.salkcoding.tunalands.landManager
-import com.salkcoding.tunalands.data.lands.Rank
+import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.displayManager
-import com.salkcoding.tunalands.util.errorFormat
-import com.salkcoding.tunalands.util.isSameLocation
 import com.salkcoding.tunalands.util.sendErrorTipMessage
 import org.bukkit.ChatColor
 import org.bukkit.Material

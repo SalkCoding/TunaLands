@@ -2,8 +2,8 @@ package com.salkcoding.tunalands.commands.sub
 
 import com.salkcoding.tunalands.bungeeApi
 import com.salkcoding.tunalands.landManager
-import com.salkcoding.tunalands.data.lands.Rank
-import com.salkcoding.tunalands.data.recordLeft
+import com.salkcoding.tunalands.lands.Rank
+import com.salkcoding.tunalands.leftManager
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
 import com.salkcoding.tunalands.util.toColoredText
@@ -19,14 +19,12 @@ import java.util.*
 
 class Leave : CommandExecutor {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        when {
-            label == "leave" && args.isEmpty() -> {
-                val player = sender as? Player
-                if (player != null) {
-                    work(player)
-                } else sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
-                return true
-            }
+        if (label == "leave" && args.isEmpty()) {
+            val player = sender as? Player
+            if (player != null) {
+                work(player)
+            } else sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
+            return true
         }
         return false
     }
@@ -56,12 +54,9 @@ class Leave : CommandExecutor {
                     lands.memberMap.remove(playerUUID)
 
                     player.sendMessage("${lands.ownerName}의 땅을 떠났습니다.".infoFormat())
-                    player.recordLeft()
+                    leftManager.recordLeft(playerUUID)
 
-                    lands.memberMap.forEach { (uuid, _) ->
-                        val target = Bukkit.getPlayer(uuid) ?: return@forEach
-                        target.sendMessage("${ChatColor.GRAY}[${data.rank.toColoredText()}${ChatColor.GRAY}] ${ChatColor.GREEN}${player.name}${ChatColor.WHITE}이/가 땅을 떠났습니다.".warnFormat())
-                    }
+                    lands.sendMessageToOnlineMembers("${ChatColor.GRAY}[${data.rank.toColoredText()}${ChatColor.GRAY}] ${ChatColor.GREEN}${player.name}${ChatColor.WHITE}이/가 땅을 떠났습니다.".warnFormat())
                 } else player.sendMessage("어느 땅에도 소속되어있지 않습니다.".errorFormat())
             } else {
                 val playerUUID = offlinePlayer.uniqueId
@@ -80,12 +75,9 @@ class Leave : CommandExecutor {
                     lands.memberMap.remove(playerUUID)
 
                     bungeeApi.sendMessage(hostName, "${lands.ownerName}의 땅을 떠났습니다.".infoFormat())
-                    offlinePlayer.recordLeft()
+                    leftManager.recordLeft(playerUUID)
 
-                    lands.memberMap.forEach { (uuid, _) ->
-                        val target = Bukkit.getPlayer(uuid) ?: return@forEach
-                        target.sendMessage("${hostName}이/가 땅을 떠났습니다.".warnFormat())
-                    }
+                    lands.sendMessageToOnlineMembers("${hostName}이/가 땅을 떠났습니다.".warnFormat())
                 } else bungeeApi.sendMessage(hostName, "어느 땅에도 소속되어있지 않습니다.".errorFormat())
             }
         }

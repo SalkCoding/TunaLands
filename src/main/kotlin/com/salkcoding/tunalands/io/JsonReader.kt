@@ -1,12 +1,13 @@
 package com.salkcoding.tunalands.io
 
 import com.google.gson.JsonParser
-import com.salkcoding.tunalands.data.lands.DelegatorSetting
-import com.salkcoding.tunalands.data.lands.LandSetting
-import com.salkcoding.tunalands.data.lands.Lands
-import com.salkcoding.tunalands.data.lands.Rank
+import com.salkcoding.tunalands.lands.setting.DelegatorSetting
+import com.salkcoding.tunalands.lands.setting.LandSetting
+import com.salkcoding.tunalands.lands.Lands
+import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.tunaLands
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.Location
 import java.io.File
 import java.util.*
@@ -28,7 +29,10 @@ object JsonReader {
                 val ownerName = jsonObject["ownerName"].asString
                 val ownerUUID = UUID.fromString(jsonObject["ownerUUID"].asString)
                 val expiredMillisecond = jsonObject["expiredMillisecond"].asLong
+                val enable = jsonObject["enable"].asBoolean
                 val open = jsonObject["open"].asBoolean
+                val recommend = jsonObject["recommend"].asInt
+                val landsName = jsonObject["landsName"].asString
                 val landList = mutableListOf<String>()
                 jsonObject["landList"].asJsonArray.forEach {
                     landList.add(it.asString)
@@ -56,11 +60,11 @@ object JsonReader {
                 }
                 val lore = mutableListOf<String>()
                 jsonObject["lore"].asJsonArray.forEach {
-                    lore.add(it.asString)
+                    lore.add(ChatColor.translateAlternateColorCodes('&', it.asString))
                 }
                 val welcomeMessage = mutableListOf<String>()
                 jsonObject["welcomeMessage"].asJsonArray.forEach {
-                    welcomeMessage.add(it.asString)
+                    welcomeMessage.add(ChatColor.translateAlternateColorCodes('&', it.asString))
                 }
                 val memberMap = mutableMapOf<UUID, Lands.MemberData>()
                 jsonObject["memberMap"].asJsonArray.forEach {
@@ -162,7 +166,10 @@ object JsonReader {
                         upCore,
                         downCore,
                         expiredMillisecond,
+                        enable,
                         open,
+                        recommend,
+                        landsName,
                         lore,
                         welcomeMessage,
                         locationList[1],

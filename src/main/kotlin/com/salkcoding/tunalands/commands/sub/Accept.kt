@@ -2,8 +2,8 @@ package com.salkcoding.tunalands.commands.sub
 
 import com.salkcoding.tunalands.bungeeApi
 import com.salkcoding.tunalands.landManager
-import com.salkcoding.tunalands.data.lands.Lands
-import com.salkcoding.tunalands.data.lands.Rank
+import com.salkcoding.tunalands.lands.Lands
+import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
 import org.bukkit.Bukkit
@@ -17,14 +17,12 @@ import java.util.*
 class Accept : CommandExecutor {
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        when {
-            label == "accept" && args.isEmpty() -> {
-                val player = sender as? Player
-                if (player != null) {
-                    work(player)
-                } else sender.sendMessage("콘솔에서는 사용 불가능한 명령어입니다.".errorFormat())
-                return true
-            }
+        if (label == "accept" && args.isEmpty()) {
+            val player = sender as? Player
+            if (player != null) {
+                work(player)
+            } else sender.sendMessage("콘솔에서는 사용 불가능한 명령어입니다.".errorFormat())
+            return true
         }
         return false
     }
@@ -53,16 +51,7 @@ class Accept : CommandExecutor {
                             else -> "null"
                         }
 
-                        lands.memberMap.forEach { (uuid, _) ->
-                            val member = Bukkit.getOfflinePlayer(uuid)
-                            if (member.isOnline) {
-                                member.player!!.sendMessage("${player.name}님이 ${rankString}로 땅에 가입되었습니다.".infoFormat())
-                            } else {
-                                bungeeApi.sendMessage(
-                                    member.name, "${player.name}님이 ${rankString}로 땅에 가입되었습니다.".infoFormat()
-                                )
-                            }
-                        }
+                        lands.sendMessageToOnlineMembers("${player.name}님이 ${rankString}로 땅에 가입되었습니다.".infoFormat())
 
                         landManager.getPlayerLands(
                             player.uniqueId,
@@ -89,16 +78,7 @@ class Accept : CommandExecutor {
                             else -> "null"
                         }
 
-                        lands.memberMap.forEach { (uuid, _) ->
-                            val member = Bukkit.getOfflinePlayer(uuid)
-                            if (member.isOnline) {
-                                member.player!!.sendMessage("${offlinePlayer.name}님이 ${rankString}로 땅에 가입되었습니다.".infoFormat())
-                            } else {
-                                bungeeApi.sendMessage(
-                                    member.name, "${offlinePlayer.name}님이 ${rankString}로 땅에 가입되었습니다.".infoFormat()
-                                )
-                            }
-                        }
+                        lands.sendMessageToOnlineMembers("${offlinePlayer.name}님이 ${rankString}로 땅에 가입되었습니다.".infoFormat())
 
                         landManager.getPlayerLands(
                             offlinePlayer.uniqueId,
