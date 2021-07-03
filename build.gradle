@@ -1,5 +1,5 @@
 plugins {
-    id "org.jetbrains.kotlin.jvm" version "1.4.21"
+    id "org.jetbrains.kotlin.jvm" version "1.5.20"
 }
 
 group "kr.kro.salk"
@@ -9,7 +9,7 @@ repositories {
     mavenCentral()
     maven {
         name = "KotlinBukkitAPI"
-        url "http://nexus.devsrsouza.com.br/repository/maven-public/"
+        url "https://nexus.devsrsouza.com.br/repository/maven-public/"
     }
     maven{
         url "https://repo.codemc.io/repository/maven-public/"
@@ -19,10 +19,12 @@ repositories {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
+    implementation 'com.zaxxer:HikariCP:4.0.3'
+
     compileOnly "br.com.devsrsouza.kotlinbukkitapi:core:0.2.0-SNAPSHOT"
     compileOnly "net.pl3x.purpur:purpur-api:1.16.5-R0.1-SNAPSHOT"
     compileOnly "com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.4.0"
-    compileOnly files("C:/Users/Josangbeom/Desktop/Minecraft/Library/bukkitlinked-1.0-SNAPSHOT-jar-with-dependencies.jar")
+    compileOnly files("C:/Users/Josangbeom/Desktop/Minecraft/Library/bukkitlinked-1.2-SNAPSHOT-jar-with-dependencies.jar")
     compileOnly files("C:/Users/Josangbeom/Desktop/Minecraft/Library/Vault.jar")
-    compile 'com.zaxxer:HikariCP:3.4.5'
+    implementation files("C:/Users/Josangbeom/Desktop/Minecraft/Library/Metamorphosis.jar")
 }

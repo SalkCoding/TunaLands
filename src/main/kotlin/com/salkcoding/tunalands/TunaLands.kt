@@ -20,6 +20,7 @@ import com.salkcoding.tunalands.listener.region.*
 import com.salkcoding.tunalands.recipe.ReleaseFlagRecipe
 import com.salkcoding.tunalands.recipe.TakeFlagRecipe
 import com.salkcoding.tunalands.vote.RecommendManager
+import fish.evatuna.metamorphosis.Metamorphosis
 import me.baiks.bukkitlinked.BukkitLinked
 import me.baiks.bukkitlinked.api.BukkitLinkedAPI
 import net.milkbowl.vault.economy.Economy
@@ -36,6 +37,7 @@ lateinit var alarmManager: AlarmManager
 lateinit var recommendManager: RecommendManager
 lateinit var leftManager: LeftManager
 
+lateinit var metamorphosis: Metamorphosis
 lateinit var bukkitLinkedAPI: BukkitLinkedAPI
 lateinit var bungeeApi: BungeeChannelApi
 lateinit var economy: Economy
@@ -59,16 +61,23 @@ class TunaLands : JavaPlugin() {
         recommendManager = RecommendManager(configuration.recommend.reset * 50, configuration.recommend.cooldown * 50)
         leftManager = LeftManager(configuration.command.rejoinCooldown * 50)
 
+        val metamorphosis = server.pluginManager.getPlugin("Metamorphosis") as? Metamorphosis
+        if (metamorphosis == null) {
+            server.pluginManager.disablePlugin(this)
+            logger.warning("Metamorphosis is not running on this server!")
+            return
+        }
+
         val bukkitLinked = server.pluginManager.getPlugin("BukkitLinked") as? BukkitLinked
         if (bukkitLinked == null) {
             server.pluginManager.disablePlugin(this)
+            logger.warning("BukkitLinked is not running on this server!")
             return
         }
         bukkitLinkedAPI = bukkitLinked.api
 
+        //For sending message
         bungeeApi = BungeeChannelApi.of(this)
-        //Global listener
-        bungeeApi.registerForwardListener(CommandListener())
 
         val handler = LandCommandHandler()
         handler.register("accept", Accept())
@@ -96,6 +105,8 @@ class TunaLands : JavaPlugin() {
         handler.register("debug", Debug())
 
         getCommand("tunaland")!!.setExecutor(handler)
+        //For bungee command support
+        server.pluginManager.registerEvents(CommandListener(), this)
 
         server.pluginManager.registerEvents(ArmorStandListener(), this)
         server.pluginManager.registerEvents(BlockBreakListener(), this)

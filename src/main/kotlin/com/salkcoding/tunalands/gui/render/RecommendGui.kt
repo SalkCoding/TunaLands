@@ -226,16 +226,20 @@ class RecommendGui(private val player: Player) : GuiInterface {
                 val lands = landMap[landList[index]] ?: return
                 if (recommendManager.canRecommend(player.uniqueId)) {
                     recommendManager.recommend(player.uniqueId, lands)
+                    player.sendMessage("${lands.landsName}을/를 추천했습니다!".infoFormat())
                 } else {
                     val remain = recommendManager.remainMilliseconds(player.uniqueId)
                     val hours = (remain / 3600000) % 24
                     val minutes = (remain / 60000) % 60
                     val seconds = (remain / 1000) % 60
-                    when {
-                        hours > 0 -> player.sendMessage("${hours}시간 ${minutes}분 ${seconds}초 후 다시 추천할 수 있습니다.".errorFormat())
-                        minutes > 0 -> player.sendMessage("${minutes}분 ${seconds}초 후 다시 추천할 수 있습니다.".errorFormat())
-                        seconds > 0 -> player.sendMessage("${seconds}초 후 다시 추천할 수 있습니다.".errorFormat())
-                    }
+                    player.sendMessage(
+                        when {
+                            hours > 0 -> "${hours}시간 ${minutes}분 ${seconds}초 후 다시 추천할 수 있습니다.".errorFormat()
+                            minutes > 0 -> "${minutes}분 ${seconds}초 후 다시 추천할 수 있습니다.".errorFormat()
+                            seconds > 0 -> "${seconds}초 후 다시 추천할 수 있습니다.".errorFormat()
+                            else -> ""
+                        }
+                    )
                 }
             }
         }
