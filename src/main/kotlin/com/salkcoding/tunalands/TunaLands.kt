@@ -4,7 +4,6 @@ import com.salkcoding.tunalands.alarm.AlarmManager
 import com.salkcoding.tunalands.listener.JoinListener
 import com.salkcoding.tunalands.border.BorderManager
 import com.salkcoding.tunalands.bungee.CommandListener
-import com.salkcoding.tunalands.bungee.channelapi.BungeeChannelApi
 import com.salkcoding.tunalands.commands.LandCommandHandler
 import com.salkcoding.tunalands.commands.debug.Debug
 import com.salkcoding.tunalands.commands.sub.*
@@ -39,7 +38,6 @@ lateinit var leftManager: LeftManager
 
 lateinit var metamorphosis: Metamorphosis
 lateinit var bukkitLinkedAPI: BukkitLinkedAPI
-lateinit var bungeeApi: BungeeChannelApi
 lateinit var economy: Economy
 lateinit var database: Database
 lateinit var configuration: Config
@@ -61,23 +59,21 @@ class TunaLands : JavaPlugin() {
         recommendManager = RecommendManager(configuration.recommend.reset * 50, configuration.recommend.cooldown * 50)
         leftManager = LeftManager(configuration.command.rejoinCooldown * 50)
 
-        val metamorphosis = server.pluginManager.getPlugin("Metamorphosis") as? Metamorphosis
-        if (metamorphosis == null) {
+        val tempMetamorphosis = server.pluginManager.getPlugin("Metamorphosis") as? Metamorphosis
+        if (tempMetamorphosis == null) {
             server.pluginManager.disablePlugin(this)
             logger.warning("Metamorphosis is not running on this server!")
             return
         }
+        metamorphosis = tempMetamorphosis
 
-        val bukkitLinked = server.pluginManager.getPlugin("BukkitLinked") as? BukkitLinked
-        if (bukkitLinked == null) {
+        val tempBukkitLinked = server.pluginManager.getPlugin("BukkitLinked") as? BukkitLinked
+        if (tempBukkitLinked == null) {
             server.pluginManager.disablePlugin(this)
             logger.warning("BukkitLinked is not running on this server!")
             return
         }
-        bukkitLinkedAPI = bukkitLinked.api
-
-        //For sending message
-        bungeeApi = BungeeChannelApi.of(this)
+        bukkitLinkedAPI = tempBukkitLinked.api
 
         val handler = LandCommandHandler()
         handler.register("accept", Accept())

@@ -1,6 +1,6 @@
 package com.salkcoding.tunalands.commands.sub
 
-import com.salkcoding.tunalands.bungeeApi
+import com.salkcoding.tunalands.bukkitLinkedAPI
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.leftManager
@@ -68,17 +68,17 @@ class Leave : CommandExecutor {
                 if (lands != null) {
                     val data = lands.memberMap[playerUUID]!!
                     if (data.rank == Rank.OWNER) {
-                        bungeeApi.sendMessage(hostName, "소유자는 땅을 삭제하기전에는 땅에서 나갈 수 없습니다.".errorFormat())
+                        bukkitLinkedAPI.sendMessageAcrossServer(hostName, "소유자는 땅을 삭제하기전에는 땅에서 나갈 수 없습니다.".errorFormat())
                         return
                     }
 
                     lands.memberMap.remove(playerUUID)
 
-                    bungeeApi.sendMessage(hostName, "${lands.ownerName}의 땅을 떠났습니다.".infoFormat())
+                    bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${lands.ownerName}의 땅을 떠났습니다.".infoFormat())
                     leftManager.recordLeft(playerUUID)
 
                     lands.sendMessageToOnlineMembers("${hostName}이/가 땅을 떠났습니다.".warnFormat())
-                } else bungeeApi.sendMessage(hostName, "어느 땅에도 소속되어있지 않습니다.".errorFormat())
+                } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "어느 땅에도 소속되어있지 않습니다.".errorFormat())
             }
         }
     }

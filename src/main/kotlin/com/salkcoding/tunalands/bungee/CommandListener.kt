@@ -10,6 +10,7 @@ import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
 import fish.evatuna.metamorphosis.kafka.KafkaReceiveEvent
+import me.baiks.bukkitlinked.api.TeleportResult
 import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -40,7 +41,7 @@ class CommandListener : Listener {
                     if (lands != null) {
                         val sendJson = JsonObject().apply {
                             addProperty("uuid", uuid.toString())
-                            addProperty("serverName", json["serverName"].asString)
+                            addProperty("targetServerName", json["serverName"].asString)
                         }
 
                         val banArray = JsonArray()
@@ -54,7 +55,7 @@ class CommandListener : Listener {
 
                         sendJson.add("banArray", banArray)
                         metamorphosis.send("com.salkcoding.tunalands.response_banlist", sendJson.toString())
-                    } else bungeeApi.sendMessage(name, "해당 명령어는 땅 소속만 사용가능합니다.".errorFormat())
+                    } else bukkitLinkedAPI.sendMessageAcrossServer(name, "해당 명령어는 땅 소속만 사용가능합니다.".errorFormat())
                 })
             }
             "cancel" -> {
@@ -88,7 +89,7 @@ class CommandListener : Listener {
                 Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
                     val sendJson = JsonObject().apply {
                         addProperty("uuid", uuid.toString())
-                        addProperty("serverName", json["serverName"].asString)
+                        addProperty("targetServerName", json["serverName"].asString)
                     }
                     val visitArray = JsonArray()
                     val landMap = landManager.getPlayerLandMap()
@@ -121,13 +122,13 @@ class CommandListener : Listener {
                 if (lands != null) {
                     if (recommendManager.canRecommend(uuid)) {
                         recommendManager.recommend(uuid, lands)
-                        bungeeApi.sendMessage(name, "${lands.landsName}을/를 추천했습니다!".infoFormat())
+                        bukkitLinkedAPI.sendMessageAcrossServer(name, "${lands.landsName}을/를 추천했습니다!".infoFormat())
                     } else {
                         val remain = recommendManager.remainMilliseconds(uuid)
                         val hours = (remain / 3600000) % 24
                         val minutes = (remain / 60000) % 60
                         val seconds = (remain / 1000) % 60
-                        bungeeApi.sendMessage(
+                        bukkitLinkedAPI.sendMessageAcrossServer(
                             name,
                             when {
                                 hours > 0 -> "${hours}시간 ${minutes}분 ${seconds}초 후 다시 추천할 수 있습니다.".errorFormat()
@@ -137,7 +138,7 @@ class CommandListener : Listener {
                             }
                         )
                     }
-                } else bungeeApi.sendMessage(name, "해당 땅이 존재하지 않습니다.".errorFormat())
+                } else bukkitLinkedAPI.sendMessageAcrossServer(name, "해당 땅이 존재하지 않습니다.".errorFormat())
             }
             "setleader" -> {
                 SetLeader.work(uuid, json["targetName"].asString)
@@ -150,30 +151,44 @@ class CommandListener : Listener {
                         val sendJson = JsonObject().apply {
                             addProperty("uuid", uuid.toString())
                             addProperty("spawnCooldown", configuration.command.spawnCooldown)
-                            addProperty("serverName", json["serverName"].asString)
+                            addProperty("targetServerName", json["serverName"].asString)
                             addProperty("spawnServerName", currentServerName)
                         }
                         metamorphosis.send("com.salkcoding.tunalands.response_spawn", sendJson.toString())
-                    } else bungeeApi.sendMessage(name, "해당 명령어는 땅의 소유자, 관리 대리인, 멤버만 사용가능합니다.".errorFormat())
+                    } else bukkitLinkedAPI.sendMessageAcrossServer(
+                        name,
+                        "해당 명령어는 땅의 소유자, 관리 대리인, 멤버만 사용가능합니다.".errorFormat()
+                    )
                 })
             }
-            "spawn_teleported" -> {
-                Bukkit.getScheduler().runTaskLater(tunaLands, Runnable {
-                    val player = Bukkit.getPlayer(uuid)
-                    if (player != null) {
-                        val lands = landManager.getPlayerLands(uuid, Rank.OWNER, Rank.DELEGATOR, Rank.MEMBER)
-                        if (lands != null) {
-                            //Remove visitor data
-                            val previousLands = landManager.getPlayerLands(uuid, Rank.VISITOR)
-                            if (previousLands != null) {
-                                previousLands.memberMap.remove(uuid)
-                                player.sendMessage("${previousLands.ownerName}의 땅을 떠났습니다.".infoFormat())
-                            }
-
-                            player.teleportAsync(lands.memberSpawn)
-                        } else tunaLands.logger.warning("$uuid requested ${event.uniqueId}:${event.key}:${event.value} but lands instance is null")
-                    } else tunaLands.logger.warning("$uuid requested ${event.uniqueId}:${event.key}:${event.value} but player instance is null")
-                }, 15)
+            "pending_spawn_teleport" -> {
+                val lands = landManager.getPlayerLands(uuid, Rank.OWNER, Rank.DELEGATOR, Rank.MEMBER)
+                if (lands != null) {
+                    //Remove visitor data
+                    val previousLands = landManager.getPlayerLands(uuid, Rank.VISITOR)
+                    if (previousLands != null) {
+                        previousLands.memberMap.remove(uuid)
+                        bukkitLinkedAPI.sendMessageAcrossServer(
+                            uuid,
+                            "${previousLands.landsName}을/를 떠났습니다.".infoFormat()
+                        )
+                    }
+                    val name = json["name"].asString
+                    val memberSpawn = lands.memberSpawn
+                    Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
+                        val result = bukkitLinkedAPI.teleport(
+                            json["name"].asString,
+                            currentServerName,
+                            memberSpawn.world.name,
+                            memberSpawn.x.toInt(),
+                            memberSpawn.y.toInt(),
+                            memberSpawn.z.toInt()
+                        )
+                        if (result != TeleportResult.TELEPORT_STARTED) {
+                            tunaLands.logger.warning("$name teleport to lands spawn fail!: $result")
+                        }
+                    })
+                } else tunaLands.logger.warning("$uuid requested ${event.uniqueId}:${event.key}:${event.value} but lands instance is null")
             }
             "unban" -> {
                 Unban.work(uuid, json["targetName"].asString)
@@ -182,7 +197,7 @@ class CommandListener : Listener {
                 Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
                     val sendJson = JsonObject().apply {
                         addProperty("uuid", uuid.toString())
-                        addProperty("serverName", json["serverName"].asString)
+                        addProperty("targetServerName", json["serverName"].asString)
                     }
                     val visitArray = JsonArray()
                     val landMap = landManager.getPlayerLandMap()
@@ -215,14 +230,17 @@ class CommandListener : Listener {
                     val lands = landManager.getPlayerLands(ownerUUID, Rank.OWNER)
                     if (lands != null) {
                         if (!lands.open && !isOp) {
-                            bungeeApi.sendMessage(name, "땅이 비공개 상태라 방문할 수 없습니다!".errorFormat())
+                            bukkitLinkedAPI.sendMessageAcrossServer(name, "땅이 비공개 상태라 방문할 수 없습니다!".errorFormat())
                             return@Runnable
                         }
 
                         if (uuid in lands.memberMap) {
                             val rank = lands.memberMap[uuid]!!.rank
                             if (rank != Rank.PARTTIMEJOB) {
-                                bungeeApi.sendMessage(name, "자신이 소속되어있는 땅에는 방문할 수 없습니다!".errorFormat())
+                                bukkitLinkedAPI.sendMessageAcrossServer(
+                                    name,
+                                    "자신이 소속되어있는 땅에는 방문할 수 없습니다!".errorFormat()
+                                )
                                 return@Runnable
                             }
                         }
@@ -230,74 +248,84 @@ class CommandListener : Listener {
                         if (uuid in lands.memberMap) {
                             val rank = lands.memberMap[uuid]!!.rank
                             if (rank != Rank.PARTTIMEJOB) {
-                                bungeeApi.sendMessage(name, "이미 방문 중입니다!".errorFormat())
+                                bukkitLinkedAPI.sendMessageAcrossServer(name, "이미 방문 중입니다!".errorFormat())
                                 return@Runnable
                             }
                         }
 
                         if (!lands.banMap.containsKey(uuid)) {
-                            val sendJson = JsonObject()
-                            sendJson.addProperty("uuid", uuid.toString())
-                            sendJson.addProperty("ownerUUID", ownerUUID.toString())
-                            sendJson.addProperty("serverName", json["serverName"].asString)
-                            sendJson.addProperty("visitServerName", currentServerName)
-                            sendJson.addProperty("visitCooldown", configuration.command.visitCooldown)
+                            val sendJson = JsonObject().apply {
+                                addProperty("uuid", uuid.toString())
+                                addProperty("ownerUUID", ownerUUID.toString())
+                                addProperty("targetServerName", json["serverName"].asString)
+                                addProperty("visitServerName", currentServerName)
+                                addProperty("visitCooldown", configuration.command.visitCooldown)
+                            }
 
                             metamorphosis.send("com.salkcoding.tunalands.response_visit_connect", sendJson.toString())
                         } else {
-                            bungeeApi.sendMessage(name, "${lands.ownerName}의 땅에서 밴되었기 때문에 방문할 수 없습니다!".errorFormat())
+                            bukkitLinkedAPI.sendMessageAcrossServer(
+                                name,
+                                "${lands.ownerName}의 땅에서 밴되었기 때문에 방문할 수 없습니다!".errorFormat()
+                            )
                         }
-                    } else bungeeApi.sendMessage(name, "해당 땅이 존재하지 않습니다.".errorFormat())
+                    } else bukkitLinkedAPI.sendMessageAcrossServer(name, "해당 땅이 존재하지 않습니다.".errorFormat())
                 })
             }
-            "visit_teleported" -> {
-                Bukkit.getScheduler().runTaskLater(tunaLands, Runnable {
-                    val player = Bukkit.getPlayer(uuid)
-                    val targetUUID = UUID.fromString(json["targetUUID"].asString)
-                    val lands = landManager.getPlayerLands(targetUUID, Rank.OWNER)
-                    if (player != null) {
-                        if (lands != null) {
-                            //Remove visitor data
-                            val previousLands = landManager.getPlayerLands(uuid, Rank.VISITOR)
-                            if (previousLands != null) {
-                                previousLands.memberMap.remove(uuid)
-                                player.sendMessage("${previousLands.ownerName}의 땅을 떠났습니다.".infoFormat())
-                            }
+            "pending_visit_teleport" -> {
+                val name = json["name"].asString
+                val targetUUID = UUID.fromString(json["targetUUID"].asString)
+                val lands = landManager.getPlayerLands(targetUUID, Rank.OWNER)
+                if (lands != null) {
+                    //Remove visitor data
+                    val previousLands = landManager.getPlayerLands(uuid, Rank.VISITOR)
+                    if (previousLands != null) {
+                        previousLands.memberMap.remove(uuid)
+                        bukkitLinkedAPI.sendMessageAcrossServer(
+                            name,
+                            "${previousLands.landsName}의 땅을 떠났습니다.".infoFormat()
+                        )
+                    }
 
-                            val visitorSpawn = lands.visitorSpawn
-                            player.teleportAsync(visitorSpawn)
+                    lands.welcomeMessage.forEach {
+                        bukkitLinkedAPI.sendMessageAcrossServer(name, it)
+                    }
 
-                            lands.welcomeMessage.forEach {
-                                player.sendMessage(it)
-                            }
+                    if (uuid in lands.memberMap) {
+                        if (lands.memberMap[uuid]!!.rank == Rank.PARTTIMEJOB)
+                            return
+                    }
 
-                            if (uuid in lands.memberMap) {
-                                if (lands.memberMap[uuid]!!.rank == Rank.PARTTIMEJOB)
-                                    return@Runnable
-                            }
+                    lands.landHistory.visitorCount += 1
+                    val current = System.currentTimeMillis()
+                    lands.memberMap[uuid] = Lands.MemberData(
+                        uuid,
+                        Rank.VISITOR,
+                        current,
+                        current
+                    )
 
-                            lands.landHistory.visitorCount += 1
-                            val current = System.currentTimeMillis()
-                            lands.memberMap[uuid] = Lands.MemberData(
-                                uuid,
-                                Rank.VISITOR,
-                                current,
-                                current
+                    lands.memberMap.keys.forEach { memberUUID ->
+                        val member = Bukkit.getOfflinePlayer(memberUUID)
+                        if (member.isOnline) {
+                            member.player!!.sendMessage("${name}님이 땅에 방문했습니다.".infoFormat())
+                        } else {
+                            bukkitLinkedAPI.sendMessageAcrossServer(
+                                member.name, "${name}님이 땅에 방문했습니다.".infoFormat()
                             )
+                        }
+                    }
 
-                            lands.memberMap.keys.forEach { memberUUID ->
-                                val member = Bukkit.getOfflinePlayer(memberUUID)
-                                if (member.isOnline) {
-                                    member.player!!.sendMessage("${player.name}님이 땅에 방문했습니다.".infoFormat())
-                                } else {
-                                    bungeeApi.sendMessage(
-                                        member.name, "${player.name}님이 땅에 방문했습니다.".infoFormat()
-                                    )
-                                }
-                            }
-                        } else tunaLands.logger.warning("$uuid requested ${event.uniqueId}:${event.key}:${event.value} but lands instance is null")
-                    } else tunaLands.logger.warning("$uuid requested ${event.uniqueId}:${event.key}:${event.value} but player instance is null")
-                }, 15)
+                    val spawn = lands.visitorSpawn
+                    bukkitLinkedAPI.teleport(
+                        name,
+                        currentServerName,
+                        spawn.world.name,
+                        spawn.x.toInt(),
+                        spawn.y.toInt(),
+                        spawn.z.toInt()
+                    )
+                } else tunaLands.logger.warning("$uuid requested ${event.uniqueId}:${event.key}:${event.value} but lands instance is null")
             }
         }
     }

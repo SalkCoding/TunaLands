@@ -1,6 +1,6 @@
 package com.salkcoding.tunalands.commands.sub
 
-import com.salkcoding.tunalands.bungeeApi
+import com.salkcoding.tunalands.bukkitLinkedAPI
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
@@ -49,7 +49,7 @@ class Cancel : CommandExecutor {
                         if (data.target.isOnline) {
                             data.target.player!!.sendMessage("${player.name}가 초대를 취소하였습니다.".errorFormat())
                         } else {
-                            bungeeApi.sendMessage(
+                            bukkitLinkedAPI.sendMessageAcrossServer(
                                 targetName,
                                 "${player.name}가 초대를 취소하였습니다.".errorFormat()
                             )
@@ -64,25 +64,25 @@ class Cancel : CommandExecutor {
                 if (lands != null) {
                     val target = Bukkit.getOfflinePlayerIfCached(targetName)
                     if (target == null) {
-                        bungeeApi.sendMessage(hostName, "존재하지 않는 유저입니다!".errorFormat())
+                        bukkitLinkedAPI.sendMessageAcrossServer(hostName, "존재하지 않는 유저입니다!".errorFormat())
                         return
                     }
 
                     if (target.uniqueId in inviteMap) {
                         val data = inviteMap[target.uniqueId]!!
-                        bungeeApi.sendMessage(hostName, "${targetName}에게 보낸 초대가 취소되었습니다.".infoFormat())
+                        bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${targetName}에게 보낸 초대가 취소되었습니다.".infoFormat())
                         if (data.target.isOnline) {
                             data.target.player!!.sendMessage("${hostName}가 초대를 취소하였습니다.".errorFormat())
                         } else {
-                            bungeeApi.sendMessage(
+                            bukkitLinkedAPI.sendMessageAcrossServer(
                                 targetName,
                                 "${hostName}가 초대를 취소하였습니다.".errorFormat()
                             )
                         }
                         data.task.cancel()
                         inviteMap.remove(data.target.uniqueId)
-                    } else bungeeApi.sendMessage(hostName, "보낸 초대가 없습니다.".errorFormat())
-                } else bungeeApi.sendMessage(hostName, "해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat())
+                    } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "보낸 초대가 없습니다.".errorFormat())
+                } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat())
             }
         }
     }

@@ -1,6 +1,6 @@
 package com.salkcoding.tunalands.commands.sub
 
-import com.salkcoding.tunalands.bungeeApi
+import com.salkcoding.tunalands.bukkitLinkedAPI
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
@@ -51,7 +51,7 @@ class Hego : CommandExecutor {
                             if (targetOffline.isOnline)
                                 targetOffline.player!!.sendMessage("${player.name}이/가 당신을 ${lands.ownerName}의 땅에서 해고 했습니다.".infoFormat())
                             else
-                                bungeeApi.sendMessage(
+                                bukkitLinkedAPI.sendMessageAcrossServer(
                                     targetName,
                                     "${player.name}이/가 당신을 ${lands.ownerName}의 땅에서 해고 했습니다.".infoFormat()
                                 )
@@ -65,7 +65,7 @@ class Hego : CommandExecutor {
                 if (lands != null) {
                     val targetOffline = Bukkit.getOfflinePlayerIfCached(targetName)
                     if (targetOffline == null) {
-                        bungeeApi.sendMessage(hostName, "존재하지 않는 유저입니다!".errorFormat())
+                        bukkitLinkedAPI.sendMessageAcrossServer(hostName, "존재하지 않는 유저입니다!".errorFormat())
                         return
                     }
 
@@ -74,18 +74,18 @@ class Hego : CommandExecutor {
                         if (targetData.rank == Rank.PARTTIMEJOB) {
                             lands.memberMap.remove(targetOffline.uniqueId)
 
-                            bungeeApi.sendMessage(hostName, "${targetName}을/를 해고했습니다.".infoFormat())
+                            bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${targetName}을/를 해고했습니다.".infoFormat())
                             if (targetOffline.isOnline)
                                 targetOffline.player!!.sendMessage("${hostName}이/가 당신을 ${lands.ownerName}의 땅에서 해고 했습니다.".infoFormat())
                             else
-                                bungeeApi.sendMessage(
+                                bukkitLinkedAPI.sendMessageAcrossServer(
                                     targetName,
                                     "${hostName}이/가 당신을 ${lands.ownerName}의 땅에서 해고 했습니다.".infoFormat()
                                 )
                             return
-                        } else bungeeApi.sendMessage(hostName, "${targetName}은/는 알바가 아닙니다.".errorFormat())
-                    } else bungeeApi.sendMessage(hostName, "${targetName}은/는 당신의 땅의 소속되어있지 않습니다.".errorFormat())
-                } else bungeeApi.sendMessage(hostName, "해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat())
+                        } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${targetName}은/는 알바가 아닙니다.".errorFormat())
+                    } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${targetName}은/는 당신의 땅의 소속되어있지 않습니다.".errorFormat())
+                } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat())
             }
         }
     }

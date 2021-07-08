@@ -1,6 +1,6 @@
 package com.salkcoding.tunalands.commands.sub
 
-import com.salkcoding.tunalands.bungeeApi
+import com.salkcoding.tunalands.bukkitLinkedAPI
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
@@ -53,7 +53,7 @@ class Unban : CommandExecutor {
                     if (targetOffline.isOnline)
                         targetOffline.player!!.sendMessage("${player.name}의 땅의 밴이 해제되었습니다.".infoFormat())
                     else
-                        bungeeApi.sendMessage(targetName, "${player.name}의 땅의 밴이 해제되었습니다.".infoFormat())
+                        bukkitLinkedAPI.sendMessageAcrossServer(targetName, "${player.name}의 땅의 밴이 해제되었습니다.".infoFormat())
 
                     lands.banMap.remove(targetOffline.uniqueId)
                 } else player.sendMessage("해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat())
@@ -63,24 +63,24 @@ class Unban : CommandExecutor {
                 if (lands != null) {
                     val data = lands.memberMap[offlinePlayer.uniqueId]!!
                     if (data.rank == Rank.DELEGATOR && !lands.delegatorSetting.canBan) {
-                        bungeeApi.sendMessage(hostName, "권한이 없습니다!".errorFormat())
+                        bukkitLinkedAPI.sendMessageAcrossServer(hostName, "권한이 없습니다!".errorFormat())
                         return
                     }
 
                     val targetOffline = Bukkit.getOfflinePlayerIfCached(targetName)
                     if (targetOffline == null) {
-                        bungeeApi.sendMessage(hostName, "존재하지 않는 유저입니다!".errorFormat())
+                        bukkitLinkedAPI.sendMessageAcrossServer(hostName, "존재하지 않는 유저입니다!".errorFormat())
                         return
                     }
 
-                    bungeeApi.sendMessage(hostName, "${targetName}의 밴을 해제했습니다.".infoFormat())
+                    bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${targetName}의 밴을 해제했습니다.".infoFormat())
                     if (targetOffline.isOnline)
                         targetOffline.player!!.sendMessage("${hostName}의 땅의 밴이 해제되었습니다.".infoFormat())
                     else
-                        bungeeApi.sendMessage(targetName, "${hostName}의 땅의 밴이 해제되었습니다.".infoFormat())
+                        bukkitLinkedAPI.sendMessageAcrossServer(targetName, "${hostName}의 땅의 밴이 해제되었습니다.".infoFormat())
 
                     lands.banMap.remove(targetOffline.uniqueId)
-                } else bungeeApi.sendMessage(hostName, "해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat())
+                } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat())
             }
         }
     }

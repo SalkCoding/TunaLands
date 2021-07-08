@@ -1,7 +1,7 @@
 package com.salkcoding.tunalands.commands.sub
 
 import com.salkcoding.tunalands.alarmManager
-import com.salkcoding.tunalands.bungeeApi
+import com.salkcoding.tunalands.bukkitLinkedAPI
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
@@ -63,9 +63,9 @@ class Delete : CommandExecutor {
                         downCoreLocation.block.type = Material.AIR
 
                         landManager.deleteLands(offlinePlayer)
-                        bungeeApi.sendMessage(hostName, "땅을 삭제했습니다.".infoFormat())
-                    } else bungeeApi.sendMessage(hostName, "모든 멤버가 나가기전까지는 땅을 삭제할 수 없습니다.".errorFormat())
-                } else bungeeApi.sendMessage(hostName, "해당 명령어는 땅 소유자만 사용가능합니다.".errorFormat())
+                        bukkitLinkedAPI.sendMessageAcrossServer(hostName, "땅을 삭제했습니다.".infoFormat())
+                    } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "모든 멤버가 나가기전까지는 땅을 삭제할 수 없습니다.".errorFormat())
+                } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "해당 명령어는 땅 소유자만 사용가능합니다.".errorFormat())
             }
         }
     }

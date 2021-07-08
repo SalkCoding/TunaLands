@@ -1,6 +1,6 @@
 package com.salkcoding.tunalands.commands.sub
 
-import com.salkcoding.tunalands.bungeeApi
+import com.salkcoding.tunalands.bukkitLinkedAPI
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.leftManager
@@ -63,7 +63,7 @@ class Kick : CommandExecutor {
                         if (targetOffline.isOnline)
                             targetOffline.player!!.sendMessage("${player.name}이/가 당신을 ${lands.ownerName}의 땅에서 당신을 쫓아냈습니다.".infoFormat())
                         else
-                            bungeeApi.sendMessage(
+                            bukkitLinkedAPI.sendMessageAcrossServer(
                                 targetName,
                                 "${player.name}이/가 당신을 ${lands.ownerName}의 땅에서 당신을 쫓아냈습니다.".infoFormat()
                             )
@@ -76,36 +76,36 @@ class Kick : CommandExecutor {
                 if (lands != null) {
                     val targetOffline = Bukkit.getOfflinePlayerIfCached(targetName)
                     if (targetOffline == null) {
-                        bungeeApi.sendMessage(hostName, "존재하지 않는 유저입니다!".errorFormat())
+                        bukkitLinkedAPI.sendMessageAcrossServer(hostName, "존재하지 않는 유저입니다!".errorFormat())
                         return
                     }
 
                     val targetUUID = targetOffline.uniqueId
                     if (targetUUID == offlinePlayer.uniqueId) {
-                        bungeeApi.sendMessage(hostName, "스스로를 쫓아낼 수는 없습니다.".errorFormat())
+                        bukkitLinkedAPI.sendMessageAcrossServer(hostName, "스스로를 쫓아낼 수는 없습니다.".errorFormat())
                         return
                     }
 
                     val targetData = lands.memberMap[targetUUID]
                     if (targetData != null) {
                         if (targetData.rank == Rank.OWNER) {
-                            bungeeApi.sendMessage(hostName, "소유자를 쫓아낼 수는 없습니다.".errorFormat())
+                            bukkitLinkedAPI.sendMessageAcrossServer(hostName, "소유자를 쫓아낼 수는 없습니다.".errorFormat())
                             return
                         }
                         lands.memberMap.remove(targetUUID)
                         leftManager.recordLeft(targetUUID)
 
-                        bungeeApi.sendMessage(hostName, "${targetName}을/를 쫓아냈습니다.".infoFormat())
+                        bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${targetName}을/를 쫓아냈습니다.".infoFormat())
                         if (targetOffline.isOnline)
                             targetOffline.player!!.sendMessage("${hostName}이/가 당신을 ${lands.ownerName}의 땅에서 당신을 쫓아냈습니다.".infoFormat())
                         else
-                            bungeeApi.sendMessage(
+                            bukkitLinkedAPI.sendMessageAcrossServer(
                                 targetName,
                                 "${hostName}이/가 당신을 ${lands.ownerName}의 땅에서 당신을 쫓아냈습니다.".infoFormat()
                             )
 
-                    } else bungeeApi.sendMessage(hostName, "${targetName}은/는 당신의 땅에 소속되어있지 않습니다.".errorFormat())
-                } else bungeeApi.sendMessage(hostName, "해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat())
+                    } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${targetName}은/는 당신의 땅에 소속되어있지 않습니다.".errorFormat())
+                } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat())
             }
         }
     }

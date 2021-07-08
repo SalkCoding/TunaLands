@@ -112,11 +112,11 @@ class Invite : CommandExecutor {
                     } else {//Target is not online or in proxy server
                         if (targetUUID in onlinePlayerSet) {//In proxy server
                             player.sendMessage("${targetName}에게 멤버 초대장를 보냈습니다.".infoFormat())
-                            bungeeApi.sendMessage(
+                            bukkitLinkedAPI.sendMessageAcrossServer(
                                 targetName,
                                 "${player.name}이/가 당신을 ${lands.ownerName}의 멤버로 초대했습니다.".infoFormat()
                             )
-                            bungeeApi.sendMessage(
+                            bukkitLinkedAPI.sendMessageAcrossServer(
                                 targetName,
                                 "수락하시려면, /tl accept를 거부하시려면, /tl deny을 입력해주세요.".infoFormat()
                             )
@@ -129,7 +129,7 @@ class Invite : CommandExecutor {
                                     if (targetOffline.isOnline)
                                         targetOffline.player?.sendMessage("초대가 만료되었습니다.".warnFormat())
                                     else
-                                        bungeeApi.sendMessage(
+                                        bukkitLinkedAPI.sendMessageAcrossServer(
                                             targetName,
                                             "초대가 만료되었습니다.".warnFormat()
                                         )
@@ -146,7 +146,7 @@ class Invite : CommandExecutor {
                 if (lands != null) {
                     val targetOffline = Bukkit.getOfflinePlayerIfCached(targetName)
                     if (targetOffline == null) {
-                        bungeeApi.sendMessage(hostName, "존재하지 않는 유저입니다.".errorFormat())
+                        bukkitLinkedAPI.sendMessageAcrossServer(hostName, "존재하지 않는 유저입니다.".errorFormat())
                         return
                     }
 
@@ -159,13 +159,13 @@ class Invite : CommandExecutor {
                         Rank.PARTTIMEJOB
                     )
                     if (targetLands != null) {
-                        bungeeApi.sendMessage(hostName, "해당 플레이어는 이미 땅에 소속되어있습니다.".errorFormat())
+                        bukkitLinkedAPI.sendMessageAcrossServer(hostName, "해당 플레이어는 이미 땅에 소속되어있습니다.".errorFormat())
                         return
                     }
 
                     if (!leftManager.canRejoin(targetUUID)) {
                         val rejoin = leftManager.getRejoinCooldown(targetUUID)!! - System.currentTimeMillis()
-                        bungeeApi.sendMessage(
+                        bukkitLinkedAPI.sendMessageAcrossServer(
                             hostName,
                             "해당 플레이어는 ${
                                 rejoin / 86400000
@@ -181,16 +181,16 @@ class Invite : CommandExecutor {
                     }
 
                     if (targetUUID == offlinePlayer.uniqueId) {
-                        bungeeApi.sendMessage(hostName, "자신을 초대할 수는 없습니다.".errorFormat())
+                        bukkitLinkedAPI.sendMessageAcrossServer(hostName, "자신을 초대할 수는 없습니다.".errorFormat())
                         return
                     }
 
                     if (targetUUID in lands.banMap) {
-                        bungeeApi.sendMessage(hostName, "밴 당한 유저는 초대하실 수 없습니다.".errorFormat())
+                        bukkitLinkedAPI.sendMessageAcrossServer(hostName, "밴 당한 유저는 초대하실 수 없습니다.".errorFormat())
                         return
                     }
 
-                    bungeeApi.sendMessage(hostName, "${targetName}에게 멤버 초대장를 보냈습니다.".infoFormat())
+                    bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${targetName}에게 멤버 초대장를 보냈습니다.".infoFormat())
 
                     //Online in current server
                     if (targetOffline.isOnline) {
@@ -204,18 +204,18 @@ class Invite : CommandExecutor {
                                 target,
                                 Rank.MEMBER,
                                 Bukkit.getScheduler().runTaskLater(tunaLands, Runnable {
-                                    bungeeApi.sendMessage(hostName, "${target.name}가 초대에 응하지 않았습니다.".warnFormat())
+                                    bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${target.name}가 초대에 응하지 않았습니다.".warnFormat())
                                     target.sendMessage("초대가 만료되었습니다.".warnFormat())
                                     inviteMap.remove(target.uniqueId)
                                 }, 600)//Later 30 seconds
                             )
                     } else {//Target is not online or in proxy server
                         if (targetUUID in onlinePlayerSet) {//In proxy server
-                            bungeeApi.sendMessage(
+                            bukkitLinkedAPI.sendMessageAcrossServer(
                                 targetName,
                                 "${offlinePlayer.name}이/가 당신을 ${lands.ownerName}의 멤버로 초대했습니다.".infoFormat()
                             )
-                            bungeeApi.sendMessage(
+                            bukkitLinkedAPI.sendMessageAcrossServer(
                                 targetName,
                                 "수락하시려면, /tl accept를 거부하시려면, /tl deny을 입력해주세요.".infoFormat()
                             )
@@ -224,11 +224,11 @@ class Invite : CommandExecutor {
                                 targetOffline,
                                 Rank.MEMBER,
                                 Bukkit.getScheduler().runTaskLater(tunaLands, Runnable {
-                                    bungeeApi.sendMessage(hostName, "${targetName}가 초대에 응하지 않았습니다.".warnFormat())
+                                    bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${targetName}가 초대에 응하지 않았습니다.".warnFormat())
                                     if (targetOffline.isOnline)
                                         targetOffline.player?.sendMessage("초대가 만료되었습니다.".warnFormat())
                                     else
-                                        bungeeApi.sendMessage(
+                                        bukkitLinkedAPI.sendMessageAcrossServer(
                                             targetName,
                                             "초대가 만료되었습니다.".warnFormat()
                                         )
@@ -236,9 +236,9 @@ class Invite : CommandExecutor {
                                 }, 600)//Later 30 seconds
                             )
                             inviteMap[targetUUID] = inviteData
-                        } else bungeeApi.sendMessage(hostName, "해당 플레이어를 찾을 수 없습니다.".errorFormat())//Not online
+                        } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "해당 플레이어를 찾을 수 없습니다.".errorFormat())//Not online
                     }
-                } else bungeeApi.sendMessage(hostName, "해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat())
+                } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat())
             }
         }
     }

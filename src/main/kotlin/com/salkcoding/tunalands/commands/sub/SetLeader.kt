@@ -1,6 +1,6 @@
 package com.salkcoding.tunalands.commands.sub
 
-import com.salkcoding.tunalands.bungeeApi
+import com.salkcoding.tunalands.bukkitLinkedAPI
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
@@ -69,7 +69,7 @@ class SetLeader : CommandExecutor {
                                     targetData.rank = Rank.OWNER
                                     data.rank = Rank.DELEGATOR
 
-                                    bungeeApi.sendMessage(
+                                    bukkitLinkedAPI.sendMessageAcrossServer(
                                         targetName,
                                         "${player.name}의 땅의 소유자가 되었습니다.".infoFormat()
                                     )
@@ -91,12 +91,12 @@ class SetLeader : CommandExecutor {
                     val data = lands.memberMap[offlinePlayer.uniqueId]!!
                     val targetOffline = Bukkit.getOfflinePlayerIfCached(targetName)
                     if (targetOffline == null) {
-                        bungeeApi.sendMessage(hostName, "존재하지 않는 유저입니다!".errorFormat())
+                        bukkitLinkedAPI.sendMessageAcrossServer(hostName, "존재하지 않는 유저입니다!".errorFormat())
                         return
                     }
 
                     if (targetOffline.uniqueId == offlinePlayer.uniqueId) {
-                        bungeeApi.sendMessage(hostName, "당신은 이미 땅의 소유자입니다.".errorFormat())
+                        bukkitLinkedAPI.sendMessageAcrossServer(hostName, "당신은 이미 땅의 소유자입니다.".errorFormat())
                         return
                     }
 
@@ -120,21 +120,21 @@ class SetLeader : CommandExecutor {
                                     targetData.rank = Rank.OWNER
                                     data.rank = Rank.DELEGATOR
 
-                                    bungeeApi.sendMessage(
+                                    bukkitLinkedAPI.sendMessageAcrossServer(
                                         targetName,
                                         "${hostName}의 땅의 소유자가 되었습니다.".infoFormat()
                                     )
                                 }
 
-                                bungeeApi.sendMessage(hostName, "${targetName}은/는 이제 땅의 소유자입니다.".infoFormat())
-                                bungeeApi.sendMessage(hostName, "관리 대리인으로 강등되셨습니다.".warnFormat())
+                                bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${targetName}은/는 이제 땅의 소유자입니다.".infoFormat())
+                                bukkitLinkedAPI.sendMessageAcrossServer(hostName, "관리 대리인으로 강등되셨습니다.".warnFormat())
 
                                 lands.sendMessageToOnlineMembers("${targetName}이/가 새로운 땅의 소유자가 되었습니다.".infoFormat())
                             }
-                            else -> bungeeApi.sendMessage(hostName, "관리 대리인과 멤버만 소유자가 될 수 있습니다.".errorFormat())
+                            else -> bukkitLinkedAPI.sendMessageAcrossServer(hostName, "관리 대리인과 멤버만 소유자가 될 수 있습니다.".errorFormat())
                         }
-                    } else bungeeApi.sendMessage(hostName, "${targetName}은/는 당신의 땅에 소속되어있지 않습니다.".errorFormat())
-                } else bungeeApi.sendMessage(hostName, "해당 명령어는 땅 소유자만 사용가능합니다.".errorFormat())
+                    } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${targetName}은/는 당신의 땅에 소속되어있지 않습니다.".errorFormat())
+                } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "해당 명령어는 땅 소유자만 사용가능합니다.".errorFormat())
             }
         }
     }

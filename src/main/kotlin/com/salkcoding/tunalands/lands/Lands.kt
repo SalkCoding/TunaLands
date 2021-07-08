@@ -1,6 +1,6 @@
 package com.salkcoding.tunalands.lands
 
-import com.salkcoding.tunalands.bungeeApi
+import com.salkcoding.tunalands.bukkitLinkedAPI
 import com.salkcoding.tunalands.lands.setting.DelegatorSetting
 import com.salkcoding.tunalands.lands.setting.LandSetting
 import com.salkcoding.tunalands.util.warnFormat
@@ -74,7 +74,7 @@ data class Lands(
                 if (offlinePlayer.isOnline)
                     offlinePlayer.player!!.sendMessage(message)
                 else
-                    bungeeApi.sendMessage(offlinePlayer.name, message)
+                    bukkitLinkedAPI.sendMessageAcrossServer(offlinePlayer.name, message)
             }
         }
     }
@@ -85,7 +85,7 @@ data class Lands(
             if (offlinePlayer.isOnline)
                 offlinePlayer.player!!.sendMessage(message)
             else
-                bungeeApi.sendMessage(offlinePlayer.name, message)
+                bukkitLinkedAPI.sendMessageAcrossServer(offlinePlayer.name, message)
         }
     }
 }

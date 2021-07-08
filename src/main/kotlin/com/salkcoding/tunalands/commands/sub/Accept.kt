@@ -1,6 +1,6 @@
 package com.salkcoding.tunalands.commands.sub
 
-import com.salkcoding.tunalands.bungeeApi
+import com.salkcoding.tunalands.bukkitLinkedAPI
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
@@ -70,7 +70,7 @@ class Accept : CommandExecutor {
                     val host = data.host
                     val lands = landManager.getPlayerLands(host.uniqueId, Rank.OWNER, Rank.DELEGATOR)
                     if (lands != null) {
-                        bungeeApi.sendMessage(offlinePlayer.name, "초대를 수락했습니다.".infoFormat())
+                        bukkitLinkedAPI.sendMessageAcrossServer(offlinePlayer.name, "초대를 수락했습니다.".infoFormat())
 
                         val rankString = when (data.targetRank) {
                             Rank.MEMBER -> "멤버"
@@ -89,8 +89,8 @@ class Accept : CommandExecutor {
                         lands.memberMap[uuid] = Lands.MemberData(uuid, data.targetRank, present, present)
                         data.task.cancel()
                         inviteMap.remove(uuid)
-                    } else bungeeApi.sendMessage(offlinePlayer.name, "해당 땅이 더이상 존재하지 않습니다.".errorFormat())
-                } else bungeeApi.sendMessage(offlinePlayer.name, "받은 초대가 없습니다.".errorFormat())
+                    } else bukkitLinkedAPI.sendMessageAcrossServer(offlinePlayer.name, "해당 땅이 더이상 존재하지 않습니다.".errorFormat())
+                } else bukkitLinkedAPI.sendMessageAcrossServer(offlinePlayer.name, "받은 초대가 없습니다.".errorFormat())
             }
         }
     }

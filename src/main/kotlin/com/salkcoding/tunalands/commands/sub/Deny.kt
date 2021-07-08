@@ -1,6 +1,6 @@
 package com.salkcoding.tunalands.commands.sub
 
-import com.salkcoding.tunalands.bungeeApi
+import com.salkcoding.tunalands.bukkitLinkedAPI
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
 import org.bukkit.Bukkit
@@ -43,7 +43,7 @@ class Deny : CommandExecutor {
                     if (host.isOnline)
                         host.player!!.sendMessage("${player.name}이/가 당신의 초대를 거절하였습니다.".infoFormat())
                     else
-                        bungeeApi.sendMessage(host.name, "${player.name}이/가 당신의 초대를 거절하였습니다.".infoFormat())
+                        bukkitLinkedAPI.sendMessageAcrossServer(host.name, "${player.name}이/가 당신의 초대를 거절하였습니다.".infoFormat())
 
                     data.task.cancel()
                     inviteMap.remove(uuid)
@@ -53,15 +53,15 @@ class Deny : CommandExecutor {
                     val data = inviteMap[uuid]!!
                     val host = data.host
 
-                    bungeeApi.sendMessage(offlinePlayer.name, "초대를 거절했습니다.".infoFormat())
+                    bukkitLinkedAPI.sendMessageAcrossServer(offlinePlayer.name, "초대를 거절했습니다.".infoFormat())
                     if (host.isOnline)
                         host.player!!.sendMessage("${offlinePlayer.name}이/가 당신의 초대를 거절하였습니다.".infoFormat())
                     else
-                        bungeeApi.sendMessage(host.name, "${offlinePlayer.name}이/가 당신의 초대를 거절하였습니다.".infoFormat())
+                        bukkitLinkedAPI.sendMessageAcrossServer(host.name, "${offlinePlayer.name}이/가 당신의 초대를 거절하였습니다.".infoFormat())
 
                     data.task.cancel()
                     inviteMap.remove(uuid)
-                } else bungeeApi.sendMessage(offlinePlayer.name, "받은 초대가 없습니다.".errorFormat())
+                } else bukkitLinkedAPI.sendMessageAcrossServer(offlinePlayer.name, "받은 초대가 없습니다.".errorFormat())
             }
         }
     }
