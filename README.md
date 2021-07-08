@@ -1,10 +1,10 @@
 # TunaLands
 
 ## Devloping environment
-* IntelliJ IDEA 2020.3.2 (Ultimate Edition)
+* IntelliJ IDEA 2021.1.2 (Ultimate Edition)
 * Runtime version: 11.0.9.1+11-b1145.63 amd64
-* Kotlin 14.1.21
-* Gradle 6.7
+* Kotlin 1.5.20
+* Gradle 7.0
 
 ## Testing environment
 * Windows 10 Home
@@ -19,6 +19,7 @@
 * [Vault 1.7.3](https://github.com/MilkBowl/Vault)
 * [HikariCP 3.4.5](https://github.com/brettwooldridge/HikariCP)
 * BukkitLinkedAPI
+* Metamorphosis
 
 # Data format
 
