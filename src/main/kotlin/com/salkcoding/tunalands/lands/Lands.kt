@@ -3,6 +3,8 @@ package com.salkcoding.tunalands.lands
 import com.salkcoding.tunalands.bukkitLinkedAPI
 import com.salkcoding.tunalands.lands.setting.DelegatorSetting
 import com.salkcoding.tunalands.lands.setting.LandSetting
+import com.salkcoding.tunalands.metamorphosis
+import com.salkcoding.tunalands.util.ObservableMap
 import com.salkcoding.tunalands.util.warnFormat
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -37,7 +39,19 @@ data class Lands(
     val partTimeJobSetting: LandSetting = LandSetting(),
     val memberSetting: LandSetting = LandSetting(),
     val delegatorSetting: DelegatorSetting = DelegatorSetting(),
-    val memberMap: MutableMap<UUID, MemberData> = mutableMapOf(),
+    val memberMap: MutableMap<UUID, MemberData> = ObservableMap(
+        map = mutableMapOf(),
+        onChange = object : ObservableMap.Observed<UUID, MemberData> {
+            override fun run(newMap: MutableMap<UUID, MemberData>) {
+                val message: String =
+                    newMap
+                        .map {
+                            "${it.value.uuid},${Bukkit.getOfflinePlayer(it.value.uuid)},${it.value.rank}"
+                        }
+                        .joinToString(";")
+                metamorphosis.send("com.salkcoding.tunalands.update_land_member_change", message)
+            }
+        }),
     val banMap: MutableMap<UUID, BanData> = mutableMapOf(),
 ) {
     data class MemberData(
