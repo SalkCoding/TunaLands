@@ -47,18 +47,6 @@ lateinit var currentServerName: String
 class TunaLands : JavaPlugin() {
 
     override fun onEnable() {
-        tunaLands = this
-
-        configRead()
-
-        landManager = LandManager()
-        borderManager = BorderManager()
-        guiManager = GuiManager()
-        displayManager = DisplayManager()
-        alarmManager = AlarmManager()
-        recommendManager = RecommendManager(configuration.recommend.reset * 50, configuration.recommend.cooldown * 50)
-        leftManager = LeftManager(configuration.command.rejoinCooldown * 50)
-
         val tempMetamorphosis = server.pluginManager.getPlugin("Metamorphosis") as? Metamorphosis
         if (tempMetamorphosis == null) {
             server.pluginManager.disablePlugin(this)
@@ -74,6 +62,26 @@ class TunaLands : JavaPlugin() {
             return
         }
         bukkitLinkedAPI = tempBukkitLinked.api
+
+        if (!setupEconomy()) {
+            logger.warning("Disabled due to no Vault dependency found!")
+            server.pluginManager.disablePlugin(this)
+            return
+        }
+
+
+        tunaLands = this
+
+        configRead()
+
+        landManager = LandManager()
+        borderManager = BorderManager()
+        guiManager = GuiManager()
+        displayManager = DisplayManager()
+        alarmManager = AlarmManager()
+        recommendManager = RecommendManager(configuration.recommend.reset * 50, configuration.recommend.cooldown * 50)
+        leftManager = LeftManager(configuration.command.rejoinCooldown * 50)
+
 
         val handler = LandCommandHandler()
         handler.register("accept", Accept())
@@ -224,11 +232,6 @@ class TunaLands : JavaPlugin() {
 
         configuration = Config(database, protect, fuel, recommend, command, limitWorld)
 
-        if (!setupEconomy()) {
-            logger.warning("Disabled due to no Vault dependency found!")
-            server.pluginManager.disablePlugin(this)
-            return
-        }
     }
 
     private fun setupEconomy(): Boolean {

@@ -5,7 +5,9 @@ import com.salkcoding.tunalands.lands.setting.DelegatorSetting
 import com.salkcoding.tunalands.lands.setting.LandSetting
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
+import com.salkcoding.tunalands.metamorphosis
 import com.salkcoding.tunalands.tunaLands
+import com.salkcoding.tunalands.util.ObservableMap
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Location
@@ -66,7 +68,21 @@ object JsonReader {
                 jsonObject["welcomeMessage"].asJsonArray.forEach {
                     welcomeMessage.add(ChatColor.translateAlternateColorCodes('&', it.asString))
                 }
-                val memberMap = mutableMapOf<UUID, Lands.MemberData>()
+                val memberMap: MutableMap<UUID, Lands.MemberData> = ObservableMap(
+                    map = mutableMapOf(),
+                    onChange = object : ObservableMap.Observed<UUID, Lands.MemberData> {
+                        override fun syncChanges(newMap: MutableMap<UUID, Lands.MemberData>) {
+                            val message: String =
+                                newMap
+                                    .map {
+                                        "${it.value.uuid},${Bukkit.getOfflinePlayer(it.value.uuid).name},${it.value.rank}"
+                                    }
+                                    .joinToString(";")
+                            metamorphosis.send("com.salkcoding.tunalands.update_land_member_change", message)
+                        }
+                    },
+                    plugin = tunaLands
+                )
                 jsonObject["memberMap"].asJsonArray.forEach {
                     val jsonMemberData = it.asJsonObject
                     val memberUUID = UUID.fromString(jsonMemberData["uuid"].asString)
