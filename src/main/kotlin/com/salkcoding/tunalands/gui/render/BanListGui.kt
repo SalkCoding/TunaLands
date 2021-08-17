@@ -1,6 +1,5 @@
 package com.salkcoding.tunalands.gui.render
 
-import br.com.devsrsouza.kotlinbukkitapi.extensions.item.displayName
 import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.guiManager
 import com.salkcoding.tunalands.lands.Lands
@@ -29,11 +28,11 @@ class BanListGui(
     private lateinit var playerList: List<UUID>
 
     private val sortButton = (Material.HOPPER * 1).apply {
-        this.displayName("${ChatColor.WHITE}정렬 방법 선택")
+        this.setDisplayName("${ChatColor.WHITE}정렬 방법 선택")
     }
 
     private val statisticsInfo = (Material.PAINTING * 1).apply {
-        this.displayName("${ChatColor.WHITE}통계")
+        this.setDisplayName("${ChatColor.WHITE}통계")
     }
 
     private var sortWay = 0

@@ -1,6 +1,5 @@
 package com.salkcoding.tunalands.gui.render
 
-import br.com.devsrsouza.kotlinbukkitapi.extensions.item.displayName
 import com.salkcoding.tunalands.*
 import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.util.*
@@ -21,11 +20,11 @@ class RecommendGui(private val player: Player) : GuiInterface {
     private lateinit var landList: List<UUID>
 
     private val sortButton = (Material.HOPPER * 1).apply {
-        this.displayName("${ChatColor.WHITE}정렬 방법 선택")
+        this.setDisplayName("${ChatColor.WHITE}정렬 방법 선택")
     }
 
     private val statisticsInfo = (Material.PAINTING * 1).apply {
-        this.displayName("${ChatColor.WHITE}지역 통계")
+        this.setDisplayName("${ChatColor.WHITE}지역 통계")
     }
 
     private var sortWay = 0

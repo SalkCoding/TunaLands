@@ -1,6 +1,6 @@
 package com.salkcoding.tunalands.gui.render.settinggui
 
-import br.com.devsrsouza.kotlinbukkitapi.extensions.item.displayName
+
 import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.guiManager
 import com.salkcoding.tunalands.lands.Lands
@@ -21,64 +21,64 @@ import org.bukkit.inventory.Inventory
 class MemberSettingGui(private val player: Player, private val lands: Lands, private val rank: Rank) : GuiInterface {
 
     //First row
-    private val canPVP = (Material.DIAMOND_SWORD * 1).apply { this.displayName("${ChatColor.WHITE}PVP") }
-    private val breakBlock = (Material.DIAMOND_PICKAXE * 1).apply { this.displayName("${ChatColor.WHITE}블록 부수기") }
-    private val placeBlock = (Material.WHITE_CONCRETE * 1).apply { this.displayName("${ChatColor.WHITE}블록 설치") }
-    private val canHurt = (Material.RED_DYE * 1).apply { this.displayName("${ChatColor.WHITE}데미지") }
-    private val pickupExp = (Material.EXPERIENCE_BOTTLE * 1).apply { this.displayName("${ChatColor.WHITE}경험치 오브 줍기") }
-    private val pickupItem = (Material.PUMPKIN_SEEDS * 1).apply { this.displayName("${ChatColor.WHITE}아이템 줍기") }
-    private val dropItem = (Material.MELON_SEEDS * 1).apply { this.displayName("${ChatColor.WHITE}아이템 버리기") }
-    private val openChest = (Material.CHEST * 1).apply { this.displayName("${ChatColor.WHITE}창고 사용") }
-    private val eatCake = (Material.CAKE * 1).apply { this.displayName("${ChatColor.WHITE}케이크 소비") }
+    private val canPVP = (Material.DIAMOND_SWORD * 1).apply { this.setDisplayName("${ChatColor.WHITE}PVP") }
+    private val breakBlock = (Material.DIAMOND_PICKAXE * 1).apply { this.setDisplayName("${ChatColor.WHITE}블록 부수기") }
+    private val placeBlock = (Material.WHITE_CONCRETE * 1).apply { this.setDisplayName("${ChatColor.WHITE}블록 설치") }
+    private val canHurt = (Material.RED_DYE * 1).apply { this.setDisplayName("${ChatColor.WHITE}데미지") }
+    private val pickupExp = (Material.EXPERIENCE_BOTTLE * 1).apply { this.setDisplayName("${ChatColor.WHITE}경험치 오브 줍기") }
+    private val pickupItem = (Material.PUMPKIN_SEEDS * 1).apply { this.setDisplayName("${ChatColor.WHITE}아이템 줍기") }
+    private val dropItem = (Material.MELON_SEEDS * 1).apply { this.setDisplayName("${ChatColor.WHITE}아이템 버리기") }
+    private val openChest = (Material.CHEST * 1).apply { this.setDisplayName("${ChatColor.WHITE}창고 사용") }
+    private val eatCake = (Material.CAKE * 1).apply { this.setDisplayName("${ChatColor.WHITE}케이크 소비") }
 
     //Second row
-    private val useCircuit = (Material.REPEATER * 1).apply { this.displayName("${ChatColor.WHITE}회로 조작") }
-    private val useLever = (Material.LEVER * 1).apply { this.displayName("${ChatColor.WHITE}레버 사용") }
-    private val useButton = (Material.STONE_BUTTON * 1).apply { this.displayName("${ChatColor.WHITE}버튼 사용") }
+    private val useCircuit = (Material.REPEATER * 1).apply { this.setDisplayName("${ChatColor.WHITE}회로 조작") }
+    private val useLever = (Material.LEVER * 1).apply { this.setDisplayName("${ChatColor.WHITE}레버 사용") }
+    private val useButton = (Material.STONE_BUTTON * 1).apply { this.setDisplayName("${ChatColor.WHITE}버튼 사용") }
     private val usePressureSensor =
-        (Material.OAK_PRESSURE_PLATE * 1).apply { this.displayName("${ChatColor.WHITE}압력판 사용") }
-    private val useDoor = (Material.OAK_DOOR * 1).apply { this.displayName("${ChatColor.WHITE}문 사용") }
-    private val useTrapdoor = (Material.OAK_TRAPDOOR * 1).apply { this.displayName("${ChatColor.WHITE}다락문 사용") }
-    private val useFenceGate = (Material.OAK_FENCE_GATE * 1).apply { this.displayName("${ChatColor.WHITE}울타리 문 사용") }
-    private val useHopper = (Material.HOPPER * 1).apply { this.displayName("${ChatColor.WHITE}깔대기 사용") }
+        (Material.OAK_PRESSURE_PLATE * 1).apply { this.setDisplayName("${ChatColor.WHITE}압력판 사용") }
+    private val useDoor = (Material.OAK_DOOR * 1).apply { this.setDisplayName("${ChatColor.WHITE}문 사용") }
+    private val useTrapdoor = (Material.OAK_TRAPDOOR * 1).apply { this.setDisplayName("${ChatColor.WHITE}다락문 사용") }
+    private val useFenceGate = (Material.OAK_FENCE_GATE * 1).apply { this.setDisplayName("${ChatColor.WHITE}울타리 문 사용") }
+    private val useHopper = (Material.HOPPER * 1).apply { this.setDisplayName("${ChatColor.WHITE}깔대기 사용") }
     private val useDispenserAndDropper =
-        (Material.DISPENSER * 1).apply { this.displayName("${ChatColor.WHITE}발사기/공급기 사용") }
+        (Material.DISPENSER * 1).apply { this.setDisplayName("${ChatColor.WHITE}발사기/공급기 사용") }
 
     //Third row
-    private val useCraftTable = (Material.CRAFTING_TABLE * 1).apply { this.displayName("${ChatColor.WHITE}작업대 사용") }
-    private val useFurnace = (Material.FURNACE * 1).apply { this.displayName("${ChatColor.WHITE}화로 사용") }
-    private val useBed = (Material.RED_BED * 1).apply { this.displayName("${ChatColor.WHITE}침대 사용") }
+    private val useCraftTable = (Material.CRAFTING_TABLE * 1).apply { this.setDisplayName("${ChatColor.WHITE}작업대 사용") }
+    private val useFurnace = (Material.FURNACE * 1).apply { this.setDisplayName("${ChatColor.WHITE}화로 사용") }
+    private val useBed = (Material.RED_BED * 1).apply { this.setDisplayName("${ChatColor.WHITE}침대 사용") }
     private val useEnchantingTable =
-        (Material.ENCHANTING_TABLE * 1).apply { this.displayName("${ChatColor.WHITE}인첸트 테이블 사용") }
-    private val useAnvil = (Material.ANVIL * 1).apply { this.displayName("${ChatColor.WHITE}모루 사용") }
-    private val useCauldron = (Material.CAULDRON * 1).apply { this.displayName("${ChatColor.WHITE}가마솥 사용") }
-    private val useBrewingStand = (Material.BREWING_STAND * 1).apply { this.displayName("${ChatColor.WHITE}양조기 사용") }
-    private val useBeacon = (Material.BEACON * 1).apply { this.displayName("${ChatColor.WHITE}신호기 사용") }
-    private val useArmorStand = (Material.ARMOR_STAND * 1).apply { this.displayName("${ChatColor.WHITE}갑옷 거치대 사용") }
+        (Material.ENCHANTING_TABLE * 1).apply { this.setDisplayName("${ChatColor.WHITE}인첸트 테이블 사용") }
+    private val useAnvil = (Material.ANVIL * 1).apply { this.setDisplayName("${ChatColor.WHITE}모루 사용") }
+    private val useCauldron = (Material.CAULDRON * 1).apply { this.setDisplayName("${ChatColor.WHITE}가마솥 사용") }
+    private val useBrewingStand = (Material.BREWING_STAND * 1).apply { this.setDisplayName("${ChatColor.WHITE}양조기 사용") }
+    private val useBeacon = (Material.BEACON * 1).apply { this.setDisplayName("${ChatColor.WHITE}신호기 사용") }
+    private val useArmorStand = (Material.ARMOR_STAND * 1).apply { this.setDisplayName("${ChatColor.WHITE}갑옷 거치대 사용") }
 
     //Fourth row
-    private val canSow = (Material.WHEAT_SEEDS * 1).apply { this.displayName("${ChatColor.WHITE}농작물 심기") }
-    private val canHarvest = (Material.DIAMOND_HOE * 1).apply { this.displayName("${ChatColor.WHITE}농작물 수확") }
-    private val canBreed = (Material.WHEAT * 1).apply { this.displayName("${ChatColor.WHITE}동물 교배") }
-    private val useBucket = (Material.BUCKET * 1).apply { this.displayName("${ChatColor.WHITE}양동이 사용") }
-    private val useMilk = (Material.MILK_BUCKET * 1).apply { this.displayName("${ChatColor.WHITE}우유 마시기") }
-    private val throwEgg = (Material.EGG * 1).apply { this.displayName("${ChatColor.WHITE}달걀 던지기") }
-    private val useShears = (Material.SHEARS * 1).apply { this.displayName("${ChatColor.WHITE}양털 깎기") }
+    private val canSow = (Material.WHEAT_SEEDS * 1).apply { this.setDisplayName("${ChatColor.WHITE}농작물 심기") }
+    private val canHarvest = (Material.DIAMOND_HOE * 1).apply { this.setDisplayName("${ChatColor.WHITE}농작물 수확") }
+    private val canBreed = (Material.WHEAT * 1).apply { this.setDisplayName("${ChatColor.WHITE}동물 교배") }
+    private val useBucket = (Material.BUCKET * 1).apply { this.setDisplayName("${ChatColor.WHITE}양동이 사용") }
+    private val useMilk = (Material.MILK_BUCKET * 1).apply { this.setDisplayName("${ChatColor.WHITE}우유 마시기") }
+    private val throwEgg = (Material.EGG * 1).apply { this.setDisplayName("${ChatColor.WHITE}달걀 던지기") }
+    private val useShears = (Material.SHEARS * 1).apply { this.setDisplayName("${ChatColor.WHITE}양털 깎기") }
     private val useFlintAndSteel =
-        (Material.FLINT_AND_STEEL * 1).apply { this.displayName("${ChatColor.WHITE}부싯돌과 부시 사용") }
-    private val canRuinFarmland = (Material.FARMLAND * 1).apply { this.displayName("${ChatColor.WHITE}짓밟기") }
+        (Material.FLINT_AND_STEEL * 1).apply { this.setDisplayName("${ChatColor.WHITE}부싯돌과 부시 사용") }
+    private val canRuinFarmland = (Material.FARMLAND * 1).apply { this.setDisplayName("${ChatColor.WHITE}짓밟기") }
 
     //Fifth row
-    private val useMinecart = (Material.MINECART * 1).apply { this.displayName("${ChatColor.WHITE}마인카트 사용") }
-    private val canFishing = (Material.FISHING_ROD * 1).apply { this.displayName("${ChatColor.WHITE}낚시") }
-    private val useBoat = (Material.OAK_BOAT * 1).apply { this.displayName("${ChatColor.WHITE}배 사용") }
-    private val canRiding = (Material.SADDLE * 1).apply { this.displayName("${ChatColor.WHITE}라이딩") }
+    private val useMinecart = (Material.MINECART * 1).apply { this.setDisplayName("${ChatColor.WHITE}마인카트 사용") }
+    private val canFishing = (Material.FISHING_ROD * 1).apply { this.setDisplayName("${ChatColor.WHITE}낚시") }
+    private val useBoat = (Material.OAK_BOAT * 1).apply { this.setDisplayName("${ChatColor.WHITE}배 사용") }
+    private val canRiding = (Material.SADDLE * 1).apply { this.setDisplayName("${ChatColor.WHITE}라이딩") }
     private val useChestedHorse =
-        (Material.DIAMOND_HORSE_ARMOR * 1).apply { this.displayName("${ChatColor.WHITE}말 인벤토리 사용") }
-    private val useLead = (Material.LEAD * 1).apply { this.displayName("${ChatColor.WHITE}끈 사용") }
-    private val breakItemFrame = (Material.ITEM_FRAME * 1).apply { this.displayName("${ChatColor.WHITE}아이템 액자 부수기") }
-    private val useNoteBlock = (Material.NOTE_BLOCK * 1).apply { this.displayName("${ChatColor.WHITE}노트블록 사용") }
-    private val useJukebox = (Material.JUKEBOX * 1).apply { this.displayName("${ChatColor.WHITE}주크박스 사용") }
+        (Material.DIAMOND_HORSE_ARMOR * 1).apply { this.setDisplayName("${ChatColor.WHITE}말 인벤토리 사용") }
+    private val useLead = (Material.LEAD * 1).apply { this.setDisplayName("${ChatColor.WHITE}끈 사용") }
+    private val breakItemFrame = (Material.ITEM_FRAME * 1).apply { this.setDisplayName("${ChatColor.WHITE}아이템 액자 부수기") }
+    private val useNoteBlock = (Material.NOTE_BLOCK * 1).apply { this.setDisplayName("${ChatColor.WHITE}노트블록 사용") }
+    private val useJukebox = (Material.JUKEBOX * 1).apply { this.setDisplayName("${ChatColor.WHITE}주크박스 사용") }
 
     override fun render(inv: Inventory) {
         val setting = lands.memberSetting

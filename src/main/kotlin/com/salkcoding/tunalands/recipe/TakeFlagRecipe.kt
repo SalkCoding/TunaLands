@@ -1,6 +1,6 @@
 package com.salkcoding.tunalands.recipe
 
-import br.com.devsrsouza.kotlinbukkitapi.extensions.item.displayName
+
 import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.times
 import org.bukkit.Bukkit
@@ -14,7 +14,7 @@ object TakeFlagRecipe : RecipeRegister {
     private const val key = "take_flag"
 
     val takeFlag = (Material.GREEN_BANNER * 1).apply {
-        this.displayName("${ChatColor.GREEN}점유 ${ChatColor.WHITE}깃발")
+        this.setDisplayName("${ChatColor.GREEN}점유 ${ChatColor.WHITE}깃발")
         this.lore = listOf(
             "${ChatColor.WHITE}늘리고 싶은 지역에 설치하여 점유할 수 있는 깃발입니다."
         )

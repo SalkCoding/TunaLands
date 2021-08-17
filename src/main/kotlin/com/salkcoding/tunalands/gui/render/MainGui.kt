@@ -1,7 +1,5 @@
 package com.salkcoding.tunalands.gui.render
 
-import br.com.devsrsouza.kotlinbukkitapi.extensions.item.displayName
-import br.com.devsrsouza.kotlinbukkitapi.extensions.player.playSound
 import com.salkcoding.tunalands.alarmManager
 import com.salkcoding.tunalands.displayManager
 import com.salkcoding.tunalands.lands.Lands
@@ -66,28 +64,28 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
     //Static
     companion object {
         private val settingButton = (Material.BONE * 1).apply {
-            this.displayName("${ChatColor.WHITE}지역 관리")
+            this.setDisplayName("${ChatColor.WHITE}지역 관리")
             this.lore = listOf(
                 "${ChatColor.WHITE}지역의 세부 설정을 변경합니다."
             )
         }
 
         private val shopButton = (Material.HEART_OF_THE_SEA * 1).apply {
-            this.displayName("${ChatColor.WHITE}지역 상점")
+            this.setDisplayName("${ChatColor.WHITE}지역 상점")
             this.lore = listOf(
                 "${ChatColor.WHITE}지역에 관련된 물품을 구매할 수 있습니다."
             )
         }
 
         private val userListButton = (Material.WRITABLE_BOOK * 1).apply {
-            this.displayName("${ChatColor.WHITE}사용자 목록")
+            this.setDisplayName("${ChatColor.WHITE}사용자 목록")
             this.lore = listOf(
                 "${ChatColor.WHITE}지역의 사용자 목록을 확인합니다."
             )
         }
 
         private val banListButton = (Material.CRIMSON_SIGN * 1).apply {
-            this.displayName("${ChatColor.WHITE}밴 목록")
+            this.setDisplayName("${ChatColor.WHITE}밴 목록")
             this.lore = listOf(
                 "${ChatColor.WHITE}밴 목록을 확인합니다."
             )
@@ -126,7 +124,7 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                     seconds > 0 -> "${ChatColor.WHITE}남은 연료: ${seconds}초"
                     else -> "${ChatColor.WHITE}NULL"
                 }
-                this.displayName(lands.landsName)
+                this.setDisplayName(lands.landsName)
                 this.lore = listOf(
                     fuel,
                     "${ChatColor.WHITE}점유한 지역: ${ChatColor.GOLD}${lands.landList.size}${ChatColor.WHITE}개",
@@ -147,7 +145,7 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
         }, 0, 20)
 
         lockButton.apply {
-            this.displayName(
+            this.setDisplayName(
                 "${ChatColor.WHITE}지역을 ${
                     when (lands.open) {
                         true -> "${ChatColor.RED}비공개"
@@ -244,17 +242,17 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                 when (rank) {
                     Rank.OWNER, Rank.DELEGATOR -> {
                         lockButton.apply {
-                            this.displayName(
+                            this.setDisplayName(
                                 "${ChatColor.WHITE}지역을 ${
                                     when (lands.open) {
                                         true -> {
                                             lands.open = false
-                                            player.playSound(Sound.BLOCK_WOODEN_DOOR_CLOSE, .5f, 1f)
+                                            player.playSound(player.location, Sound.BLOCK_WOODEN_DOOR_CLOSE, .5f, 1f)
                                             "${ChatColor.GREEN}공개"
                                         }
                                         false -> {
                                             lands.open = true
-                                            player.playSound(Sound.BLOCK_WOODEN_DOOR_OPEN, .5f, 1f)
+                                            player.playSound(player.location, Sound.BLOCK_WOODEN_DOOR_OPEN, .5f, 1f)
                                             "${ChatColor.RED}비공개"
                                         }
                                     }

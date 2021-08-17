@@ -1,11 +1,11 @@
 package com.salkcoding.tunalands.lands
 
 import com.salkcoding.tunalands.bukkitLinkedAPI
+import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.lands.setting.DelegatorSetting
 import com.salkcoding.tunalands.lands.setting.LandSetting
 import com.salkcoding.tunalands.metamorphosis
 import com.salkcoding.tunalands.util.ObservableMap
-import com.salkcoding.tunalands.util.warnFormat
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Chunk
@@ -40,13 +40,14 @@ data class Lands(
     val memberSetting: LandSetting = LandSetting(),
     val delegatorSetting: DelegatorSetting = DelegatorSetting(),
     val memberMap: MutableMap<UUID, MemberData> = ObservableMap(
+        plugin = tunaLands,
         map = mutableMapOf(),
         onChange = object : ObservableMap.Observed<UUID, MemberData> {
-            override fun run(newMap: MutableMap<UUID, MemberData>) {
+            override fun syncChanges(newMap: MutableMap<UUID, MemberData>) {
                 val message: String =
                     newMap
                         .map {
-                            "${it.value.uuid},${Bukkit.getOfflinePlayer(it.value.uuid)},${it.value.rank}"
+                            "${it.value.uuid},${Bukkit.getOfflinePlayer(it.value.uuid).name},${it.value.rank}"
                         }
                         .joinToString(";")
                 metamorphosis.send("com.salkcoding.tunalands.update_land_member_change", message)

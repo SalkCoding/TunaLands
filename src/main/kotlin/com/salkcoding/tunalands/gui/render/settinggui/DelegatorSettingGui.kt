@@ -1,6 +1,6 @@
 package com.salkcoding.tunalands.gui.render.settinggui
 
-import br.com.devsrsouza.kotlinbukkitapi.extensions.item.displayName
+
 import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.guiManager
 import com.salkcoding.tunalands.lands.Lands
@@ -20,12 +20,12 @@ import org.bukkit.inventory.Inventory
 
 class DelegatorSettingGui(private val player: Player, private val lands: Lands, private val rank: Rank) : GuiInterface {
 
-    private val canSetVisitorSetting = (Material.NETHER_STAR * 1).apply { this.displayName("${ChatColor.WHITE}방문자 권한 설정 권한") }
-    private val canSetPartTimeJobSetting = (Material.BOOK * 1).apply { this.displayName("${ChatColor.WHITE}알바 권한 설정 권한") }
-    private val canSetMemberSetting = (Material.PAINTING * 1).apply { this.displayName("${ChatColor.WHITE}멤버 권한 설정 권한") }
-    private val canSetRegionSetting = (Material.GRASS_BLOCK * 1).apply { this.displayName("${ChatColor.WHITE}지역 설정 권한") }
-    private val canSetSpawn = (Material.IRON_DOOR * 1).apply { this.displayName("${ChatColor.WHITE}스폰 설정 권한") }
-    private val canBan = (Material.CRIMSON_SIGN * 1).apply { this.displayName("${ChatColor.WHITE}밴 권한") }
+    private val canSetVisitorSetting = (Material.NETHER_STAR * 1).apply { this.setDisplayName("${ChatColor.WHITE}방문자 권한 설정 권한") }
+    private val canSetPartTimeJobSetting = (Material.BOOK * 1).apply { this.setDisplayName("${ChatColor.WHITE}알바 권한 설정 권한") }
+    private val canSetMemberSetting = (Material.PAINTING * 1).apply { this.setDisplayName("${ChatColor.WHITE}멤버 권한 설정 권한") }
+    private val canSetRegionSetting = (Material.GRASS_BLOCK * 1).apply { this.setDisplayName("${ChatColor.WHITE}지역 설정 권한") }
+    private val canSetSpawn = (Material.IRON_DOOR * 1).apply { this.setDisplayName("${ChatColor.WHITE}스폰 설정 권한") }
+    private val canBan = (Material.CRIMSON_SIGN * 1).apply { this.setDisplayName("${ChatColor.WHITE}밴 권한") }
     override fun render(inv: Inventory) {
         val setting = lands.delegatorSetting
 
