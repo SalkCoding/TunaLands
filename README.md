@@ -1,23 +1,24 @@
 # TunaLands
 
 ## Devloping environment
-* IntelliJ IDEA 2021.1.2 (Ultimate Edition)
-* Runtime version: 11.0.9.1+11-b1145.63 amd64
-* Kotlin 1.5.20
-* Gradle 7.0
+* IntelliJ IDEA 2021.3 (Ultimate Edition)
+* Runtime version: 11.0.13+7-b1751.19 amd64
+* Kotlin 1.6.10
+* Gradle 7.2
 
 ## Testing environment
 * Windows 10 Home
-* [purpurclip-1.16.4-950](https://github.com/pl3xgaming/Purpur)
-* [GraalVM CE 20.3.0 (openjdk 11.0.9)](https://www.graalvm.org)
+* [purpur-1.8](https://github.com/pl3xgaming/Purpur)
+* [openJDK 17](https://jdk.java.net/17/)
 * JVM Memory 512MB ~ 2GB (No GUI)
 
 ## Dependencies
 * kotlin-stdlib
-* [purpurclip-1.16.5-latest](https://github.com/pl3xgaming/Purpur)
-* [kotlinbukkitapi 0.2.0-SNAPSHOT](https://github.com/DevSrSouza/KotlinBukkitAPI)
+* JavaSE 17
+* [purpur-api-R0.1-SNAPSHOT](https://github.com/pl3xgaming/Purpur)
+* [holographicdisplays-api:2.4.9](https://github.com/filoghost/HolographicDisplays)
 * [Vault 1.7.3](https://github.com/MilkBowl/Vault)
-* [HikariCP 3.4.5](https://github.com/brettwooldridge/HikariCP)
+* [HikariCP 5.0.0](https://github.com/brettwooldridge/HikariCP)
 * BukkitLinkedAPI
 * Metamorphosis
 
