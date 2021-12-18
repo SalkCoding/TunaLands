@@ -14,9 +14,9 @@
 
 ## Dependencies
 * kotlin-stdlib
-* JavaSE 17
+* [adventure-text-minimessage.4.1.0-SNAPSHOT](https://docs.adventure.kyori.net/minimessage) (For Vault)
 * [purpur-api-R0.1-SNAPSHOT](https://github.com/pl3xgaming/Purpur)
-* [holographicdisplays-api:2.4.9](https://github.com/filoghost/HolographicDisplays)
+* [holographicdisplays-api-2.4.9](https://github.com/filoghost/HolographicDisplays)
 * [Vault 1.7.3](https://github.com/MilkBowl/Vault)
 * [HikariCP 5.0.0](https://github.com/brettwooldridge/HikariCP)
 * BukkitLinkedAPI
