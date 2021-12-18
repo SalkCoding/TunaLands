@@ -105,13 +105,13 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
         task = Bukkit.getScheduler().runTaskTimerAsynchronously(tunaLands, Runnable {
             val expired = lands.expiredMillisecond - System.currentTimeMillis()
             //Expired
-            if (expired < 1000) {//Just close, DO NOT DELETE DATA OR BLOCK HERE
+            if (lands.enable && expired < 1000) {//Just close, DO NOT DELETE DATA OR BLOCK HERE
                 player.sendMessage("보호 기간이 만료되어, 지역 보호가 비활성화됩니다!".warnFormat())
                 task.cancel()
                 Bukkit.getScheduler().runTask(tunaLands, Runnable(player::closeInventory))
                 return@Runnable
             }
-            //Not expired
+            //Not expired or already disabled
             totalInfoIcon.apply {
                 val days = expired / 86400000
                 val hours = (expired / 3600000) % 24
@@ -122,7 +122,7 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                     hours > 0 -> "${ChatColor.WHITE}남은 연료: ${hours}시간 ${minutes}분 ${seconds}초"
                     minutes > 0 -> "${ChatColor.WHITE}남은 연료: ${minutes}분 ${seconds}초"
                     seconds > 0 -> "${ChatColor.WHITE}남은 연료: ${seconds}초"
-                    else -> "${ChatColor.WHITE}NULL"
+                    else -> "${ChatColor.RED}보호 기간이 만료됨!"
                 }
                 this.setDisplayName(lands.landsName)
                 this.lore = listOf(
@@ -217,6 +217,11 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
             10 -> {
                 when (rank) {
                     Rank.OWNER, Rank.DELEGATOR -> {
+                        if (!lands.enable) {
+                            player.sendMessage("땅을 먼저 재활성화 시켜야합니다!".errorFormat())
+                            return
+                        }
+
                         player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
                         player.openSettingGui(lands, rank)
                     }
@@ -241,6 +246,11 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
             22 -> {
                 when (rank) {
                     Rank.OWNER, Rank.DELEGATOR -> {
+                        if (!lands.enable) {
+                            player.sendMessage("땅을 먼저 재활성화 시켜야합니다!".errorFormat())
+                            return
+                        }
+
                         lockButton.apply {
                             this.setDisplayName(
                                 "${ChatColor.WHITE}지역을 ${
@@ -320,6 +330,8 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
     override fun onClose(event: InventoryCloseEvent) {
         task.cancel()
         guiManager.guiMap.remove(event.view)
+        val remainItem = event.inventory.getItem(4) ?: return
+        player.giveOrDrop(remainItem)
     }
 }
 
