@@ -8,7 +8,7 @@
 
 ## Testing environment
 * Windows 10 Home
-* [purpur-1.8](https://github.com/pl3xgaming/Purpur)
+* [purpur-1.18](https://github.com/pl3xgaming/Purpur)
 * [openJDK 17](https://jdk.java.net/17/)
 * JVM Memory 512MB ~ 2GB (No GUI)
 
