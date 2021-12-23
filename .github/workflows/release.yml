@@ -38,4 +38,4 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         files: ./build/libs/*.jar
-        tag-name: "auto-release"
+        tag_name: "auto-release"
