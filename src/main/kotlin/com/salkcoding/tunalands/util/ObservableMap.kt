@@ -17,7 +17,7 @@ class ObservableMap<K, V>(
         Bukkit.getScheduler().runTaskTimer(
             tunaLands,
             Runnable {
-                (map as ObservableMap).sync()
+                this.sync()
             },
             100,
             100
