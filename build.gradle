@@ -25,15 +25,15 @@ dependencies {
     compileOnly "org.purpurmc.purpur:purpur-api:1.18-R0.1-SNAPSHOT"
     compileOnly "com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.4.9"
     compileOnly "com.github.MilkBowl:VaultAPI:1.7"
-    compileOnly files("C:/Users/화지대/Downloads/Metamorphosis-1.0-API.jar")
-    compileOnly files("C:/Users/화지대/Downloads/bukkitlinked-1.4.2-SNAPSHOT-jar-with-dependencies.jar")
+    compileOnly files("lib/Metamorphosis-1.0-API.jar")
+    compileOnly files("lib/bukkitlinked-1.4.2-SNAPSHOT-jar-with-dependencies.jar")
 }
 
-kotlinOptions {
-    jvmTarget = "17"
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions { jvmTarget = JavaVersion.VERSION_17 }
 }
 
-compileOptions {
-    sourceCompatibility JavaVersion.VERSION_17
-    targetCompatibility JavaVersion.VERSION_17
+compileJava {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
