@@ -1,5 +1,6 @@
 package com.salkcoding.tunalands.io
 
+import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.salkcoding.tunalands.lands.setting.DelegatorSetting
 import com.salkcoding.tunalands.lands.setting.LandSetting
@@ -72,13 +73,18 @@ object JsonReader {
                     map = mutableMapOf(),
                     onChange = object : ObservableMap.Observed<UUID, Lands.MemberData> {
                         override fun syncChanges(newMap: MutableMap<UUID, Lands.MemberData>) {
-                            val message: String =
-                                newMap
+                            val jsonMessage: JsonObject = JsonObject().apply {
+                                this.addProperty("mapString", newMap
                                     .map {
                                         "${it.value.uuid},${Bukkit.getOfflinePlayer(it.value.uuid).name},${it.value.rank}"
                                     }
-                                    .joinToString(";")
-                            metamorphosis.send("com.salkcoding.tunalands.update_land_member_change", message)
+                                    .joinToString(";"))
+                            }
+
+                            metamorphosis.send(
+                                "com.salkcoding.tunalands.update_land_member_change",
+                                jsonMessage.toString()
+                            )
                         }
                     },
                     plugin = tunaLands
