@@ -10,7 +10,7 @@ class LandCommandHandler : CommandExecutor {
 
     //IgnoreCases
     fun register(command: String, executor: CommandExecutor) {
-        val lowerCase = command.toLowerCase()
+        val lowerCase = command.lowercase()
         if (lowerCase !in commandMap) {
             commandMap[lowerCase] = executor
         } else
@@ -19,23 +19,10 @@ class LandCommandHandler : CommandExecutor {
 
     //ignoreCases
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        //Main command
-        /*if (args.isEmpty()) {
-            val player = sender as? Player
-            if (player != null) {
-                if (landManager.hasLand(player))
-                    player.openMainGui()
-                else
-                    player.sendMessage("Only player, has lands can use this command".errorFormat())
-            } else {
-                sender.sendMessage("Only player can use this command".errorFormat())
-            }
-            return true
-        }*/
         if (args.isEmpty()) return false
 
         //Sub command
-        val newLabel = args[0].toLowerCase()
+        val newLabel = args[0].lowercase()
         if (newLabel in commandMap) {
             val newArgs = args.toMutableList()
             newArgs.removeFirst()
