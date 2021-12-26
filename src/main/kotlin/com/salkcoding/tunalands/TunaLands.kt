@@ -74,14 +74,10 @@ class TunaLands : JavaPlugin() {
 
         configRead()
 
-        displayManager = DisplayManager()
-
-        //Depend on displayManager
         landManager = LandManager()
-
-        //Independent manager
-        guiManager = GuiManager()
         borderManager = BorderManager()
+        guiManager = GuiManager()
+        displayManager = DisplayManager()
         alarmManager = AlarmManager()
         recommendManager = RecommendManager(configuration.recommend.reset * 50, configuration.recommend.cooldown * 50)
         leftManager = LeftManager(configuration.command.rejoinCooldown * 50)
@@ -164,16 +160,12 @@ class TunaLands : JavaPlugin() {
     override fun onDisable() {
         database.dispose()
 
-        //Independent manager
         recommendManager.dispose()
         alarmManager.dispose()
-        borderManager.dispose()
-        guiManager.dispose()
-
-        //Depend on displayManager
-        landManager.dispose()
-
         displayManager.dispose()
+        guiManager.dispose()
+        borderManager.dispose()
+        landManager.dispose()
 
         TakeFlagRecipe.unregisterRecipe()
         ReleaseFlagRecipe.unregisterRecipe()

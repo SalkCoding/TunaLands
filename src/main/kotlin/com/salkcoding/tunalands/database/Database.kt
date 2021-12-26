@@ -79,8 +79,7 @@ class Database {
         Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
             val connection = hikari.connection
             try {
-                val prestate =
-                    connection.prepareStatement("DELETE FROM tunalands_landlist WHERE `uuid`=? AND `name`=? AND `x`=? AND `z`=?")
+                val prestate = connection.prepareStatement("DELETE FROM tunalands_landlist WHERE `uuid`=? AND `name`=? AND `x`=? AND `z`=?")
                 try {
                     prestate.setString(1, chunkInfo.ownerUUID.toString())
                     prestate.setString(2, chunkInfo.ownerName)
@@ -126,8 +125,7 @@ class Database {
         Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
             val connection = hikari.connection
             try {
-                val prestate =
-                    connection.prepareStatement("UPDATE tunalands_landlist SET `uuid`=?, `name`=? WHERE `uuid`=? AND name`=?")
+                val prestate = connection.prepareStatement("UPDATE tunalands_landlist SET `uuid`=?, `name`=? WHERE `uuid`=? AND name`=?")
                 try {
                     prestate.setString(1, newUUID.toString())
                     prestate.setString(2, newName)

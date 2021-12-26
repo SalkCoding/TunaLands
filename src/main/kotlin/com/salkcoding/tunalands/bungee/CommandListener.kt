@@ -22,7 +22,6 @@ class CommandListener : Listener {
     @EventHandler
     fun onReceived(event: KafkaReceiveEvent) {
         if (!event.key.startsWith("com.salkcoding.tunalands")) return
-<<<<<<< Updated upstream
         lateinit var json: JsonObject
         try {
             json = JsonParser.parseString(event.value).asJsonObject
@@ -30,9 +29,6 @@ class CommandListener : Listener {
             tunaLands.logger.warning("${event.key} sent an object without transform to JSON object!")
         }
 
-=======
-        val json = JsonParser.parseString(event.value).asJsonObject
->>>>>>> Stashed changes
         val uuid = UUID.fromString(json["uuid"].asString)
         //Split a last sub key
         when (event.key.split(".").last()) {
