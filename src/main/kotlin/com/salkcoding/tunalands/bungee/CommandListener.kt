@@ -19,6 +19,33 @@ import java.util.*
 
 class CommandListener : Listener {
 
+    companion object {
+        val commandList = listOf(
+            "accept",
+            "alba",
+            "ban",
+            "banlist",
+            "cancel",
+            "delete",
+            "demote",
+            "deny",
+            "hego",
+            "invite",
+            "kick",
+            "leave",
+            "promote",
+            "recommend",
+            "recommend_lands",
+            "setleader",
+            "spawn",
+            "pending_spawn_teleport",
+            "unban",
+            "visit",
+            "visit_connect",
+            "pending_visit_teleport",
+        )
+    }
+
     @EventHandler
     fun onReceived(event: KafkaReceiveEvent) {
         if (!event.key.startsWith("com.salkcoding.tunalands")) return
@@ -29,9 +56,12 @@ class CommandListener : Listener {
             tunaLands.logger.warning("${event.key} sent an object without transform to JSON object!")
         }
 
+        val command = event.key.split(".").last()
+        if (!commandList.contains(command)) return
+
         val uuid = UUID.fromString(json["uuid"].asString)
         //Split a last sub key
-        when (event.key.split(".").last()) {
+        when (command) {
             "accept" -> {
                 Accept.work(uuid)
             }
