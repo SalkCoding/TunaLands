@@ -3,6 +3,7 @@ package com.salkcoding.tunalands.bungee
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import com.google.gson.stream.MalformedJsonException
 import com.salkcoding.tunalands.*
 import com.salkcoding.tunalands.commands.sub.*
 import com.salkcoding.tunalands.lands.Lands
@@ -18,13 +19,49 @@ import java.util.*
 
 class CommandListener : Listener {
 
+    companion object {
+        val commandList = listOf(
+            "accept",
+            "alba",
+            "ban",
+            "banlist",
+            "cancel",
+            "delete",
+            "demote",
+            "deny",
+            "hego",
+            "invite",
+            "kick",
+            "leave",
+            "promote",
+            "recommend",
+            "recommend_lands",
+            "setleader",
+            "spawn",
+            "pending_spawn_teleport",
+            "unban",
+            "visit",
+            "visit_connect",
+            "pending_visit_teleport",
+        )
+    }
+
     @EventHandler
     fun onReceived(event: KafkaReceiveEvent) {
         if (!event.key.startsWith("com.salkcoding.tunalands")) return
-        val json = JsonParser().parse(event.value).asJsonObject
+        lateinit var json: JsonObject
+        try {
+            json = JsonParser.parseString(event.value).asJsonObject
+        } catch (e: MalformedJsonException) {
+            tunaLands.logger.warning("${event.key} sent an object without transform to JSON object!")
+        }
+
+        val command = event.key.split(".").last()
+        if (!commandList.contains(command)) return
+
         val uuid = UUID.fromString(json["uuid"].asString)
         //Split a last sub key
-        when (event.key.split(".").last()) {
+        when (command) {
             "accept" -> {
                 Accept.work(uuid)
             }
