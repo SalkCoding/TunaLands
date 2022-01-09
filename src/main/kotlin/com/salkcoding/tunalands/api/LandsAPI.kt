@@ -2,7 +2,9 @@ package com.salkcoding.tunalands.api
 
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.landManager
+import com.salkcoding.tunalands.lands.Lands
 import org.bukkit.Bukkit
+import org.bukkit.entity.Player
 import java.util.*
 
 object LandsAPI {
@@ -26,5 +28,44 @@ object LandsAPI {
                 list
             }
         }
+    }
+
+    /**
+     * Returns the rank of the player for the Lands the player is currently located at.
+     * If the player is not located at a lands or has no rank, it will return null.
+     *
+     * @param  p  target player
+     * @return the rank of the player at current location
+     */
+    fun getPlayerRankAtChunk(p: Player): Rank? {
+        val land = landManager.getLandsWithChunk(p.location.chunk) ?: return null
+
+        for (member: MutableMap.MutableEntry<UUID, Lands.MemberData> in land.memberMap) {
+            if (p.uniqueId == member.key) {
+                return member.value.rank
+            }
+        }
+        return null
+    }
+
+    /**
+     * Returns a list of online members for the lands at current player's location.
+     * If the player is not located at a lands or has no rank, it will return an empty list.
+     *
+     * @param  p  target player
+     * @return the rank of the player at current location
+     */
+    fun getOnlineLandsMembersAtChunk(p: Player): List<Player> {
+        val land = landManager.getLandsWithChunk(p.location.chunk) ?: return emptyList()
+        val onlineMembers = mutableListOf<Player>()
+
+        for (member: MutableMap.MutableEntry<UUID, Lands.MemberData> in land.memberMap) {
+            val onlineMember = Bukkit.getPlayer(member.key)
+            if (onlineMember != null) {
+                onlineMembers.add(onlineMember)
+            }
+        }
+
+        return onlineMembers
     }
 }
