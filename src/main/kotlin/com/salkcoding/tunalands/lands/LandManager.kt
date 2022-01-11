@@ -165,6 +165,18 @@ class LandManager {
         }
     }
 
+    fun getLandsWithChunkQuery(worldName: String, query: String): Lands? {
+        val chunkInfo = landMap[query] ?: return null
+        if (chunkInfo.chunk.world.name != worldName) return null
+
+        for (lands in playerLandMap.values) {
+            if (lands.landList.contains(query)) {
+                return lands
+            }
+        }
+        return null
+    }
+
     fun isSameLandsNameExist(name: String): Boolean {
         playerLandMap.forEach { (_, lands) ->
             if (lands.landsName == name)

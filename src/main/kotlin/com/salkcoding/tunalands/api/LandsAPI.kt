@@ -68,4 +68,17 @@ object LandsAPI {
 
         return onlineMembers
     }
+
+    /**
+     * Returns the UUID of the owner that owns the chunk at x, z in world worldName
+     * chunkData string is in the format of chunk_x:chunk_z
+     *
+     * @param  worldName  world name
+     * @param  chunkData  chunk_x:chunk_z
+     * @return the UUID of the owner at specified chunk
+     */
+    fun getOwnerUUIDWithChunkQuery(worldName: String, chunkData: String): UUID? {
+        val land = landManager.getLandsWithChunkQuery(worldName, chunkData) ?: return null
+        return land.ownerUUID
+    }
 }
