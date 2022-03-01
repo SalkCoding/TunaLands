@@ -23,6 +23,12 @@ class CoreListener : Listener {
         val placedBlock = event.block
         val player = event.player
         if (placedBlock.type == configuration.protect.coreBlock && player.isSneaking) {
+            if(configuration.limitWorld.contains(placedBlock.world.name)){
+                player.sendErrorTipMessage("${ChatColor.RED}해당 월드에서는 코어를 만들 수 없습니다!")
+                event.isCancelled = true
+                return
+            }
+
             if (landManager.isProtectedLand(placedBlock.chunk)){
                 player.sendErrorTipMessage("${ChatColor.RED}다른 사람의 땅에는 코어를 만들 수 없습니다!")
                 event.isCancelled = true
