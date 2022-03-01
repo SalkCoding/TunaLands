@@ -29,6 +29,12 @@ class CoreListener : Listener {
                 return
             }
 
+            if(configuration.limitWorld.contains(placedBlock.world.name)){
+                player.sendErrorTipMessage("${ChatColor.RED}해당 월드에서는 코어를 만들 수 없습니다!")
+                event.isCancelled = true
+                return
+            }
+
             if (landManager.getPlayerLands(player.uniqueId) != null) {
                 player.sendErrorTipMessage("${ChatColor.RED}이미 땅을 소유하고있습니다!")
                 event.isCancelled = true
