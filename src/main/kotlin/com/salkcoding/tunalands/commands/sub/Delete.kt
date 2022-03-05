@@ -61,7 +61,8 @@ class Delete : CommandExecutor {
                         //Destroy core naturally
                         upCoreLocation.block.type = Material.AIR
                         downCoreLocation.block.type = Material.AIR
-
+                        
+                        alarmManager.unregisterAlarm(lands)
                         landManager.deleteLands(offlinePlayer)
                         bukkitLinkedAPI.sendMessageAcrossServer(hostName, "땅을 삭제했습니다.".infoFormat())
                     } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "모든 멤버가 나가기전까지는 땅을 삭제할 수 없습니다.".errorFormat())
