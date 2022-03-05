@@ -146,6 +146,12 @@ class Debug : CommandExecutor {
                 val target = Bukkit.getOfflinePlayer(args[1])
                 val lands = landManager.getPlayerLands(target.uniqueId, Rank.OWNER)
                 if (lands != null) {
+                    val upCoreLocation = lands.upCoreLocation
+                    val downCoreLocation = lands.downCoreLocation
+                    upCoreLocation.block.type = Material.AIR
+                    downCoreLocation.block.type = Material.AIR
+
+                    alarmManager.unregisterAlarm(lands)
                     landManager.deleteLands(target)
                     sender.sendMessage("${target.name}의 땅을 삭제했습니다.".infoFormat())
                 } else sender.sendMessage("소속된 곳이 없습니다".infoFormat())
