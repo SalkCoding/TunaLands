@@ -7,10 +7,7 @@ import com.salkcoding.tunalands.io.JsonReader
 import com.salkcoding.tunalands.io.JsonWriter
 import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.*
-import org.bukkit.Bukkit
-import org.bukkit.ChatColor
-import org.bukkit.Chunk
-import org.bukkit.OfflinePlayer
+import org.bukkit.*
 import org.bukkit.block.Block
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -57,23 +54,33 @@ class LandManager {
         }
     }
 
-    fun deleteLands(owner: OfflinePlayer) {
-        deleteLands(owner.uniqueId, owner.name!!)
-    }
+    fun deleteLands(lands: Lands, forced: Boolean = false) {
+        val uuid = lands.ownerUUID
+        val name = lands.ownerName
+        val upCoreLocation = lands.upCoreLocation
+        val downCoreLocation = lands.downCoreLocation
 
-    fun deleteLands(ownerUUID: UUID, ownerName: String) {
-        val lands = playerLandMap[ownerUUID]!!
+        //Destroy core naturally
+        if (forced) {
+            upCoreLocation.block.type = Material.AIR
+            downCoreLocation.block.type = Material.AIR
+        } else {
+            upCoreLocation.block.breakNaturally()
+            downCoreLocation.block.breakNaturally()
+        }
+
+        alarmManager.unregisterAlarm(lands)
         displayManager.removeDisplay(lands)
         lands.landList.forEach { query ->
             landMap.remove(query)
         }
-        playerLandMap.remove(ownerUUID)
-        database.deleteAll(ownerUUID, ownerName)
+        playerLandMap.remove(uuid)
+        database.deleteAll(uuid, name)
 
         Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
             val folder = File(tunaLands.dataFolder, "userdata")
             if (folder.exists()) {
-                val file = File(folder, "$ownerUUID.json")
+                val file = File(folder, "$uuid.json")
                 if (file.exists())
                     file.delete()
             }
