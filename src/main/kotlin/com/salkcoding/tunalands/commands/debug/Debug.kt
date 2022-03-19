@@ -30,7 +30,7 @@ class Debug : CommandExecutor {
                 val uuid = Bukkit.getOfflinePlayer(name).uniqueId
                 val lands = landManager.getPlayerLands(targetUUID, Rank.OWNER)
                 if (lands != null) {
-                    when (val rank = args[3]) {
+                    when (val rank = args[3].lowercase()) {
                         "owner",
                         "delegator",
                         "member",
@@ -38,7 +38,7 @@ class Debug : CommandExecutor {
                         "visitor" -> {
                             lands.memberMap[uuid] = Lands.MemberData(
                                 uuid,
-                                Rank.valueOf(rank),
+                                Rank.valueOf(rank.uppercase()),
                                 System.currentTimeMillis(),
                                 System.currentTimeMillis()
                             )

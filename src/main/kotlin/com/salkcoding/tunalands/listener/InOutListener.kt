@@ -55,7 +55,11 @@ class InOutListener : Listener {
                 visitLands.memberMap.remove(playerUUID)
 
                 player.sendMessage("${visitLands.landsName}을/를 떠났습니다.".infoFormat())
-                leftManager.recordLeft(playerUUID)
+                
+                /*
+                    TODO 버그: 땅이 없는 A 플레이어가 B 플레이어의 땅을 wasd 로 이동했다가 나올경우, 땅 멤버에서 나왔다고 취급됨.
+                    leftManager.recordLeft(playerUUID)
+                 */
 
                 visitLands.sendMessageToOnlineMembers("${ChatColor.GRAY}[${rank.toColoredText()}${ChatColor.GRAY}] ${ChatColor.GREEN}${player.name}${ChatColor.WHITE}이/가 땅을 떠났습니다.".warnFormat())
             }
