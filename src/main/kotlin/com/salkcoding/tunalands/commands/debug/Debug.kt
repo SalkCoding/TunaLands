@@ -30,7 +30,7 @@ class Debug : CommandExecutor {
                 val uuid = Bukkit.getOfflinePlayer(name).uniqueId
                 val lands = landManager.getPlayerLands(targetUUID, Rank.OWNER)
                 if (lands != null) {
-                    when (val rank = args[3]) {
+                    when (val rank = args[3].lowercase()) {
                         "owner",
                         "delegator",
                         "member",
@@ -38,7 +38,7 @@ class Debug : CommandExecutor {
                         "visitor" -> {
                             lands.memberMap[uuid] = Lands.MemberData(
                                 uuid,
-                                Rank.valueOf(rank),
+                                Rank.valueOf(rank.uppercase()),
                                 System.currentTimeMillis(),
                                 System.currentTimeMillis()
                             )
@@ -167,6 +167,39 @@ class Debug : CommandExecutor {
                 } else {
                     sender.sendMessage("콘솔에서는 사용 불가능한 명령어입니다.".errorFormat())
                 }
+                return true
+            }
+            args[0] == "move" && args.size == 3 -> {
+                val uuid = Bukkit.getPlayerUniqueId(args[1])
+                val targetUUID = Bukkit.getPlayerUniqueId(args[2])
+                if (uuid == null) {
+                    sender.sendMessage("${args[1]}이라는 유저는 존재하지 않습니다!".errorFormat())
+                    return true
+                }
+                if (targetUUID == null) {
+                    sender.sendMessage("${args[2]}이라는 유저는 존재하지 않습니다!".errorFormat())
+                    return true
+                }
+
+                val landList = landManager.getPlayerLandsList(uuid)
+                if (landList.isNotEmpty()) {
+                    landList.forEach { lands ->
+                        val data = lands.memberMap[uuid]!!
+                        if (data.rank != Rank.OWNER) lands.memberMap.remove(uuid)
+                        else {
+                            lands.memberMap.remove(uuid)
+                            val list = lands.memberMap.values.toList()
+                            list.sortedBy { it.rank }
+                            landManager.changeChunksOwner(
+                                Bukkit.getOfflinePlayer(uuid),
+                                Bukkit.getOfflinePlayer(list.first().uuid)
+                            )
+                        }
+                    }
+                }
+                val lands = landManager.getPlayerLands(targetUUID)!!
+                val present = System.currentTimeMillis()
+                lands.memberMap[uuid] = Lands.MemberData(uuid, Rank.valueOf(args[2].uppercase()), present, present)
                 return true
             }
             else -> return false

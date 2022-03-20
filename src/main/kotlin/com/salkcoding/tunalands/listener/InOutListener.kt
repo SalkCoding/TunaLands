@@ -2,9 +2,7 @@ package com.salkcoding.tunalands.listener
 
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.landManager
-import com.salkcoding.tunalands.leftManager
 import com.salkcoding.tunalands.util.*
-import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -51,12 +49,9 @@ class InOutListener : Listener {
                 val playerUUID = player.uniqueId
                 val visitLands = landManager.getPlayerLands(playerUUID, Rank.VISITOR) ?: return
                 val rank = visitLands.memberMap[playerUUID]!!.rank
-
                 visitLands.memberMap.remove(playerUUID)
 
                 player.sendMessage("${visitLands.landsName}을/를 떠났습니다.".infoFormat())
-                leftManager.recordLeft(playerUUID)
-
                 visitLands.sendMessageToOnlineMembers("${ChatColor.GRAY}[${rank.toColoredText()}${ChatColor.GRAY}] ${ChatColor.GREEN}${player.name}${ChatColor.WHITE}이/가 땅을 떠났습니다.".warnFormat())
             }
         }
