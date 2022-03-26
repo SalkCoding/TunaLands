@@ -22,8 +22,10 @@ class AsyncBorderPainter : Runnable {
                     val x = split.first
                     val z = split.second
 
-                    val location = world.getHighestBlockAt(x, z).location.add(0.0, 3.0, 0.0)
-                    world.spawnParticle(Particle.FIREWORKS_SPARK, location, 0, .0, .0, .0, .0, null, true)
+                    if (world.isChunkLoaded(x, z)) {
+                        val location = world.getHighestBlockAt(x, z).location.add(0.0, 3.0, 0.0)
+                        world.spawnParticle(Particle.FIREWORKS_SPARK, location, 0, .0, .0, .0, .0, null, true)
+                    }
                 }
             })
         }
