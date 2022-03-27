@@ -9,6 +9,13 @@ import java.util.*
 
 object LandsAPI {
 
+    /**
+     * Returns the rank of the player belonged.
+     * If player has belonged various groups, the higher rank will be returned.
+     *
+     * @param uuid player UUID
+     * @return the rank of the player
+     */
     fun getPlayerRank(uuid: UUID): Rank? {
         return when (val lands = landManager.getPlayerLands(uuid)) {
             null -> null
@@ -16,6 +23,40 @@ object LandsAPI {
         }
     }
 
+    /**
+     * Returns the rank of the player for the Lands the player is currently located at.
+     * If the player is not located at a lands or has no rank, it will return null.
+     *
+     * @param p target player
+     * @return the rank of the player at current location
+     */
+    fun getPlayerRankAtChunk(p: Player): Rank? {
+        val land = landManager.getLandsWithChunk(p.location.chunk) ?: return null
+
+        for (member: MutableMap.MutableEntry<UUID, Lands.MemberData> in land.memberMap) {
+            if (p.uniqueId == member.key) {
+                return member.value.rank
+            }
+        }
+        return null
+    }
+
+    /**
+     * Returns the list of lands that player belonged
+     *
+     * @param uuid uuid of targeted player
+     * @return the rank of the player at current location
+     */
+    fun getPlayerLandsList(uuid: UUID): List<Lands> {
+        return landManager.getPlayerLandsList(uuid)
+    }
+
+    /**
+     * Returns the list of lands members
+     *
+     * @param uuid player UUID
+     * @return list of lands members
+     */
     fun getPlayerLandsMemberList(uuid: UUID): List<String>? {
         return when (val lands = landManager.getPlayerLands(uuid)) {
             null -> null
@@ -31,28 +72,10 @@ object LandsAPI {
     }
 
     /**
-     * Returns the rank of the player for the Lands the player is currently located at.
-     * If the player is not located at a lands or has no rank, it will return null.
-     *
-     * @param  p  target player
-     * @return the rank of the player at current location
-     */
-    fun getPlayerRankAtChunk(p: Player): Rank? {
-        val land = landManager.getLandsWithChunk(p.location.chunk) ?: return null
-
-        for (member: MutableMap.MutableEntry<UUID, Lands.MemberData> in land.memberMap) {
-            if (p.uniqueId == member.key) {
-                return member.value.rank
-            }
-        }
-        return null
-    }
-
-    /**
      * Returns a list of online members for the lands at current player's location.
      * If the player is not located at a lands or has no rank, it will return an empty list.
      *
-     * @param  p  target player
+     * @param p target player
      * @return the rank of the player at current location
      */
     fun getOnlineLandsMembersAtChunk(p: Player): List<Player> {
@@ -73,8 +96,8 @@ object LandsAPI {
      * Returns the UUID of the owner that owns the chunk at x, z in world worldName
      * chunkData string is in the format of chunk_x:chunk_z
      *
-     * @param  worldName  world name
-     * @param  chunkData  chunk_x:chunk_z
+     * @param worldName world name
+     * @param chunkData chunk_x:chunk_z
      * @return the UUID of the owner at specified chunk
      */
     fun getOwnerUUIDWithChunkQuery(worldName: String, chunkData: String): UUID? {

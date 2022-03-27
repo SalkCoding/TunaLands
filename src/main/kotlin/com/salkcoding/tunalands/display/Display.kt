@@ -5,7 +5,7 @@ import com.gmail.filoghost.holographicdisplays.api.Hologram
 abstract class Display {
 
     protected lateinit var hologram: Hologram
-    var pause: Boolean = false
+    var isPaused: Boolean = false
 
     open fun create() {
         throw NotImplementedError("Create method not implemented")
@@ -16,11 +16,11 @@ abstract class Display {
     }
 
     open fun pause() {
-        pause = true
+        isPaused = true
     }
 
     open fun resume() {
-        pause = false
+        isPaused = false
     }
 
     open fun remove() {
