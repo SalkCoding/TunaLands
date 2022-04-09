@@ -62,48 +62,55 @@ class VisitGui(private val player: Player) : GuiInterface {
     private fun pageRender(inv: Inventory) {
         val sortLore = when (sortWay) {
             0 -> {
-                //Default sorting
+                // oldest created
+                landList = landMap.keys.sortedBy {
+                    landMap[it]!!.landHistory.createdMillisecond
+                }
+                "오래된 순"
+            }
+            1 -> {
+                // most recently created
                 landList = landMap.keys.sortedByDescending {
                     landMap[it]!!.landHistory.createdMillisecond
                 }
-                "기본"
+                "최신 순"
             }
-            1 -> {
+            2 -> {
                 //Public sorting
                 landList = landMap.keys.sortedByDescending {
                     landMap[it]!!.landHistory.createdMillisecond
-                }
+                }.sortedBy { landMap[it]!!.open }
                 "공개 지역"
             }
-            2 -> {
+            3 -> {
                 //Private sorting
                 landList = landMap.keys.sortedByDescending {
                     landMap[it]!!.landHistory.createdMillisecond
-                }
+                }.sortedBy { !landMap[it]!!.open }
                 "비공개 지역"
             }
-            3 -> {
+            4 -> {
                 //Recommend count sorting
                 landList = landMap.keys.sortedByDescending {
                     landMap[it]!!.recommend
                 }
                 "추천 수"
             }
-            4 -> {
+            5 -> {
                 //Member count sorting
                 landList = landMap.keys.sortedByDescending {
                     landMap[it]!!.memberMap.size
                 }
                 "멤버 수"
             }
-            5 -> {
+            6 -> {
                 //Visitor count sorting
                 landList = landMap.keys.sortedByDescending {
                     landMap[it]!!.landHistory.visitorCount
                 }
                 "방문자 수"
             }
-            6 -> {
+            7 -> {
                 //Solo sorting
                 landList = landMap.keys.sortedByDescending {
                     landMap[it]!!.landHistory.createdMillisecond
@@ -118,7 +125,8 @@ class VisitGui(private val player: Player) : GuiInterface {
         sortButton.apply {
             this.lore = listOf(
                 "${ChatColor.WHITE}현재 보기 상태: ${ChatColor.GOLD}$sortLore",
-                "${ChatColor.WHITE}기본: 생성된 시간이 오래된 순으로 정렬합니다.",
+                "${ChatColor.WHITE}오래된 순: 생성된 시간이 오래된 순으로 정렬합니다.",
+                "${ChatColor.WHITE}최신 순: 최근에 생성된 순으로 정렬합니다.",
                 "${ChatColor.WHITE}공개 지역: 공개로 설정된 지역의 목록을 생성된 시간이 오래된 순으로  정렬합니다.",
                 "${ChatColor.WHITE}비공개 지역: 비공개로 설정된 지역의 목록을 생성된 시간이 오래된 순서으로 정렬합니다.",
                 "${ChatColor.WHITE}추천 수: 추천이 많은 순으로 정렬합니다.",
