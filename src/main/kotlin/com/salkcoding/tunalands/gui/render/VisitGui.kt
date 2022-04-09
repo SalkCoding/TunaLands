@@ -71,14 +71,14 @@ class VisitGui(private val player: Player) : GuiInterface {
             1 -> {
                 //Public sorting
                 landList = landMap.keys.sortedByDescending {
-                    landMap[it]!!.landHistory.createdMillisecond
+                    landMap[it]!!.open
                 }
                 "공개 지역"
             }
             2 -> {
                 //Private sorting
                 landList = landMap.keys.sortedByDescending {
-                    landMap[it]!!.landHistory.createdMillisecond
+                    !landMap[it]!!.open
                 }
                 "비공개 지역"
             }
