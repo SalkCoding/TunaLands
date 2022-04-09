@@ -177,6 +177,11 @@ class VisitGui(private val player: Player) : GuiInterface {
             })
         }
 
+        // Clear empty slots
+        for (i in length until 36) {
+            inv.clear(i + 18)
+        }
+
         if (currentPage < 1)
             inv.setItem(9, blackPane)
         else
