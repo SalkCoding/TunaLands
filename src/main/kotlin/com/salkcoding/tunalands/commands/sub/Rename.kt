@@ -7,6 +7,7 @@ import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.hasNotEnoughMoney
 import com.salkcoding.tunalands.util.infoFormat
+import net.milkbowl.vault.economy.EconomyResponse
 import org.bukkit.ChatColor
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -27,7 +28,6 @@ class Rename : CommandExecutor {
                     player.sendMessage("${delta}캔이 부족합니다.".errorFormat())
                     return true
                 }
-                economy.withdrawPlayer(player, price)
 
                 val lands = landManager.getPlayerLands(player.uniqueId, Rank.OWNER)
                 if (lands != null) {
@@ -43,8 +43,13 @@ class Rename : CommandExecutor {
                         return true
                     }
 
-                    lands.landsName = "${ChatColor.WHITE}$newLandsName"
-                    player.sendMessage("땅 이름을 ${ChatColor.GRAY}${lands.landsName}${ChatColor.RESET}으로 변경하였습니다.".infoFormat())
+                    val res = economy.withdrawPlayer(player, price)
+                    if (res.type == EconomyResponse.ResponseType.SUCCESS) {
+                        lands.landsName = "${ChatColor.WHITE}$newLandsName"
+                        player.sendMessage("땅 이름을 ${ChatColor.GRAY}${lands.landsName}${ChatColor.RESET}으로 변경하였습니다.".infoFormat())
+                    } else {
+                        player.sendMessage("캔이 부족합니다.".errorFormat())
+                    }
                 } else player.sendMessage("땅의 소유자만 사용 가능한 명령어입니다.".errorFormat())
             } else sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
             return true
