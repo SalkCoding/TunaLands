@@ -62,11 +62,21 @@ flag:
   releaseFlagPrice: 5
 
 fuel:
-  m30: 30
-  h1: 50
-  h6: 290
-  h12: 570
-  h24: 1100
+  price: 10.0
+  fuelRequirements:
+    # Required secondsPerFuel: above 0.5 (because TunaLands only checks and consumes fuel every 0.5 seconds)
+    # Recommended secondsPerFuel: above 1
+    - numOfMembers: 1
+      numOfChunks: 1
+      secondsPerFuel: 120.0
+
+    - numOfMembers: 4
+      numOfChunks: 4
+      secondsPerFuel: 60.0
+
+    - numOfMembers: 100
+      numOfChunks: 400
+      secondsPerFuel: 0.1
 
 command:
   cooldown: #Tick
