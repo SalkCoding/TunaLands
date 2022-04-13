@@ -13,6 +13,8 @@ import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Location
 import java.io.File
+import java.time.Instant
+import java.time.ZoneId
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -30,6 +32,7 @@ object JsonReader {
 
                 val ownerName = jsonObject["ownerName"].asString
                 val ownerUUID = UUID.fromString(jsonObject["ownerUUID"].asString)
+                val fuelLeft = jsonObject["fuelLeft"].asLong
                 val expiredMillisecond = jsonObject["expiredMillisecond"].asLong
                 val enable = jsonObject["enable"].asBoolean
                 val open = jsonObject["open"].asBoolean
@@ -186,7 +189,10 @@ object JsonReader {
                         landHistory,
                         upCore,
                         downCore,
-                        expiredMillisecond,
+                        fuelLeft,
+                        Instant.ofEpochMilli(expiredMillisecond)
+                            .atZone(ZoneId.systemDefault())
+                            .toLocalDateTime(),
                         enable,
                         open,
                         recommend,

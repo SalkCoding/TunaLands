@@ -2,6 +2,7 @@ package com.salkcoding.tunalands.lands
 
 import com.google.gson.JsonObject
 import com.salkcoding.tunalands.bukkitLinkedAPI
+import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.lands.setting.DelegatorSetting
 import com.salkcoding.tunalands.lands.setting.LandSetting
@@ -11,7 +12,10 @@ import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Chunk
 import org.bukkit.Location
+import java.time.Duration
+import java.time.LocalDateTime
 import java.util.*
+import kotlin.math.roundToLong
 
 data class Lands(
     var ownerName: String,
@@ -20,7 +24,8 @@ data class Lands(
     val landHistory: LandHistory,
     val upCoreLocation: Location, //Chest
     val downCoreLocation: Location, //Core block
-    var expiredMillisecond: Long,
+    var fuelLeft: Long, // amount of fuel left,
+    var nextTimeFuelNeedsToBeConsumed: LocalDateTime,
     //Optional variables of Constructor
     var enable: Boolean = true,
     var open: Boolean = false,
@@ -108,5 +113,21 @@ data class Lands(
             else
                 bukkitLinkedAPI.sendMessageAcrossServer(offlinePlayer.name, message)
         }
+    }
+
+    fun getEstimatedMillisecondsLeftWithCurrentFuel(): Long {
+        val currentFuelTimeLeft = Duration.between(this.nextTimeFuelNeedsToBeConsumed, LocalDateTime.now())
+
+        val secondsPerFuel = configuration.fuel.getFuelRequirement(this).secondsPerFuel
+        val msPerFuel = (secondsPerFuel * 1000).roundToLong()
+        val timeLeftInMilliseconds = currentFuelTimeLeft.toMillis() + msPerFuel * this.fuelLeft
+
+        return timeLeftInMilliseconds
+    }
+
+    fun getMillisecondsPerFuel(): Long {
+        val secondsPerFuel = configuration.fuel.getFuelRequirement(this).secondsPerFuel
+        val msPerFuel = (secondsPerFuel * 1000).roundToLong()
+        return msPerFuel
     }
 }

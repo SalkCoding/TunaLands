@@ -1,40 +1,54 @@
 package com.salkcoding.tunalands.lands
 
-import com.salkcoding.tunalands.alarmManager
-import com.salkcoding.tunalands.database
-import com.salkcoding.tunalands.displayManager
+import com.salkcoding.tunalands.*
 import com.salkcoding.tunalands.io.JsonReader
 import com.salkcoding.tunalands.io.JsonWriter
-import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.*
 import org.bukkit.*
 import org.bukkit.block.Block
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.io.File
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.math.roundToLong
 
 class LandManager {
 
     private val landMap = ConcurrentHashMap<String, Lands.ChunkInfo>()
     private val playerLandMap = JsonReader.loadPlayerLandMap()
-    private val task = Bukkit.getScheduler().runTaskTimerAsynchronously(tunaLands, Runnable {
+    private val task = Bukkit.getScheduler().runTaskTimer(tunaLands, Runnable {
         playerLandMap.forEach { (_, lands) ->
-            val expired = lands.expiredMillisecond
-            val present = System.currentTimeMillis()
-            if (lands.enable && present > expired) {
-                lands.sendMessageToOnlineMembers(
-                    listOf(
-                        "땅 보호 기간이 만료되어 비활성화 상태로 전환됩니다!".warnFormat(),
-                        "코어에 연료를 넣어 활성화하지 않을 경우 모든 블럭과의 상호작용이 불가능합니다!".warnFormat()
+            val timeToConsumeFuel = lands.nextTimeFuelNeedsToBeConsumed
+            val present = LocalDateTime.now()
+
+            if (lands.enable && present.isAfter(timeToConsumeFuel)) {
+                // 새롭게 연료를 소비해야되는 시간이 됨
+
+                if (lands.fuelLeft > 0) {
+                    // minutesPerFuel 이 소숫점일 수도 있어서 밀리초로 변환 후 적용합니다.
+                    // 예: minutesPerFuel 이 0.01 일 경우, 연료 하나당 0.01분을 커버해줍니다.
+                    // => 0.01분 = 0.6초 = 600밀리초
+                    val secondsPerFuel = configuration.fuel.getFuelRequirement(lands).secondsPerFuel
+                    val msPerFuel = (secondsPerFuel * 1000).roundToLong()
+
+                    lands.nextTimeFuelNeedsToBeConsumed = present.plus(msPerFuel, ChronoUnit.MILLIS)
+                    lands.fuelLeft--
+                } else {
+                    lands.sendMessageToOnlineMembers(
+                        listOf(
+                            "땅 보호 기간이 만료되어 비활성화 상태로 전환됩니다!".warnFormat(),
+                            "코어에 연료를 넣어 활성화하지 않을 경우 모든 블럭과의 상호작용이 불가능합니다!".warnFormat()
+                        )
                     )
-                )
-                displayManager.pauseDisplay(lands)
-                lands.enable = false
+                    displayManager.pauseDisplay(lands)
+                    lands.enable = false
+                }
             }
         }
-    }, 100, 100)
+    }, 100, 10)
 
     init {
         playerLandMap.forEach { (_, lands) ->
@@ -48,9 +62,10 @@ class LandManager {
                     result.second
                 )
             }
-            val expired = lands.expiredMillisecond - System.currentTimeMillis()
-            if (expired > 0)
+
+            if (lands.fuelLeft > 0) {
                 displayManager.createDisplay(lands)
+            }
         }
     }
 
@@ -202,7 +217,12 @@ class LandManager {
             val uuid = player.uniqueId
             if (!playerLandMap.containsKey(uuid)) {
                 val now = System.currentTimeMillis()
-                val expired = System.currentTimeMillis() + 86400000//1 Day
+                // Give fuel that should last for 24 hours
+                val defaultFuelRequirement = configuration.fuel.fuelRequirements.maxOf { it }
+                val defaultFuelAmount = (86400 / defaultFuelRequirement.secondsPerFuel).roundToLong()
+                val msPerFuel = (defaultFuelRequirement.secondsPerFuel * 1000).roundToLong()
+                val nextTimeToConsumeFuel = LocalDateTime.now().plus(msPerFuel, ChronoUnit.MILLIS)
+
                 val lands = Lands(
                     player.name,
                     uuid,
@@ -213,7 +233,8 @@ class LandManager {
                     ),
                     upCore.location,
                     downCore.location,
-                    expired
+                    defaultFuelAmount,
+                    nextTimeToConsumeFuel
                 ).apply {
                     this.memberMap[uuid] = Lands.MemberData(uuid, Rank.OWNER, now, now)
                 }

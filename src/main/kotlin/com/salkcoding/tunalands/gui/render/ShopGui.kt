@@ -18,44 +18,50 @@ import org.bukkit.inventory.Inventory
 class ShopGui(private val player: Player, private val lands: Lands, private val rank: Rank) : GuiInterface {
 
     companion object {
-        val fuel30Minutes = (Material.PAPER * 1).apply {
+
+        val fuel = (Material.PAPER * 1).apply {
             this.setDisplayName("${ChatColor.WHITE}연료")
             this.lore = listOf(
-                "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.fuel.m30}캔",
-                "${ChatColor.WHITE}30분 동안 유지되는 연료이다."
+                "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.fuel.price}캔",
+                "${ChatColor.WHITE}마을의 규모에 따라 시간적 가치가 변하는 연료이다. (1개)"
             )
+            this.amount = 1
         }
 
-        val fuel1Hour = (Material.PAPER * 1).apply {
+        val fuel8 = (Material.PAPER * 1).apply {
             this.setDisplayName("${ChatColor.WHITE}연료")
             this.lore = listOf(
-                "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.fuel.h1}캔",
-                "${ChatColor.WHITE}1시간 동안 유지되는 연료이다."
+                "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.fuel.price * 8}캔",
+                "${ChatColor.WHITE}마을의 규모에 따라 시간적 가치가 변하는 연료이다. (8개)"
             )
+            this.amount = 8
         }
 
-        val fuel6Hours = (Material.PAPER * 1).apply {
+        val fuel16 = (Material.PAPER * 1).apply {
             this.setDisplayName("${ChatColor.WHITE}연료")
             this.lore = listOf(
-                "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.fuel.h6}캔",
-                "${ChatColor.WHITE}6시간 동안 유지되는 연료이다."
+                "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.fuel.price * 16}캔",
+                "${ChatColor.WHITE}마을의 규모에 따라 시간적 가치가 변하는 연료이다. (16개)"
             )
+            this.amount = 16
         }
 
-        val fuel12Hours = (Material.PAPER * 1).apply {
+        val fuel32 = (Material.PAPER * 1).apply {
             this.setDisplayName("${ChatColor.WHITE}연료")
             this.lore = listOf(
-                "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.fuel.h12}캔",
-                "${ChatColor.WHITE}12시간 동안 유지되는 연료이다."
+                "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.fuel.price * 32}캔",
+                "${ChatColor.WHITE}마을의 규모에 따라 시간적 가치가 변하는 연료이다. (32개)"
             )
+            this.amount = 32
         }
 
-        val fuel24Hours = (Material.PAPER * 1).apply {
+        val fuel64 = (Material.PAPER * 1).apply {
             this.setDisplayName("${ChatColor.WHITE}연료")
             this.lore = listOf(
-                "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.fuel.h24}캔",
-                "${ChatColor.WHITE}24시간 동안 유지되는 연료이다."
+                "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.fuel.price * 64}캔",
+                "${ChatColor.WHITE}마을의 규모에 따라 시간적 가치가 변하는 연료이다. (64개)"
             )
+            this.amount = 64
         }
     }
 
@@ -75,11 +81,11 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
 
         inv.setItem(0, backButton)
 
-        inv.setItem(29, fuel30Minutes)
-        inv.setItem(30, fuel1Hour)
-        inv.setItem(31, fuel6Hours)
-        inv.setItem(32, fuel12Hours)
-        inv.setItem(33, fuel24Hours)
+        inv.setItem(29, fuel)
+        inv.setItem(30, fuel8)
+        inv.setItem(31, fuel16)
+        inv.setItem(32, fuel32)
+        inv.setItem(33, fuel64)
     }
 
     override fun onClick(event: InventoryClickEvent) {
@@ -90,7 +96,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 player.openMainGui(lands, rank)
             }
             29 -> {
-                val price = configuration.fuel.m30.toDouble()
+                val price = configuration.fuel.price
                 if (player.hasNotEnoughMoney(price)) {
                     val delta = price - economy.getBalance(player)
                     player.sendMessage("${delta}캔이 부족합니다.".errorFormat())
@@ -98,10 +104,10 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 }
                 economy.withdrawPlayer(player, price)
 
-                player.giveOrDrop(fuel30Minutes)
+                player.giveOrDrop(fuel)
             }
             30 -> {
-                val price = configuration.fuel.h1.toDouble()
+                val price = configuration.fuel.price * 8
                 if (player.hasNotEnoughMoney(price)) {
                     val delta = price - economy.getBalance(player)
                     player.sendMessage("${delta}캔이 부족합니다.".errorFormat())
@@ -109,10 +115,10 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 }
                 economy.withdrawPlayer(player, price)
 
-                player.giveOrDrop(fuel1Hour)
+                player.giveOrDrop(fuel8)
             }
             31 -> {
-                val price = configuration.fuel.h6.toDouble()
+                val price = configuration.fuel.price * 16
                 if (player.hasNotEnoughMoney(price)) {
                     val delta = price - economy.getBalance(player)
                     player.sendMessage("${delta}캔이 부족합니다.".errorFormat())
@@ -120,10 +126,10 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 }
                 economy.withdrawPlayer(player, price)
 
-                player.giveOrDrop(fuel6Hours)
+                player.giveOrDrop(fuel16)
             }
             32 -> {
-                val price = configuration.fuel.h12.toDouble()
+                val price = configuration.fuel.price * 32
                 if (player.hasNotEnoughMoney(price)) {
                     val delta = price - economy.getBalance(player)
                     player.sendMessage("${delta}캔이 부족합니다.".errorFormat())
@@ -131,10 +137,10 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 }
                 economy.withdrawPlayer(player, price)
 
-                player.giveOrDrop(fuel12Hours)
+                player.giveOrDrop(fuel32)
             }
             33 -> {
-                val price = configuration.fuel.h24.toDouble()
+                val price = configuration.fuel.price * 64
                 if (player.hasNotEnoughMoney(price)) {
                     val delta = price - economy.getBalance(player)
                     player.sendMessage("${delta}캔이 부족합니다.".errorFormat())
@@ -142,7 +148,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 }
                 economy.withdrawPlayer(player, price)
 
-                player.giveOrDrop(fuel24Hours)
+                player.giveOrDrop(fuel64)
             }
         }
     }

@@ -102,10 +102,10 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
         val created = Calendar.getInstance()
         created.timeInMillis = landHistory.createdMillisecond
 
-        task = Bukkit.getScheduler().runTaskTimerAsynchronously(tunaLands, Runnable {
-            val expired = lands.expiredMillisecond - System.currentTimeMillis()
+        task = Bukkit.getScheduler().runTaskTimer(tunaLands, Runnable {
+            val timeLeftUntilExpiration = lands.getEstimatedMillisecondsLeftWithCurrentFuel()
             //Expired
-            if (lands.enable && expired < 1000) {//Just close, DO NOT DELETE DATA OR BLOCK HERE
+            if (lands.enable && timeLeftUntilExpiration < 1000) {//Just close, DO NOT DELETE DATA OR BLOCK HERE
                 player.sendMessage("보호 기간이 만료되어, 지역 보호가 비활성화됩니다!".warnFormat())
                 task.cancel()
                 Bukkit.getScheduler().runTask(tunaLands, Runnable(player::closeInventory))
@@ -113,20 +113,21 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
             }
             //Not expired or already disabled
             totalInfoIcon.apply {
-                val days = expired / 86400000
-                val hours = (expired / 3600000) % 24
-                val minutes = (expired / 60000) % 60
-                val seconds = (expired / 1000) % 60
-                val fuel = when {
-                    days > 0 -> "${ChatColor.WHITE}남은 연료: ${days}일 ${hours}시간 ${minutes}분 ${seconds}초"
-                    hours > 0 -> "${ChatColor.WHITE}남은 연료: ${hours}시간 ${minutes}분 ${seconds}초"
-                    minutes > 0 -> "${ChatColor.WHITE}남은 연료: ${minutes}분 ${seconds}초"
-                    seconds > 0 -> "${ChatColor.WHITE}남은 연료: ${seconds}초"
-                    else -> "${ChatColor.RED}보호 기간이 만료됨!"
+                val days = timeLeftUntilExpiration / 86400000
+                val hours = (timeLeftUntilExpiration / 3600000) % 24
+                val minutes = (timeLeftUntilExpiration / 60000) % 60
+                val seconds = (timeLeftUntilExpiration / 1000) % 60
+                val timeLeft = when {
+                    days > 0 -> "예상: ${days}일 ${hours}시간 ${minutes}분 ${seconds}초 남음"
+                    hours > 0 -> "예상: ${hours}시간 ${minutes}분 ${seconds}초 남음"
+                    minutes > 0 -> "예상: ${minutes}분 ${seconds}초 남음"
+                    seconds > 0 -> "예상: ${seconds}초 남음"
+                    else -> "${ChatColor.RED}예상: 0초 남음"
                 }
                 this.setDisplayName(lands.landsName)
                 this.lore = listOf(
-                    fuel,
+                    "${ChatColor.WHITE}현재 연료: ${lands.fuelLeft}개",
+                    timeLeft,
                     "${ChatColor.WHITE}점유한 지역: ${ChatColor.GOLD}${lands.landList.size}${ChatColor.WHITE}개",
                     "${ChatColor.WHITE}멤버 수: ${ChatColor.GOLD}${lands.memberMap.size}${ChatColor.WHITE}명",
                     "${ChatColor.WHITE}추천 수: ${ChatColor.GOLD}${lands.recommend}",
@@ -183,33 +184,39 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                 )
                     return
                 Bukkit.getScheduler().runTaskLater(tunaLands, Runnable {
-                    val fuel = event.inventory.getItem(4) ?: return@Runnable
-                    if (!fuel.isSimilar(ShopGui.fuel30Minutes) &&
-                        !fuel.isSimilar(ShopGui.fuel1Hour) &&
-                        !fuel.isSimilar(ShopGui.fuel6Hours) &&
-                        !fuel.isSimilar(ShopGui.fuel12Hours) &&
-                        !fuel.isSimilar(ShopGui.fuel24Hours)
+                    val addedFuelItem = event.inventory.getItem(4) ?: return@Runnable
+                    if (!addedFuelItem.isSimilar(ShopGui.fuel) &&
+                        !addedFuelItem.isSimilar(ShopGui.fuel8) &&
+                        !addedFuelItem.isSimilar(ShopGui.fuel16) &&
+                        !addedFuelItem.isSimilar(ShopGui.fuel32) &&
+                        !addedFuelItem.isSimilar(ShopGui.fuel64)
                     ) return@Runnable
-                    val lore = fuel.lore ?: return@Runnable
-                    val timeLore = lore[1].split(" ")[0]
-                    val time = timeRegex.find(timeLore)!!.value.toInt()
-                    val measure = measureRegex.find(timeLore)!!.value
-                    val addAmount = (fuel.amount * time * when (measure) {
-                        "분" -> 60000
-                        "시간" -> 3600000
-                        else -> 0
-                    })
 
-                    if (lands.enable) lands.expiredMillisecond += addAmount
-                    else {
-                        lands.expiredMillisecond = System.currentTimeMillis() + addAmount
+                    lands.fuelLeft += addedFuelItem.amount
+
+                    if (!lands.enable) {
                         lands.enable = true
                         displayManager.resumeDisplay(lands)
                     }
 
                     alarmManager.resetAlarm(lands)
 
-                    player.sendMessage("${ChatColor.GOLD}${time * fuel.amount}${ChatColor.WHITE}${measure}이 추가되었습니다!".infoFormat())
+                    val newlyAddedMilliseconds = lands.getMillisecondsPerFuel() * addedFuelItem.amount
+                    val days = newlyAddedMilliseconds / 86400000
+                    val hours = (newlyAddedMilliseconds / 3600000) % 24
+                    val minutes = (newlyAddedMilliseconds / 60000) % 60
+                    val seconds = (newlyAddedMilliseconds / 1000) % 60
+
+                    val addedTimeEstimate = when {
+                        days > 0 -> "${days}일 ${hours}시간 ${minutes}분 ${seconds}초 (예상)"
+                        hours > 0 -> "${hours}시간 ${minutes}분 ${seconds}초 (예상)"
+                        minutes > 0 -> "${minutes}분 ${seconds}초 (예상)"
+                        seconds > 0 -> "${seconds}초"
+                        else -> "0초 (예상)"
+                    }
+
+                    player.sendMessage("${ChatColor.WHITE}연료 ${ChatColor.GOLD}${addedFuelItem.amount}개${ChatColor.WHITE}가 추가되었습니다! ".infoFormat())
+                    player.sendMessage("${ChatColor.WHITE}(현재 청크 갯수 및 인원기준 추가된 시간: ${ChatColor.GOLD}$addedTimeEstimate)".infoFormat())
                     player.playSound(player.location, Sound.BLOCK_BLASTFURNACE_FIRE_CRACKLE, 2.5f, 1f)
                     event.inventory.setItem(4, null)
                 }, 2)
@@ -294,33 +301,38 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
             if (event.action != InventoryAction.MOVE_TO_OTHER_INVENTORY)
                 return
             Bukkit.getScheduler().runTaskLater(tunaLands, Runnable {
-                val fuel = event.inventory.getItem(4) ?: return@Runnable
-                if (!fuel.isSimilar(ShopGui.fuel30Minutes) &&
-                    !fuel.isSimilar(ShopGui.fuel1Hour) &&
-                    !fuel.isSimilar(ShopGui.fuel6Hours) &&
-                    !fuel.isSimilar(ShopGui.fuel12Hours) &&
-                    !fuel.isSimilar(ShopGui.fuel24Hours)
+                val addedFuelItem = event.inventory.getItem(4) ?: return@Runnable
+                if (!addedFuelItem.isSimilar(ShopGui.fuel) &&
+                    !addedFuelItem.isSimilar(ShopGui.fuel8) &&
+                    !addedFuelItem.isSimilar(ShopGui.fuel16) &&
+                    !addedFuelItem.isSimilar(ShopGui.fuel32) &&
+                    !addedFuelItem.isSimilar(ShopGui.fuel64)
                 ) return@Runnable
-                val lore = fuel.lore ?: return@Runnable
-                val timeLore = lore[1].split(" ")[0]
-                val time = timeRegex.find(timeLore)!!.value.toInt()
-                val measure = measureRegex.find(timeLore)!!.value
-                val addAmount = (fuel.amount * time * when (measure) {
-                    "분" -> 60000
-                    "시간" -> 3600000
-                    else -> 0
-                })
+                lands.fuelLeft += addedFuelItem.amount
 
-                if (lands.enable) lands.expiredMillisecond += addAmount
-                else {
-                    lands.expiredMillisecond = System.currentTimeMillis() + addAmount
+                if (!lands.enable) {
                     lands.enable = true
                     displayManager.resumeDisplay(lands)
                 }
 
                 alarmManager.resetAlarm(lands)
 
-                player.sendMessage("${ChatColor.GOLD}${time * fuel.amount}${ChatColor.WHITE}${measure}이 추가되었습니다!".infoFormat())
+                val newlyAddedMilliseconds = lands.getMillisecondsPerFuel() * addedFuelItem.amount
+                val days = newlyAddedMilliseconds / 86400000
+                val hours = (newlyAddedMilliseconds / 3600000) % 24
+                val minutes = (newlyAddedMilliseconds / 60000) % 60
+                val seconds = (newlyAddedMilliseconds / 1000) % 60
+
+                val addedTimeEstimate = when {
+                    days > 0 -> "${days}일 ${hours}시간 ${minutes}분 ${seconds}초 (예상)"
+                    hours > 0 -> "${hours}시간 ${minutes}분 ${seconds}초 (예상)"
+                    minutes > 0 -> "${minutes}분 ${seconds}초 (예상)"
+                    seconds > 0 -> "${seconds}초"
+                    else -> "0초 (예상)"
+                }
+
+                player.sendMessage("${ChatColor.WHITE}연료 ${ChatColor.GOLD}${addedFuelItem.amount}개${ChatColor.WHITE}가 추가되었습니다! ".infoFormat())
+                player.sendMessage("${ChatColor.WHITE}(현재 청크 갯수 및 인원기준 추가된 시간: ${ChatColor.GOLD}$addedTimeEstimate)".infoFormat())
                 player.playSound(player.location, Sound.BLOCK_BLASTFURNACE_FIRE_CRACKLE, 2.5f, 1f)
                 event.inventory.setItem(4, null)
             }, 2)

@@ -13,7 +13,9 @@ import com.salkcoding.tunalands.display.DisplayChunkListener
 import com.salkcoding.tunalands.display.DisplayManager
 import com.salkcoding.tunalands.gui.GuiManager
 import com.salkcoding.tunalands.io.AutoSaver
+import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.LeftManager
+import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.listener.*
 import com.salkcoding.tunalands.listener.region.*
 import com.salkcoding.tunalands.recipe.ReleaseFlagRecipe
@@ -208,11 +210,14 @@ class TunaLands : JavaPlugin() {
         //Fuel
         val configFuel = config.getConfigurationSection("fuel")!!
         val fuel = Config.Fuel(
-            configFuel.getInt("m30"),
-            configFuel.getInt("h1"),
-            configFuel.getInt("h6"),
-            configFuel.getInt("h12"),
-            configFuel.getInt("h24"),
+            configFuel.getDouble("price"),
+            configFuel.getMapList("fuelRequirements").map {
+                Config.FuelRequirement(
+                    it["numOfMembers"] as Int,
+                    it["numOfChunks"] as Int,
+                    it["fuelPerHour"] as Double
+                )
+            }
         )
         logger.info("fuel: $fuel")
         //Recommend
@@ -274,12 +279,27 @@ data class Config(
     )
 
     data class Fuel(
-        val m30: Int,
-        val h1: Int,
-        val h6: Int,
-        val h12: Int,
-        val h24: Int
-    )
+        val price: Double,
+        val fuelRequirements: List<FuelRequirement>
+    ) {
+        fun getFuelRequirement(land: Lands): FuelRequirement {
+            return fuelRequirements.filter {
+                land.memberMap.filter { (_, it) ->
+                    it.rank != Rank.VISITOR && it.rank != Rank.PARTTIMEJOB
+                }.size >= it.numOfMembers || land.landList.size >= it.numOfChunks
+            }.minOrNull() ?: fuelRequirements.maxOf { it }
+        }
+    }
+
+    data class FuelRequirement(
+        val numOfMembers: Int,
+        val numOfChunks: Int,
+        val secondsPerFuel: Double
+    ) : Comparable<FuelRequirement> {
+        override fun compareTo(other: FuelRequirement): Int {
+            return this.secondsPerFuel.compareTo(other.secondsPerFuel)
+        }
+    }
 
     data class Recommend(
         val reset: Long,

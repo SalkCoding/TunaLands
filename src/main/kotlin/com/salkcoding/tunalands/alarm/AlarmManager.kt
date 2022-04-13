@@ -23,7 +23,7 @@ class AlarmManager {
             return
 
         val alarm = alarmMap[lands]!!
-        val expired = lands.expiredMillisecond - System.currentTimeMillis()
+        val expired = lands.getEstimatedMillisecondsLeftWithCurrentFuel()
 
         //n days m hours k minutes
         val hours = (expired / 3600000) % 24

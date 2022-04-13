@@ -5,6 +5,7 @@ import com.google.gson.JsonObject
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.tunaLands
 import java.io.File
+import java.time.ZoneId
 
 object JsonWriter {
 
@@ -145,7 +146,7 @@ object JsonWriter {
                 //Write upper jsonObject
                 jsonObject.addProperty("ownerName", lands.ownerName)
                 jsonObject.addProperty("ownerUUID", lands.ownerUUID.toString())
-                jsonObject.addProperty("expiredMillisecond", lands.expiredMillisecond)
+                jsonObject.addProperty("expiredMillisecond", lands.nextTimeFuelNeedsToBeConsumed.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
                 jsonObject.addProperty("enable", lands.enable)
                 jsonObject.addProperty("open", lands.open)
                 jsonObject.addProperty("recommend", lands.recommend)
