@@ -62,55 +62,85 @@ class VisitGui(private val player: Player) : GuiInterface {
     private fun pageRender(inv: Inventory) {
         val sortLore = when (sortWay) {
             0 -> {
-                //Default sorting
-                landList = landMap.keys.sortedByDescending {
+                // oldest created
+                landList = landMap.keys
+                    .sortedBy {
                     landMap[it]!!.landHistory.createdMillisecond
                 }
-                "기본"
+                "오래된 순"
             }
             1 -> {
-                //Public sorting
-                landList = landMap.keys.sortedByDescending {
-                    landMap[it]!!.open
+                // most recently created
+                landList = landMap.keys
+                    .sortedByDescending {
+                    landMap[it]!!.landHistory.createdMillisecond
                 }
-                "공개 지역"
+                "최신 순"
             }
             2 -> {
-                //Private sorting
-                landList = landMap.keys.sortedByDescending {
-                    !landMap[it]!!.open
-                }
-                "비공개 지역"
+                //Public sorting
+                landList = landMap.keys
+                    .sortedByDescending {
+                        landMap[it]!!.landHistory.createdMillisecond
+                    }
+                    .sortedByDescending {
+                        landMap[it]!!.open
+                    }
+                "공개 지역"
             }
             3 -> {
-                //Recommend count sorting
-                landList = landMap.keys.sortedByDescending {
-                    landMap[it]!!.recommend
-                }
-                "추천 수"
+                //Private sorting
+                landList = landMap.keys
+                    .sortedByDescending {
+                        landMap[it]!!.landHistory.createdMillisecond
+                    }
+                    .sortedByDescending {
+                        !landMap[it]!!.open
+                    }
+                "비공개 지역"
             }
             4 -> {
-                //Member count sorting
-                landList = landMap.keys.sortedByDescending {
-                    landMap[it]!!.memberMap.size
-                }
-                "멤버 수"
+                //Recommend count sorting
+                landList = landMap.keys
+                    .sortedByDescending {
+                        landMap[it]!!.landHistory.createdMillisecond
+                    }
+                    .sortedByDescending {
+                        landMap[it]!!.recommend
+                    }
+                "추천 수"
             }
             5 -> {
-                //Visitor count sorting
-                landList = landMap.keys.sortedByDescending {
-                    landMap[it]!!.landHistory.visitorCount
-                }
-                "방문자 수"
+                //Member count sorting
+                landList = landMap.keys
+                    .sortedByDescending {
+                        landMap[it]!!.landHistory.createdMillisecond
+                    }
+                    .sortedByDescending {
+                        landMap[it]!!.memberMap.size
+                    }
+                "멤버 수"
             }
             6 -> {
+                //Visitor count sorting
+                landList = landMap.keys
+                    .sortedByDescending {
+                        landMap[it]!!.landHistory.createdMillisecond
+                    }
+                    .sortedByDescending {
+                        landMap[it]!!.landHistory.visitorCount
+                    }
+                "방문자 수"
+            }
+            7 -> {
                 //Solo sorting
-                landList = landMap.keys.sortedByDescending {
-                    landMap[it]!!.landHistory.createdMillisecond
-                }.filter {
-                    landMap[it]!!.memberMap.size == 1
-                }
-                "혼자 운영중인 지역"
+                landList = landMap.keys
+                    .sortedByDescending {
+                        landMap[it]!!.landHistory.createdMillisecond
+                    }.filter {
+                        landMap[it]!!.memberMap.size == 1
+                    }
+                "혼자 운영중인 지역만"
             }
             else -> ""
         }
@@ -118,13 +148,14 @@ class VisitGui(private val player: Player) : GuiInterface {
         sortButton.apply {
             this.lore = listOf(
                 "${ChatColor.WHITE}현재 보기 상태: ${ChatColor.GOLD}$sortLore",
-                "${ChatColor.WHITE}기본: 생성된 시간이 오래된 순으로 정렬합니다.",
+                "${ChatColor.WHITE}오래된 순: 생성된 시간이 오래된 순으로 정렬합니다.",
+                "${ChatColor.WHITE}최신 순: 최근에 생성된 순으로 정렬합니다.",
                 "${ChatColor.WHITE}공개 지역: 공개로 설정된 지역의 목록을 생성된 시간이 오래된 순으로  정렬합니다.",
                 "${ChatColor.WHITE}비공개 지역: 비공개로 설정된 지역의 목록을 생성된 시간이 오래된 순서으로 정렬합니다.",
                 "${ChatColor.WHITE}추천 수: 추천이 많은 순으로 정렬합니다.",
                 "${ChatColor.WHITE}멤버 수: 멤버가 많은 순으로 정렬합니다.",
                 "${ChatColor.WHITE}방문자 수: 방문자 수가 많은 순으로 정렬합니다.",
-                "${ChatColor.WHITE}혼자 운영중인 지역:  혼자 운영중인 지역들을, 생성된 시간이 오래된 순으로 정렬합니다.",
+                "${ChatColor.WHITE}혼자 운영중인 지역만:  혼자 운영중인 지역들을, 생성된 시간이 오래된 순으로 정렬합니다.",
                 "",
                 "${ChatColor.WHITE}클릭하여 정렬 방법을 변경할 수 있습니다."
             )
