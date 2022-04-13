@@ -32,7 +32,7 @@ object JsonReader {
 
                 val ownerName = jsonObject["ownerName"].asString
                 val ownerUUID = UUID.fromString(jsonObject["ownerUUID"].asString)
-                val fuelLeft = jsonObject["fuelLeft"].asLong
+                val fuelLeft = jsonObject["fuelLeft"]?.asLong ?: 0
                 val expiredMillisecond = jsonObject["expiredMillisecond"].asLong
                 val enable = jsonObject["enable"].asBoolean
                 val open = jsonObject["open"].asBoolean
