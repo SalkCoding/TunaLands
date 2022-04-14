@@ -1,13 +1,10 @@
 package com.salkcoding.tunalands.gui.render
 
-import com.salkcoding.tunalands.alarmManager
-import com.salkcoding.tunalands.displayManager
+import com.salkcoding.tunalands.*
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.gui.render.settinggui.openSettingGui
-import com.salkcoding.tunalands.guiManager
-import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.*
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -124,12 +121,20 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                     seconds > 0 -> "예상: ${seconds}초 남음"
                     else -> "${ChatColor.RED}예상: 0초 남음"
                 }
+
+                val currentNumOfMembers = lands.memberMap.filter { (_, memberData) ->
+                    memberData.rank != Rank.VISITOR && memberData.rank != Rank.PARTTIMEJOB
+                }.size
+                val nextFuelRequirement = configuration.fuel.fuelRequirements.filter {
+                    it.numOfChunks > lands.landList.size && it.numOfMembers > currentNumOfMembers
+                }.maxOf { it }
+
                 this.setDisplayName(lands.landsName)
                 this.lore = listOf(
                     "${ChatColor.WHITE}현재 연료: ${lands.fuelLeft}개",
                     timeLeft,
-                    "${ChatColor.WHITE}점유한 지역: ${ChatColor.GOLD}${lands.landList.size}${ChatColor.WHITE}개",
-                    "${ChatColor.WHITE}멤버 수: ${ChatColor.GOLD}${lands.memberMap.size}${ChatColor.WHITE}명",
+                    "${ChatColor.WHITE}점유한 지역: ${ChatColor.GOLD}${lands.landList.size}${ChatColor.WHITE}개 (하루당 연료 증가까지 남은 청크: ${nextFuelRequirement.numOfChunks - lands.landList.size}개)",
+                    "${ChatColor.WHITE}멤버 수: ${ChatColor.GOLD}${lands.memberMap.size}${ChatColor.WHITE}명 (하루 당 연료 증가까지 남은 인원 수: ${nextFuelRequirement.numOfMembers - currentNumOfMembers}명)",
                     "${ChatColor.WHITE}추천 수: ${ChatColor.GOLD}${lands.recommend}",
                     "${ChatColor.WHITE}생성일: ${ChatColor.GRAY}${
                         created.get(Calendar.YEAR)
