@@ -1,25 +1,22 @@
 package com.salkcoding.tunalands
 
 import com.salkcoding.tunalands.alarm.AlarmManager
-import com.salkcoding.tunalands.listener.JoinListener
 import com.salkcoding.tunalands.border.BorderManager
 import com.salkcoding.tunalands.bungee.CommandListener
 import com.salkcoding.tunalands.commands.LandCommandHandler
 import com.salkcoding.tunalands.commands.debug.Debug
 import com.salkcoding.tunalands.commands.sub.*
-import com.salkcoding.tunalands.lands.LandManager
 import com.salkcoding.tunalands.database.Database
 import com.salkcoding.tunalands.display.DisplayChunkListener
 import com.salkcoding.tunalands.display.DisplayManager
 import com.salkcoding.tunalands.gui.GuiManager
 import com.salkcoding.tunalands.io.AutoSaver
+import com.salkcoding.tunalands.lands.LandManager
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.LeftManager
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.listener.*
 import com.salkcoding.tunalands.listener.region.*
-import com.salkcoding.tunalands.recipe.ReleaseFlagRecipe
-import com.salkcoding.tunalands.recipe.TakeFlagRecipe
 import com.salkcoding.tunalands.vote.RecommendManager
 import fish.evatuna.metamorphosis.Metamorphosis
 import me.baiks.bukkitlinked.BukkitLinked
@@ -210,7 +207,7 @@ class TunaLands : JavaPlugin() {
                 Config.FuelRequirement(
                     it["numOfMembers"] as Int,
                     it["numOfChunks"] as Int,
-                    it["fuelPerHour"] as Double
+                    it["secondsPerFuel"] as Double
                 )
             }
         )
@@ -239,7 +236,7 @@ class TunaLands : JavaPlugin() {
         logger.info("limitWorld: $limitWorld")
 
         // Flag prices
-        val flagSection = configCommand.getConfigurationSection("flag")!!
+        val flagSection = config.getConfigurationSection("flag")!!
         val flag = Config.Flag(
             flagSection.getDouble("takeFlagPrice"),
             flagSection.getDouble("releaseFlagPrice")

@@ -1,8 +1,7 @@
 package com.salkcoding.tunalands.listener
 
+import com.salkcoding.tunalands.gui.render.ShopGui
 import com.salkcoding.tunalands.landManager
-import com.salkcoding.tunalands.recipe.ReleaseFlagRecipe
-import com.salkcoding.tunalands.recipe.TakeFlagRecipe
 import org.bukkit.Material
 import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
@@ -22,12 +21,12 @@ class FlagListener : Listener {
         val under = event.clickedBlock ?: return
         when (flag.type) {
             Material.GREEN_BANNER -> {
-                if (!flag.isSimilar(TakeFlagRecipe.takeFlag)) return
+                if (!flag.isSimilar(ShopGui.takeFlag)) return
                 landManager.buyLand(event.player, flag, under)
                 event.isCancelled = true
             }
             Material.RED_BANNER -> {
-                if (!flag.isSimilar(ReleaseFlagRecipe.releaseFlag)) return
+                if (!flag.isSimilar(ShopGui.releaseFlag)) return
                 landManager.sellLand(event.player, flag, under)
                 event.isCancelled = true
             }

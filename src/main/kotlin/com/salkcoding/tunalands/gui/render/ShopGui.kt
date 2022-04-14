@@ -6,8 +6,6 @@ import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.guiManager
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
-import com.salkcoding.tunalands.recipe.ReleaseFlagRecipe
-import com.salkcoding.tunalands.recipe.TakeFlagRecipe
 import com.salkcoding.tunalands.util.*
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -65,6 +63,22 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
             )
             this.amount = 64
         }
+
+        val releaseFlag = (Material.RED_BANNER * 1).apply {
+            this.setDisplayName("${ChatColor.RED}제거 ${ChatColor.WHITE}깃발")
+            this.lore = listOf(
+                "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.flag.releaseFlagPrice}캔",
+                "${ChatColor.WHITE}제거하고 싶은 지역에 설치하여 제거할 수 있는 깃발입니다."
+            )
+        }
+
+        val takeFlag = (Material.GREEN_BANNER * 1).apply {
+            this.setDisplayName("${ChatColor.GREEN}점유 ${ChatColor.WHITE}깃발")
+            this.lore = listOf(
+                "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.flag.takeFlagPrice}캔",
+                "${ChatColor.WHITE}늘리고 싶은 지역에 설치하여 점유할 수 있는 깃발입니다."
+            )
+        }
     }
 
     override fun render(inv: Inventory) {
@@ -91,8 +105,8 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
         inv.setItem(33, fuel64)
 
         // 점유, 제거 깃발
-        inv.setItem(19, TakeFlagRecipe.takeFlag)
-        inv.setItem(20, ReleaseFlagRecipe.releaseFlag)
+        inv.setItem(20, takeFlag)
+        inv.setItem(21, releaseFlag)
     }
 
     override fun onClick(event: InventoryClickEvent) {
@@ -102,7 +116,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
             0 -> {
                 player.openMainGui(lands, rank)
             }
-            19 -> {
+            20 -> {
                 val price = configuration.flag.takeFlagPrice
                 if (player.hasNotEnoughMoney(price)) {
                     val delta = price - economy.getBalance(player)
@@ -111,9 +125,9 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 }
                 economy.withdrawPlayer(player, price)
 
-                player.giveOrDrop(fuel)
+                player.giveOrDrop(takeFlag)
             }
-            20 -> {
+            21 -> {
                 val price = configuration.flag.releaseFlagPrice
                 if (player.hasNotEnoughMoney(price)) {
                     val delta = price - economy.getBalance(player)
@@ -122,7 +136,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 }
                 economy.withdrawPlayer(player, price)
 
-                player.giveOrDrop(fuel)
+                player.giveOrDrop(releaseFlag)
             }
             29 -> {
                 val price = configuration.fuel.price

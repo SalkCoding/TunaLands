@@ -115,12 +115,17 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                 val minutes = (timeLeftUntilExpiration / 60000) % 60
                 val seconds = (timeLeftUntilExpiration / 1000) % 60
                 val timeLeft = when {
-                    days > 0 -> "예상: ${days}일 ${hours}시간 ${minutes}분 ${seconds}초 남음"
-                    hours > 0 -> "예상: ${hours}시간 ${minutes}분 ${seconds}초 남음"
-                    minutes > 0 -> "예상: ${minutes}분 ${seconds}초 남음"
-                    seconds > 0 -> "예상: ${seconds}초 남음"
+                    days > 0 -> "${ChatColor.WHITE}예상: ${days}일 ${hours}시간 ${minutes}분 ${seconds}초 남음"
+                    hours > 0 -> "${ChatColor.WHITE}예상: ${hours}시간 ${minutes}분 ${seconds}초 남음"
+                    minutes > 0 -> "${ChatColor.WHITE}예상: ${minutes}분 ${seconds}초 남음"
+                    seconds > 0 -> "${ChatColor.WHITE}예상: ${seconds}초 남음"
                     else -> "${ChatColor.RED}예상: 0초 남음"
                 }
+
+
+                val fuelPerHour = 3600000.0 / lands.getMillisecondsPerFuel()
+                val fuelPerDay = 86400000.0 / lands.getMillisecondsPerFuel()
+                val fuelInfo = String.format("${ChatColor.WHITE}*시간 당 %.2f개 소모 (하루에 %.2f개)", fuelPerHour, fuelPerDay)
 
                 val currentNumOfMembers = lands.memberMap.filter { (_, memberData) ->
                     memberData.rank != Rank.VISITOR && memberData.rank != Rank.PARTTIMEJOB
@@ -133,7 +138,8 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                 this.lore = listOf(
                     "${ChatColor.WHITE}현재 연료: ${lands.fuelLeft}개",
                     timeLeft,
-                    "${ChatColor.WHITE}점유한 지역: ${ChatColor.GOLD}${lands.landList.size}${ChatColor.WHITE}개 (하루당 연료 증가까지 남은 청크: ${nextFuelRequirement.numOfChunks - lands.landList.size}개)",
+                    fuelInfo,
+                    "${ChatColor.WHITE}점유한 지역: ${ChatColor.GOLD}${lands.landList.size}${ChatColor.WHITE}개 (하루 당 연료 증가까지 남은 청크: ${nextFuelRequirement.numOfChunks - lands.landList.size}개)",
                     "${ChatColor.WHITE}멤버 수: ${ChatColor.GOLD}${lands.memberMap.size}${ChatColor.WHITE}명 (하루 당 연료 증가까지 남은 인원 수: ${nextFuelRequirement.numOfMembers - currentNumOfMembers}명)",
                     "${ChatColor.WHITE}추천 수: ${ChatColor.GOLD}${lands.recommend}",
                     "${ChatColor.WHITE}생성일: ${ChatColor.GRAY}${
@@ -221,7 +227,7 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                     }
 
                     player.sendMessage("${ChatColor.WHITE}연료 ${ChatColor.GOLD}${addedFuelItem.amount}개${ChatColor.WHITE}가 추가되었습니다! ".infoFormat())
-                    player.sendMessage("${ChatColor.WHITE}(현재 청크 갯수 및 인원기준 추가된 시간: ${ChatColor.GOLD}$addedTimeEstimate)".infoFormat())
+                    player.sendMessage("${ChatColor.WHITE}현재 마을 규모 기준 추가 된 시간: ${ChatColor.GOLD}$addedTimeEstimate".infoFormat())
                     player.playSound(player.location, Sound.BLOCK_BLASTFURNACE_FIRE_CRACKLE, 2.5f, 1f)
                     event.inventory.setItem(4, null)
                 }, 2)

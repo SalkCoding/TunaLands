@@ -13,7 +13,7 @@ class TimerDisplay(
 
     override fun create() {
         val location = lands.upCoreLocation.toCenterLocation()
-        location.y += 1
+        location.y += 1.5
 
         hologram = HologramsAPI.createHologram(tunaLands, location)
         hologram.appendTextLine(lands.landsName)
@@ -59,36 +59,57 @@ class TimerDisplay(
 
         // Text Line 3 (*시간당 x개 소모 (하루에 y개)
         // Milliseconds in a day = 86400000
+        val fuelPerHour = 3600000.0 / lands.getMillisecondsPerFuel()
         val fuelPerDay = 86400000.0 / lands.getMillisecondsPerFuel()
-        hologramTexts.add(String.format("%.2f", fuelPerDay))
+        hologramTexts.add(String.format("*시간 당 %.2f개 소모 (하루에 %.2f개)", fuelPerHour, fuelPerDay))
 
 
         // Sync invoke
         // Change Hologram
+//        Bukkit.getScheduler().runTask(tunaLands, Runnable {
+//            //Flicker prevent
+//            var removeLinesFrom: Int? = null
+//            for (lineNum in 0 until hologram.size()) {
+//                val line = hologram.getLine(lineNum) as TextLine
+//                line.text = hologramTexts[lineNum]
+//                if (lineNum < hologramTexts.size) {
+//                    if (line.text != hologramTexts[lineNum]) {
+//                        // if line text is same, leave it
+//                        line.text = hologramTexts[lineNum]
+//                    }
+//                } else {
+//                    removeLinesFrom = lineNum
+//                    break
+//                }
+//            }
+//
+////            // Remove unused lines
+//            if (removeLinesFrom != null) {
+//                for (ignored in removeLinesFrom until hologram.size()) {
+//                    hologram.removeLine(removeLinesFrom)
+//                }
+//            }
+//        })
+
         Bukkit.getScheduler().runTask(tunaLands, Runnable {
             //Flicker prevent
-            var removeLinesFrom: Int? = null
-            for (lineNum in 0 until hologram.size()) {
-                val line = hologram.getLine(lineNum) as TextLine
-                if (lineNum < hologramTexts.size) {
-                    if (line.text != hologramTexts[lineNum]) {
-                        // if line text is same, leave it
-                        line.text = hologramTexts[lineNum]
+            var lineNum: Int = 0
+            hologramTexts.forEach { text ->
+                if (lineNum < hologram.size()) {
+                    val line = hologram.getLine(lineNum) as TextLine
+                    if (line.text != text) {
+                        line.text = text
                     }
                 } else {
-                    removeLinesFrom = lineNum
-                    break
+                    hologram.appendTextLine(text)
                 }
+                lineNum++
             }
 
-            // Remove unused lines
-            if (removeLinesFrom != null) {
-                for (lineNum in removeLinesFrom until hologram.size()) {
-                    hologram.removeLine(lineNum)
-                }
+            while (hologram.size() - 1 > lineNum) {
+                hologram.removeLine(hologram.size() - 1)
             }
         })
-
 
         return true
     }
