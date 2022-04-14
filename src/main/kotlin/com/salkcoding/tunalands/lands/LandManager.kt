@@ -46,6 +46,8 @@ class LandManager {
                     displayManager.pauseDisplay(lands)
                     lands.enable = false
                 }
+            } else if (!lands.enable) {
+                displayManager.pauseDisplayIfNotPaused(lands)
             }
         }
     }, 100, 10)

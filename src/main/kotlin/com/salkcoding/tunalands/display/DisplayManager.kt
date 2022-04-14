@@ -44,6 +44,16 @@ class DisplayManager {
         displayMap[query]!!.pause()
     }
 
+    fun pauseDisplayIfNotPaused(lands: Lands) {
+        val query = lands.upCoreLocation.chunk.toQuery()
+        if (query !in displayMap)
+            return
+
+        if (!displayMap[query]!!.pause){
+            displayMap[query]!!.pause()
+        }
+    }
+
     fun resumeDisplay(lands: Lands) {
         val query = lands.upCoreLocation.chunk.toQuery()
         if (query !in displayMap)

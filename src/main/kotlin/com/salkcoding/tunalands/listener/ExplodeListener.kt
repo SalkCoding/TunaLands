@@ -1,6 +1,7 @@
 package com.salkcoding.tunalands.listener
 
 import com.salkcoding.tunalands.landManager
+import org.bukkit.entity.FallingBlock
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockExplodeEvent
@@ -33,7 +34,10 @@ class ExplodeListener : Listener {
     fun onEntityChange(event: EntityChangeBlockEvent) {
         if (event.isCancelled) return
 
-        if (landManager.isProtectedLand(event.block.chunk))
-            event.isCancelled = true
+        if (landManager.isProtectedLand(event.block.chunk)) {
+            if (event.entity !is FallingBlock) {
+                event.isCancelled = true
+            }
+        }
     }
 }

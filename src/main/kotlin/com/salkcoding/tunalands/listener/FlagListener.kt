@@ -21,12 +21,12 @@ class FlagListener : Listener {
         val under = event.clickedBlock ?: return
         when (flag.type) {
             Material.GREEN_BANNER -> {
-                if (!flag.isSimilar(ShopGui.takeFlag)) return
+                if (!flag.isSimilar(ShopGui.takeFlagItem)) return
                 landManager.buyLand(event.player, flag, under)
                 event.isCancelled = true
             }
             Material.RED_BANNER -> {
-                if (!flag.isSimilar(ShopGui.releaseFlag)) return
+                if (!flag.isSimilar(ShopGui.releaseFlagItem)) return
                 landManager.sellLand(event.player, flag, under)
                 event.isCancelled = true
             }

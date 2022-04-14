@@ -199,12 +199,7 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                     return
                 Bukkit.getScheduler().runTaskLater(tunaLands, Runnable {
                     val addedFuelItem = event.inventory.getItem(4) ?: return@Runnable
-                    if (!addedFuelItem.isSimilar(ShopGui.fuel) &&
-                        !addedFuelItem.isSimilar(ShopGui.fuel8) &&
-                        !addedFuelItem.isSimilar(ShopGui.fuel16) &&
-                        !addedFuelItem.isSimilar(ShopGui.fuel32) &&
-                        !addedFuelItem.isSimilar(ShopGui.fuel64)
-                    ) return@Runnable
+                    if (!addedFuelItem.isSimilar(ShopGui.fuelItem)) return@Runnable
 
                     lands.fuelLeft += addedFuelItem.amount
 
@@ -316,12 +311,7 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                 return
             Bukkit.getScheduler().runTaskLater(tunaLands, Runnable {
                 val addedFuelItem = event.inventory.getItem(4) ?: return@Runnable
-                if (!addedFuelItem.isSimilar(ShopGui.fuel) &&
-                    !addedFuelItem.isSimilar(ShopGui.fuel8) &&
-                    !addedFuelItem.isSimilar(ShopGui.fuel16) &&
-                    !addedFuelItem.isSimilar(ShopGui.fuel32) &&
-                    !addedFuelItem.isSimilar(ShopGui.fuel64)
-                ) return@Runnable
+                if (!addedFuelItem.isSimilar(ShopGui.fuelItem)) return@Runnable
                 lands.fuelLeft += addedFuelItem.amount
 
                 if (!lands.enable) {
