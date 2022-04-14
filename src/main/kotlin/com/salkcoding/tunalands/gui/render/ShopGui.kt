@@ -6,6 +6,8 @@ import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.guiManager
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
+import com.salkcoding.tunalands.recipe.ReleaseFlagRecipe
+import com.salkcoding.tunalands.recipe.TakeFlagRecipe
 import com.salkcoding.tunalands.util.*
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -81,11 +83,16 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
 
         inv.setItem(0, backButton)
 
+        // 연료
         inv.setItem(29, fuel)
         inv.setItem(30, fuel8)
         inv.setItem(31, fuel16)
         inv.setItem(32, fuel32)
         inv.setItem(33, fuel64)
+
+        // 점유, 제거 깃발
+        inv.setItem(19, TakeFlagRecipe.takeFlag)
+        inv.setItem(20, ReleaseFlagRecipe.releaseFlag)
     }
 
     override fun onClick(event: InventoryClickEvent) {
@@ -94,6 +101,28 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
         when (event.rawSlot) {
             0 -> {
                 player.openMainGui(lands, rank)
+            }
+            19 -> {
+                val price = configuration.flag.takeFlagPrice
+                if (player.hasNotEnoughMoney(price)) {
+                    val delta = price - economy.getBalance(player)
+                    player.sendMessage("${delta}캔이 부족합니다.".errorFormat())
+                    return
+                }
+                economy.withdrawPlayer(player, price)
+
+                player.giveOrDrop(fuel)
+            }
+            20 -> {
+                val price = configuration.flag.releaseFlagPrice
+                if (player.hasNotEnoughMoney(price)) {
+                    val delta = price - economy.getBalance(player)
+                    player.sendMessage("${delta}캔이 부족합니다.".errorFormat())
+                    return
+                }
+                economy.withdrawPlayer(player, price)
+
+                player.giveOrDrop(fuel)
             }
             29 -> {
                 val price = configuration.fuel.price

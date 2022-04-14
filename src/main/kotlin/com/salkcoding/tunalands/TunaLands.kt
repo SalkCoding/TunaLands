@@ -153,8 +153,6 @@ class TunaLands : JavaPlugin() {
 
         server.pluginManager.registerEvents(JoinListener(), this)
 
-        TakeFlagRecipe.registerRecipe()
-        ReleaseFlagRecipe.registerRecipe()
 
         database = Database()
 
@@ -176,9 +174,6 @@ class TunaLands : JavaPlugin() {
         landManager.dispose()
 
         displayManager.dispose()
-
-        TakeFlagRecipe.unregisterRecipe()
-        ReleaseFlagRecipe.unregisterRecipe()
 
         logger.warning("All guis are closed")
 
@@ -243,7 +238,14 @@ class TunaLands : JavaPlugin() {
         val limitWorld = config.getStringList("limitWorld")
         logger.info("limitWorld: $limitWorld")
 
-        configuration = Config(database, protect, fuel, recommend, command, limitWorld)
+        // Flag prices
+        val flagSection = configCommand.getConfigurationSection("flag")!!
+        val flag = Config.Flag(
+            flagSection.getDouble("takeFlagPrice"),
+            flagSection.getDouble("releaseFlagPrice")
+        )
+
+        configuration = Config(database, protect, fuel, recommend, command, limitWorld, flag)
 
     }
 
@@ -261,7 +263,8 @@ data class Config(
     val fuel: Fuel,
     val recommend: Recommend,
     val command: Command,
-    val limitWorld: List<String>
+    val limitWorld: List<String>,
+    val flag: Flag
 ) {
 
     data class Database constructor(
@@ -312,5 +315,10 @@ data class Config(
         val spawnCooldown: Long,
         val setSpawnPrice: Int,
         val renamePrice: Int
+    )
+
+    data class Flag(
+        val takeFlagPrice: Double,
+        val releaseFlagPrice: Double
     )
 }
