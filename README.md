@@ -89,6 +89,10 @@ command:
 limitWorld:
   - world_nether
   - world_the_end
+
+flag:
+  takeFlagPrice: 10
+  releaseFlagPrice: 5
 ```
 
 ## Save format(Json)
