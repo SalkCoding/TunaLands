@@ -125,7 +125,11 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 }
                 economy.withdrawPlayer(player, price)
 
-                player.giveOrDrop(takeFlag)
+                player.giveOrDrop(takeFlag.apply {
+                    this.lore = listOf(
+                        "${ChatColor.WHITE}늘리고 싶은 지역에 설치하여 점유할 수 있는 깃발입니다."
+                    )
+                })
             }
             21 -> {
                 val price = configuration.flag.releaseFlagPrice
@@ -136,7 +140,11 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 }
                 economy.withdrawPlayer(player, price)
 
-                player.giveOrDrop(releaseFlag)
+                player.giveOrDrop(releaseFlag.apply {
+                    this.lore = listOf(
+                        "${ChatColor.WHITE}제거하고 싶은 지역에 설치하여 제거할 수 있는 깃발입니다."
+                    )
+                })
             }
             29 -> {
                 val price = configuration.fuel.price
@@ -147,7 +155,11 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 }
                 economy.withdrawPlayer(player, price)
 
-                player.giveOrDrop(fuel)
+                player.giveOrDrop(fuel.apply {
+                    this.lore = listOf(
+                        "${ChatColor.WHITE}마을의 규모에 따라 시간적 가치가 변하는 연료이다."
+                    )
+                })
             }
             30 -> {
                 val price = configuration.fuel.price * 8
@@ -158,7 +170,11 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 }
                 economy.withdrawPlayer(player, price)
 
-                player.giveOrDrop(fuel8)
+                player.giveOrDrop(fuel8.apply {
+                    this.lore = listOf(
+                        "${ChatColor.WHITE}마을의 규모에 따라 시간적 가치가 변하는 연료이다."
+                    )
+                })
             }
             31 -> {
                 val price = configuration.fuel.price * 16
@@ -169,7 +185,11 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 }
                 economy.withdrawPlayer(player, price)
 
-                player.giveOrDrop(fuel16)
+                player.giveOrDrop(fuel16.apply {
+                    this.lore = listOf(
+                        "${ChatColor.WHITE}마을의 규모에 따라 시간적 가치가 변하는 연료이다."
+                    )
+                })
             }
             32 -> {
                 val price = configuration.fuel.price * 32
@@ -180,7 +200,11 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 }
                 economy.withdrawPlayer(player, price)
 
-                player.giveOrDrop(fuel32)
+                player.giveOrDrop(fuel32.apply {
+                    this.lore = listOf(
+                        "${ChatColor.WHITE}마을의 규모에 따라 시간적 가치가 변하는 연료이다."
+                    )
+                })
             }
             33 -> {
                 val price = configuration.fuel.price * 64
@@ -191,7 +215,11 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 }
                 economy.withdrawPlayer(player, price)
 
-                player.giveOrDrop(fuel64)
+                player.giveOrDrop(fuel64.apply {
+                    this.lore = listOf(
+                        "${ChatColor.WHITE}마을의 규모에 따라 시간적 가치가 변하는 연료이다."
+                    )
+                })
             }
         }
     }

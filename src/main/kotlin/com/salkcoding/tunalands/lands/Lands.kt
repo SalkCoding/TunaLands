@@ -116,7 +116,10 @@ data class Lands(
     }
 
     fun getEstimatedMillisecondsLeftWithCurrentFuel(): Long {
-        val currentFuelTimeLeft = Duration.between(this.nextTimeFuelNeedsToBeConsumed, LocalDateTime.now())
+        var currentFuelTimeLeft = Duration.between(LocalDateTime.now(), this.nextTimeFuelNeedsToBeConsumed)
+        if (currentFuelTimeLeft.isNegative) {
+            currentFuelTimeLeft = Duration.ZERO
+        }
 
         val secondsPerFuel = configuration.fuel.getFuelRequirement(this).secondsPerFuel
         val msPerFuel = (secondsPerFuel * 1000).roundToLong()

@@ -91,7 +91,7 @@ class TimerDisplay(
 //            }
 //        })
 
-        Bukkit.getScheduler().runTask(tunaLands, Runnable {
+//        Bukkit.getScheduler().runTask(tunaLands, Runnable {
             //Flicker prevent
             var lineNum: Int = 0
             hologramTexts.forEach { text ->
@@ -109,7 +109,7 @@ class TimerDisplay(
             while (hologram.size() - 1 > lineNum) {
                 hologram.removeLine(hologram.size() - 1)
             }
-        })
+//        })
 
         return true
     }

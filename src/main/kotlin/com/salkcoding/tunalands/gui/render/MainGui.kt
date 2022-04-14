@@ -16,6 +16,7 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.scheduler.BukkitTask
+import java.lang.Integer.min
 import java.util.*
 
 class MainGui(private val player: Player, private val lands: Lands, private val rank: Rank) : GuiInterface {
@@ -131,16 +132,18 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                     memberData.rank != Rank.VISITOR && memberData.rank != Rank.PARTTIMEJOB
                 }.size
                 val nextFuelRequirement = configuration.fuel.fuelRequirements.filter {
-                    it.numOfChunks > lands.landList.size && it.numOfMembers > currentNumOfMembers
+                    it.numOfChunks >= lands.landList.size && it.numOfMembers >= currentNumOfMembers
                 }.maxOf { it }
+
+
 
                 this.setDisplayName(lands.landsName)
                 this.lore = listOf(
                     "${ChatColor.WHITE}현재 연료: ${lands.fuelLeft}개",
                     timeLeft,
                     fuelInfo,
-                    "${ChatColor.WHITE}점유한 지역: ${ChatColor.GOLD}${lands.landList.size}${ChatColor.WHITE}개 (하루 당 연료 증가까지 남은 청크: ${nextFuelRequirement.numOfChunks - lands.landList.size}개)",
-                    "${ChatColor.WHITE}멤버 수: ${ChatColor.GOLD}${lands.memberMap.size}${ChatColor.WHITE}명 (하루 당 연료 증가까지 남은 인원 수: ${nextFuelRequirement.numOfMembers - currentNumOfMembers}명)",
+                    "${ChatColor.WHITE}점유한 지역: ${ChatColor.GOLD}${lands.landList.size}${ChatColor.WHITE}개 (하루 당 연료 증가까지 남은 청크: ${min(0, nextFuelRequirement.numOfChunks - lands.landList.size)}개)",
+                    "${ChatColor.WHITE}멤버 수: ${ChatColor.GOLD}${lands.memberMap.size}${ChatColor.WHITE}명 (하루 당 연료 증가까지 남은 인원 수: ${min(0, nextFuelRequirement.numOfMembers - currentNumOfMembers)}명)",
                     "${ChatColor.WHITE}추천 수: ${ChatColor.GOLD}${lands.recommend}",
                     "${ChatColor.WHITE}생성일: ${ChatColor.GRAY}${
                         created.get(Calendar.YEAR)
