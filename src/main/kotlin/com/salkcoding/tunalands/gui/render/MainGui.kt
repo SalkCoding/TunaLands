@@ -16,6 +16,7 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.scheduler.BukkitTask
+import java.lang.Integer.max
 import java.lang.Integer.min
 import java.util.*
 
@@ -163,13 +164,13 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                 }
 
                 val chunksLeftUntilNextRequirement = if (nextBestFuelRequirementForChunk != null) {
-                    "(하루 당 연료 증가까지 남은 청크: ${min(0, nextBestFuelRequirementForChunk.numOfChunks - lands.landList.size)}개)"
+                    "(하루 당 연료 증가까지 남은 청크: ${max(0, nextBestFuelRequirementForChunk.numOfChunks - lands.landList.size)}개)"
                 } else {
                     ""
                 }
 
                 val membersLeftUntilNextRequirement = if (nextBestFuelRequirementForMembers != null) {
-                    "(하루 당 연료 증가까지 남은 인원 수: ${min(0, nextBestFuelRequirementForMembers.numOfMembers - currentNumOfMembers)}명)"
+                    "(하루 당 연료 증가까지 남은 인원 수: ${max(0, nextBestFuelRequirementForMembers.numOfMembers - currentNumOfMembers)}명)"
                 } else {
                     ""
                 }
