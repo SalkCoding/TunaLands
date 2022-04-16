@@ -141,7 +141,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 val price = configuration.flag.takeFlagPrice
                 if (player.hasNotEnoughMoney(price)) {
                     val delta = price - economy.getBalance(player)
-                    player.sendMessage("${delta}캔이 부족합니다.".errorFormat())
+                    player.sendMessage("${"%.2f".format(delta)}캔이 부족합니다.".errorFormat())
                     return
                 }
                 economy.withdrawPlayer(player, price)
@@ -152,7 +152,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 val price = configuration.flag.releaseFlagPrice
                 if (player.hasNotEnoughMoney(price)) {
                     val delta = price - economy.getBalance(player)
-                    player.sendMessage("${delta}캔이 부족합니다.".errorFormat())
+                    player.sendMessage("${"%.2f".format(delta)}캔이 부족합니다.".errorFormat())
                     return
                 }
                 economy.withdrawPlayer(player, price)
@@ -163,7 +163,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 val price = configuration.fuel.price
                 if (player.hasNotEnoughMoney(price)) {
                     val delta = price - economy.getBalance(player)
-                    player.sendMessage("${delta}캔이 부족합니다.".errorFormat())
+                    player.sendMessage("${"%.2f".format(delta)}캔이 부족합니다.".errorFormat())
                     return
                 }
                 economy.withdrawPlayer(player, price)
@@ -176,7 +176,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 val price = configuration.fuel.price * 8
                 if (player.hasNotEnoughMoney(price)) {
                     val delta = price - economy.getBalance(player)
-                    player.sendMessage("${delta}캔이 부족합니다.".errorFormat())
+                    player.sendMessage("${"%.2f".format(delta)}캔이 부족합니다.".errorFormat())
                     return
                 }
                 economy.withdrawPlayer(player, price)
@@ -189,7 +189,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 val price = configuration.fuel.price * 16
                 if (player.hasNotEnoughMoney(price)) {
                     val delta = price - economy.getBalance(player)
-                    player.sendMessage("${delta}캔이 부족합니다.".errorFormat())
+                    player.sendMessage("${"%.2f".format(delta)}캔이 부족합니다.".errorFormat())
                     return
                 }
                 economy.withdrawPlayer(player, price)
@@ -202,7 +202,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 val price = configuration.fuel.price * 32
                 if (player.hasNotEnoughMoney(price)) {
                     val delta = price - economy.getBalance(player)
-                    player.sendMessage("${delta}캔이 부족합니다.".errorFormat())
+                    player.sendMessage("${"%.2f".format(delta)}캔이 부족합니다.".errorFormat())
                     return
                 }
                 economy.withdrawPlayer(player, price)
@@ -215,7 +215,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 val price = configuration.fuel.price * 64
                 if (player.hasNotEnoughMoney(price)) {
                     val delta = price - economy.getBalance(player)
-                    player.sendMessage("${delta}캔이 부족합니다.".errorFormat())
+                    player.sendMessage("${"%.2f".format(delta)}캔이 부족합니다.".errorFormat())
                     return
                 }
                 economy.withdrawPlayer(player, price)

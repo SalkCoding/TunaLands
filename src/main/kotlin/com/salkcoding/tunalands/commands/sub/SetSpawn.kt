@@ -25,7 +25,7 @@ class SetSpawn : CommandExecutor {
                     val price = configuration.command.setSpawnPrice.toDouble()
                     if (player.hasNotEnoughMoney(price)) {
                         val delta = price - economy.getBalance(player)
-                        player.sendMessage("${delta}캔이 부족합니다.".errorFormat())
+                        player.sendMessage("${"%.2f".format(delta)}캔이 부족합니다.".errorFormat())
                         return true
                     }
                     economy.withdrawPlayer(player, price)

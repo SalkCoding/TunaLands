@@ -131,19 +131,56 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                 val currentNumOfMembers = lands.memberMap.filter { (_, memberData) ->
                     memberData.rank != Rank.VISITOR && memberData.rank != Rank.PARTTIMEJOB
                 }.size
-                val nextFuelRequirement = configuration.fuel.fuelRequirements.filter {
-                    it.numOfChunks >= lands.landList.size && it.numOfMembers >= currentNumOfMembers
-                }.maxOf { it }
 
+                val currentFuelRequirement = configuration.fuel.getFuelRequirement(lands)
+                val nextFuelRequirements = configuration.fuel.fuelRequirements.filter {
+                    it.numOfChunks >= lands.landList.size
+                            && it.numOfMembers >= currentNumOfMembers
+                            && currentFuelRequirement != it
+                }
 
+                var nextBestFuelRequirementForChunk: Config.FuelRequirement? = null
+                var nextBestFuelRequirementForMembers: Config.FuelRequirement? = null
+
+                for (requirement in nextFuelRequirements) {
+                    if (nextBestFuelRequirementForChunk != null) {
+                        if (requirement.secondsPerFuel >= nextBestFuelRequirementForChunk.secondsPerFuel
+                            && requirement.numOfChunks <= nextBestFuelRequirementForChunk.numOfChunks) {
+                            nextBestFuelRequirementForChunk = requirement
+                        }
+                    } else {
+                        nextBestFuelRequirementForChunk = requirement
+                    }
+
+                    if (nextBestFuelRequirementForMembers != null) {
+                        if (requirement.secondsPerFuel >= nextBestFuelRequirementForMembers.secondsPerFuel
+                            && requirement.numOfMembers <= nextBestFuelRequirementForChunk.numOfMembers) {
+                            nextBestFuelRequirementForMembers = requirement
+                        }
+                    } else {
+                        nextBestFuelRequirementForMembers = requirement
+                    }
+                }
+
+                val chunksLeftUntilNextRequirement = if (nextBestFuelRequirementForChunk != null) {
+                    "(하루 당 연료 증가까지 남은 청크: ${min(0, nextBestFuelRequirementForChunk.numOfChunks - lands.landList.size)}개)"
+                } else {
+                    ""
+                }
+
+                val membersLeftUntilNextRequirement = if (nextBestFuelRequirementForMembers != null) {
+                    "(하루 당 연료 증가까지 남은 인원 수: ${min(0, nextBestFuelRequirementForMembers.numOfMembers - currentNumOfMembers)}명)"
+                } else {
+                    ""
+                }
 
                 this.setDisplayName(lands.landsName)
                 this.lore = listOf(
                     "${ChatColor.WHITE}현재 연료: ${lands.fuelLeft}개",
                     timeLeft,
                     fuelInfo,
-                    "${ChatColor.WHITE}점유한 지역: ${ChatColor.GOLD}${lands.landList.size}${ChatColor.WHITE}개 (하루 당 연료 증가까지 남은 청크: ${min(0, nextFuelRequirement.numOfChunks - lands.landList.size)}개)",
-                    "${ChatColor.WHITE}멤버 수: ${ChatColor.GOLD}${lands.memberMap.size}${ChatColor.WHITE}명 (하루 당 연료 증가까지 남은 인원 수: ${min(0, nextFuelRequirement.numOfMembers - currentNumOfMembers)}명)",
+                    "${ChatColor.WHITE}점유한 지역: ${ChatColor.GOLD}${lands.landList.size}${ChatColor.WHITE}개 $chunksLeftUntilNextRequirement",
+                    "${ChatColor.WHITE}멤버 수: ${ChatColor.GOLD}${lands.memberMap.size}${ChatColor.WHITE}명 $membersLeftUntilNextRequirement",
                     "${ChatColor.WHITE}추천 수: ${ChatColor.GOLD}${lands.recommend}",
                     "${ChatColor.WHITE}생성일: ${ChatColor.GRAY}${
                         created.get(Calendar.YEAR)
