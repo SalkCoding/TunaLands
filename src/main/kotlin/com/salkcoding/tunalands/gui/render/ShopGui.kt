@@ -150,7 +150,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 player.giveOrDrop(takeFlagItem)
 
                 // DO NOT CHANGE MESSAGE FORMAT. LINKED WITH KIBANA
-                tunaLands.logger.info("${player.name} (${player.uniqueId}) purchased take_flag x1 for $price")
+                tunaLands.logger.info("${player.name} (${player.uniqueId}) purchased take_flag x1 for $price (${price} each)")
             }
             21 -> {
                 val price = configuration.flag.releaseFlagPrice
@@ -164,7 +164,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 player.giveOrDrop(releaseFlagItem)
 
                 // DO NOT CHANGE MESSAGE FORMAT. LINKED WITH KIBANA
-                tunaLands.logger.info("${player.name} (${player.uniqueId}) purchased release_flag x1 for $price")
+                tunaLands.logger.info("${player.name} (${player.uniqueId}) purchased release_flag x1 for $price (${price} each)")
             }
             29 -> {
                 val price = configuration.fuel.price
@@ -180,7 +180,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 })
 
                 // DO NOT CHANGE MESSAGE FORMAT. LINKED WITH KIBANA
-                tunaLands.logger.info("${player.name} (${player.uniqueId}) purchased fuel x1 for $price")
+                tunaLands.logger.info("${player.name} (${player.uniqueId}) purchased fuel x1 for $price (${price/1.0} each)")
             }
             30 -> {
                 val price = configuration.fuel.price * 8
@@ -196,7 +196,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 })
 
                 // DO NOT CHANGE MESSAGE FORMAT. LINKED WITH KIBANA
-                tunaLands.logger.info("${player.name} (${player.uniqueId}) purchased fuel x8 for $price")
+                tunaLands.logger.info("${player.name} (${player.uniqueId}) purchased fuel x8 for $price (${price/8.0} each)")
             }
             31 -> {
                 val price = configuration.fuel.price * 16
@@ -212,7 +212,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 })
 
                 // DO NOT CHANGE MESSAGE FORMAT. LINKED WITH KIBANA
-                tunaLands.logger.info("${player.name} (${player.uniqueId}) purchased fuel x16 for $price")
+                tunaLands.logger.info("${player.name} (${player.uniqueId}) purchased fuel x16 for $price (${price/16.0} each)")
             }
             32 -> {
                 val price = configuration.fuel.price * 32
@@ -228,7 +228,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 })
 
                 // DO NOT CHANGE MESSAGE FORMAT. LINKED WITH KIBANA
-                tunaLands.logger.info("${player.name} (${player.uniqueId}) purchased fuel x32 for $price")
+                tunaLands.logger.info("${player.name} (${player.uniqueId}) purchased fuel x32 for $price (${price/32.0} each)")
             }
             33 -> {
                 val price = configuration.fuel.price * 64
@@ -244,7 +244,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 })
 
                 // DO NOT CHANGE MESSAGE FORMAT. LINKED WITH KIBANA
-                tunaLands.logger.info("${player.name} (${player.uniqueId}) purchased fuel x64 for $price")
+                tunaLands.logger.info("${player.name} (${player.uniqueId}) purchased fuel x64 for $price (${price/64.0} each)")
             }
         }
     }
