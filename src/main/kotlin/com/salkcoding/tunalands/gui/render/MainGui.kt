@@ -262,6 +262,9 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                         else -> "0초 (예상)"
                     }
 
+                    // DO NOT CHANGE MESSAGE FORMAT. LINKED WITH KIBANA
+                    tunaLands.logger.info("${player.name} (${player.uniqueId}) burned fuel x${addedFuelItem.amount}")
+
                     player.sendMessage("${ChatColor.WHITE}연료 ${ChatColor.GOLD}${addedFuelItem.amount}개${ChatColor.WHITE}가 추가되었습니다! ".infoFormat())
                     player.sendMessage("${ChatColor.WHITE}현재 마을 규모 기준 추가 된 시간: ${ChatColor.GOLD}$addedTimeEstimate".infoFormat())
                     player.playSound(player.location, Sound.BLOCK_BLASTFURNACE_FIRE_CRACKLE, 2.5f, 1f)
@@ -373,6 +376,8 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                     else -> "0초 (예상)"
                 }
 
+                // DO NOT CHANGE MESSAGE FORMAT. LINKED WITH KIBANA
+                tunaLands.logger.info("${player.name} (${player.uniqueId}) burned fuel x${addedFuelItem.amount}")
                 player.sendMessage("${ChatColor.WHITE}연료 ${ChatColor.GOLD}${addedFuelItem.amount}개${ChatColor.WHITE}가 추가되었습니다! ".infoFormat())
                 player.sendMessage("${ChatColor.WHITE}(현재 청크 갯수 및 인원기준 추가된 시간: ${ChatColor.GOLD}$addedTimeEstimate)".infoFormat())
                 player.playSound(player.location, Sound.BLOCK_BLASTFURNACE_FIRE_CRACKLE, 2.5f, 1f)
