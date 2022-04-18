@@ -85,27 +85,30 @@ fun Lands.borderFinder(): List<String> {
 fun Lands.checkFloodFill(): Boolean {
     if (landList.isEmpty()) return true
 
-    val xList = mutableListOf<Int>()
-    val zList = mutableListOf<Int>()
-    landList.forEach { query ->
+    val chunks: List<Pair<Int, Int>> = landList.map { query ->
         val result = query.splitQuery()
-        xList.add(result.first)
-        zList.add(result.second)
+        Pair(result.first, result.second)
     }
-    val xMin = xList.minByOrNull { it }!!
-    val zMin = zList.minByOrNull { it }!!
+
+    val xMin = chunks.minOf { it.first }
+    val zMin = chunks.minOf { it.second }
+
+    val xMax = chunks.maxOf { it.first }
+    val zMax = chunks.maxOf { it.second }
 
     //Array
-    val xLen = xList.toSet().size + 2
-    val zLen = zList.toSet().size + 2
+    val xLen = xMax - xMin + 3
+    val zLen = zMax - zMin + 3
     val array = Array(xLen) { Array(zLen) { 0 } }
 
-    //Setting array (xList size always equals with yList size)
-    for (i in 0 until xList.size) {
-        val x = xList[i] + (-xMin) + 1
-        val y = zList[i] + (-zMin) + 1
+    // 1. Check that chunks don't do 땅따먹기
 
-        array[x][y] = 1
+    //Setting array (xList size always equals with yList size)
+    chunks.forEach { (x, z) ->
+        val a = x - xMin + 1
+        val b = z - zMin + 1
+
+        array[a][b] = 1
     }
 
     //Perform flood fill
@@ -114,25 +117,59 @@ fun Lands.checkFloodFill(): Boolean {
     //Check and return value
     array.forEach { subArray ->
         subArray.forEach { element ->
-            if (element == 0)
+            if (element == 0) {
                 return false
+            }
         }
     }
+
+    // 2. Check that chunks are all connected
+    val connectedCheckArray = Array(xMax - xMin + 1) { Array(zMax - zMin + 1) { 0 } }
+    var cx: Int = 0
+    var cz: Int = 0
+    chunks.forEach { (x, z) ->
+        connectedCheckArray[x - xMin][z - zMin] = 1
+        cx = x - xMin
+        cz = z - zMin
+    }
+
+    isLandsDisconnected(connectedCheckArray, cx, cz, xMax - xMin + 1, zMax - zMin + 1)
+
+    connectedCheckArray.forEach { subArray ->
+        subArray.forEach { element ->
+            if (element == 1) {
+                return false
+            }
+        }
+    }
+
     return true
+}
+
+fun isLandsDisconnected(array: Array<Array<Int>>, x: Int, z: Int, xLimit: Int, zLimit: Int) {
+    if (x < 0 || x >= xLimit || z < 0 || z >= zLimit) return
+    if (array[x][z] != 1) return
+
+    array[x][z] = 2
+
+    isLandsDisconnected(array, x, z - 1, xLimit, zLimit)//South
+    isLandsDisconnected(array, x, z + 1, xLimit, zLimit)//North
+    isLandsDisconnected(array, x - 1, z, xLimit, zLimit)//West
+    isLandsDisconnected(array, x + 1, z, xLimit, zLimit)//East
 }
 
 /*
 DO NOT USE the tailrec keyword! It makes performance worst.
 And a recursion flood fill is more efficient than an iterator flood fill(e.g. using queue for BFS)
 */
-fun calculateFloodFill(array: Array<Array<Int>>, x: Int, y: Int, xLimit: Int, zLimit: Int) {
-    if (x < 0 || y < 0) return
-    if (xLimit <= x || zLimit <= y) return
-    if (array[x][y] == 1) return
-    if (array[x][y] != 0) return
-    array[x][y] = 1
-    calculateFloodFill(array, x, y - 1, xLimit, zLimit)//South
-    calculateFloodFill(array, x, y + 1, xLimit, zLimit)//North
-    calculateFloodFill(array, x - 1, y, xLimit, zLimit)//West
-    calculateFloodFill(array, x + 1, y, xLimit, zLimit)//East
+fun calculateFloodFill(array: Array<Array<Int>>, x: Int, z: Int, xLimit: Int, zLimit: Int) {
+    if (x < 0 || x >= xLimit || z < 0 || z >= zLimit) return
+    if (array[x][z] != 0) return
+
+    array[x][z] = 1
+
+    calculateFloodFill(array, x, z - 1, xLimit, zLimit)//South
+    calculateFloodFill(array, x, z + 1, xLimit, zLimit)//North
+    calculateFloodFill(array, x - 1, z, xLimit, zLimit)//West
+    calculateFloodFill(array, x + 1, z, xLimit, zLimit)//East
 }
