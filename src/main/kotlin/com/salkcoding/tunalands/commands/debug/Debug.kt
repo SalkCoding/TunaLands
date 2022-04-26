@@ -159,12 +159,39 @@ class Debug : CommandExecutor {
                 }
                 return true
             }
+            args[0] == "forcebuy" && args.size == 2 -> {
+                val player = sender as? Player
+                val owner = Bukkit.getOfflinePlayerIfCached(args[1])
+
+                if (owner == null) {
+                    sender.sendMessage("존재하지 않는 플레이어입니다.".errorFormat())
+                } else if (player == null) {
+                    sender.sendMessage("콘솔에서는 사용 불가능한 명령어입니다.".errorFormat())
+                } else {
+                    landManager.buyLandByForceAsAdmin(player, owner, player.location.block)
+                }
+                return true
+            }
             args[0] == "sell" && args.size == 1 -> {
                 val player = sender as? Player
                 if (player != null) {
                     landManager.sellLand(player, (Material.APPLE * 1), player.location.block)
                 } else {
                     sender.sendMessage("콘솔에서는 사용 불가능한 명령어입니다.".errorFormat())
+                }
+                return true
+            }
+
+            args[0] == "forcesell" && args.size == 2 -> {
+                val player = sender as? Player
+                val owner = Bukkit.getOfflinePlayerIfCached(args[1])
+
+                if (owner == null) {
+                    sender.sendMessage("존재하지 않는 플레이어입니다.".errorFormat())
+                } else if (player == null) {
+                    sender.sendMessage("콘솔에서는 사용 불가능한 명령어입니다.".errorFormat())
+                } else {
+                    landManager.sellLandByForceAsAdmin(player, owner, player.location.block)
                 }
                 return true
             }

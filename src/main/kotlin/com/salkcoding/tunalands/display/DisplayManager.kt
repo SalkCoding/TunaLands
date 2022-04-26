@@ -2,6 +2,7 @@ package com.salkcoding.tunalands.display
 
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.tunaLands
+import com.salkcoding.tunalands.util.toChunkQuery
 import com.salkcoding.tunalands.util.toQuery
 import org.bukkit.Bukkit
 import org.bukkit.Chunk
@@ -45,7 +46,7 @@ class DisplayManager {
     }
 
     fun pauseDisplayIfNotPaused(lands: Lands) {
-        val query = lands.upCoreLocation.chunk.toQuery()
+        val query = lands.upCoreLocation.toChunkQuery()
         if (query !in displayMap)
             return
 

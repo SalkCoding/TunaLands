@@ -50,18 +50,11 @@ data class Lands(
         map = mutableMapOf(),
         onChange = object : ObservableMap.Observed<UUID, MemberData> {
             override fun syncChanges(newMap: MutableMap<UUID, MemberData>) {
-                val jsonMessage: JsonObject = JsonObject().apply {
-                    this.addProperty("mapString", newMap
-                        .map {
-                            "${it.value.uuid},${Bukkit.getOfflinePlayer(it.value.uuid).name},${it.value.rank}"
-                        }
-                        .joinToString(";"))
-                }
+                val message = newMap.map {
+                    "${it.value.uuid},${Bukkit.getOfflinePlayer(it.value.uuid).name},${it.value.rank}"
+                }.joinToString(";")
 
-                metamorphosis.send(
-                    "com.salkcoding.tunalands.update_land_member_change",
-                    jsonMessage.toString()
-                )
+                tunaLands.broadcastLandMembersRunnable.queue.offer(message)
             }
         }),
     val banMap: MutableMap<UUID, BanData> = mutableMapOf(),

@@ -1,9 +1,14 @@
 package com.salkcoding.tunalands.util
 
 import org.bukkit.Chunk
+import org.bukkit.Location
 
 fun Chunk.toQuery(): String {
     return "${this.x}:${this.z}"
+}
+
+fun Location.toChunkQuery(): String {
+    return "${this.blockX shr 4}:${this.blockZ shr 4}"
 }
 
 fun String.splitQuery(): Pair<Int, Int> {

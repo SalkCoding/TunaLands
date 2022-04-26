@@ -2,6 +2,7 @@ package com.salkcoding.tunalands
 
 import com.salkcoding.tunalands.alarm.AlarmManager
 import com.salkcoding.tunalands.border.BorderManager
+import com.salkcoding.tunalands.bungee.BroadcastLandMembersRunnable
 import com.salkcoding.tunalands.bungee.CommandListener
 import com.salkcoding.tunalands.commands.LandCommandHandler
 import com.salkcoding.tunalands.commands.debug.Debug
@@ -24,6 +25,7 @@ import me.baiks.bukkitlinked.api.BukkitLinkedAPI
 import net.milkbowl.vault.economy.Economy
 import org.bukkit.Material
 import org.bukkit.plugin.java.JavaPlugin
+import java.util.concurrent.LinkedBlockingQueue
 
 lateinit var tunaLands: TunaLands
 
@@ -44,6 +46,8 @@ lateinit var configuration: Config
 lateinit var currentServerName: String
 
 class TunaLands : JavaPlugin() {
+
+    val broadcastLandMembersRunnable: BroadcastLandMembersRunnable = BroadcastLandMembersRunnable(LinkedBlockingQueue<String>())
 
     override fun onEnable() {
         val tempMetamorphosis = server.pluginManager.getPlugin("Metamorphosis") as? Metamorphosis
@@ -154,6 +158,7 @@ class TunaLands : JavaPlugin() {
         database = Database()
 
         server.scheduler.runTaskTimerAsynchronously(this, AutoSaver(), 18000, 18000)
+        server.scheduler.runTaskTimerAsynchronously(this, broadcastLandMembersRunnable, 100, 100)
 
         logger.info("Plugin is now enabled")
     }
