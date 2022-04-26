@@ -28,7 +28,7 @@ data class Lands(
     var nextTimeFuelNeedsToBeConsumed: LocalDateTime,
     //Optional variables of Constructor
     var enable: Boolean = true,
-    var open: Boolean = false,
+    var open: Boolean = true,
     var recommend: Int = 0,
     var landsName: String = "${ChatColor.WHITE}${ownerName}의 소유지",
     var lore: MutableList<String> = mutableListOf(
