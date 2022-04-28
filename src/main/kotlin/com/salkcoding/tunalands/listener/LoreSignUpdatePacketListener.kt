@@ -44,7 +44,7 @@ class LoreSignUpdatePacketListener {
 
                     lands.lore = newLore
 
-                    player.sendMessage("설명 설정이 아래와 같이 변경되었습니다.")
+                    player.sendMessage("설명 설정이 아래와 같이 변경되었습니다.".infoFormat())
 
                     lands.lore.forEach { line ->
                         player.sendMessage(line)
@@ -76,7 +76,7 @@ class LoreSignUpdatePacketListener {
 
                     lands.welcomeMessage = newLore
 
-                    player.sendMessage("환영 메시지 설정이 아래와 같이 변경되었습니다.")
+                    player.sendMessage("환영 메시지 설정이 아래와 같이 변경되었습니다.".infoFormat())
 
                     lands.welcomeMessage.forEach { line ->
                         player.sendMessage(line)
