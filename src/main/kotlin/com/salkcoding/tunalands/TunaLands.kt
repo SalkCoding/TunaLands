@@ -1,5 +1,7 @@
 package com.salkcoding.tunalands
 
+import com.comphenix.protocol.ProtocolLibrary
+import com.comphenix.protocol.ProtocolManager
 import com.salkcoding.tunalands.alarm.AlarmManager
 import com.salkcoding.tunalands.border.BorderManager
 import com.salkcoding.tunalands.bungee.BroadcastLandMembersRunnable
@@ -45,6 +47,8 @@ lateinit var configuration: Config
 
 lateinit var currentServerName: String
 
+lateinit var protocolManager: ProtocolManager
+
 class TunaLands : JavaPlugin() {
 
     val broadcastLandMembersRunnable: BroadcastLandMembersRunnable = BroadcastLandMembersRunnable(LinkedBlockingQueue<String>())
@@ -65,6 +69,9 @@ class TunaLands : JavaPlugin() {
             return
         }
         bukkitLinkedAPI = tempBukkitLinked.api
+
+
+        protocolManager = ProtocolLibrary.getProtocolManager();
 
         if (!setupEconomy()) {
             logger.warning("Disabled due to no Vault dependency found!")
@@ -150,10 +157,10 @@ class TunaLands : JavaPlugin() {
         server.pluginManager.registerEvents(InventoryCloseListener(), this)
         server.pluginManager.registerEvents(InventoryDragListener(), this)
         server.pluginManager.registerEvents(JoinListener(), this)
-        server.pluginManager.registerEvents(LoreChatListener(), this)
 
         server.pluginManager.registerEvents(JoinListener(), this)
 
+        LoreSignUpdatePacketListener().registerListener()
 
         database = Database()
 

@@ -10,6 +10,7 @@ depend:
   - Don
   - Vault
   - BukkitLinked
+  - ProtocolLib
 commands:
   tunaland:
     description: Base command
