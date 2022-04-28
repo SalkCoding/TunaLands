@@ -58,7 +58,7 @@ class VisitorSettingGui(private val player: Player, private val lands: Lands, pr
     private val landLoreSetButton = (Material.PAPER * 1).apply {
         this.setDisplayName("${ChatColor.WHITE}설명 설정")
         val lore = mutableListOf(
-            "${ChatColor.WHITE}현재 설정된 환영 메세지",
+            "${ChatColor.WHITE}현재 설정된 설명 메세지",
             "",
             "${ChatColor.WHITE}지역 목록에서 보이게 할 설명을 설정합니다.",
             "${ChatColor.WHITE}색 채팅을 이용할 수 있습니다.",
