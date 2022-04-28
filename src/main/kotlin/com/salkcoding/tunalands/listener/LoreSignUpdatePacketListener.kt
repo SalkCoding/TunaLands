@@ -15,7 +15,7 @@ import com.salkcoding.tunalands.tunaLands
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import java.lang.reflect.InvocationTargetException
-import import com.salkcoding.tunalands.util.infoFormat
+import com.salkcoding.tunalands.util.infoFormat
 
 class LoreSignUpdatePacketListener {
 
