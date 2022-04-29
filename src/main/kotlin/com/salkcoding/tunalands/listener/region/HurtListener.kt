@@ -26,8 +26,7 @@ class HurtListener : Listener {
 
         if (victim.uniqueId in lands.memberMap) {
             val victimSetting = when (lands.memberMap[victim.uniqueId]!!.rank) {
-                Rank.OWNER, Rank.DELEGATOR -> return
-                Rank.MEMBER -> lands.memberSetting
+                Rank.OWNER, Rank.DELEGATOR, Rank.MEMBER -> lands.memberSetting
                 Rank.PARTTIMEJOB -> lands.partTimeJobSetting
                 Rank.VISITOR -> lands.visitorSetting
             }
