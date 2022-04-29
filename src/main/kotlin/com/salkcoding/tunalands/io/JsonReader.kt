@@ -13,6 +13,8 @@ import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Location
 import java.io.File
+import java.time.Instant
+import java.time.ZoneId
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -30,6 +32,7 @@ object JsonReader {
 
                 val ownerName = jsonObject["ownerName"].asString
                 val ownerUUID = UUID.fromString(jsonObject["ownerUUID"].asString)
+                val fuelLeft = jsonObject["fuelLeft"]?.asLong ?: 0
                 val expiredMillisecond = jsonObject["expiredMillisecond"].asLong
                 val enable = jsonObject["enable"].asBoolean
                 val open = jsonObject["open"].asBoolean
@@ -72,18 +75,11 @@ object JsonReader {
                     map = mutableMapOf(),
                     onChange = object : ObservableMap.Observed<UUID, Lands.MemberData> {
                         override fun syncChanges(newMap: MutableMap<UUID, Lands.MemberData>) {
-                            val jsonMessage: JsonObject = JsonObject().apply {
-                                this.addProperty("mapString", newMap
-                                    .map {
-                                        "${it.value.uuid},${Bukkit.getOfflinePlayer(it.value.uuid).name},${it.value.rank}"
-                                    }
-                                    .joinToString(";"))
-                            }
+                            val message = newMap.map {
+                                "${it.value.uuid},${Bukkit.getOfflinePlayer(it.value.uuid).name},${it.value.rank}"
+                            }.joinToString(";")
 
-                            metamorphosis.send(
-                                "com.salkcoding.tunalands.update_land_member_change",
-                                jsonMessage.toString()
-                            )
+                            tunaLands.broadcastLandMembersRunnable.queue.offer(message)
                         }
                     },
                     plugin = tunaLands
@@ -186,7 +182,10 @@ object JsonReader {
                         landHistory,
                         upCore,
                         downCore,
-                        expiredMillisecond,
+                        fuelLeft,
+                        Instant.ofEpochMilli(expiredMillisecond)
+                            .atZone(ZoneId.systemDefault())
+                            .toLocalDateTime(),
                         enable,
                         open,
                         recommend,

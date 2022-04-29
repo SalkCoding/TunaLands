@@ -2,6 +2,7 @@ package com.salkcoding.tunalands.display
 
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.tunaLands
+import com.salkcoding.tunalands.util.toChunkQuery
 import com.salkcoding.tunalands.util.toQuery
 import org.bukkit.Bukkit
 import org.bukkit.Chunk
@@ -11,7 +12,7 @@ class DisplayManager {
     private val displayMap = mutableMapOf<String, Display>()
 
     //Auto update scheduler
-    private val task = Bukkit.getScheduler().runTaskTimerAsynchronously(tunaLands, Runnable {
+    private val task = Bukkit.getScheduler().runTaskTimer(tunaLands, Runnable {
         displayMap.forEach { (_, display) ->
             if (!display.pause)
                 display.update()
@@ -42,6 +43,16 @@ class DisplayManager {
             return
 
         displayMap[query]!!.pause()
+    }
+
+    fun pauseDisplayIfNotPaused(lands: Lands) {
+        val query = lands.upCoreLocation.toChunkQuery()
+        if (query !in displayMap)
+            return
+
+        if (!displayMap[query]!!.pause){
+            displayMap[query]!!.pause()
+        }
     }
 
     fun resumeDisplay(lands: Lands) {

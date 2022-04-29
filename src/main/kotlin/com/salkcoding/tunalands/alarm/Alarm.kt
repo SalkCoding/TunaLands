@@ -1,8 +1,12 @@
 package com.salkcoding.tunalands.alarm
 
+import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.util.warnFormat
 import org.bukkit.Bukkit
+import java.time.Duration
+import java.time.LocalDateTime
+import kotlin.math.roundToLong
 
 class Alarm(val lands: Lands) {
 
@@ -18,7 +22,8 @@ class Alarm(val lands: Lands) {
         //All of alarms were notified
         if (!alarm1minute) return
 
-        val expired = lands.expiredMillisecond - System.currentTimeMillis()
+
+        val expired = lands.getEstimatedMillisecondsLeftWithCurrentFuel()
         val days = expired / 86400000
         if (days > 0) return
 

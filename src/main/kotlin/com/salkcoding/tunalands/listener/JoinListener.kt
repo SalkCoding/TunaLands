@@ -13,7 +13,7 @@ class JoinListener : Listener {
         val player = event.player
         val lands = landManager.getPlayerLands(player.uniqueId) ?: return
 
-        val expired = lands.expiredMillisecond - System.currentTimeMillis()
+        val expired = lands.getEstimatedMillisecondsLeftWithCurrentFuel()
         if (expired > 0) {
             val days = expired / 86400000
             val hours = (expired / 3600000) % 24
@@ -21,10 +21,10 @@ class JoinListener : Listener {
             val seconds = (expired / 1000) % 60
             lateinit var text: String
             when {
-                days > 0 -> text = "남은 연료: ${days}일 ${hours}시간 ${minutes}분 ${seconds}초"
-                hours > 0 -> text = "남은 연료: ${hours}시간 ${minutes}분 ${seconds}초"
-                minutes > 0 -> text = "남은 연료: ${minutes}분 ${seconds}초"
-                seconds > 0 -> text = "남은 연료: ${seconds}초"
+                days > 0 -> text = "남은 연료: ${days}일 ${hours}시간 ${minutes}분 ${seconds}초 (예상)"
+                hours > 0 -> text = "남은 연료: ${hours}시간 ${minutes}분 ${seconds}초 (예상)"
+                minutes > 0 -> text = "남은 연료: ${minutes}분 ${seconds}초 (예상)"
+                seconds > 0 -> text = "남은 연료: ${seconds}초 (예상)"
             }
             player.sendMessage(text.infoFormat())
         }

@@ -1,23 +1,25 @@
 package com.salkcoding.tunalands
 
+import com.comphenix.protocol.ProtocolLibrary
+import com.comphenix.protocol.ProtocolManager
 import com.salkcoding.tunalands.alarm.AlarmManager
-import com.salkcoding.tunalands.listener.JoinListener
 import com.salkcoding.tunalands.border.BorderManager
+import com.salkcoding.tunalands.bungee.BroadcastLandMembersRunnable
 import com.salkcoding.tunalands.bungee.CommandListener
 import com.salkcoding.tunalands.commands.LandCommandHandler
 import com.salkcoding.tunalands.commands.debug.Debug
 import com.salkcoding.tunalands.commands.sub.*
-import com.salkcoding.tunalands.lands.LandManager
 import com.salkcoding.tunalands.database.Database
 import com.salkcoding.tunalands.display.DisplayChunkListener
 import com.salkcoding.tunalands.display.DisplayManager
 import com.salkcoding.tunalands.gui.GuiManager
 import com.salkcoding.tunalands.io.AutoSaver
+import com.salkcoding.tunalands.lands.LandManager
+import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.LeftManager
+import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.listener.*
 import com.salkcoding.tunalands.listener.region.*
-import com.salkcoding.tunalands.recipe.ReleaseFlagRecipe
-import com.salkcoding.tunalands.recipe.TakeFlagRecipe
 import com.salkcoding.tunalands.vote.RecommendManager
 import fish.evatuna.metamorphosis.Metamorphosis
 import me.baiks.bukkitlinked.BukkitLinked
@@ -25,6 +27,7 @@ import me.baiks.bukkitlinked.api.BukkitLinkedAPI
 import net.milkbowl.vault.economy.Economy
 import org.bukkit.Material
 import org.bukkit.plugin.java.JavaPlugin
+import java.util.concurrent.LinkedBlockingQueue
 
 lateinit var tunaLands: TunaLands
 
@@ -44,7 +47,11 @@ lateinit var configuration: Config
 
 lateinit var currentServerName: String
 
+lateinit var protocolManager: ProtocolManager
+
 class TunaLands : JavaPlugin() {
+
+    val broadcastLandMembersRunnable: BroadcastLandMembersRunnable = BroadcastLandMembersRunnable(LinkedBlockingQueue<String>())
 
     override fun onEnable() {
         val tempMetamorphosis = server.pluginManager.getPlugin("Metamorphosis") as? Metamorphosis
@@ -62,6 +69,9 @@ class TunaLands : JavaPlugin() {
             return
         }
         bukkitLinkedAPI = tempBukkitLinked.api
+
+
+        protocolManager = ProtocolLibrary.getProtocolManager();
 
         if (!setupEconomy()) {
             logger.warning("Disabled due to no Vault dependency found!")
@@ -147,16 +157,15 @@ class TunaLands : JavaPlugin() {
         server.pluginManager.registerEvents(InventoryCloseListener(), this)
         server.pluginManager.registerEvents(InventoryDragListener(), this)
         server.pluginManager.registerEvents(JoinListener(), this)
-        server.pluginManager.registerEvents(LoreChatListener(), this)
 
         server.pluginManager.registerEvents(JoinListener(), this)
 
-        TakeFlagRecipe.registerRecipe()
-        ReleaseFlagRecipe.registerRecipe()
+        LoreSignUpdatePacketListener().registerListener()
 
         database = Database()
 
         server.scheduler.runTaskTimerAsynchronously(this, AutoSaver(), 18000, 18000)
+        server.scheduler.runTaskTimerAsynchronously(this, broadcastLandMembersRunnable, 100, 100)
 
         logger.info("Plugin is now enabled")
     }
@@ -174,9 +183,6 @@ class TunaLands : JavaPlugin() {
         landManager.dispose()
 
         displayManager.dispose()
-
-        TakeFlagRecipe.unregisterRecipe()
-        ReleaseFlagRecipe.unregisterRecipe()
 
         logger.warning("All guis are closed")
 
@@ -208,11 +214,14 @@ class TunaLands : JavaPlugin() {
         //Fuel
         val configFuel = config.getConfigurationSection("fuel")!!
         val fuel = Config.Fuel(
-            configFuel.getInt("m30"),
-            configFuel.getInt("h1"),
-            configFuel.getInt("h6"),
-            configFuel.getInt("h12"),
-            configFuel.getInt("h24"),
+            configFuel.getDouble("price"),
+            configFuel.getMapList("fuelRequirements").map {
+                Config.FuelRequirement(
+                    it["numOfMembers"] as Int,
+                    it["numOfChunks"] as Int,
+                    it["secondsPerFuel"] as Double
+                )
+            }
         )
         logger.info("fuel: $fuel")
         //Recommend
@@ -238,7 +247,14 @@ class TunaLands : JavaPlugin() {
         val limitWorld = config.getStringList("limitWorld")
         logger.info("limitWorld: $limitWorld")
 
-        configuration = Config(database, protect, fuel, recommend, command, limitWorld)
+        // Flag prices
+        val flagSection = config.getConfigurationSection("flag")!!
+        val flag = Config.Flag(
+            flagSection.getDouble("takeFlagPrice"),
+            flagSection.getDouble("releaseFlagPrice")
+        )
+
+        configuration = Config(database, protect, fuel, recommend, command, limitWorld, flag)
 
     }
 
@@ -256,7 +272,8 @@ data class Config(
     val fuel: Fuel,
     val recommend: Recommend,
     val command: Command,
-    val limitWorld: List<String>
+    val limitWorld: List<String>,
+    val flag: Flag
 ) {
 
     data class Database constructor(
@@ -274,12 +291,27 @@ data class Config(
     )
 
     data class Fuel(
-        val m30: Int,
-        val h1: Int,
-        val h6: Int,
-        val h12: Int,
-        val h24: Int
-    )
+        val price: Double,
+        val fuelRequirements: List<FuelRequirement>
+    ) {
+        fun getFuelRequirement(land: Lands): FuelRequirement {
+            return fuelRequirements.filter {
+                land.memberMap.filter { (_, it) ->
+                    it.rank != Rank.VISITOR && it.rank != Rank.PARTTIMEJOB
+                }.size >= it.numOfMembers || land.landList.size >= it.numOfChunks
+            }.minOrNull() ?: fuelRequirements.maxOf { it }
+        }
+    }
+
+    data class FuelRequirement(
+        val numOfMembers: Int,
+        val numOfChunks: Int,
+        val secondsPerFuel: Double
+    ) : Comparable<FuelRequirement> {
+        override fun compareTo(other: FuelRequirement): Int {
+            return this.secondsPerFuel.compareTo(other.secondsPerFuel)
+        }
+    }
 
     data class Recommend(
         val reset: Long,
@@ -292,5 +324,10 @@ data class Config(
         val spawnCooldown: Long,
         val setSpawnPrice: Int,
         val renamePrice: Int
+    )
+
+    data class Flag(
+        val takeFlagPrice: Double,
+        val releaseFlagPrice: Double
     )
 }

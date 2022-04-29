@@ -3,6 +3,7 @@ package com.salkcoding.tunalands.util
 import com.salkcoding.tunalands.TunaLands
 import com.salkcoding.tunalands.tunaLands
 import org.bukkit.Bukkit
+import java.util.*
 
 class ObservableMap<K, V>(
     private val plugin: TunaLands,
@@ -19,7 +20,7 @@ class ObservableMap<K, V>(
             Runnable {
                 this.sync()
             },
-            100,
+            100 + Random().nextLong(100),
             100
         )
     }

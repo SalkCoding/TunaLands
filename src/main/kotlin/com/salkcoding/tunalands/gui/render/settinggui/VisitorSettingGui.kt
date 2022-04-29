@@ -1,10 +1,15 @@
 package com.salkcoding.tunalands.gui.render.settinggui
 
 
+import com.comphenix.protocol.PacketType
+import com.comphenix.protocol.events.PacketContainer
+import com.comphenix.protocol.wrappers.BlockPosition
+import com.comphenix.protocol.wrappers.WrappedBlockData
 import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.guiManager
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
+import com.salkcoding.tunalands.protocolManager
 import com.salkcoding.tunalands.util.backButton
 import com.salkcoding.tunalands.util.infoFormat
 import com.salkcoding.tunalands.util.times
@@ -13,15 +18,18 @@ import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.Sound
+import org.bukkit.block.Sign
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryAction
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.Inventory
+import java.lang.reflect.InvocationTargetException
 import java.util.*
 
-val loreChatMap = mutableMapOf<UUID, Int>()
-val welcomeMessageChatMap = mutableMapOf<UUID, Int>()
+
+val loreChatMap = mutableMapOf<UUID, Triple<Int, Int, Int>>()
+val welcomeMessageChatMap = mutableMapOf<UUID, Triple<Int, Int, Int>>()
 
 class VisitorSettingGui(private val player: Player, private val lands: Lands, private val rank: Rank) : GuiInterface {
 
@@ -31,12 +39,11 @@ class VisitorSettingGui(private val player: Player, private val lands: Lands, pr
             "${ChatColor.WHITE}현재 설정된 환영 메세지",
             "",
             "${ChatColor.WHITE}방문자가 지역에 방문했을 때 보여줄 메세지를 설정합니다.",
-            "${ChatColor.WHITE}색 채팅을 이용할 수 있으며,",
-            "${ChatColor.WHITE}\'\\n\'을 이용하여 줄바꿈을 할 수 있습니다.",
-            "${ChatColor.WHITE}최대 3줄까지 설정할 수 있습니다."
+            "${ChatColor.WHITE}색 채팅을 이용할 수 있습니다.",
+            "${ChatColor.WHITE}표지판에 원하는 메시지를 입력해주세요."
         )
         (0 until lands.lore.size).forEach { i ->
-            lore.add(i + 1, lands.lore[i])
+            lore.add(i + 1, "" + ChatColor.WHITE + lands.lore[i])
         }
         this.lore = lore
     }
@@ -51,15 +58,14 @@ class VisitorSettingGui(private val player: Player, private val lands: Lands, pr
     private val landLoreSetButton = (Material.PAPER * 1).apply {
         this.setDisplayName("${ChatColor.WHITE}설명 설정")
         val lore = mutableListOf(
-            "${ChatColor.WHITE}현재 설정된 환영 메세지",
+            "${ChatColor.WHITE}현재 설정된 설명 메세지",
             "",
             "${ChatColor.WHITE}지역 목록에서 보이게 할 설명을 설정합니다.",
-            "${ChatColor.WHITE}색 채팅을 이용할 수 있으며,",
-            "${ChatColor.WHITE}\'\\n\'을 이용하여 줄바꿈을 할 수 있습니다.",
-            "${ChatColor.WHITE}최대 3줄까지 설정할 수 있습니다."
+            "${ChatColor.WHITE}색 채팅을 이용할 수 있습니다.",
+            "${ChatColor.WHITE}표지판에 원하는 메시지를 입력해주세요."
         )
         (0 until lands.welcomeMessage.size).forEach { i ->
-            lore.add(i + 1, lands.welcomeMessage[i])
+            lore.add(i + 1, "" + ChatColor.WHITE + lands.welcomeMessage[i])
         }
         this.lore = lore
     }
@@ -69,7 +75,8 @@ class VisitorSettingGui(private val player: Player, private val lands: Lands, pr
     private val breakBlock = (Material.DIAMOND_PICKAXE * 1).apply { this.setDisplayName("${ChatColor.WHITE}블록 부수기") }
     private val placeBlock = (Material.WHITE_CONCRETE * 1).apply { this.setDisplayName("${ChatColor.WHITE}블록 설치") }
     private val canHurt = (Material.RED_DYE * 1).apply { this.setDisplayName("${ChatColor.WHITE}데미지") }
-    private val pickupExp = (Material.EXPERIENCE_BOTTLE * 1).apply { this.setDisplayName("${ChatColor.WHITE}경험치 오브 줍기") }
+    private val pickupExp =
+        (Material.EXPERIENCE_BOTTLE * 1).apply { this.setDisplayName("${ChatColor.WHITE}경험치 오브 줍기") }
     private val pickupItem = (Material.PUMPKIN_SEEDS * 1).apply { this.setDisplayName("${ChatColor.WHITE}아이템 줍기") }
     private val dropItem = (Material.MELON_SEEDS * 1).apply { this.setDisplayName("${ChatColor.WHITE}아이템 버리기") }
     private val openChest = (Material.CHEST * 1).apply { this.setDisplayName("${ChatColor.WHITE}창고 사용") }
@@ -79,18 +86,21 @@ class VisitorSettingGui(private val player: Player, private val lands: Lands, pr
     private val useCircuit = (Material.REPEATER * 1).apply { this.setDisplayName("${ChatColor.WHITE}회로 조작") }
     private val useLever = (Material.LEVER * 1).apply { this.setDisplayName("${ChatColor.WHITE}레버 사용") }
     private val useButton = (Material.STONE_BUTTON * 1).apply { this.setDisplayName("${ChatColor.WHITE}버튼 사용") }
-    private val usePressureSensor = (Material.OAK_PRESSURE_PLATE * 1).apply { this.setDisplayName("${ChatColor.WHITE}압력판 사용") }
+    private val usePressureSensor =
+        (Material.OAK_PRESSURE_PLATE * 1).apply { this.setDisplayName("${ChatColor.WHITE}압력판 사용") }
     private val useDoor = (Material.OAK_DOOR * 1).apply { this.setDisplayName("${ChatColor.WHITE}문 사용") }
     private val useTrapdoor = (Material.OAK_TRAPDOOR * 1).apply { this.setDisplayName("${ChatColor.WHITE}다락문 사용") }
     private val useFenceGate = (Material.OAK_FENCE_GATE * 1).apply { this.setDisplayName("${ChatColor.WHITE}울타리 문 사용") }
     private val useHopper = (Material.HOPPER * 1).apply { this.setDisplayName("${ChatColor.WHITE}깔대기 사용") }
-    private val useDispenserAndDropper = (Material.DISPENSER * 1).apply { this.setDisplayName("${ChatColor.WHITE}발사기/공급기 사용") }
+    private val useDispenserAndDropper =
+        (Material.DISPENSER * 1).apply { this.setDisplayName("${ChatColor.WHITE}발사기/공급기 사용") }
 
     //Third row
     private val useCraftTable = (Material.CRAFTING_TABLE * 1).apply { this.setDisplayName("${ChatColor.WHITE}작업대 사용") }
     private val useFurnace = (Material.FURNACE * 1).apply { this.setDisplayName("${ChatColor.WHITE}화로 사용") }
     private val useBed = (Material.RED_BED * 1).apply { this.setDisplayName("${ChatColor.WHITE}침대 사용") }
-    private val useEnchantingTable = (Material.ENCHANTING_TABLE * 1).apply { this.setDisplayName("${ChatColor.WHITE}인첸트 테이블 사용") }
+    private val useEnchantingTable =
+        (Material.ENCHANTING_TABLE * 1).apply { this.setDisplayName("${ChatColor.WHITE}인첸트 테이블 사용") }
     private val useAnvil = (Material.ANVIL * 1).apply { this.setDisplayName("${ChatColor.WHITE}모루 사용") }
     private val useCauldron = (Material.CAULDRON * 1).apply { this.setDisplayName("${ChatColor.WHITE}가마솥 사용") }
     private val useBrewingStand = (Material.BREWING_STAND * 1).apply { this.setDisplayName("${ChatColor.WHITE}양조기 사용") }
@@ -105,7 +115,8 @@ class VisitorSettingGui(private val player: Player, private val lands: Lands, pr
     private val useMilk = (Material.MILK_BUCKET * 1).apply { this.setDisplayName("${ChatColor.WHITE}우유 마시기") }
     private val throwEgg = (Material.EGG * 1).apply { this.setDisplayName("${ChatColor.WHITE}달걀 던지기") }
     private val useShears = (Material.SHEARS * 1).apply { this.setDisplayName("${ChatColor.WHITE}양털 깎기") }
-    private val useFlintAndSteel = (Material.FLINT_AND_STEEL * 1).apply { this.setDisplayName("${ChatColor.WHITE}부싯돌과 부시 사용") }
+    private val useFlintAndSteel =
+        (Material.FLINT_AND_STEEL * 1).apply { this.setDisplayName("${ChatColor.WHITE}부싯돌과 부시 사용") }
     private val canRuinFarmland = (Material.FARMLAND * 1).apply { this.setDisplayName("${ChatColor.WHITE}짓밟기") }
 
     //Fifth row
@@ -113,7 +124,8 @@ class VisitorSettingGui(private val player: Player, private val lands: Lands, pr
     private val canFishing = (Material.FISHING_ROD * 1).apply { this.setDisplayName("${ChatColor.WHITE}낚시") }
     private val useBoat = (Material.OAK_BOAT * 1).apply { this.setDisplayName("${ChatColor.WHITE}배 사용") }
     private val canRiding = (Material.SADDLE * 1).apply { this.setDisplayName("${ChatColor.WHITE}라이딩") }
-    private val useChestedHorse = (Material.DIAMOND_HORSE_ARMOR * 1).apply { this.setDisplayName("${ChatColor.WHITE}말 인벤토리 사용") }
+    private val useChestedHorse =
+        (Material.DIAMOND_HORSE_ARMOR * 1).apply { this.setDisplayName("${ChatColor.WHITE}말 인벤토리 사용") }
     private val useLead = (Material.LEAD * 1).apply { this.setDisplayName("${ChatColor.WHITE}끈 사용") }
     private val breakItemFrame = (Material.ITEM_FRAME * 1).apply { this.setDisplayName("${ChatColor.WHITE}아이템 액자 부수기") }
     private val useNoteBlock = (Material.NOTE_BLOCK * 1).apply { this.setDisplayName("${ChatColor.WHITE}노트블록 사용") }
@@ -137,18 +149,24 @@ class VisitorSettingGui(private val player: Player, private val lands: Lands, pr
         useCircuit.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useCircuit.toColoredText()}") }
         useLever.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useLever.toColoredText()}") }
         useButton.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useButton.toColoredText()}") }
-        usePressureSensor.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.usePressureSensor.toColoredText()}") }
+        usePressureSensor.apply {
+            this.lore = listOf("${ChatColor.WHITE}상태: ${setting.usePressureSensor.toColoredText()}")
+        }
         useDoor.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useDoor.toColoredText()}") }
         useTrapdoor.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useTrapdoor.toColoredText()}") }
         useFenceGate.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useFenceGate.toColoredText()}") }
         useHopper.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useHopper.toColoredText()}") }
-        useDispenserAndDropper.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useDispenserAndDropper.toColoredText()}") }
+        useDispenserAndDropper.apply {
+            this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useDispenserAndDropper.toColoredText()}")
+        }
 
         //Third row
         useCraftTable.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useCraftTable.toColoredText()}") }
         useFurnace.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useFurnace.toColoredText()}") }
         useBed.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useBed.toColoredText()}") }
-        useEnchantingTable.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useEnchantingTable.toColoredText()}") }
+        useEnchantingTable.apply {
+            this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useEnchantingTable.toColoredText()}")
+        }
         useAnvil.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useAnvil.toColoredText()}") }
         useCauldron.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useCauldron.toColoredText()}") }
         useBrewingStand.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useBrewingStand.toColoredText()}") }
@@ -163,7 +181,9 @@ class VisitorSettingGui(private val player: Player, private val lands: Lands, pr
         useMilk.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useMilk.toColoredText()}") }
         throwEgg.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.throwEgg.toColoredText()}") }
         useShears.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useShears.toColoredText()}") }
-        useFlintAndSteel.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useFlintAndSteel.toColoredText()}") }
+        useFlintAndSteel.apply {
+            this.lore = listOf("${ChatColor.WHITE}상태: ${setting.useFlintAndSteel.toColoredText()}")
+        }
         canRuinFarmland.apply { this.lore = listOf("${ChatColor.WHITE}상태: ${setting.canRuinFarmland.toColoredText()}") }
 
         //Fifth row
@@ -243,20 +263,57 @@ class VisitorSettingGui(private val player: Player, private val lands: Lands, pr
                 player.openSettingGui(lands, rank)//Back button
             }
             3 -> {
+                val x = player.location.blockX
+                val y = -64
+                val z = player.location.blockZ
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
-                loreChatMap[player.uniqueId] = 0
-                player.sendMessage("${ChatColor.WHITE}원하는 문장을 채팅창에 입력해주세요.".infoFormat())
-                player.sendMessage("${ChatColor.WHITE}색 채팅을 이용할 수 있으며,'\\n'을 이용하여 줄바꿈을 할 수 있습니다.".infoFormat())
-                player.sendMessage("${ChatColor.WHITE}최대 3줄까지 설정할 수 있습니다.".infoFormat())
+                loreChatMap[player.uniqueId] = Triple(x, y, z)
+                player.sendMessage("${ChatColor.WHITE}원하는 문장을 표지판에 입력해주세요.".infoFormat())
+                player.sendMessage("${ChatColor.WHITE}색 채팅을 이용할 수 있습니다.".infoFormat())
                 player.closeInventory()
+
+                // Send block change of sign at the last y bedrock
+                val blockSignPacket = PacketContainer(PacketType.Play.Server.BLOCK_CHANGE)
+                blockSignPacket.blockPositionModifier.write(0, BlockPosition(x, y, z))
+                blockSignPacket.blockData.write(0, WrappedBlockData.createData(Material.ACACIA_WALL_SIGN))
+
+                // Send open sign packet
+                val openSignPacket = PacketContainer(PacketType.Play.Server.OPEN_SIGN_EDITOR)
+                openSignPacket.blockPositionModifier.write(0, BlockPosition(x, y, z))
+
+                try {
+                    protocolManager.sendServerPacket(player, blockSignPacket)
+                    protocolManager.sendServerPacket(player, openSignPacket)
+                } catch (e: InvocationTargetException) {
+                    throw RuntimeException("Cannot send packet $openSignPacket or $blockSignPacket", e)
+                }
             }
             5 -> {
+                val x = player.location.blockX
+                val y = -64
+                val z = player.location.blockZ
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
-                welcomeMessageChatMap[player.uniqueId] = 0
-                player.sendMessage("${ChatColor.WHITE}원하는 문장을 채팅창에 입력해주세요.".infoFormat())
-                player.sendMessage("${ChatColor.WHITE}색 채팅을 이용할 수 있으며,'\\n'을 이용하여 줄바꿈을 할 수 있습니다.".infoFormat())
-                player.sendMessage("${ChatColor.WHITE}한줄만 사용 가능합니다.".infoFormat())
+                welcomeMessageChatMap[player.uniqueId] = Triple(x, y, z)
+                player.sendMessage("${ChatColor.WHITE}원하는 문장을 표지판에 입력해주세요.".infoFormat())
+                player.sendMessage("${ChatColor.WHITE}색 채팅을 이용할 수 있습니다.".infoFormat())
                 player.closeInventory()
+
+
+                // Send block change of sign at the last y bedrock
+                val blockSignPacket = PacketContainer(PacketType.Play.Server.BLOCK_CHANGE)
+                blockSignPacket.blockPositionModifier.write(0, BlockPosition(x, y, z))
+                blockSignPacket.blockData.write(0, WrappedBlockData.createData(Material.ACACIA_WALL_SIGN))
+
+                // Send open sign packet
+                val openSignPacket = PacketContainer(PacketType.Play.Server.OPEN_SIGN_EDITOR)
+                openSignPacket.blockPositionModifier.write(0, BlockPosition(x, y, z))
+
+                try {
+                    protocolManager.sendServerPacket(player, blockSignPacket)
+                    protocolManager.sendServerPacket(player, openSignPacket)
+                } catch (e: InvocationTargetException) {
+                    throw RuntimeException("Cannot send packet $openSignPacket or $blockSignPacket", e)
+                }
             }
             //First row
             9 -> {

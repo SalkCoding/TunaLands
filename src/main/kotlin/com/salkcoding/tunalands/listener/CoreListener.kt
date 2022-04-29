@@ -44,7 +44,7 @@ class CoreListener : Listener {
             val price = configuration.protect.createPrice.toDouble()
             if (player.hasNotEnoughMoney(price)) {
                 val delta = price - economy.getBalance(player)
-                player.sendErrorTipMessage("${ChatColor.RED}${delta}캔이 부족합니다.")
+                player.sendErrorTipMessage("${ChatColor.RED}${"%.2f".format(delta)}캔이 부족합니다.")
                 event.isCancelled = true
                 return
             }

@@ -1,6 +1,6 @@
 name: TunaLands
 main: com.salkcoding.tunalands.TunaLands
-version: 1.1.6-hofix-1-SNAPSHOT
+version: 1.2.0
 description: Protect lands with some money
 api-version: 1.18
 author: Salk_Coding
@@ -10,6 +10,7 @@ depend:
   - Don
   - Vault
   - BukkitLinked
+  - ProtocolLib
 commands:
   tunaland:
     description: Base command

@@ -2,6 +2,7 @@ package com.salkcoding.tunalands.lands
 
 import com.google.gson.JsonObject
 import com.salkcoding.tunalands.bukkitLinkedAPI
+import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.lands.setting.DelegatorSetting
 import com.salkcoding.tunalands.lands.setting.LandSetting
@@ -11,7 +12,10 @@ import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Chunk
 import org.bukkit.Location
+import java.time.Duration
+import java.time.LocalDateTime
 import java.util.*
+import kotlin.math.roundToLong
 
 data class Lands(
     var ownerName: String,
@@ -20,10 +24,11 @@ data class Lands(
     val landHistory: LandHistory,
     val upCoreLocation: Location, //Chest
     val downCoreLocation: Location, //Core block
-    var expiredMillisecond: Long,
+    var fuelLeft: Long, // amount of fuel left,
+    var nextTimeFuelNeedsToBeConsumed: LocalDateTime,
     //Optional variables of Constructor
     var enable: Boolean = true,
-    var open: Boolean = false,
+    var open: Boolean = true,
     var recommend: Int = 0,
     var landsName: String = "${ChatColor.WHITE}${ownerName}의 소유지",
     var lore: MutableList<String> = mutableListOf(
@@ -45,18 +50,11 @@ data class Lands(
         map = mutableMapOf(),
         onChange = object : ObservableMap.Observed<UUID, MemberData> {
             override fun syncChanges(newMap: MutableMap<UUID, MemberData>) {
-                val jsonMessage: JsonObject = JsonObject().apply {
-                    this.addProperty("mapString", newMap
-                        .map {
-                            "${it.value.uuid},${Bukkit.getOfflinePlayer(it.value.uuid).name},${it.value.rank}"
-                        }
-                        .joinToString(";"))
-                }
+                val message = newMap.map {
+                    "${it.value.uuid},${Bukkit.getOfflinePlayer(it.value.uuid).name},${it.value.rank}"
+                }.joinToString(";")
 
-                metamorphosis.send(
-                    "com.salkcoding.tunalands.update_land_member_change",
-                    jsonMessage.toString()
-                )
+                tunaLands.broadcastLandMembersRunnable.queue.offer(message)
             }
         }),
     val banMap: MutableMap<UUID, BanData> = mutableMapOf(),
@@ -108,5 +106,24 @@ data class Lands(
             else
                 bukkitLinkedAPI.sendMessageAcrossServer(offlinePlayer.name, message)
         }
+    }
+
+    fun getEstimatedMillisecondsLeftWithCurrentFuel(): Long {
+        var currentFuelTimeLeft = Duration.between(LocalDateTime.now(), this.nextTimeFuelNeedsToBeConsumed)
+        if (currentFuelTimeLeft.isNegative) {
+            currentFuelTimeLeft = Duration.ZERO
+        }
+
+        val secondsPerFuel = configuration.fuel.getFuelRequirement(this).secondsPerFuel
+        val msPerFuel = (secondsPerFuel * 1000).roundToLong()
+        val timeLeftInMilliseconds = currentFuelTimeLeft.toMillis() + msPerFuel * this.fuelLeft
+
+        return timeLeftInMilliseconds
+    }
+
+    fun getMillisecondsPerFuel(): Long {
+        val secondsPerFuel = configuration.fuel.getFuelRequirement(this).secondsPerFuel
+        val msPerFuel = (secondsPerFuel * 1000).roundToLong()
+        return msPerFuel
     }
 }

@@ -53,14 +53,14 @@ class Debug : CommandExecutor {
                 } else sender.sendMessage("대상이 존재하지 않습니다.".infoFormat())
                 return true
             }
-            args[0] == "timeset" && args.size == 3 -> {
+            args[0] == "setfuel" && args.size == 3 -> {
                 val targetUUID = Bukkit.getPlayerUniqueId(args[1])
                 if (targetUUID != null) {
                     val lands = landManager.getPlayerLands(targetUUID, Rank.OWNER)
                     if (lands != null) {
                         try {
-                            val milliSeconds = args[2].toLong()
-                            if (milliSeconds <= 0) {
+                            val numOfFuel = args[2].toLong()
+                            if (numOfFuel <= 0) {
                                 lands.sendMessageToOnlineMembers(
                                     listOf(
                                         "관리자에의해 땅이 비활성화 상태로 전환됩니다!".warnFormat(),
@@ -70,14 +70,13 @@ class Debug : CommandExecutor {
                                 displayManager.pauseDisplay(lands)
                                 lands.enable = false
                             } else {
-                                if (lands.enable) lands.expiredMillisecond += milliSeconds
-                                else {
-                                    lands.expiredMillisecond = System.currentTimeMillis() + milliSeconds
+                                lands.fuelLeft = numOfFuel
+                                if (!lands.enable) {
                                     lands.enable = true
                                     displayManager.resumeDisplay(lands)
                                     lands.sendMessageToOnlineMembers("땅이 다시 활성화되었습니다!".infoFormat())
                                 }
-                                lands.sendMessageToOnlineMembers("관리자에의해 땅 보호 시간이 변경되었습니다.".infoFormat())
+                                lands.sendMessageToOnlineMembers("관리자에의해 땅 연료 갯수가 변경되었습니다.".infoFormat())
                             }
                         } catch (e: NumberFormatException) {
                             sender.sendMessage("${args[2]}은/는 숫자가 아닙니다.".errorFormat())
@@ -160,12 +159,39 @@ class Debug : CommandExecutor {
                 }
                 return true
             }
+            args[0] == "forcebuy" && args.size == 2 -> {
+                val player = sender as? Player
+                val owner = Bukkit.getOfflinePlayerIfCached(args[1])
+
+                if (owner == null) {
+                    sender.sendMessage("존재하지 않는 플레이어입니다.".errorFormat())
+                } else if (player == null) {
+                    sender.sendMessage("콘솔에서는 사용 불가능한 명령어입니다.".errorFormat())
+                } else {
+                    landManager.buyLandByForceAsAdmin(player, owner, player.location.block)
+                }
+                return true
+            }
             args[0] == "sell" && args.size == 1 -> {
                 val player = sender as? Player
                 if (player != null) {
                     landManager.sellLand(player, (Material.APPLE * 1), player.location.block)
                 } else {
                     sender.sendMessage("콘솔에서는 사용 불가능한 명령어입니다.".errorFormat())
+                }
+                return true
+            }
+
+            args[0] == "forcesell" && args.size == 2 -> {
+                val player = sender as? Player
+                val owner = Bukkit.getOfflinePlayerIfCached(args[1])
+
+                if (owner == null) {
+                    sender.sendMessage("존재하지 않는 플레이어입니다.".errorFormat())
+                } else if (player == null) {
+                    sender.sendMessage("콘솔에서는 사용 불가능한 명령어입니다.".errorFormat())
+                } else {
+                    landManager.sellLandByForceAsAdmin(player, owner, player.location.block)
                 }
                 return true
             }
