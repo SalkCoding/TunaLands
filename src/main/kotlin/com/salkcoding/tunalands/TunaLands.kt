@@ -120,6 +120,8 @@ class TunaLands : JavaPlugin() {
         handler.register("unban", Unban())
         handler.register("visit", Visit())
 
+        handler.register("map", Map())
+
         handler.register("debug", Debug())
 
         getCommand("tunaland")!!.setExecutor(handler)
