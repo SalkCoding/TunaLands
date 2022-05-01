@@ -42,8 +42,8 @@ class VisitorSettingGui(private val player: Player, private val lands: Lands, pr
             "${ChatColor.WHITE}색 채팅을 이용할 수 있습니다.",
             "${ChatColor.WHITE}표지판에 원하는 메시지를 입력해주세요."
         )
-        (0 until lands.lore.size).forEach { i ->
-            lore.add(i + 1, "" + ChatColor.WHITE + lands.lore[i])
+        (0 until lands.welcomeMessage.size).forEach { i ->
+            lore.add(i + 1, "" + ChatColor.WHITE + lands.welcomeMessage[i])
         }
         this.lore = lore
     }
@@ -64,8 +64,8 @@ class VisitorSettingGui(private val player: Player, private val lands: Lands, pr
             "${ChatColor.WHITE}색 채팅을 이용할 수 있습니다.",
             "${ChatColor.WHITE}표지판에 원하는 메시지를 입력해주세요."
         )
-        (0 until lands.welcomeMessage.size).forEach { i ->
-            lore.add(i + 1, "" + ChatColor.WHITE + lands.welcomeMessage[i])
+        (0 until lands.lore.size).forEach { i ->
+            lore.add(i + 1, "" + ChatColor.WHITE + lands.lore[i])
         }
         this.lore = lore
     }
@@ -267,7 +267,7 @@ class VisitorSettingGui(private val player: Player, private val lands: Lands, pr
                 val y = -64
                 val z = player.location.blockZ
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
-                loreChatMap[player.uniqueId] = Triple(x, y, z)
+                welcomeMessageChatMap[player.uniqueId] = Triple(x, y, z)
                 player.sendMessage("${ChatColor.WHITE}원하는 문장을 표지판에 입력해주세요.".infoFormat())
                 player.sendMessage("${ChatColor.WHITE}색 채팅을 이용할 수 있습니다.".infoFormat())
                 player.closeInventory()
@@ -293,7 +293,7 @@ class VisitorSettingGui(private val player: Player, private val lands: Lands, pr
                 val y = -64
                 val z = player.location.blockZ
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
-                welcomeMessageChatMap[player.uniqueId] = Triple(x, y, z)
+                loreChatMap[player.uniqueId] = Triple(x, y, z)
                 player.sendMessage("${ChatColor.WHITE}원하는 문장을 표지판에 입력해주세요.".infoFormat())
                 player.sendMessage("${ChatColor.WHITE}색 채팅을 이용할 수 있습니다.".infoFormat())
                 player.closeInventory()
