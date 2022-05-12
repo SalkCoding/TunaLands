@@ -23,6 +23,7 @@ class Help : CommandExecutor {
         sender.sendMessage("/tl invite (name): 해당 유저를 멤버로 초대합니다.".infoFormat())
         sender.sendMessage("/tl kick (name): 땅에서 해당 유저를 쫓아냅니다.".infoFormat())
         sender.sendMessage("/tl leave: 땅을 떠납니다.".infoFormat())
+        sender.sendMessage("/tl map: 현재 위치 주변 땅 지도를 봅니다.".infoFormat())
         sender.sendMessage("/tl promote (name): 해당 유저를 승급시킵니다.".infoFormat())
         sender.sendMessage("/tl recommend: 다른 사람의 땅을 추천할 수 있는 GUI를 엽니다.".infoFormat())
         sender.sendMessage("/tl rename (name): 땅의 이름을 변경합니다.".infoFormat())

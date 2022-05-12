@@ -32,8 +32,7 @@ class Rename : CommandExecutor {
                 val lands = landManager.getPlayerLands(player.uniqueId, Rank.OWNER)
                 if (lands != null) {
                     val newLandsName = args.joinToString(" ")
-                    val result = namingRegex.findAll(newLandsName).toList()
-                    if (result.size != 1) {
+                    if (!newLandsName.matches(namingRegex)) {
                         player.sendMessage("땅 이름은 특수문자를 포함할 수 없으면 3~8자로만 지정할 수 있습니다.".errorFormat())
                         return true
                     }
