@@ -2,7 +2,7 @@ package com.salkcoding.tunalands.display
 
 import eu.decentsoftware.holograms.api.holograms.Hologram
 
-open class Display {
+abstract class Display {
 
     protected lateinit var hologram: Hologram
     var pause: Boolean = false
