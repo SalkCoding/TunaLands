@@ -1,8 +1,8 @@
 package com.salkcoding.tunalands.display
 
-import com.gmail.filoghost.holographicdisplays.api.Hologram
+import eu.decentsoftware.holograms.api.holograms.Hologram
 
-abstract class Display {
+open class Display {
 
     protected lateinit var hologram: Hologram
     var pause: Boolean = false

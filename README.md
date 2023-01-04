@@ -1,24 +1,23 @@
 # TunaLands
-
-## Devloping environment
-* IntelliJ IDEA 2021.3 (Ultimate Edition)
-* Runtime version: 11.0.13+7-b1751.19 amd64
-* Kotlin 1.6.10
+## Developing environment
+* IntelliJ IDEA 2022.2.3 (Ultimate Edition)
+* Runtime version: 17.0.4.1+7-b469.62 amd64
+* Kotlin 1.7.20
 * Gradle 7.2
 
 ## Testing environment
 * Windows 10 Home
-* [purpur-1.18](https://github.com/pl3xgaming/Purpur)
+* [Purpur-1.19.3-R0.1](https://github.com/pl3xgaming/Purpur)
 * [openJDK 17](https://jdk.java.net/17/)
 * JVM Memory 512MB ~ 2GB (No GUI)
 
 ## Dependencies
 * kotlin-stdlib
-* [adventure-text-minimessage.4.1.0-SNAPSHOT](https://docs.adventure.kyori.net/minimessage) (For Vault)
-* [purpur-api-R0.1-SNAPSHOT](https://github.com/pl3xgaming/Purpur)
-* [holographicdisplays-api-2.4.9](https://github.com/filoghost/HolographicDisplays)
+* [adventure-text-minimessage.4.12.0](https://docs.adventure.kyori.net/minimessage) (For Purpur)
+* [Purpur-1.19.3-R0.1-SNAPSHOT](https://github.com/pl3xgaming/Purpur)
+* [DecentHolograms](https://github.com/DecentSoftware-eu/DecentHolograms)
 * [Vault 1.7.3](https://github.com/MilkBowl/Vault)
-* [HikariCP 5.0.0](https://github.com/brettwooldridge/HikariCP)
+* [HikariCP 5.0.1](https://github.com/brettwooldridge/HikariCP)
 * BukkitLinkedAPI
 * Metamorphosis
 
@@ -301,4 +300,4 @@ flag:
 }
 ```
 
-# [More informations](https://www.notion.so/TunaLands-f59f1a4d81284124b6af32ff5aa6fc2a)
+# [More information](https://www.notion.so/TunaLands-f59f1a4d81284124b6af32ff5aa6fc2a)

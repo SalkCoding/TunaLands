@@ -1,12 +1,12 @@
 name: TunaLands
 main: com.salkcoding.tunalands.TunaLands
-version: 1.2.1-alpha-1
+version: 1.2.2-alpha
 description: Protect lands with some money
-api-version: 1.18
+api-version: 1.19
 author: Salk_Coding
 depend:
   - Metamorphosis
-  - HolographicDisplays
+  - DecentHolograms
   - Don
   - Vault
   - BukkitLinked

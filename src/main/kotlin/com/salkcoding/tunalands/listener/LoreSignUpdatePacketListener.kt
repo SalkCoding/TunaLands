@@ -26,8 +26,6 @@ class LoreSignUpdatePacketListener {
                 val uuid = player.uniqueId
                 val packet = event.packet
 
-
-
                 if (loreChatMap.contains(uuid)) {
                     event.isCancelled = true
 

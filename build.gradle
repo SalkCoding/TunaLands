@@ -1,32 +1,30 @@
 plugins {
-    id "org.jetbrains.kotlin.jvm" version "1.6.10"
+    id "org.jetbrains.kotlin.jvm" version "1.7.20"
 }
 
 group "kr.kro.salk"
-version "1.2.1-alpha-2"
+version "1.2.2-alpha"
 
 repositories {
     mavenCentral()
-    maven {//adventure-text-minimessage
+    maven {//adventure-text-minimessage(Purpur uses this api...
         url = "https://oss.sonatype.org/content/repositories/snapshots/"
         name = "sonatype-oss-snapshots"
     }
     maven { url "https://repo.purpurmc.org/snapshots" }//Purpur
-    maven { url "https://repo.codemc.io/repository/maven-public/" }//HologramDisplays-api
-    maven { url "https://jitpack.io" }//Vault
+    maven { url "https://jitpack.io" }//Vault, Decent Holograms
     maven { url "https://hub.spigotmc.org/nexus/content/repositories/snapshots/" }//Vault
 
-    // ProtocolLib
-    maven { url = "https://repo.dmulloy2.net/repository/public/" }
+    maven { url = "https://repo.dmulloy2.net/repository/public/" }// ProtocolLib
 }
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
-    implementation "com.zaxxer:HikariCP:5.0.0"
-    implementation "net.kyori:adventure-text-minimessage:4.1.0-SNAPSHOT"
+    implementation "com.zaxxer:HikariCP:5.0.1"
+    implementation 'net.kyori:adventure-text-minimessage:4.12.0'
 
-    compileOnly "org.purpurmc.purpur:purpur-api:1.18-R0.1-SNAPSHOT"
-    compileOnly "com.gmail.filoghost.holographicdisplays:holographicdisplays-api:2.4.9"
+    compileOnly "org.purpurmc.purpur:purpur-api:1.19.3-R0.1-SNAPSHOT"
+    compileOnly "com.github.decentsoftware-eu:decentholograms:2.7.9"
     compileOnly "com.github.MilkBowl:VaultAPI:1.7"
     compileOnly files("lib/Metamorphosis-1.0-API.jar")
     compileOnly files("lib/bukkitlinked-1.4.2-SNAPSHOT-jar-with-dependencies.jar")
