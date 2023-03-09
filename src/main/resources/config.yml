@@ -14,7 +14,9 @@ protect: # Tick
   createPrice: 10
 
 fuel:
-  price: 10.0
+  price:
+    slope: 25.0
+    yIntercept: 400
   fuelRequirements:
     # Required secondsPerFuel: above 0.5 (because TunaLands only checks and consumes fuel every 0.5 seconds)
     # Recommended secondsPerFuel: above 1

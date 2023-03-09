@@ -26,52 +26,6 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
             )
         }
 
-        val fuel = (Material.PAPER * 1).apply {
-            this.setDisplayName("${ChatColor.WHITE}연료")
-            this.lore = listOf(
-                "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.fuel.price}캔",
-                "${ChatColor.WHITE}마을의 규모에 따라 시간적 가치가 변하는 연료이다. (1개)"
-            )
-            this.amount = 1
-        }
-
-        val fuel8 = (Material.PAPER * 1).apply {
-            this.setDisplayName("${ChatColor.WHITE}연료")
-            this.lore = listOf(
-                "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.fuel.price * 8}캔",
-                "${ChatColor.WHITE}마을의 규모에 따라 시간적 가치가 변하는 연료이다. (8개)"
-            )
-            this.amount = 8
-        }
-
-        val fuel16 = (Material.PAPER * 1).apply {
-            this.setDisplayName("${ChatColor.WHITE}연료")
-            this.lore = listOf(
-                "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.fuel.price * 16}캔",
-                "${ChatColor.WHITE}마을의 규모에 따라 시간적 가치가 변하는 연료이다. (16개)"
-            )
-            this.amount = 16
-        }
-
-        val fuel32 = (Material.PAPER * 1).apply {
-            this.setDisplayName("${ChatColor.WHITE}연료")
-            this.lore = listOf(
-                "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.fuel.price * 32}캔",
-                "${ChatColor.WHITE}마을의 규모에 따라 시간적 가치가 변하는 연료이다. (32개)"
-            )
-            this.amount = 32
-        }
-
-        val fuel64 = (Material.PAPER * 1).apply {
-            this.setDisplayName("${ChatColor.WHITE}연료")
-            this.lore = listOf(
-                "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.fuel.price * 64}캔",
-                "${ChatColor.WHITE}마을의 규모에 따라 시간적 가치가 변하는 연료이다. (64개)"
-            )
-            this.amount = 64
-        }
-
-
         val releaseFlagItem = (Material.RED_BANNER * 1).apply {
             this.setDisplayName("${ChatColor.RED}제거 ${ChatColor.WHITE}깃발")
             this.lore = listOf(
@@ -101,6 +55,51 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 "${ChatColor.WHITE}늘리고 싶은 지역에 설치하여 점유할 수 있는 깃발입니다."
             )
         }
+    }
+
+    val fuel = (Material.PAPER * 1).apply {
+        this.setDisplayName("${ChatColor.WHITE}연료")
+        this.lore = listOf(
+            "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.fuel.getPrice(lands)}캔",
+            "${ChatColor.WHITE}마을의 규모에 따라 시간적 가치가 변하는 연료이다. (1개)"
+        )
+        this.amount = 1
+    }
+
+    val fuel8 = (Material.PAPER * 1).apply {
+        this.setDisplayName("${ChatColor.WHITE}연료")
+        this.lore = listOf(
+            "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.fuel.getPrice(lands, 8)}캔",
+            "${ChatColor.WHITE}마을의 규모에 따라 시간적 가치가 변하는 연료이다. (8개)"
+        )
+        this.amount = 8
+    }
+
+    val fuel16 = (Material.PAPER * 1).apply {
+        this.setDisplayName("${ChatColor.WHITE}연료")
+        this.lore = listOf(
+            "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.fuel.getPrice(lands, 16)}캔",
+            "${ChatColor.WHITE}마을의 규모에 따라 시간적 가치가 변하는 연료이다. (16개)"
+        )
+        this.amount = 16
+    }
+
+    val fuel32 = (Material.PAPER * 1).apply {
+        this.setDisplayName("${ChatColor.WHITE}연료")
+        this.lore = listOf(
+            "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.fuel.getPrice(lands, 32)}캔",
+            "${ChatColor.WHITE}마을의 규모에 따라 시간적 가치가 변하는 연료이다. (32개)"
+        )
+        this.amount = 32
+    }
+
+    val fuel64 = (Material.PAPER * 1).apply {
+        this.setDisplayName("${ChatColor.WHITE}연료")
+        this.lore = listOf(
+            "${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.fuel.getPrice(lands, 64)}캔",
+            "${ChatColor.WHITE}마을의 규모에 따라 시간적 가치가 변하는 연료이다. (64개)"
+        )
+        this.amount = 64
     }
 
     override fun render(inv: Inventory) {
@@ -138,6 +137,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
             0 -> {
                 player.openMainGui(lands, rank)
             }
+
             20 -> {
                 val price = configuration.flag.takeFlagPrice
                 if (player.hasNotEnoughMoney(price)) {
@@ -152,6 +152,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 // DO NOT CHANGE MESSAGE FORMAT. LINKED WITH KIBANA
                 tunaLands.logger.info("${player.name} (${player.uniqueId}) purchased take_flag x1 for $price (${price} each)")
             }
+
             21 -> {
                 val price = configuration.flag.releaseFlagPrice
                 if (player.hasNotEnoughMoney(price)) {
@@ -166,8 +167,9 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 // DO NOT CHANGE MESSAGE FORMAT. LINKED WITH KIBANA
                 tunaLands.logger.info("${player.name} (${player.uniqueId}) purchased release_flag x1 for $price (${price} each)")
             }
+
             29 -> {
-                val price = configuration.fuel.price
+                val price = configuration.fuel.getPrice(lands).toDouble()
                 if (player.hasNotEnoughMoney(price)) {
                     val delta = price - economy.getBalance(player)
                     player.sendMessage("${"%.2f".format(delta)}캔이 부족합니다.".errorFormat())
@@ -180,10 +182,11 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 })
 
                 // DO NOT CHANGE MESSAGE FORMAT. LINKED WITH KIBANA
-                tunaLands.logger.info("${player.name} (${player.uniqueId}) purchased fuel x1 for $price (${price/1.0} each)")
+                tunaLands.logger.info("${player.name} (${player.uniqueId}) purchased fuel x1 for $price (${price / 1.0} each)")
             }
+
             30 -> {
-                val price = configuration.fuel.price * 8
+                val price = configuration.fuel.getPrice(lands, 8).toDouble()
                 if (player.hasNotEnoughMoney(price)) {
                     val delta = price - economy.getBalance(player)
                     player.sendMessage("${"%.2f".format(delta)}캔이 부족합니다.".errorFormat())
@@ -196,10 +199,11 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 })
 
                 // DO NOT CHANGE MESSAGE FORMAT. LINKED WITH KIBANA
-                tunaLands.logger.info("${player.name} (${player.uniqueId}) purchased fuel x8 for $price (${price/8.0} each)")
+                tunaLands.logger.info("${player.name} (${player.uniqueId}) purchased fuel x8 for $price (${price / 8.0} each)")
             }
+
             31 -> {
-                val price = configuration.fuel.price * 16
+                val price = configuration.fuel.getPrice(lands, 16).toDouble()
                 if (player.hasNotEnoughMoney(price)) {
                     val delta = price - economy.getBalance(player)
                     player.sendMessage("${"%.2f".format(delta)}캔이 부족합니다.".errorFormat())
@@ -212,10 +216,11 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 })
 
                 // DO NOT CHANGE MESSAGE FORMAT. LINKED WITH KIBANA
-                tunaLands.logger.info("${player.name} (${player.uniqueId}) purchased fuel x16 for $price (${price/16.0} each)")
+                tunaLands.logger.info("${player.name} (${player.uniqueId}) purchased fuel x16 for $price (${price / 16.0} each)")
             }
+
             32 -> {
-                val price = configuration.fuel.price * 32
+                val price = configuration.fuel.getPrice(lands, 32).toDouble()
                 if (player.hasNotEnoughMoney(price)) {
                     val delta = price - economy.getBalance(player)
                     player.sendMessage("${"%.2f".format(delta)}캔이 부족합니다.".errorFormat())
@@ -228,10 +233,11 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 })
 
                 // DO NOT CHANGE MESSAGE FORMAT. LINKED WITH KIBANA
-                tunaLands.logger.info("${player.name} (${player.uniqueId}) purchased fuel x32 for $price (${price/32.0} each)")
+                tunaLands.logger.info("${player.name} (${player.uniqueId}) purchased fuel x32 for $price (${price / 32.0} each)")
             }
+
             33 -> {
-                val price = configuration.fuel.price * 64
+                val price = configuration.fuel.getPrice(lands, 64).toDouble()
                 if (player.hasNotEnoughMoney(price)) {
                     val delta = price - economy.getBalance(player)
                     player.sendMessage("${"%.2f".format(delta)}캔이 부족합니다.".errorFormat())
@@ -244,7 +250,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
                 })
 
                 // DO NOT CHANGE MESSAGE FORMAT. LINKED WITH KIBANA
-                tunaLands.logger.info("${player.name} (${player.uniqueId}) purchased fuel x64 for $price (${price/64.0} each)")
+                tunaLands.logger.info("${player.name} (${player.uniqueId}) purchased fuel x64 for $price (${price / 64.0} each)")
             }
         }
     }

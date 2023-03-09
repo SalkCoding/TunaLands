@@ -28,36 +28,9 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
     private val lockButton = (Material.IRON_DOOR * 1)
 
     private val renderList = listOf(
-        //First row
-        blackPane,
-        blackPane,
-        blackPane,
-        blackPane,
-        null,
-        blackPane,
-        blackPane,
-        blackPane,
-        blackPane,
-        //Second row
-        blackPane,
-        settingButton,
-        shopButton,
-        blackPane,
-        totalInfoIcon,
-        blackPane,
-        userListButton,
-        banListButton,
-        blackPane,
-        //Third row
-        blackPane,
-        blackPane,
-        blackPane,
-        blackPane,
-        lockButton,
-        blackPane,
-        blackPane,
-        blackPane,
-        blackPane
+        blackPane, blackPane, blackPane, blackPane, null, blackPane, blackPane, blackPane, blackPane,
+        blackPane, settingButton, shopButton, blackPane, totalInfoIcon, blackPane, userListButton, banListButton, blackPane,
+        blackPane, blackPane, blackPane, blackPane, lockButton, blackPane, blackPane, blackPane, blackPane
     )
 
     //Static
@@ -123,7 +96,6 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                     seconds > 0 -> "${ChatColor.WHITE}예상: ${seconds}초 남음"
                     else -> "${ChatColor.RED}예상: 0초 남음"
                 }
-
 
                 val fuelPerHour = 3600000.0 / lands.getMillisecondsPerFuel()
                 val fuelPerDay = 86400000.0 / lands.getMillisecondsPerFuel()

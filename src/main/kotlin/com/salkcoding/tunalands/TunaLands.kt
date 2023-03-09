@@ -28,6 +28,8 @@ import net.milkbowl.vault.economy.Economy
 import org.bukkit.Material
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.concurrent.LinkedBlockingQueue
+import kotlin.math.ln
+import kotlin.math.roundToInt
 
 lateinit var tunaLands: TunaLands
 
@@ -51,7 +53,7 @@ lateinit var protocolManager: ProtocolManager
 
 class TunaLands : JavaPlugin() {
 
-    val broadcastLandMembersRunnable: BroadcastLandMembersRunnable = BroadcastLandMembersRunnable(LinkedBlockingQueue<String>())
+    val broadcastLandMembersRunnable: BroadcastLandMembersRunnable = BroadcastLandMembersRunnable(LinkedBlockingQueue())
 
     override fun onEnable() {
         val tempMetamorphosis = server.pluginManager.getPlugin("Metamorphosis") as? Metamorphosis
@@ -71,7 +73,7 @@ class TunaLands : JavaPlugin() {
         bukkitLinkedAPI = tempBukkitLinked.api
 
 
-        protocolManager = ProtocolLibrary.getProtocolManager();
+        protocolManager = ProtocolLibrary.getProtocolManager()
 
         if (!setupEconomy()) {
             logger.warning("Disabled due to no Vault dependency found!")
@@ -215,8 +217,10 @@ class TunaLands : JavaPlugin() {
         logger.info("protect: $protect")
         //Fuel
         val configFuel = config.getConfigurationSection("fuel")!!
+        val configFuelPrice = configFuel.getConfigurationSection("price")!!
         val fuel = Config.Fuel(
-            configFuel.getDouble("price"),
+            configFuelPrice.getDouble("slope"),
+            configFuelPrice.getInt("yIntercept"),
             configFuel.getMapList("fuelRequirements").map {
                 Config.FuelRequirement(
                     it["numOfMembers"] as Int,
@@ -293,15 +297,21 @@ data class Config(
     )
 
     data class Fuel(
-        val price: Double,
+        val slope: Double,
+        val yIntercept: Int,
         val fuelRequirements: List<FuelRequirement>
     ) {
-        fun getFuelRequirement(land: Lands): FuelRequirement {
+        fun getFuelRequirement(lands: Lands): FuelRequirement {
             return fuelRequirements.filter {
-                land.memberMap.filter { (_, it) ->
+                lands.memberMap.filter { (_, it) ->
                     it.rank != Rank.VISITOR && it.rank != Rank.PARTTIMEJOB
-                }.size >= it.numOfMembers || land.landList.size >= it.numOfChunks
+                }.size >= it.numOfMembers || lands.landList.size >= it.numOfChunks
             }.minOrNull() ?: fuelRequirements.maxOf { it }
+        }
+
+        fun getPrice(lands: Lands, amount: Int = 1): Int {
+            val x = lands.landList.size.toDouble()
+            return ((slope * x * ln(x) + yIntercept) / 24 * amount).roundToInt()
         }
     }
 
