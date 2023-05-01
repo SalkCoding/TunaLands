@@ -77,7 +77,6 @@ class LandManager {
 
     fun deleteLands(lands: Lands, forced: Boolean = false) {
         val uuid = lands.ownerUUID
-        val name = lands.ownerName
         val upCoreLocation = lands.upCoreLocation
         val downCoreLocation = lands.downCoreLocation
 
