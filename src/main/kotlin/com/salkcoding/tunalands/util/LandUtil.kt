@@ -4,6 +4,8 @@ import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.tunaLands
 import org.bukkit.*
 import org.bukkit.entity.Player
+import java.util.LinkedList
+import java.util.Queue
 
 fun World.playBuyChunkEffect(player: Player, chunk: Chunk) {
     val effect = ChunkEffect(this, chunk, Material.LIME_TERRACOTTA)
@@ -82,7 +84,7 @@ fun Lands.borderFinder(): List<String> {
 *   true: After performed,when an empty area is not existed
 *   false: After performed,when an empty area is existed
 */
-fun Lands.checkFloodFill(): Boolean {
+fun Lands.hasConnectedComponent(): Boolean {
     if (landList.isEmpty()) return true
 
     val chunks: List<Pair<Int, Int>> = landList.map { query ->
@@ -96,80 +98,51 @@ fun Lands.checkFloodFill(): Boolean {
     val xMax = chunks.maxOf { it.first }
     val zMax = chunks.maxOf { it.second }
 
-    //Array
-    val xLen = xMax - xMin + 3
-    val zLen = zMax - zMin + 3
+    //Array size: 0 ~ n
+    val xLen = xMax - xMin + 1
+    val zLen = zMax - zMin + 1
     val array = Array(xLen) { Array(zLen) { 0 } }
 
-    // 1. Check that chunks don't do 땅따먹기
-
-    //Setting array (xList size always equals with yList size)
-    chunks.forEach { (x, z) ->
-        val a = x - xMin + 1
-        val b = z - zMin + 1
-
-        array[a][b] = 1
+    //Setting array (0 based indexing)
+    val occupied = 1
+    for ((x, z) in chunks) {
+        array[x][z] = occupied
     }
+    //Perform BFS, change 1 to 2 about a connected component
+    calculateFloodFill(array, chunks[0], xLen, zLen, 0)
 
-    //Perform flood fill
-    calculateFloodFill(array, 0, 0, xLen, zLen)
-
-    //Check and return value
-    array.forEach { subArray ->
-        subArray.forEach { element ->
-            if (element == 0) {
-                return false
-            }
+    //Check connected components
+    for (i in 0..xLen + 1) {
+        for (j in 0..zLen + 1) {
+            //Check connected components are existed
+            if (array[i][j] == occupied) return true
         }
     }
+    return false
+}
 
-    // 2. Check that chunks are all connected
-    val connectedCheckArray = Array(xMax - xMin + 1) { Array(zMax - zMin + 1) { 0 } }
-    var cx: Int = 0
-    var cz: Int = 0
-    chunks.forEach { (x, z) ->
-        connectedCheckArray[x - xMin][z - zMin] = 1
-        cx = x - xMin
-        cz = z - zMin
-    }
 
-    isLandsDisconnected(connectedCheckArray, cx, cz, xMax - xMin + 1, zMax - zMin + 1)
+//Check Connected components, implement using BFS
+private val dx = arrayOf(1, 0, -1, 0)
+private val dz = arrayOf(0, 1, 0, -1)
+private val queue = LinkedList<Pair<Int, Int>>() as Queue<Pair<Int, Int>>
+fun calculateFloodFill(visited: Array<Array<Int>>, start: Pair<Int, Int>, xLimit: Int, zLimit: Int, fillValue: Int) {
+    //Init
+    queue.clear()
+    queue.add(start)
+    visited[start.first][start.second] = fillValue
+    //BFS
+    while (queue.isNotEmpty()) {
+        val pair = queue.remove()
+        for (i in 0 until 4) {
+            val x = pair.first + dx[i]
+            val z = pair.second + dz[i]
 
-    connectedCheckArray.forEach { subArray ->
-        subArray.forEach { element ->
-            if (element == 1) {
-                return false
-            }
+            //Out of boundary
+            if (x < 0 || x >= xLimit || z < 0 || z >= zLimit || visited[x][z] == fillValue) continue
+
+            queue.add(Pair(x, z))
+            visited[x][z] = fillValue
         }
     }
-
-    return true
-}
-
-fun isLandsDisconnected(array: Array<Array<Int>>, x: Int, z: Int, xLimit: Int, zLimit: Int) {
-    if (x < 0 || x >= xLimit || z < 0 || z >= zLimit) return
-    if (array[x][z] != 1) return
-
-    array[x][z] = 2
-
-    isLandsDisconnected(array, x, z - 1, xLimit, zLimit)//South
-    isLandsDisconnected(array, x, z + 1, xLimit, zLimit)//North
-    isLandsDisconnected(array, x - 1, z, xLimit, zLimit)//West
-    isLandsDisconnected(array, x + 1, z, xLimit, zLimit)//East
-}
-
-/*
-DO NOT USE the tailrec keyword! It makes performance worst.
-And a recursion flood fill is more efficient than an iterator flood fill(e.g. using queue for BFS)
-*/
-fun calculateFloodFill(array: Array<Array<Int>>, x: Int, z: Int, xLimit: Int, zLimit: Int) {
-    if (x < 0 || x >= xLimit || z < 0 || z >= zLimit) return
-    if (array[x][z] != 0) return
-
-    array[x][z] = 1
-
-    calculateFloodFill(array, x, z - 1, xLimit, zLimit)//South
-    calculateFloodFill(array, x, z + 1, xLimit, zLimit)//North
-    calculateFloodFill(array, x - 1, z, xLimit, zLimit)//West
-    calculateFloodFill(array, x + 1, z, xLimit, zLimit)//East
 }

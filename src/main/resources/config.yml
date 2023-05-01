@@ -1,13 +1,5 @@
 serverName: "lobby"
 
-database:
-  name: 'test'
-  ip: 'localhost'
-  port: 3306
-  username: 'root'
-  password: 'test'
-  encoding: 'utf-8'
-
 protect: # Tick
   coreBlock: "DIAMOND_BLOCK" #Not ID, But Material
   defaultStartTime: 1728000

@@ -1,54 +1,31 @@
 # TunaLands
 ## Developing environment
-* IntelliJ IDEA 2022.2.3 (Ultimate Edition)
-* Runtime version: 17.0.4.1+7-b469.62 amd64
-* Kotlin 1.7.20
+* IntelliJ IDEA 2023.1.1
+* Runtime version: 17.0.6+10-b829.9 amd64
+* Kotlin 1.8.20
 * Gradle 7.2
 
 ## Testing environment
 * Windows 10 Home
-* [Purpur-1.19.3-R0.1](https://github.com/pl3xgaming/Purpur)
+* [Purpur-1.19.4-R0.1](https://github.com/pl3xgaming/Purpur)
 * [openJDK 17](https://jdk.java.net/17/)
+* [MockK 1.13.5](https://github.com/mockk/mockk)
+* [MockBukkit 1.19-SNAPSHOT](https://github.com/MockBukkit/MockBukkit)
 * JVM Memory 512MB ~ 2GB (No GUI)
 
 ## Dependencies
 * kotlin-stdlib
 * [adventure-text-minimessage.4.12.0](https://docs.adventure.kyori.net/minimessage) (For Purpur)
-* [Purpur-1.19.3-R0.1-SNAPSHOT](https://github.com/pl3xgaming/Purpur)
+* [Purpur-1.19.4-R0.1-SNAPSHOT](https://github.com/pl3xgaming/Purpur)
 * [DecentHolograms](https://github.com/DecentSoftware-eu/DecentHolograms)
 * [Vault 1.7.3](https://github.com/MilkBowl/Vault)
-* [HikariCP 5.0.1](https://github.com/brettwooldridge/HikariCP)
 * BukkitLinkedAPI
 * Metamorphosis
 
 # Data format
-
-## Database
-
-```
-CREATE TABLE `tunalands_landlist` (
-	`uuid` VARCHAR(36) NOT NULL COLLATE 'utf8_general_ci',
-	`name` VARCHAR(16) NOT NULL COLLATE 'utf8_general_ci',
-	`x` INT(10) NOT NULL,
-	`z` INT(10) NOT NULL
-)
-COMMENT='Data set of Chunk coordinate x, y.'
-COLLATE='utf8_general_ci'
-ENGINE=InnoDB
-;
-```
-
 ## Configuration format(YMAL)
 ```
 serverName: "lobby"
-
-database:
-  name: 'test'
-  ip: 'localhost'
-  port: 3306
-  username: 'root'
-  password: 'test'
-  encoding: 'utf-8'
 
 protect:
   coreBlock: "DIAMOND_BLOCK" #Not ID, But Material
@@ -61,7 +38,9 @@ flag:
   releaseFlagPrice: 5
 
 fuel:
-  price: 10.0
+  price:
+    slope: 25.0
+    yIntercept: 400
   fuelRequirements:
     # Required secondsPerFuel: above 0.5 (because TunaLands only checks and consumes fuel every 0.5 seconds)
     # Recommended secondsPerFuel: above 1

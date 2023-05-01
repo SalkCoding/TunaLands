@@ -17,7 +17,7 @@ import kotlin.math.roundToLong
 
 class LandManager {
 
-    private class FuelConsumeRunnable(val playerLandMap:  ConcurrentHashMap<UUID, Lands>): Runnable {
+    private class FuelConsumeRunnable(val playerLandMap: ConcurrentHashMap<UUID, Lands>) : Runnable {
         override fun run() {
             playerLandMap.forEach { (_, lands) ->
                 val timeToConsumeFuel = lands.nextTimeFuelNeedsToBeConsumed
@@ -96,7 +96,6 @@ class LandManager {
             landMap.remove(query)
         }
         playerLandMap.remove(uuid)
-        database.deleteAll(uuid, name)
 
         Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
             val folder = File(tunaLands.dataFolder, "userdata")
@@ -118,8 +117,6 @@ class LandManager {
             info.ownerUUID = lands.ownerUUID
         }
         playerLandMap[lands.ownerUUID] = lands
-
-        database.replaceAll(oldOwner.uniqueId, oldOwner.name!!, newOwner.uniqueId, newOwner.name!!)
 
         Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
             val folder = File(tunaLands.dataFolder, "userdata")
@@ -247,7 +244,7 @@ class LandManager {
                 playerLandMap[uuid] = lands
                 val chunkInfo = Lands.ChunkInfo(player.name, uuid, chunk.world.name, chunk.x, chunk.z)
                 landMap[query] = chunkInfo
-                database.insert(chunkInfo)
+
                 displayManager.createDisplay(lands)
                 alarmManager.registerAlarm(lands)
                 player.sendMessage("해당 위치의 땅을 구매했습니다.".infoFormat())
@@ -279,17 +276,17 @@ class LandManager {
                 val chunkInfo = Lands.ChunkInfo(lands.ownerName, lands.ownerUUID, chunk.world.name, chunk.x, chunk.z)
                 landMap[query] = chunkInfo
                 Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
-                    val floodFill = lands.checkFloodFill()
+                    val connected = lands.hasConnectedComponent()
                     Bukkit.getScheduler().runTask(tunaLands, Runnable {
-                        if (floodFill) {
-                            flag.amount -= 1
-                            database.insert(chunkInfo)
-                            player.sendMessage("해당 위치의 땅을 구매했습니다.".infoFormat())
-                            player.world.playBuyChunkEffect(player, chunk)
-                        } else {
+                        if (connected) {
                             lands.landList.remove(query)
                             landMap.remove(query)
                             player.sendMessage("땅따먹기 방지에 의해 구매가 취소되었습니다!".errorFormat())
+                        } else {
+                            flag.amount -= 1
+
+                            player.sendMessage("해당 위치의 땅을 구매했습니다.".infoFormat())
+                            player.world.playBuyChunkEffect(player, chunk)
                         }
                     })
                 })
@@ -314,7 +311,7 @@ class LandManager {
             lands.landList.add(query)
             val chunkInfo = Lands.ChunkInfo(lands.ownerName, lands.ownerUUID, chunk.world.name, chunk.x, chunk.z)
             landMap[query] = chunkInfo
-            database.insert(chunkInfo)
+
             player.sendMessage("해당 위치의 땅을 강제 구매했습니다.".infoFormat())
             player.world.playBuyChunkEffect(player, chunk)
         }
@@ -346,22 +343,23 @@ class LandManager {
                         val removedInfo = landMap.remove(query)!!
                         lands.landList.remove(query)
                         Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
-                            val floodFill = lands.checkFloodFill()
+                            val connected = lands.hasConnectedComponent()
                             Bukkit.getScheduler().runTask(tunaLands, Runnable {
-                                if (floodFill) {
-                                    if (lands.landList.isEmpty()) playerLandMap.remove(player.uniqueId)
-                                    flag.amount -= 1
-                                    database.delete(removedInfo)
-                                    player.sendMessage("제거되었습니다.".infoFormat())
-                                    player.world.playSellChunkEffect(player, chunk)
-                                } else {
+                                if (connected) {
                                     landMap[query] = removedInfo
                                     lands.landList.add(query)
                                     player.sendMessage("땅따먹기 방지에 의해 제거가 취소되었습니다!".errorFormat())
+                                } else {
+                                    if (lands.landList.isEmpty()) playerLandMap.remove(player.uniqueId)
+                                    flag.amount -= 1
+
+                                    player.sendMessage("제거되었습니다.".infoFormat())
+                                    player.world.playSellChunkEffect(player, chunk)
                                 }
                             })
                         })
                     }
+
                     else -> {
                         player.sendMessage("${landMap[query]!!.ownerName}의 땅 소유자와 관리 대리인만 해당 땅을 제거할 수 있습니다.".warnFormat())
                     }
@@ -389,12 +387,12 @@ class LandManager {
                 player.sendMessage("코어가 위치한 땅은 제거할 수 없습니다.".errorFormat())
                 return
             }
-            val removedInfo = landMap.remove(query)!!
+
             lands.landList.remove(query)
             if (lands.landList.isEmpty()) {
                 playerLandMap.remove(player.uniqueId)
             }
-            database.delete(removedInfo)
+
             player.sendMessage("제거되었습니다.".infoFormat())
             player.world.playSellChunkEffect(player, chunk)
         } else {

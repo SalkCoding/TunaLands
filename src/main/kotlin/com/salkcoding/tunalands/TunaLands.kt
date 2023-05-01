@@ -9,7 +9,6 @@ import com.salkcoding.tunalands.bungee.CommandListener
 import com.salkcoding.tunalands.commands.LandCommandHandler
 import com.salkcoding.tunalands.commands.debug.Debug
 import com.salkcoding.tunalands.commands.sub.*
-import com.salkcoding.tunalands.database.Database
 import com.salkcoding.tunalands.display.DisplayChunkListener
 import com.salkcoding.tunalands.display.DisplayManager
 import com.salkcoding.tunalands.gui.GuiManager
@@ -44,7 +43,6 @@ lateinit var leftManager: LeftManager
 lateinit var metamorphosis: Metamorphosis
 lateinit var bukkitLinkedAPI: BukkitLinkedAPI
 lateinit var economy: Economy
-lateinit var database: Database
 lateinit var configuration: Config
 
 lateinit var currentServerName: String
@@ -166,8 +164,6 @@ class TunaLands : JavaPlugin() {
 
         LoreSignUpdatePacketListener().registerListener()
 
-        database = Database()
-
         server.scheduler.runTaskTimerAsynchronously(this, AutoSaver(), 18000, 18000)
         server.scheduler.runTaskTimerAsynchronously(this, broadcastLandMembersRunnable, 100, 100)
 
@@ -175,8 +171,6 @@ class TunaLands : JavaPlugin() {
     }
 
     override fun onDisable() {
-        database.dispose()
-
         //Independent manager
         recommendManager.dispose()
         alarmManager.dispose()
@@ -197,17 +191,6 @@ class TunaLands : JavaPlugin() {
     private fun configRead() {
         saveDefaultConfig()
         currentServerName = config.getString("serverName")!!
-        //DataBase
-        val databaseConfig = config.getConfigurationSection("database")!!
-        val database = Config.Database(
-            databaseConfig.getString("name")!!,
-            databaseConfig.getString("ip")!!,
-            databaseConfig.getInt("port"),
-            databaseConfig.getString("username")!!,
-            databaseConfig.getString("password")!!,
-            databaseConfig.getString("encoding")!!
-        )
-        logger.info("database: $database")
         //Protect
         val configProtect = config.getConfigurationSection("protect")!!
         val protect = Config.Protect(
@@ -260,7 +243,7 @@ class TunaLands : JavaPlugin() {
             flagSection.getDouble("releaseFlagPrice")
         )
 
-        configuration = Config(database, protect, fuel, recommend, command, limitWorld, flag)
+        configuration = Config(protect, fuel, recommend, command, limitWorld, flag)
 
     }
 
@@ -273,7 +256,6 @@ class TunaLands : JavaPlugin() {
 }
 
 data class Config(
-    val dataBase: Database,
     val protect: Protect,
     val fuel: Fuel,
     val recommend: Recommend,
@@ -281,16 +263,6 @@ data class Config(
     val limitWorld: List<String>,
     val flag: Flag
 ) {
-
-    data class Database constructor(
-        val name: String,
-        val ip: String,
-        val port: Int,
-        val username: String,
-        val password: String,
-        val encoding: String
-    )
-
     data class Protect(
         val coreBlock: Material,
         val createPrice: Int
