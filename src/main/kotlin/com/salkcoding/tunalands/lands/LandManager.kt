@@ -1,6 +1,7 @@
 package com.salkcoding.tunalands.lands
 
 import com.salkcoding.tunalands.*
+import com.salkcoding.tunalands.fuel.FuelConsumeRunnable
 import com.salkcoding.tunalands.io.JsonReader
 import com.salkcoding.tunalands.io.JsonWriter
 import com.salkcoding.tunalands.util.*
@@ -16,41 +17,6 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.roundToLong
 
 class LandManager {
-
-    private class FuelConsumeRunnable(val playerLandMap: ConcurrentHashMap<UUID, Lands>) : Runnable {
-        override fun run() {
-            playerLandMap.forEach { (_, lands) ->
-                val timeToConsumeFuel = lands.nextTimeFuelNeedsToBeConsumed
-                val present = LocalDateTime.now()
-
-                if (lands.enable && present.isAfter(timeToConsumeFuel)) {
-                    // 새롭게 연료를 소비해야되는 시간이 됨
-
-                    if (lands.fuelLeft > 0) {
-                        // minutesPerFuel 이 소숫점일 수도 있어서 밀리초로 변환 후 적용합니다.
-                        // 예: minutesPerFuel 이 0.01 일 경우, 연료 하나당 0.01분을 커버해줍니다.
-                        // => 0.01분 = 0.6초 = 600밀리초
-                        val secondsPerFuel = configuration.fuel.getFuelRequirement(lands).secondsPerFuel
-                        val msPerFuel = (secondsPerFuel * 1000).roundToLong()
-
-                        lands.nextTimeFuelNeedsToBeConsumed = present.plus(msPerFuel, ChronoUnit.MILLIS)
-                        lands.fuelLeft--
-                    } else {
-                        lands.sendMessageToOnlineMembers(
-                            listOf(
-                                "땅 보호 기간이 만료되어 비활성화 상태로 전환됩니다!".warnFormat(),
-                                "코어에 연료를 넣어 활성화하지 않을 경우 모든 블럭과의 상호작용이 불가능합니다!".warnFormat()
-                            )
-                        )
-                        displayManager.pauseDisplay(lands)
-                        lands.enable = false
-                    }
-                } else if (!lands.enable) {
-                    displayManager.pauseDisplayIfNotPaused(lands)
-                }
-            }
-        }
-    }
 
     private val landMap = ConcurrentHashMap<String, Lands.ChunkInfo>()
     private val playerLandMap = JsonReader.loadPlayerLandMap()

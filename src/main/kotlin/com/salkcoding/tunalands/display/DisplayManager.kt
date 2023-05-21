@@ -14,7 +14,7 @@ class DisplayManager {
     //Auto update scheduler
     private val task = Bukkit.getScheduler().runTaskTimer(tunaLands, Runnable {
         displayMap.forEach { (_, display) ->
-            if (!display.pause)
+            if (!display.isPause)
                 display.update()
         }
     }, 20, 20)
@@ -37,30 +37,43 @@ class DisplayManager {
         displayMap[query]!!.update()
     }
 
-    fun pauseDisplay(lands: Lands) {
+    fun setDisplay(lands: Lands, vararg messages: String) {
         val query = lands.upCoreLocation.chunk.toQuery()
         if (query !in displayMap)
             return
 
-        displayMap[query]!!.pause()
+        val display = displayMap[query]!! as TimerDisplay
+        display.setMessage(*messages)
     }
 
-    fun pauseDisplayIfNotPaused(lands: Lands) {
-        val query = lands.upCoreLocation.toChunkQuery()
+    fun pauseDisplay(lands: Lands): Display? {
+        val query = lands.upCoreLocation.chunk.toQuery()
         if (query !in displayMap)
-            return
+            return null
 
-        if (!displayMap[query]!!.pause){
-            displayMap[query]!!.pause()
+        return displayMap[query]!!.apply {
+            this.isPause = true
         }
     }
 
-    fun resumeDisplay(lands: Lands) {
+    fun pauseDisplayIfNotPaused(lands: Lands): Display? {
+        val query = lands.upCoreLocation.toChunkQuery()
+        if (query !in displayMap)
+            return null
+
+        val display = displayMap[query]!!
+        if (!display.isPause) display.isPause = true
+        return display
+    }
+
+    fun resumeDisplay(lands: Lands): Display? {
         val query = lands.upCoreLocation.chunk.toQuery()
         if (query !in displayMap)
-            return
+            return null
 
-        displayMap[query]!!.resume()
+        return displayMap[query]!!.apply {
+            this.isPause = false
+        }
     }
 
     fun removeDisplay(lands: Lands) {

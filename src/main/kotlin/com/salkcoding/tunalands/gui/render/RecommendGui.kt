@@ -19,6 +19,7 @@ class RecommendGui(private val player: Player) : GuiInterface {
     private val landMap = landManager.getPlayerLandMap()
     private lateinit var landList: List<UUID>
 
+    //Dynamic button
     private val sortButton = (Material.HOPPER * 1).apply {
         this.setDisplayName("${ChatColor.WHITE}정렬 방법 선택")
     }

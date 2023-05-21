@@ -10,6 +10,7 @@ import com.salkcoding.tunalands.util.infoFormat
 import com.salkcoding.tunalands.util.times
 import com.salkcoding.tunalands.util.warnFormat
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -67,13 +68,16 @@ class Debug : CommandExecutor {
                                         "코어에 연료를 넣어 활성화하지 않을 경우 모든 블럭과의 상호작용이 불가능합니다!".warnFormat()
                                     )
                                 )
-                                displayManager.pauseDisplay(lands)
+                                displayManager.pauseDisplay(lands)?.setMessage(
+                                    "${ChatColor.RED}비활성화 ${ChatColor.WHITE}상태",
+                                    "${ChatColor.GOLD}연료${ChatColor.WHITE}를 사용하여 ${ChatColor.GREEN}재활성화 ${ChatColor.WHITE}해야합니다!"
+                                )
                                 lands.enable = false
                             } else {
                                 lands.fuelLeft = numOfFuel
                                 if (!lands.enable) {
                                     lands.enable = true
-                                    displayManager.resumeDisplay(lands)
+                                    displayManager.resumeDisplay(lands)?.update()
                                     lands.sendMessageToOnlineMembers("땅이 다시 활성화되었습니다!".infoFormat())
                                 }
                                 lands.sendMessageToOnlineMembers("관리자에의해 땅 연료 갯수가 변경되었습니다.".infoFormat())

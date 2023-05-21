@@ -302,7 +302,7 @@ class VisitGui(private val player: Player) : GuiInterface {
                         TeleportCooltime.addPlayer(
                             player,
                             lands.visitorSpawn,
-                            configuration.command.visitCooldown,
+                            configuration.commandCooldown.visitCooldown,
                             {
                                 //Remove visitor data
                                 val previousLands = landManager.getPlayerLands(uuid, Rank.VISITOR)

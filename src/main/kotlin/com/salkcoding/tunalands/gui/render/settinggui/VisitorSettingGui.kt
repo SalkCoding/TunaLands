@@ -6,11 +6,11 @@ import com.comphenix.protocol.events.PacketContainer
 import com.comphenix.protocol.wrappers.BlockPosition
 import com.comphenix.protocol.wrappers.WrappedBlockData
 import com.salkcoding.tunalands.gui.GuiInterface
+import com.salkcoding.tunalands.gui.render.backButton
 import com.salkcoding.tunalands.guiManager
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.protocolManager
-import com.salkcoding.tunalands.util.backButton
 import com.salkcoding.tunalands.util.infoFormat
 import com.salkcoding.tunalands.util.times
 import com.salkcoding.tunalands.util.toColoredText

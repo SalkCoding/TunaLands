@@ -17,7 +17,6 @@
 * kotlin-stdlib
 * [adventure-text-minimessage.4.12.0](https://docs.adventure.kyori.net/minimessage) (For Purpur)
 * [Purpur-1.19.4-R0.1-SNAPSHOT](https://github.com/pl3xgaming/Purpur)
-* [DecentHolograms](https://github.com/DecentSoftware-eu/DecentHolograms)
 * [Vault 1.7.3](https://github.com/MilkBowl/Vault)
 * BukkitLinkedAPI
 * Metamorphosis
@@ -27,34 +26,28 @@
 ```
 serverName: "lobby"
 
-protect:
+protect: # Tick
   coreBlock: "DIAMOND_BLOCK" #Not ID, But Material
+  defaultStartTime: 1728000
   createPrice: 10
-  baseMaxExtendCount: 5
-  baseLimitExtendPrice: 5
-
-flag:
-  takeFlagPrice: 10
-  releaseFlagPrice: 5
 
 fuel:
-  price:
-    slope: 25.0
-    yIntercept: 400
+  price: 10.0
   fuelRequirements:
     # Required secondsPerFuel: above 0.5 (because TunaLands only checks and consumes fuel every 0.5 seconds)
     # Recommended secondsPerFuel: above 1
     - numOfMembers: 1
-      numOfChunks: 1
       secondsPerFuel: 120.0
 
     - numOfMembers: 4
-      numOfChunks: 4
       secondsPerFuel: 60.0
 
     - numOfMembers: 100
-      numOfChunks: 400
       secondsPerFuel: 0.1
+
+recommend: # Tick
+  reset: 1728000
+  cooldown: 1728000
 
 command:
   cooldown: #Tick
@@ -63,14 +56,20 @@ command:
     spawn: 100 #5s
   price:
     setSpawnPrice: 10
+    renamePrice: 10
 
 limitWorld:
   - world_nether
   - world_the_end
 
 flag:
-  takeFlagPrice: 10
-  releaseFlagPrice: 5
+  price:
+    takeProtectFlagPrice: 10
+    releaseProtectFlagPrice: 5
+    takeFarmFlagPrice: 10
+    releaseFarmFlagPrice: 5
+  farm:
+    limitFarmOccupied: 10
 ```
 
 ## Save format(Json)

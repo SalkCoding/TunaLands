@@ -1,6 +1,5 @@
 package com.salkcoding.tunalands.util
 
-import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.economy
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack

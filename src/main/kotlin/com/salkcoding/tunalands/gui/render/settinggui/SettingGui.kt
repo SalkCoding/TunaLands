@@ -2,11 +2,11 @@ package com.salkcoding.tunalands.gui.render.settinggui
 
 
 import com.salkcoding.tunalands.gui.GuiInterface
+import com.salkcoding.tunalands.gui.render.backButton
 import com.salkcoding.tunalands.gui.render.openMainGui
 import com.salkcoding.tunalands.guiManager
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
-import com.salkcoding.tunalands.util.backButton
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.times
 import org.bukkit.Bukkit

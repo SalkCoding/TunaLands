@@ -1,10 +1,10 @@
 package com.salkcoding.tunalands.gui.render
 
 import com.salkcoding.tunalands.*
-import com.salkcoding.tunalands.lands.Lands
-import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.gui.render.settinggui.openSettingGui
+import com.salkcoding.tunalands.lands.Lands
+import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.*
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -16,8 +16,6 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.scheduler.BukkitTask
-import java.lang.Integer.max
-import java.lang.Integer.min
 import java.util.*
 
 class MainGui(private val player: Player, private val lands: Lands, private val rank: Rank) : GuiInterface {
@@ -28,44 +26,34 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
     private val lockButton = (Material.IRON_DOOR * 1)
 
     private val renderList = listOf(
-        blackPane, blackPane, blackPane, blackPane, null, blackPane, blackPane, blackPane, blackPane,
-        blackPane, settingButton, shopButton, blackPane, totalInfoIcon, blackPane, userListButton, banListButton, blackPane,
-        blackPane, blackPane, blackPane, blackPane, lockButton, blackPane, blackPane, blackPane, blackPane
+        blackPane,
+        blackPane,
+        blackPane,
+        blackPane,
+        null,
+        blackPane,
+        blackPane,
+        blackPane,
+        blackPane,
+        blackPane,
+        settingButton,
+        shopButton,
+        blackPane,
+        totalInfoIcon,
+        blackPane,
+        userListButton,
+        banListButton,
+        blackPane,
+        blackPane,
+        blackPane,
+        blackPane,
+        blackPane,
+        lockButton,
+        blackPane,
+        blackPane,
+        blackPane,
+        blackPane
     )
-
-    //Static
-    companion object {
-        private val settingButton = (Material.BONE * 1).apply {
-            this.setDisplayName("${ChatColor.WHITE}지역 관리")
-            this.lore = listOf(
-                "${ChatColor.WHITE}지역의 세부 설정을 변경합니다."
-            )
-        }
-
-        private val shopButton = (Material.HEART_OF_THE_SEA * 1).apply {
-            this.setDisplayName("${ChatColor.WHITE}지역 상점")
-            this.lore = listOf(
-                "${ChatColor.WHITE}지역에 관련된 물품을 구매할 수 있습니다."
-            )
-        }
-
-        private val userListButton = (Material.WRITABLE_BOOK * 1).apply {
-            this.setDisplayName("${ChatColor.WHITE}사용자 목록")
-            this.lore = listOf(
-                "${ChatColor.WHITE}지역의 사용자 목록을 확인합니다."
-            )
-        }
-
-        private val banListButton = (Material.CRIMSON_SIGN * 1).apply {
-            this.setDisplayName("${ChatColor.WHITE}밴 목록")
-            this.lore = listOf(
-                "${ChatColor.WHITE}밴 목록을 확인합니다."
-            )
-        }
-
-        private val timeRegex = Regex("[\\d]+")
-        private val measureRegex = Regex("[가-힣]+")
-    }
 
     lateinit var task: BukkitTask
 
@@ -105,55 +93,15 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                     memberData.rank != Rank.VISITOR && memberData.rank != Rank.PARTTIMEJOB
                 }.size
 
-                val currentFuelRequirement = configuration.fuel.getFuelRequirement(lands)
-                val nextFuelRequirements = configuration.fuel.fuelRequirements.filter {
-                    it.numOfChunks >= lands.landList.size
-                            && it.numOfMembers >= currentNumOfMembers
-                            && currentFuelRequirement != it
-                }
 
-                var nextBestFuelRequirementForChunk: Config.FuelRequirement? = null
-                var nextBestFuelRequirementForMembers: Config.FuelRequirement? = null
-
-                for (requirement in nextFuelRequirements) {
-                    if (nextBestFuelRequirementForChunk != null) {
-                        if (requirement.secondsPerFuel >= nextBestFuelRequirementForChunk.secondsPerFuel
-                            && requirement.numOfChunks <= nextBestFuelRequirementForChunk.numOfChunks) {
-                            nextBestFuelRequirementForChunk = requirement
-                        }
-                    } else {
-                        nextBestFuelRequirementForChunk = requirement
-                    }
-
-                    if (nextBestFuelRequirementForMembers != null) {
-                        if (requirement.secondsPerFuel >= nextBestFuelRequirementForMembers.secondsPerFuel
-                            && requirement.numOfMembers <= nextBestFuelRequirementForChunk.numOfMembers) {
-                            nextBestFuelRequirementForMembers = requirement
-                        }
-                    } else {
-                        nextBestFuelRequirementForMembers = requirement
-                    }
-                }
-
-                val chunksLeftUntilNextRequirement = if (nextBestFuelRequirementForChunk != null) {
-                    "(하루 당 연료 증가까지 남은 청크: ${max(0, nextBestFuelRequirementForChunk.numOfChunks - lands.landList.size)}개)"
-                } else {
-                    ""
-                }
-
-                val membersLeftUntilNextRequirement = if (nextBestFuelRequirementForMembers != null) {
-                    "(하루 당 연료 증가까지 남은 인원 수: ${max(0, nextBestFuelRequirementForMembers.numOfMembers - currentNumOfMembers)}명)"
-                } else {
-                    ""
-                }
 
                 this.setDisplayName(lands.landsName)
                 this.lore = listOf(
                     "${ChatColor.WHITE}현재 연료: ${lands.fuelLeft}개",
                     timeLeft,
                     fuelInfo,
-                    "${ChatColor.WHITE}점유한 지역: ${ChatColor.GOLD}${lands.landList.size}${ChatColor.WHITE}개 $chunksLeftUntilNextRequirement",
-                    "${ChatColor.WHITE}멤버 수: ${ChatColor.GOLD}${lands.memberMap.size}${ChatColor.WHITE}명 $membersLeftUntilNextRequirement",
+                    "${ChatColor.WHITE}점유한 지역: ${ChatColor.GOLD}${lands.landList.size}${ChatColor.WHITE}개 ${lands.landList.size}",
+                    "${ChatColor.WHITE}멤버 수: ${ChatColor.GOLD}${lands.memberMap.size}${ChatColor.WHITE}명 ${lands.memberMap.size}",
                     "${ChatColor.WHITE}추천 수: ${ChatColor.GOLD}${lands.recommend}",
                     "${ChatColor.WHITE}생성일: ${ChatColor.GRAY}${
                         created.get(Calendar.YEAR)
@@ -205,18 +153,18 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                 if (event.action != InventoryAction.PLACE_ALL
                     && event.action != InventoryAction.PLACE_ONE
                     && event.action != InventoryAction.PLACE_SOME
-                )
-                    return
+                ) return
+
                 Bukkit.getScheduler().runTaskLater(tunaLands, Runnable {
                     val addedFuelItem = event.inventory.getItem(4) ?: return@Runnable
-                    if (!addedFuelItem.isSimilar(ShopGui.fuelItem)) return@Runnable
+                    if (!addedFuelItem.isSimilar(fuelItem)) return@Runnable
 
                     lands.fuelLeft += addedFuelItem.amount
 
                     if (!lands.enable) {
                         lands.enable = true
-                        displayManager.resumeDisplay(lands)
-                    }
+                        displayManager.resumeDisplay(lands)?.update()
+                    } else displayManager.updateDisplay(lands)
 
                     alarmManager.resetAlarm(lands)
 
@@ -243,6 +191,7 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                     event.inventory.setItem(4, null)
                 }, 2)
             }
+
             10 -> {
                 when (rank) {
                     Rank.OWNER, Rank.DELEGATOR -> {
@@ -254,24 +203,29 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                         player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
                         player.openSettingGui(lands, rank)
                     }
+
                     else -> {
                         player.playSound(player.location, Sound.ENTITY_VILLAGER_NO, 0.5f, 1.0f)
                         player.sendMessage("권한이 없습니다!".errorFormat())
                     }
                 }
             }
+
             11 -> {
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
                 player.openShopGui(lands, rank)
             }
+
             15 -> {
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
                 player.openUserListGui(lands, rank)
             }
+
             16 -> {
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
                 player.openBanListGui(lands, false, rank)
             }
+
             22 -> {
                 when (rank) {
                     Rank.OWNER, Rank.DELEGATOR -> {
@@ -289,6 +243,7 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                                             player.playSound(player.location, Sound.BLOCK_WOODEN_DOOR_CLOSE, .5f, 1f)
                                             "${ChatColor.GREEN}공개"
                                         }
+
                                         false -> {
                                             lands.open = true
                                             player.playSound(player.location, Sound.BLOCK_WOODEN_DOOR_OPEN, .5f, 1f)
@@ -309,6 +264,7 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                         }
                         event.inventory.setItem(22, lockButton)
                     }
+
                     else -> {
                         player.playSound(player.location, Sound.ENTITY_VILLAGER_NO, 0.5f, 1.0f)
                         player.sendMessage("권한이 없습니다!".errorFormat())
@@ -324,12 +280,12 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                 return
             Bukkit.getScheduler().runTaskLater(tunaLands, Runnable {
                 val addedFuelItem = event.inventory.getItem(4) ?: return@Runnable
-                if (!addedFuelItem.isSimilar(ShopGui.fuelItem)) return@Runnable
+                if (!addedFuelItem.isSimilar(fuelItem)) return@Runnable
                 lands.fuelLeft += addedFuelItem.amount
 
                 if (!lands.enable) {
                     lands.enable = true
-                    displayManager.resumeDisplay(lands)
+                    displayManager.resumeDisplay(lands)?.update()
                 }
 
                 alarmManager.resetAlarm(lands)

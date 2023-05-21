@@ -22,7 +22,7 @@ class SetSpawn : CommandExecutor {
                         return true
                     }
 
-                    val price = configuration.command.setSpawnPrice.toDouble()
+                    val price = configuration.commandPrice.setSpawnPrice.toDouble()
                     if (player.hasNotEnoughMoney(price)) {
                         val delta = price - economy.getBalance(player)
                         player.sendMessage("${"%.2f".format(delta)}캔이 부족합니다.".errorFormat())

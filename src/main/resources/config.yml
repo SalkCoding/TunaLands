@@ -6,22 +6,17 @@ protect: # Tick
   createPrice: 10
 
 fuel:
-  price:
-    slope: 25.0
-    yIntercept: 400
+  price: 10.0
   fuelRequirements:
     # Required secondsPerFuel: above 0.5 (because TunaLands only checks and consumes fuel every 0.5 seconds)
     # Recommended secondsPerFuel: above 1
     - numOfMembers: 1
-      numOfChunks: 1
       secondsPerFuel: 120.0
 
     - numOfMembers: 4
-      numOfChunks: 4
       secondsPerFuel: 60.0
 
     - numOfMembers: 100
-      numOfChunks: 400
       secondsPerFuel: 0.1
 
 recommend: # Tick
@@ -42,5 +37,10 @@ limitWorld:
   - world_the_end
 
 flag:
-  takeFlagPrice: 10
-  releaseFlagPrice: 5
+  price:
+    takeProtectFlagPrice: 10
+    releaseProtectFlagPrice: 5
+    takeFarmFlagPrice: 10
+    releaseFarmFlagPrice: 5
+  farm:
+    limitFarmOccupied: 10

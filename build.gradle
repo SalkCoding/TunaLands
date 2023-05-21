@@ -3,18 +3,18 @@ plugins {
 }
 
 group "kr.kro.salk"
-version "1.2.2-alpha"
+version "1.2.4"
 
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }//MockBukkit
     maven { url 'https://repo.papermc.io/repository/maven-public/' }//MockBukkit
-    maven {//adventure-text-minimessage(Purpur uses this api...
+    maven {//adventure-text-minimessage(Purpur uses this api...)
         url = "https://oss.sonatype.org/content/repositories/snapshots/"
         name = "sonatype-oss-snapshots"
     }
     maven { url "https://repo.purpurmc.org/snapshots" }//Purpur
-    maven { url "https://jitpack.io" }//Vault, Decent Holograms
+    maven { url "https://jitpack.io" }//Vault
     maven { url "https://hub.spigotmc.org/nexus/content/repositories/snapshots/" }//Vault
 
     maven { url = "https://repo.dmulloy2.net/repository/public/" }// ProtocolLib
@@ -28,10 +28,9 @@ dependencies {
     implementation 'net.kyori:adventure-text-minimessage:4.12.0'
 
     compileOnly "org.purpurmc.purpur:purpur-api:1.19.4-R0.1-SNAPSHOT"
-    compileOnly "com.github.decentsoftware-eu:decentholograms:2.7.9"
     compileOnly "com.github.MilkBowl:VaultAPI:1.7"
-    compileOnly files("lib/Metamorphosis-1.0-API.jar")
     compileOnly files("lib/bukkitlinked-1.4.2-SNAPSHOT-jar-with-dependencies.jar")
+    compileOnly files('lib/Metamorphosis-2.3.0.jar')
 
     compileOnly"com.comphenix.protocol:ProtocolLib:4.7.0"
 }

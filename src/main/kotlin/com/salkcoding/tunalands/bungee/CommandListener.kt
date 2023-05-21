@@ -10,7 +10,7 @@ import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
-import fish.evatuna.metamorphosis.kafka.KafkaReceiveEvent
+import fish.evatuna.metamorphosis.redis.MetamorphosisReceiveEvent
 import me.baiks.bukkitlinked.api.TeleportResult
 import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
@@ -47,7 +47,7 @@ class CommandListener : Listener {
     }
 
     @EventHandler
-    fun onReceived(event: KafkaReceiveEvent) {
+    fun onReceived(event: MetamorphosisReceiveEvent) {
         if (!event.key.startsWith("com.salkcoding.tunalands")) return
         lateinit var json: JsonObject
         try {
@@ -187,7 +187,7 @@ class CommandListener : Listener {
                     if (lands != null) {
                         val sendJson = JsonObject().apply {
                             addProperty("uuid", uuid.toString())
-                            addProperty("spawnCooldown", configuration.command.spawnCooldown)
+                            addProperty("spawnCooldown", configuration.commandCooldown.spawnCooldown)
                             addProperty("targetServerName", json["serverName"].asString)
                             addProperty("spawnServerName", currentServerName)
                         }
@@ -296,7 +296,7 @@ class CommandListener : Listener {
                                 addProperty("ownerUUID", ownerUUID.toString())
                                 addProperty("targetServerName", json["serverName"].asString)
                                 addProperty("visitServerName", currentServerName)
-                                addProperty("visitCooldown", configuration.command.visitCooldown)
+                                addProperty("visitCooldown", configuration.commandCooldown.visitCooldown)
                             }
 
                             metamorphosis.send("com.salkcoding.tunalands.response_visit_connect", sendJson.toString())

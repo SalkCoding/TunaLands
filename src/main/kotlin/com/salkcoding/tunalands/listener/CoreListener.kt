@@ -22,7 +22,7 @@ class CoreListener : Listener {
 
         val placedBlock = event.block
         val player = event.player
-        if (placedBlock.type == configuration.protect.coreBlock && player.isSneaking) {
+        if (placedBlock.type == configuration.protect.coreBlockType && player.isSneaking) {
             if(configuration.limitWorld.contains(placedBlock.world.name)){
                 player.sendErrorTipMessage("${ChatColor.RED}해당 월드에서는 코어를 만들 수 없습니다!")
                 event.isCancelled = true
@@ -70,7 +70,7 @@ class CoreListener : Listener {
         if (landManager.isProtectedLand(chunk)) {
             //Core protection
             val block = event.block
-            if (block.type == Material.CHEST || block.type == configuration.protect.coreBlock) {
+            if (block.type == Material.CHEST || block.type == configuration.protect.coreBlockType) {
                 val upCoreLocation = lands.upCoreLocation
                 val downCoreLocation = lands.downCoreLocation
 
