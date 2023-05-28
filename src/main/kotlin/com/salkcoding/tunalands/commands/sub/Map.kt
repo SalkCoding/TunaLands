@@ -1,11 +1,15 @@
 package com.salkcoding.tunalands.commands.sub
 
 import com.salkcoding.tunalands.landManager
+import com.salkcoding.tunalands.lands.LandType
+import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.splitQuery
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.TextColor
+import org.bukkit.ChatColor
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -27,7 +31,6 @@ class Map : CommandExecutor {
                         return true
                     }
 
-
                     val width = 25
                     val height = 9
 
@@ -36,11 +39,6 @@ class Map : CommandExecutor {
 
                     val centerX = player.location.chunk.x
                     val centerZ = player.location.chunk.z
-
-                    val owned = lands.landList
-                        .map { it.splitQuery() }
-                        .filter { abs(it.first - centerX) <= width && abs(it.second - centerZ) <= height }
-                        .toHashSet()
 
                     val messages = mutableListOf<Component>()
                     val margin = Component.text("   ")
@@ -61,6 +59,7 @@ class Map : CommandExecutor {
                                 rowWith = 14
                                 margin.append(NW).append(margin).append(N).append(margin).append(NE)
                             }
+
                             -halfHeight + 3 -> {
 
                                 when (dir) {
@@ -69,22 +68,26 @@ class Map : CommandExecutor {
                                         margin.append(margin)
                                             .append(Component.text("↖  ", NamedTextColor.RED))
                                     }
+
                                     "N" -> {
                                         rowWith = 9
                                         margin.append(margin)
                                             .append(Component.text("  ⬆", NamedTextColor.RED))
                                     }
+
                                     "NE" -> {
                                         rowWith = 11
                                         margin.append(margin)
                                             .append(Component.text("    ↗", NamedTextColor.RED))
                                     }
+
                                     else -> {
                                         rowWith = 0
                                         Component.text("")
                                     }
                                 }
                             }
+
                             -halfHeight + 4 -> {
                                 val W = colorStringIfEquals(dir, "W")
                                 val C = Component.text(" +", NamedTextColor.RED)
@@ -96,11 +99,13 @@ class Map : CommandExecutor {
                                         margin.append(W).append(Component.text(" ⬅", NamedTextColor.RED)).append(C)
                                             .append(margin).append(E)
                                     }
+
                                     "E" -> {
                                         rowWith = 14
                                         margin.append(W).append(margin).append(C)
                                             .append(Component.text(" ➡", NamedTextColor.RED)).append(E)
                                     }
+
                                     else -> {
                                         rowWith = 14
                                         margin.append(W).append(margin).append(C).append(margin).append(E)
@@ -114,16 +119,19 @@ class Map : CommandExecutor {
                                         rowWith = 9
                                         margin.append(margin).append(Component.text("↙  ", NamedTextColor.RED))
                                     }
+
                                     "S" -> {
                                         rowWith = 9
                                         margin.append(margin)
                                             .append(Component.text("  ⬇", NamedTextColor.RED))
                                     }
+
                                     "SE" -> {
                                         rowWith = 11
                                         margin.append(margin)
                                             .append(Component.text("    ↘", NamedTextColor.RED))
                                     }
+
                                     else -> {
                                         rowWith = 0
                                         Component.text("")
@@ -139,6 +147,7 @@ class Map : CommandExecutor {
                                 rowWith = 14
                                 margin.append(SW).append(margin).append(S).append(margin).append(SE)
                             }
+
                             else -> {
                                 rowWith = 0
                                 Component.empty()
@@ -164,9 +173,13 @@ class Map : CommandExecutor {
                             if (lands.upCoreLocation.chunk.x == x && lands.upCoreLocation.chunk.z == z) {
                                 icon = "+"
                                 color = NamedTextColor.AQUA
-                            } else if (owned.contains(Pair(x, z))) {
+                            } else if (abs(x - centerX) <= width && abs(z - centerZ) <= height) {
                                 icon = "+"
-                                color = NamedTextColor.GREEN
+                                val type = lands.landMap["$x:$z"]!!
+                                color = when (type) {
+                                    LandType.NORMAL -> NamedTextColor.GREEN
+                                    LandType.FARM -> TextColor.color(0x964b00) as NamedTextColor
+                                }
                             } else if (landAtXZ != null && landAtXZ.ownerUUID != lands.ownerUUID) {
                                 icon = "+"
                                 color = NamedTextColor.YELLOW
@@ -182,11 +195,21 @@ class Map : CommandExecutor {
                         }
 
                         val legend = when (offsetZ) {
-                            -halfHeight + 2 -> Component.text("H", NamedTextColor.WHITE).append(Component.text(" : 현재 위치", NamedTextColor.WHITE))
-                            -halfHeight + 3 -> Component.text("#", NamedTextColor.AQUA).append(Component.text(" : 코어", NamedTextColor.WHITE))
-                            -halfHeight + 4 -> Component.text("#", NamedTextColor.GREEN).append(Component.text(" : 점유 중", NamedTextColor.WHITE))
-                            -halfHeight + 5 -> Component.text("#", NamedTextColor.YELLOW).append(Component.text(" : 타지역", NamedTextColor.WHITE))
-                            -halfHeight + 6 -> Component.text("#", NamedTextColor.GRAY).append(Component.text(" : 미점유", NamedTextColor.WHITE))
+                            -halfHeight + 2 -> Component.text("H", NamedTextColor.WHITE)
+                                .append(Component.text(" : 현재 위치", NamedTextColor.WHITE))
+
+                            -halfHeight + 3 -> Component.text("#", NamedTextColor.AQUA)
+                                .append(Component.text(" : 코어", NamedTextColor.WHITE))
+
+                            -halfHeight + 4 -> Component.text("#", NamedTextColor.GREEN)
+                                .append(Component.text(" : 점유 중", NamedTextColor.WHITE))
+
+                            -halfHeight + 5 -> Component.text("#", NamedTextColor.YELLOW)
+                                .append(Component.text(" : 타지역", NamedTextColor.WHITE))
+
+                            -halfHeight + 6 -> Component.text("#", NamedTextColor.GRAY)
+                                .append(Component.text(" : 미점유", NamedTextColor.WHITE))
+
                             else -> Component.empty()
                         }
 

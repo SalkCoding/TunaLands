@@ -17,7 +17,7 @@ class SetSpawn : CommandExecutor {
             if (player != null) {
                 val lands = landManager.getPlayerLands(player.uniqueId, Rank.OWNER, Rank.DELEGATOR)
                 if (lands != null) {
-                    if (player.location.chunk.toQuery() !in lands.landList) {
+                    if (player.location.chunk.toQuery() !in lands.landMap) {
                         player.sendMessage("자신의 보호된 땅 이외의 위치에서는 스폰을 설정할 수 없습니다!".errorFormat())
                         return true
                     }

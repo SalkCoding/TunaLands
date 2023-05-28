@@ -7,22 +7,22 @@ version "1.2.4"
 
 repositories {
     mavenCentral()
-    maven { url 'https://jitpack.io' }//MockBukkit
+    maven { url 'https://jitpack.io' }//MockBukkit, //Vault
     maven { url 'https://repo.papermc.io/repository/maven-public/' }//MockBukkit
     maven {//adventure-text-minimessage(Purpur uses this api...)
         url = "https://oss.sonatype.org/content/repositories/snapshots/"
         name = "sonatype-oss-snapshots"
     }
     maven { url "https://repo.purpurmc.org/snapshots" }//Purpur
-    maven { url "https://jitpack.io" }//Vault
     maven { url "https://hub.spigotmc.org/nexus/content/repositories/snapshots/" }//Vault
 
     maven { url = "https://repo.dmulloy2.net/repository/public/" }// ProtocolLib
 }
 
 dependencies {
-    testImplementation "io.mockk:mockk:1.13.5"
-    testImplementation 'com.github.MockBukkit:MockBukkit:v1.19-SNAPSHOT'
+    testImplementation 'io.mockk:mockk:1.13.5'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
+    testImplementation 'com.github.seeseemelk:MockBukkit-v1.19:3.1.0'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
     implementation 'net.kyori:adventure-text-minimessage:4.12.0'

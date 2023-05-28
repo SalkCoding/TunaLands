@@ -13,12 +13,14 @@ import org.bukkit.Location
 import java.time.Duration
 import java.time.LocalDateTime
 import java.util.*
+import kotlin.collections.HashMap
 import kotlin.math.roundToLong
 
+//TODO 농사 용지인지 확인 코드 추가
 data class Lands(
     var ownerName: String,
     var ownerUUID: UUID,
-    val landList: MutableList<String>,
+    val landMap: HashMap<String,LandType>,
     val landHistory: LandHistory,
     val upCoreLocation: Location, //Chest
     val downCoreLocation: Location, //Core block
@@ -79,7 +81,8 @@ data class Lands(
         var ownerUUID: UUID,
         val worldName: String,
         val xChunk: Int,
-        val zChunk: Int
+        val zChunk: Int,
+        var landType: LandType
     ) {
         val chunk: Chunk = Bukkit.getWorld(worldName)!!.getChunkAt(xChunk, zChunk)
     }

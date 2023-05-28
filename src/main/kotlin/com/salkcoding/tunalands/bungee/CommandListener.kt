@@ -10,7 +10,7 @@ import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
-import fish.evatuna.metamorphosis.redis.MetamorphosisReceiveEvent
+import fish.evatuna.metamorphosis.kafka.KafkaReceiveEvent
 import me.baiks.bukkitlinked.api.TeleportResult
 import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
@@ -47,7 +47,7 @@ class CommandListener : Listener {
     }
 
     @EventHandler
-    fun onReceived(event: MetamorphosisReceiveEvent) {
+    fun onReceived(event: KafkaReceiveEvent) {
         if (!event.key.startsWith("com.salkcoding.tunalands")) return
         lateinit var json: JsonObject
         try {

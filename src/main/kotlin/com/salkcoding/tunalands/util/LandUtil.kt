@@ -28,10 +28,10 @@ Check borders of lands with landList
 It checks coordinates clockwise and finding edge of lands
 */
 fun Lands.borderFinder(): List<String> {
-    val landList = this.landList
+    val landMap = this.landMap
     val borderList = mutableListOf<String>()
-    landList.forEach { chunk ->
-        val split = chunk.splitQuery()
+    landMap.forEach { (query, type) ->
+        val split = query.splitQuery()
         val x = split.first
         val z = split.second
 
@@ -39,7 +39,7 @@ fun Lands.borderFinder(): List<String> {
         val blockZ = z shl 4
 
         //Checking sides
-        if ("${x - 1}:$z" !in landList) {//Left side
+        if ("${x - 1}:$z" !in landMap) {//Left side
             val leftBottom = "${blockX}:${blockZ}"
             if (leftBottom !in borderList)
                 borderList.add(leftBottom)
@@ -48,7 +48,7 @@ fun Lands.borderFinder(): List<String> {
             if (leftTop !in borderList)
                 borderList.add(leftTop)
         }
-        if ("$x:${z + 1}" !in landList) {//Top side
+        if ("$x:${z + 1}" !in landMap) {//Top side
             val leftTop = "${blockX}:${blockZ + 16}"
             if (leftTop !in borderList)
                 borderList.add(leftTop)
@@ -57,7 +57,7 @@ fun Lands.borderFinder(): List<String> {
             if (rightTop !in borderList)
                 borderList.add(rightTop)
         }
-        if ("${x + 1}:$z" !in landList) {//Right side
+        if ("${x + 1}:$z" !in landMap) {//Right side
             val rightTop = "${blockX + 16}:${blockZ + 16}"
             if (rightTop !in borderList)
                 borderList.add(rightTop)
@@ -66,7 +66,7 @@ fun Lands.borderFinder(): List<String> {
             if (rightBottom !in borderList)
                 borderList.add(rightBottom)
         }
-        if ("$x:${z - 1}" !in landList) {//Bottom side
+        if ("$x:${z - 1}" !in landMap) {//Bottom side
             val rightBottom = "${blockX + 16}:${blockZ}"
             if (rightBottom !in borderList)
                 borderList.add(rightBottom)
@@ -85,9 +85,9 @@ fun Lands.borderFinder(): List<String> {
 *   false: After performed,when an empty area is existed
 */
 fun Lands.hasConnectedComponent(): Boolean {
-    if (landList.isEmpty()) return true
+    if (landMap.isEmpty()) return true
 
-    val chunks: List<Pair<Int, Int>> = landList.map { query ->
+    val chunks: List<Pair<Int, Int>> = landMap.map { (query,_) ->
         val result = query.splitQuery()
         Pair(result.first, result.second)
     }

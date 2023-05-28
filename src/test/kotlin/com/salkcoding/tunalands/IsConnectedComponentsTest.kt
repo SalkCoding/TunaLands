@@ -3,8 +3,12 @@ package com.salkcoding.tunalands
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.util.hasConnectedComponent
 import io.mockk.mockk
+import org.junit.Test
 
-object IsConnectedComponentsTest {
+class IsConnectedComponentsTest {
+
+    //TODO complete test function
+    //@Test
     fun `GIVEN several connected components are existed`() {
         val map = arrayOf(
             arrayOf(1, 1, 0, 0, 1, 1, 0),
@@ -16,12 +20,12 @@ object IsConnectedComponentsTest {
             arrayOf(0, 1, 0, 0, 0, 0, 0)
         )
         val mockLands = mockk<Lands>()
-        for (i in map.indices) {
+        /*for (i in map.indices) {
             for (j in map.indices) {
                 if (map[i][j] == 1)
-                    mockLands.landList.add("$i:$j")
+                    mockLands.add("$i:$j")
             }
-        }
+        }*/
 
         //It has to return true
         assert(!mockLands.hasConnectedComponent())

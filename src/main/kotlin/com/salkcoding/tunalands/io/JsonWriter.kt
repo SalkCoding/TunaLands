@@ -24,8 +24,11 @@ object JsonWriter {
 
                 //Initialize data
                 val jsonLandList = JsonArray()
-                lands.landList.forEach {
-                    jsonLandList.add(it)
+                lands.landMap.forEach { (query, type) ->
+                    val info = JsonObject()
+                    info.addProperty("coordinate", query)
+                    info.addProperty("landType", type.name)
+                    jsonLandList.add(info)
                 }
 
                 val landHistory = lands.landHistory
@@ -147,7 +150,10 @@ object JsonWriter {
                 jsonObject.addProperty("ownerName", lands.ownerName)
                 jsonObject.addProperty("ownerUUID", lands.ownerUUID.toString())
                 jsonObject.addProperty("fuelLeft", lands.fuelLeft)
-                jsonObject.addProperty("expiredMillisecond", lands.nextTimeFuelNeedsToBeConsumed.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
+                jsonObject.addProperty(
+                    "expiredMillisecond",
+                    lands.nextTimeFuelNeedsToBeConsumed.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                )
                 jsonObject.addProperty("enable", lands.enable)
                 jsonObject.addProperty("open", lands.open)
                 jsonObject.addProperty("recommend", lands.recommend)

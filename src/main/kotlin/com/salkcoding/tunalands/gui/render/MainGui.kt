@@ -100,7 +100,7 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                     "${ChatColor.WHITE}현재 연료: ${lands.fuelLeft}개",
                     timeLeft,
                     fuelInfo,
-                    "${ChatColor.WHITE}점유한 지역: ${ChatColor.GOLD}${lands.landList.size}${ChatColor.WHITE}개 ${lands.landList.size}",
+                    "${ChatColor.WHITE}점유한 지역: ${ChatColor.GOLD}${lands.landMap.size}${ChatColor.WHITE}개 ${lands.landMap.size}",
                     "${ChatColor.WHITE}멤버 수: ${ChatColor.GOLD}${lands.memberMap.size}${ChatColor.WHITE}명 ${lands.memberMap.size}",
                     "${ChatColor.WHITE}추천 수: ${ChatColor.GOLD}${lands.recommend}",
                     "${ChatColor.WHITE}생성일: ${ChatColor.GRAY}${

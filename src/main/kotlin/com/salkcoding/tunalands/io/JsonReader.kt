@@ -1,12 +1,11 @@
 package com.salkcoding.tunalands.io
 
-import com.google.gson.JsonObject
 import com.google.gson.JsonParser
+import com.salkcoding.tunalands.lands.LandType
 import com.salkcoding.tunalands.lands.setting.DelegatorSetting
 import com.salkcoding.tunalands.lands.setting.LandSetting
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
-import com.salkcoding.tunalands.metamorphosis
 import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.ObservableMap
 import org.bukkit.Bukkit
@@ -17,6 +16,7 @@ import java.time.Instant
 import java.time.ZoneId
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.collections.HashMap
 
 object JsonReader {
 
@@ -38,9 +38,10 @@ object JsonReader {
                 val open = jsonObject["open"].asBoolean
                 val recommend = jsonObject["recommend"].asInt
                 val landsName = jsonObject["landsName"].asString
-                val landList = mutableListOf<String>()
+                val landList = HashMap<String, LandType>()
                 jsonObject["landList"].asJsonArray.forEach {
-                    landList.add(it.asString)
+                    val info = it.asJsonObject
+                    landList[info["coordinate"].asString] = LandType.valueOf(info["landType"].asString)
                 }
                 val jsonLandHistory = jsonObject["landHistory"].asJsonObject
                 val landHistory = Lands.LandHistory(
@@ -186,6 +187,7 @@ object JsonReader {
                         Instant.ofEpochMilli(expiredMillisecond)
                             .atZone(ZoneId.systemDefault())
                             .toLocalDateTime(),
+
                         enable,
                         open,
                         recommend,

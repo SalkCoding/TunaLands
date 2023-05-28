@@ -45,15 +45,18 @@ class Debug : CommandExecutor {
                             )
                             sender.sendMessage("${name}을/를 ${rank}로/으로 설정했습니다.".infoFormat())
                         }
+
                         "null" -> {
                             lands.memberMap.remove(uuid)
                             sender.sendMessage("${name}을/를 멤버 목록에서 제거했습니다.".infoFormat())
                         }
+
                         else -> return false
                     }
                 } else sender.sendMessage("대상이 존재하지 않습니다.".infoFormat())
                 return true
             }
+
             args[0] == "setfuel" && args.size == 3 -> {
                 val targetUUID = Bukkit.getPlayerUniqueId(args[1])
                 if (targetUUID != null) {
@@ -89,13 +92,15 @@ class Debug : CommandExecutor {
                 } else sender.sendMessage("존재하지 않는 플레이어입니다.".errorFormat())
                 return true
             }
+
             args[0] == "info" && args.size == 2 -> {
                 val name = args[1]
-                val list = landManager.getPlayerLandList(Bukkit.getOfflinePlayer(name).uniqueId)
+                val list = landManager.getPlayerLandList(Bukkit.getOfflinePlayer(name).uniqueId)?.toList()
                 if (list != null) sender.sendMessage("$name 소유의 땅 목록: ${list.joinToString(separator = ", ")}".infoFormat())
                 else sender.sendMessage("소유한 땅이 없습니다.".infoFormat())
                 return true
             }
+
             args[0] == "player" && args.size == 2 -> {
                 val name = args[1]
                 val uuid = Bukkit.getOfflinePlayer(name).uniqueId
@@ -108,6 +113,7 @@ class Debug : CommandExecutor {
                 } else sender.sendMessage("소속된 곳이 없습니다".infoFormat())
                 return true
             }
+
             args[0] == "visit" && args.size == 2 -> {
                 if (sender !is Player) {
                     sender.sendMessage("콘솔에서는 사용할 수 없습니다.".errorFormat())
@@ -122,6 +128,7 @@ class Debug : CommandExecutor {
                 } else sender.sendMessage("소속된 곳이 없습니다".infoFormat())
                 return true
             }
+
             args[0] == "reset" && args.size == 4 -> {
                 when (args[1]) {
                     "recommend" -> {
@@ -135,6 +142,7 @@ class Debug : CommandExecutor {
                 }
                 return true
             }
+
             args[0] == "reset" && args.size == 3 -> {
                 when (args[1]) {
                     "cooldown" -> {
@@ -145,6 +153,7 @@ class Debug : CommandExecutor {
                 }
                 return true
             }
+
             args[0] == "delete" && args.size == 2 -> {
                 val target = Bukkit.getOfflinePlayer(args[1])
                 val lands = landManager.getPlayerLands(target.uniqueId, Rank.OWNER)
@@ -154,6 +163,7 @@ class Debug : CommandExecutor {
                 } else sender.sendMessage("소속된 곳이 없습니다".infoFormat())
                 return true
             }
+
             args[0] == "buy" && args.size == 1 -> {
                 val player = sender as? Player
                 if (player != null) {
@@ -163,6 +173,7 @@ class Debug : CommandExecutor {
                 }
                 return true
             }
+
             args[0] == "forcebuy" && args.size == 2 -> {
                 val player = sender as? Player
                 val owner = Bukkit.getOfflinePlayerIfCached(args[1])
@@ -176,6 +187,7 @@ class Debug : CommandExecutor {
                 }
                 return true
             }
+
             args[0] == "sell" && args.size == 1 -> {
                 val player = sender as? Player
                 if (player != null) {
@@ -199,6 +211,7 @@ class Debug : CommandExecutor {
                 }
                 return true
             }
+
             args[0] == "move" && args.size == 3 -> {
                 val uuid = Bukkit.getPlayerUniqueId(args[1])
                 val targetUUID = Bukkit.getPlayerUniqueId(args[2])
@@ -232,6 +245,7 @@ class Debug : CommandExecutor {
                 lands.memberMap[uuid] = Lands.MemberData(uuid, Rank.valueOf(args[2].uppercase()), present, present)
                 return true
             }
+
             else -> return false
         }
     }

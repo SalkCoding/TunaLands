@@ -1,5 +1,6 @@
 package com.salkcoding.tunalands.util
 
+import com.salkcoding.tunalands.lands.LandType
 import org.bukkit.Chunk
 import org.bukkit.Location
 
@@ -23,7 +24,7 @@ fun String.splitQuery(): Pair<Int, Int> {
     }
 }
 
-fun Chunk.isMeetOtherChunk(chunkList: List<String>): Boolean {
+fun Chunk.isMeetOtherChunk(chunkList: HashMap<String, LandType>): Boolean {
     val left = "${this.x + 1}:${this.z}"
     val top = "${this.x}:${this.z + 1}"
     val right = "${this.x - 1}:${this.z}"
