@@ -10,7 +10,7 @@ import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
-import fish.evatuna.metamorphosis.kafka.KafkaReceiveEvent
+import fish.evatuna.metamorphosis.redis.MetamorphosisReceiveEvent
 import me.baiks.bukkitlinked.api.TeleportResult
 import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
@@ -47,7 +47,7 @@ class CommandListener : Listener {
     }
 
     @EventHandler
-    fun onReceived(event: KafkaReceiveEvent) {
+    fun onReceived(event: MetamorphosisReceiveEvent) {
         if (!event.key.startsWith("com.salkcoding.tunalands")) return
         lateinit var json: JsonObject
         try {
@@ -65,12 +65,15 @@ class CommandListener : Listener {
             "accept" -> {
                 Accept.work(uuid)
             }
+
             "alba" -> {
                 Alba.work(uuid, json["targetName"].asString)
             }
+
             "ban" -> {
                 Ban.work(uuid, json["targetName"].asString)
             }
+
             "banlist" -> {
                 Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
                     val name = json["name"].asString
@@ -95,33 +98,43 @@ class CommandListener : Listener {
                     } else bukkitLinkedAPI.sendMessageAcrossServer(name, "해당 명령어는 땅 소속만 사용가능합니다.".errorFormat())
                 })
             }
+
             "cancel" -> {
                 Cancel.work(uuid, json["targetName"].asString)
             }
+
             "delete" -> {
                 Delete.work(uuid)
             }
+
             "demote" -> {
                 Demote.work(uuid, json["targetName"].asString)
             }
+
             "deny" -> {
                 Deny.work(uuid)
             }
+
             "hego" -> {
                 Hego.work(uuid, json["targetName"].asString)
             }
+
             "invite" -> {
                 Invite.work(uuid, json["targetName"].asString)
             }
+
             "kick" -> {
                 Kick.work(uuid, json["targetName"].asString)
             }
+
             "leave" -> {
                 Leave.work(uuid)
             }
+
             "promote" -> {
                 Promote.work(uuid, json["targetName"].asString)
             }
+
             "recommend" -> {
                 Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
                     val sendJson = JsonObject().apply {
@@ -151,6 +164,7 @@ class CommandListener : Listener {
                     metamorphosis.send("com.salkcoding.tunalands.response_recommend", sendJson.toString())
                 })
             }
+
             "recommend_lands" -> {
                 val name = json["name"].asString
                 val ownerUUID = UUID.fromString(json["ownerUUID"].asString)
@@ -177,9 +191,11 @@ class CommandListener : Listener {
                     }
                 } else bukkitLinkedAPI.sendMessageAcrossServer(name, "해당 땅이 존재하지 않습니다.".errorFormat())
             }
+
             "setleader" -> {
                 SetLeader.work(uuid, json["targetName"].asString)
             }
+
             "spawn" -> {
                 Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
                     val name = json["name"].asString
@@ -198,6 +214,7 @@ class CommandListener : Listener {
                     )
                 })
             }
+
             "pending_spawn_teleport" -> {
                 val lands = landManager.getPlayerLands(uuid, Rank.OWNER, Rank.DELEGATOR, Rank.MEMBER)
                 if (lands != null) {
@@ -227,9 +244,11 @@ class CommandListener : Listener {
                     })
                 } else tunaLands.logger.warning("$uuid requested ${event.uniqueId}:${event.key}:${event.value} but lands instance is null")
             }
+
             "unban" -> {
                 Unban.work(uuid, json["targetName"].asString)
             }
+
             "visit" -> {
                 Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
                     val sendJson = JsonObject().apply {
@@ -259,6 +278,7 @@ class CommandListener : Listener {
                     metamorphosis.send("com.salkcoding.tunalands.response_visit", sendJson.toString())
                 })
             }
+
             "visit_connect" -> {
                 Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
                     val name = json["name"].asString
@@ -309,6 +329,7 @@ class CommandListener : Listener {
                     } else bukkitLinkedAPI.sendMessageAcrossServer(name, "해당 땅이 존재하지 않습니다.".errorFormat())
                 })
             }
+
             "pending_visit_teleport" -> {
                 val name = json["name"].asString
                 val targetUUID = UUID.fromString(json["targetUUID"].asString)

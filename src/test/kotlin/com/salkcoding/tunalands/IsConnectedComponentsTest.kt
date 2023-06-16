@@ -3,7 +3,6 @@ package com.salkcoding.tunalands
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.util.hasConnectedComponent
 import io.mockk.mockk
-import org.junit.Test
 
 class IsConnectedComponentsTest {
 

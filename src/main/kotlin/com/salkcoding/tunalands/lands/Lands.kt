@@ -16,7 +16,6 @@ import java.util.*
 import kotlin.collections.HashMap
 import kotlin.math.roundToLong
 
-//TODO 농사 용지인지 확인 코드 추가
 data class Lands(
     var ownerName: String,
     var ownerUUID: UUID,

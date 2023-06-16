@@ -75,13 +75,13 @@ class Config {
         // Flag prices
         val flagSection = config.getConfigurationSection("flag")!!
         val flagPriceSection = flagSection.getConfigurationSection("price")!!
-        val flagLimitSection = flagSection.getConfigurationSection("limit")!!
+        val flagFarmSection = flagSection.getConfigurationSection("farm")!!
         flag = Flag(
             flagPriceSection.getDouble("takeProtectFlagPrice"),
             flagPriceSection.getDouble("releaseProtectFlagPrice"),
             flagPriceSection.getDouble("takeFarmFlagPrice"),
             flagPriceSection.getDouble("releaseFarmFlagPrice"),
-            flagLimitSection.getInt("limitFarmOccupied")
+            flagFarmSection.getInt("limitFarmOccupied")
         )
     }
 

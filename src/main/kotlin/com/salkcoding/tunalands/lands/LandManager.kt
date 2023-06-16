@@ -201,53 +201,55 @@ class LandManager {
             return
         }
 
+        if (lands.landMap.filter { (_, type) ->
+                type == LandType.FARM
+            }.size > configuration.flag.limitFarmOccupied) {
+            player.sendMessage("농지는 ${configuration.flag.limitFarmOccupied}개 이상 소유하실 수 없습니다.".errorFormat())
+            return
+        }
+
         flag.amount -= 1
         player.sendMessage("땅의 용도가 ${type}으로 전환되었습니다!".infoFormat())
     }
 
-    fun buyLand(player: Player, upCore: Block, downCore: Block) {
+    fun buyLand(player: Player, upCore: Block, downCore: Block): Lands {
+        //이미 caller 쪽에서 땅 소유하고 있는지 확인해서 추가 검사할 필요 없습니다.
         val chunk = upCore.chunk
         val query = chunk.toQuery()
-        if (landMap.containsKey(query)) {
-            player.sendMessage("${landMap[query]!!.ownerName}가 이미 구매한 땅입니다.".errorFormat())
-            return
-        }
-
         //First buy
         val uuid = player.uniqueId
-        if (!playerLandMap.containsKey(uuid)) {
-            val now = System.currentTimeMillis()
-            // Give fuel that should last for 24 hours
-            val defaultFuelRequirement = configuration.fuel.fuelRequirements.maxOf { it }
-            val defaultFuelAmount = (86400 / defaultFuelRequirement.secondsPerFuel).roundToLong()
-            val msPerFuel = (defaultFuelRequirement.secondsPerFuel * 1000).roundToLong()
-            val nextTimeToConsumeFuel = LocalDateTime.now().plus(msPerFuel, ChronoUnit.MILLIS)
+        val now = System.currentTimeMillis()
+        // Give fuel that should last for 24 hours
+        val defaultFuelRequirement = configuration.fuel.fuelRequirements.maxOf { it }
+        val defaultFuelAmount = (86400 / defaultFuelRequirement.secondsPerFuel).roundToLong()
+        val msPerFuel = (defaultFuelRequirement.secondsPerFuel * 1000).roundToLong()
+        val nextTimeToConsumeFuel = LocalDateTime.now().plus(msPerFuel, ChronoUnit.MILLIS)
 
-            val lands = Lands(
-                player.name,
-                uuid,
-                HashMap(),
-                Lands.LandHistory(
-                    0,
-                    now
-                ),
-                upCore.location,
-                downCore.location,
-                defaultFuelAmount,
-                nextTimeToConsumeFuel
-            ).apply {
-                this.memberMap[uuid] = Lands.MemberData(uuid, Rank.OWNER, now, now)
-                this.landMap[query] = LandType.NORMAL
-            }
-            playerLandMap[uuid] = lands
-            val chunkInfo = Lands.ChunkInfo(player.name, uuid, chunk.world.name, chunk.x, chunk.z, LandType.NORMAL)
-            landMap[query] = chunkInfo
-
-            displayManager.createDisplay(lands)
-            alarmManager.registerAlarm(lands)
-            player.sendMessage("해당 위치의 땅을 구매했습니다.".infoFormat())
-            player.world.playBuyChunkEffect(player, chunk)
+        val lands = Lands(
+            player.name,
+            uuid,
+            HashMap(),
+            Lands.LandHistory(
+                0,
+                now
+            ),
+            upCore.location,
+            downCore.location,
+            defaultFuelAmount,
+            nextTimeToConsumeFuel
+        ).apply {
+            this.memberMap[uuid] = Lands.MemberData(uuid, Rank.OWNER, now, now)
+            this.landMap[query] = LandType.NORMAL
         }
+        playerLandMap[uuid] = lands
+        val chunkInfo = Lands.ChunkInfo(player.name, uuid, chunk.world.name, chunk.x, chunk.z, LandType.NORMAL)
+        landMap[query] = chunkInfo
+
+        displayManager.createDisplay(lands)
+        alarmManager.registerAlarm(lands)
+        player.sendMessage("해당 위치의 땅을 구매했습니다.".infoFormat())
+        player.world.playBuyChunkEffect(player, chunk)
+        return lands
     }
 
     fun buyLand(player: Player, flag: ItemStack, block: Block) {

@@ -43,3 +43,15 @@ compileJava {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
 }
+
+task copyBuild(type: Copy) {
+    dependsOn 'build'
+    from 'build/libs'
+    include '*.jar'
+    into 'testserver/plugins'
+}
+
+task testWithServer(type: Exec) {
+    dependsOn 'build', 'copyBuild'
+    commandLine 'cmd', '/c', 'cd testserver && java -jar spigot-1.19.4.jar'
+}

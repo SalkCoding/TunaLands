@@ -1,9 +1,12 @@
 package com.salkcoding.tunalands.listener
 
+import com.salkcoding.tunalands.api.event.LandCreateEvent
 import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.economy
 import com.salkcoding.tunalands.landManager
+import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.*
+import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.event.EventHandler
@@ -23,13 +26,13 @@ class CoreListener : Listener {
         val placedBlock = event.block
         val player = event.player
         if (placedBlock.type == configuration.protect.coreBlockType && player.isSneaking) {
-            if(configuration.limitWorld.contains(placedBlock.world.name)){
+            if (configuration.limitWorld.contains(placedBlock.world.name)) {
                 player.sendErrorTipMessage("${ChatColor.RED}해당 월드에서는 코어를 만들 수 없습니다!")
                 event.isCancelled = true
                 return
             }
 
-            if (landManager.isProtectedLand(placedBlock.chunk)){
+            if (landManager.isProtectedLand(placedBlock.chunk)) {
                 player.sendErrorTipMessage("${ChatColor.RED}다른 사람의 땅에는 코어를 만들 수 없습니다!")
                 event.isCancelled = true
                 return
@@ -53,7 +56,14 @@ class CoreListener : Listener {
             val chest = placedBlock.getRelative(0, 1, 0)
             chest.type = Material.CHEST
 
-            landManager.buyLand(player, chest, placedBlock)
+            val lands = landManager.buyLand(player, chest, placedBlock)
+            Bukkit.getPluginManager().callEvent(
+                LandCreateEvent(
+                    lands,
+                    player,
+                    placedBlock.location
+                )
+            )
 
             event.isCancelled = false
         }

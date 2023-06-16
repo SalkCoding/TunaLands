@@ -1,5 +1,6 @@
 package com.salkcoding.tunalands.commands.sub
 
+import com.salkcoding.tunalands.api.event.LandJoinEvent
 import com.salkcoding.tunalands.bukkitLinkedAPI
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Lands
@@ -57,6 +58,14 @@ class Accept : CommandExecutor {
                             player.uniqueId,
                             Rank.VISITOR
                         )?.memberMap?.remove(player.uniqueId)
+
+                        Bukkit.getPluginManager().callEvent(
+                            LandJoinEvent(
+                                lands,
+                                player,
+                                data.targetRank
+                            )
+                        )
 
                         val present = System.currentTimeMillis()
                         lands.memberMap[uuid] = Lands.MemberData(uuid, data.targetRank, present, present)
