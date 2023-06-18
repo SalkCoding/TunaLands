@@ -13,7 +13,7 @@ import java.util.*
 
 class InOutListener : Listener {
 
-    private val enterSet = mutableMapOf<UUID, Int>()
+    private val enterSet = mutableMapOf<UUID, UUID>()
 
     @EventHandler
     fun onMove(event: PlayerMoveEvent) {
@@ -31,11 +31,11 @@ class InOutListener : Listener {
             }
 
             if (uuid !in enterSet) {
-                enterSet[uuid] = lands.hashCode()
+                enterSet[uuid] = lands.ownerUUID
                 player.sendTitle("", lands.landsName, 10, 20, 10)
             } else {
                 val old = enterSet[uuid]
-                val present = lands.hashCode()
+                val present = lands.ownerUUID
                 if (old != present) {
                     enterSet[uuid] = present
                     player.sendTitle("", lands.landsName, 10, 20, 10)

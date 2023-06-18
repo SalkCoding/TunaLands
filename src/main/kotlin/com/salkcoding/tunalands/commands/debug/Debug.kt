@@ -1,5 +1,6 @@
 package com.salkcoding.tunalands.commands.debug
 
+import com.salkcoding.tunalands.alarmManager
 import com.salkcoding.tunalands.displayManager
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Lands
@@ -63,7 +64,7 @@ class Debug : CommandExecutor {
                     val lands = landManager.getPlayerLands(targetUUID, Rank.OWNER)
                     if (lands != null) {
                         try {
-                            val numOfFuel = args[2].toLong()
+                            val numOfFuel = args[2].toDouble()
                             if (numOfFuel <= 0) {
                                 lands.sendMessageToOnlineMembers(
                                     listOf(
@@ -71,6 +72,7 @@ class Debug : CommandExecutor {
                                         "코어에 연료를 넣어 활성화하지 않을 경우 모든 블럭과의 상호작용이 불가능합니다!".warnFormat()
                                     )
                                 )
+                                alarmManager.unregisterAlarm(lands)
                                 displayManager.pauseDisplay(lands)?.setMessage(
                                     "${ChatColor.RED}비활성화 ${ChatColor.WHITE}상태",
                                     "${ChatColor.GOLD}연료${ChatColor.WHITE}를 사용하여 ${ChatColor.GREEN}재활성화 ${ChatColor.WHITE}해야합니다!"
@@ -81,8 +83,10 @@ class Debug : CommandExecutor {
                                 if (!lands.enable) {
                                     lands.enable = true
                                     displayManager.resumeDisplay(lands)?.update()
+                                    alarmManager.registerAlarm(lands)
                                     lands.sendMessageToOnlineMembers("땅이 다시 활성화되었습니다!".infoFormat())
                                 }
+                                alarmManager.resetAlarm(lands)
                                 lands.sendMessageToOnlineMembers("관리자에의해 땅 연료 갯수가 변경되었습니다.".infoFormat())
                             }
                         } catch (e: NumberFormatException) {

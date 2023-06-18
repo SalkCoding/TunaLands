@@ -1,5 +1,6 @@
 package com.salkcoding.tunalands.gui.render
 
+import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.util.times
 import org.bukkit.ChatColor
 import org.bukkit.DyeColor
@@ -39,13 +40,13 @@ val fuelItem = (Material.PAPER * 1).apply {
 val takeProtectFlagItem = (Material.GREEN_BANNER * 1).apply {
     this.setDisplayName("${ChatColor.GREEN}점유 ${ChatColor.WHITE}깃발")
     this.lore = listOf(
-        "${ChatColor.WHITE}늘리고 싶은 지역에 설치하여 점유할 수 있는 깃발입니다."
+        "${ChatColor.WHITE}늘리고 싶은 지역에 설치하여 점유할 수 있는 깃발입니다.",
     )
 }
 
 val releaseProtectFlagItem = (Material.GREEN_BANNER * 1).apply {
     val bannerMeta = this.itemMeta as BannerMeta
-    bannerMeta.patterns.add(Pattern(DyeColor.RED, PatternType.CROSS))
+    bannerMeta.patterns.add(Pattern(DyeColor.RED, PatternType.STRAIGHT_CROSS))
     bannerMeta.setDisplayName("${ChatColor.RED}제거 ${ChatColor.WHITE}깃발")
     bannerMeta.lore = listOf(
         "${ChatColor.WHITE}제거하고 싶은 지역에 설치하여 제거할 수 있는 깃발입니다."
@@ -62,7 +63,7 @@ val takeFarmFlagItem = (Material.BROWN_BANNER * 1).apply {
 
 val releaseFarmFlagItem = (Material.BROWN_BANNER * 1).apply {
     val bannerMeta = this.itemMeta as BannerMeta
-    bannerMeta.patterns.add(Pattern(DyeColor.RED, PatternType.CROSS))
+    bannerMeta.patterns.add(Pattern(DyeColor.RED, PatternType.STRAIGHT_CROSS))
     bannerMeta.setDisplayName("${ChatColor.replaceHex("#964b00")}농작지 ${ChatColor.RED}제거 ${ChatColor.WHITE}깃발")
     bannerMeta.lore = listOf(
         "${ChatColor.WHITE}농작지를 일반 영토로 변경합니다."

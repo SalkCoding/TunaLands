@@ -81,10 +81,26 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
         inv.setItem(0, backButton)
 
         // 깃발
-        inv.setItem(19, takeProtectFlagItem)
-        inv.setItem(21, releaseProtectFlagItem)
-        inv.setItem(23, takeFarmFlagItem)
-        inv.setItem(25, releaseFarmFlagItem)
+        inv.setItem(19, takeProtectFlagItem.clone().apply {
+            val lore = this.lore!!
+            lore.add("${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.flag.takeFarmFlagPrice}캔")
+            this.lore = lore
+        })
+        inv.setItem(21, releaseProtectFlagItem.clone().apply {
+            val lore = this.lore!!
+            lore.add("${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.flag.releaseProtectFlagPrice}캔")
+            this.lore = lore
+        })
+        inv.setItem(23, takeFarmFlagItem.clone().apply {
+            val lore = this.lore!!
+            lore.add("${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.flag.takeFarmFlagPrice}캔")
+            this.lore = lore
+        })
+        inv.setItem(25, releaseFarmFlagItem.clone().apply {
+            val lore = this.lore!!
+            lore.add("${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.flag.takeFarmFlagPrice}캔")
+            this.lore = lore
+        })
 
         // 연료
         inv.setItem(29, fuel)

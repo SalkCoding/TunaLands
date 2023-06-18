@@ -1,5 +1,6 @@
 package com.salkcoding.tunalands.commands.sub
 
+import com.salkcoding.tunalands.alarmManager
 import com.salkcoding.tunalands.bukkitLinkedAPI
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
@@ -38,6 +39,7 @@ class Delete : CommandExecutor {
                 val lands = landManager.getPlayerLands(player.uniqueId, Rank.OWNER)
                 if (lands != null) {
                     if (lands.memberMap.size == 1) {
+                        alarmManager.unregisterAlarm(lands)
                         landManager.deleteLands(lands)
                         player.sendMessage("땅을 삭제했습니다.".infoFormat())
                         player.playSound(player.location, Sound.ENTITY_GENERIC_EXPLODE, 0.5f, 1f)
@@ -48,6 +50,7 @@ class Delete : CommandExecutor {
                 val lands = landManager.getPlayerLands(offlinePlayer.uniqueId, Rank.OWNER)
                 if (lands != null) {
                     if (lands.memberMap.size == 1) {
+                        alarmManager.unregisterAlarm(lands)
                         landManager.deleteLands(lands)
                         bukkitLinkedAPI.sendMessageAcrossServer(hostName, "땅을 삭제했습니다.".infoFormat())
                     } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "모든 멤버가 나가기전까지는 땅을 삭제할 수 없습니다.".errorFormat())

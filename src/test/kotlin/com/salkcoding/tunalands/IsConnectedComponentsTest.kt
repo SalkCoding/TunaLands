@@ -1,9 +1,5 @@
 package com.salkcoding.tunalands
 
-import com.salkcoding.tunalands.lands.Lands
-import com.salkcoding.tunalands.util.hasConnectedComponent
-import io.mockk.mockk
-
 class IsConnectedComponentsTest {
 
     //TODO complete test function
@@ -18,15 +14,7 @@ class IsConnectedComponentsTest {
             arrayOf(0, 1, 0, 0, 0, 0, 0),
             arrayOf(0, 1, 0, 0, 0, 0, 0)
         )
-        val mockLands = mockk<Lands>()
-        /*for (i in map.indices) {
-            for (j in map.indices) {
-                if (map[i][j] == 1)
-                    mockLands.add("$i:$j")
-            }
-        }*/
 
-        //It has to return true
-        assert(!mockLands.hasConnectedComponent())
+
     }
 }

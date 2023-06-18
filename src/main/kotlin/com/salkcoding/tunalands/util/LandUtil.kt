@@ -30,7 +30,7 @@ It checks coordinates clockwise and finding edge of lands
 fun Lands.borderFinder(): List<String> {
     val landMap = this.landMap
     val borderList = mutableListOf<String>()
-    landMap.forEach { (query, type) ->
+    landMap.forEach { (query, _) ->
         val split = query.splitQuery()
         val x = split.first
         val z = split.second
@@ -84,10 +84,10 @@ fun Lands.borderFinder(): List<String> {
 *   true: After performed,when an empty area is not existed
 *   false: After performed,when an empty area is existed
 */
-fun Lands.hasConnectedComponent(): Boolean {
-    if (landMap.isEmpty()) return true
-
-    val chunks: List<Pair<Int, Int>> = landMap.map { (query,_) ->
+private val dx = arrayOf(1, 0, -1, 0)
+private val dz = arrayOf(0, 1, 0, -1)
+fun Lands.checkFloodFill(): Boolean {
+    val chunks: List<Pair<Int, Int>> = landMap.map { (query, _) ->
         val result = query.splitQuery()
         Pair(result.first, result.second)
     }
@@ -98,51 +98,44 @@ fun Lands.hasConnectedComponent(): Boolean {
     val xMax = chunks.maxOf { it.first }
     val zMax = chunks.maxOf { it.second }
 
-    //Array size: 0 ~ n
-    val xLen = xMax - xMin + 1
-    val zLen = zMax - zMin + 1
+    //Array
+    val xLen = xMax - xMin + 3
+    val zLen = zMax - zMin + 3
     val array = Array(xLen) { Array(zLen) { 0 } }
 
-    //Setting array (0 based indexing)
-    val occupied = 1
-    for ((x, z) in chunks) {
-        array[x][z] = occupied
+    // 1. Check that chunks don't do 땅따먹기
+
+    //Setting array (xList size always equals with yList size)
+    //사이드 한칸씩 띄워져 있음
+    chunks.forEach { (x, z) ->
+        val a = x - xMin + 1
+        val b = z - zMin + 1
+
+        array[a][b] = 1
     }
-    //Perform BFS, change 1 to 2 about a connected component
-    calculateFloodFill(array, chunks[0], xLen, zLen, 0)
 
-    //Check connected components
-    for (i in 0..xLen + 1) {
-        for (j in 0..zLen + 1) {
-            //Check connected components are existed
-            if (array[i][j] == occupied) return true
-        }
-    }
-    return false
-}
-
-
-//Check Connected components, implement using BFS
-private val dx = arrayOf(1, 0, -1, 0)
-private val dz = arrayOf(0, 1, 0, -1)
-private val queue = LinkedList<Pair<Int, Int>>() as Queue<Pair<Int, Int>>
-fun calculateFloodFill(visited: Array<Array<Int>>, start: Pair<Int, Int>, xLimit: Int, zLimit: Int, fillValue: Int) {
-    //Init
-    queue.clear()
-    queue.add(start)
-    visited[start.first][start.second] = fillValue
-    //BFS
+    //BFS search
+    val queue: Queue<Pair<Int, Int>> = LinkedList()
+    val visited = Array(xLen) { Array(zLen) { 0 } }
+    queue.add(Pair(0, 0))
+    visited[0][0] = 1
     while (queue.isNotEmpty()) {
-        val pair = queue.remove()
-        for (i in 0 until 4) {
-            val x = pair.first + dx[i]
-            val z = pair.second + dz[i]
-
-            //Out of boundary
-            if (x < 0 || x >= xLimit || z < 0 || z >= zLimit || visited[x][z] == fillValue) continue
-
-            queue.add(Pair(x, z))
-            visited[x][z] = fillValue
+        val now = queue.remove()
+        for (i in 0..3) {
+            val nx = dx[i] + now.first
+            val nz = dz[i] + now.second
+            if (nx < 0 || nz < 0 || nx >= xLen || nz >= zLen || array[nx][nz] == 1 || visited[nx][nz] == 1) continue
+            queue.add(Pair(nx, nz))
+            visited[nx][nz] = 1
         }
     }
+
+    for (i in 0 until xLen) {
+        for (j in 0 until zLen) {
+            if (array[i][j] == 0 && visited[i][j] == 0)
+                return false
+        }
+    }
+
+    return true
 }

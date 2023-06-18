@@ -5,6 +5,7 @@ import com.salkcoding.tunalands.lands.Rank
 
 data class Fuel(
     val price: Double,
+    val defaultFuel: Double,
     val fuelRequirements: List<FuelRequirement>
 ) {
     fun getFuelRequirement(land: Lands): FuelRequirement {

@@ -19,12 +19,12 @@ import kotlin.math.roundToLong
 data class Lands(
     var ownerName: String,
     var ownerUUID: UUID,
-    val landMap: HashMap<String,LandType>,
+    val landMap: HashMap<String, LandType>,
     val landHistory: LandHistory,
     val upCoreLocation: Location, //Chest
     val downCoreLocation: Location, //Core block
-    var fuelLeft: Long, // amount of fuel left,
-    var nextTimeFuelNeedsToBeConsumed: LocalDateTime,
+    var fuelLeft: Double, // amount of fuel left (second),
+    var secondPerFuel: Double, // amount of fuel decrement for second (second)
     //Optional variables of Constructor
     var enable: Boolean = true,
     var open: Boolean = true,
@@ -58,6 +58,7 @@ data class Lands(
         }),
     val banMap: MutableMap<UUID, BanData> = mutableMapOf(),
 ) {
+
     data class MemberData(
         val uuid: UUID,
         var rank: Rank,
@@ -108,22 +109,4 @@ data class Lands(
         }
     }
 
-    fun getEstimatedMillisecondsLeftWithCurrentFuel(): Long {
-        var currentFuelTimeLeft = Duration.between(LocalDateTime.now(), this.nextTimeFuelNeedsToBeConsumed)
-        if (currentFuelTimeLeft.isNegative) {
-            currentFuelTimeLeft = Duration.ZERO
-        }
-
-        val secondsPerFuel = configuration.fuel.getFuelRequirement(this).secondsPerFuel
-        val msPerFuel = (secondsPerFuel * 1000).roundToLong()
-        val timeLeftInMilliseconds = currentFuelTimeLeft.toMillis() + msPerFuel * this.fuelLeft
-
-        return timeLeftInMilliseconds
-    }
-
-    fun getMillisecondsPerFuel(): Long {
-        val secondsPerFuel = configuration.fuel.getFuelRequirement(this).secondsPerFuel
-        val msPerFuel = (secondsPerFuel * 1000).roundToLong()
-        return msPerFuel
-    }
 }

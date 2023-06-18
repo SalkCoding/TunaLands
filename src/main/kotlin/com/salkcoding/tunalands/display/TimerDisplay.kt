@@ -18,7 +18,7 @@ class TimerDisplay(
         location.y += 1.5
 
         hologram = location.world.spawnEntity(location, EntityType.TEXT_DISPLAY) as TextDisplay
-        hologram.billboard= Billboard.CENTER
+        hologram.billboard = Billboard.CENTER
         hologram.text = ReadyMessage
     }
 
@@ -30,7 +30,7 @@ class TimerDisplay(
             throw IllegalStateException("Hologram isn't initialized!")
         }
 
-        val builder=StringBuilder()
+        val builder = StringBuilder()
         // Text Line 0 (땅 이름)
         builder.append(lands.landsName).append("\n")
 
@@ -38,13 +38,13 @@ class TimerDisplay(
         builder.append("현재 연료: ${lands.fuelLeft}개").append("\n")
 
         // Text Line 2 (예상: a일 b시간 c분 d초 남음)
-        val timeLeftInMilliseconds = lands.getEstimatedMillisecondsLeftWithCurrentFuel()
+        val timeLeftInSeconds = lands.fuelLeft / lands.secondPerFuel
 
-        if (timeLeftInMilliseconds > 0) {
-            val days = timeLeftInMilliseconds / 86400000
-            val hours = (timeLeftInMilliseconds / 3600000) % 24
-            val minutes = (timeLeftInMilliseconds / 60000) % 60
-            val seconds = (timeLeftInMilliseconds / 1000) % 60
+        if (timeLeftInSeconds > 0) {
+            val days = (timeLeftInSeconds / 86400).toLong()
+            val hours = ((timeLeftInSeconds / 3600) % 24).toLong()
+            val minutes = ((timeLeftInSeconds / 60) % 60).toLong()
+            val seconds = (timeLeftInSeconds % 60).toLong()
 
             val timeMessage = when {
                 days > 0 -> "예상: ${days}일 ${hours}시간 ${minutes}분 ${seconds}초 남음"
@@ -60,9 +60,8 @@ class TimerDisplay(
         }
 
         // Text Line 3 (*시간당 x개 소모 (하루에 y개)
-        // Milliseconds in a day = 86400000
-        val fuelPerHour = 3600000.0 / lands.getMillisecondsPerFuel()
-        val fuelPerDay = 86400000.0 / lands.getMillisecondsPerFuel()
+        val fuelPerHour = lands.secondPerFuel * 3600
+        val fuelPerDay = lands.secondPerFuel * 86400
         builder.append(String.format("*시간 당 %.2f개 소모 (하루에 %.2f개)", fuelPerHour, fuelPerDay))
 
         hologram.text = builder.toString()

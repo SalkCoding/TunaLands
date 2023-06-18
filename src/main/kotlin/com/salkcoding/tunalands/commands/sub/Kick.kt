@@ -1,6 +1,7 @@
 package com.salkcoding.tunalands.commands.sub
 
 import com.salkcoding.tunalands.bukkitLinkedAPI
+import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.leftManager
@@ -13,6 +14,7 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.*
+import kotlin.math.roundToLong
 
 class Kick : CommandExecutor {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
@@ -58,6 +60,8 @@ class Kick : CommandExecutor {
                         }
                         lands.memberMap.remove(targetUUID)
                         leftManager.recordLeft(targetUUID)
+                        lands.secondPerFuel =
+                            configuration.fuel.getFuelRequirement(lands).secondsPerFuel
 
                         player.sendMessage("${targetName}을/를 쫓아냈습니다.".infoFormat())
                         if (targetOffline.isOnline)
@@ -92,6 +96,9 @@ class Kick : CommandExecutor {
                             bukkitLinkedAPI.sendMessageAcrossServer(hostName, "소유자를 쫓아낼 수는 없습니다.".errorFormat())
                             return
                         }
+
+                        lands.secondPerFuel =
+                            configuration.fuel.getFuelRequirement(lands).secondsPerFuel
                         lands.memberMap.remove(targetUUID)
                         leftManager.recordLeft(targetUUID)
 

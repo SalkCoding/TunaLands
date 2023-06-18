@@ -1,10 +1,7 @@
 package com.salkcoding.tunalands.listener
 
+import com.salkcoding.tunalands.*
 import com.salkcoding.tunalands.api.event.LandCreateEvent
-import com.salkcoding.tunalands.configuration
-import com.salkcoding.tunalands.economy
-import com.salkcoding.tunalands.landManager
-import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.*
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -64,6 +61,7 @@ class CoreListener : Listener {
                     placedBlock.location
                 )
             )
+            alarmManager.registerAlarm(lands)
 
             event.isCancelled = false
         }

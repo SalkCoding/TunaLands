@@ -1,6 +1,7 @@
 package com.salkcoding.tunalands.commands.sub
 
 import com.salkcoding.tunalands.bukkitLinkedAPI
+import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
@@ -14,6 +15,7 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.*
+import kotlin.math.roundToLong
 
 class Ban : CommandExecutor {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
@@ -65,10 +67,11 @@ class Ban : CommandExecutor {
                             return
                         }
                         lands.memberMap.remove(targetUUID)
+                        lands.secondPerFuel =
+                            configuration.fuel.getFuelRequirement(lands).secondsPerFuel
                     }
                     leftManager.recordLeft(targetUUID)
 
-                    //Else ban another player
                     player.sendMessage("${targetOffline.name}을/를 밴하였습니다.".infoFormat())
                     if (targetOffline.isOnline)
                         targetOffline.player!!.sendMessage("${lands.ownerName}의 땅에서 ${player.name}에 의해 밴당하셨습니다.".infoFormat())
@@ -111,6 +114,8 @@ class Ban : CommandExecutor {
                             return
                         }
                         lands.memberMap.remove(targetUUID)
+                        lands.secondPerFuel =
+                            configuration.fuel.getFuelRequirement(lands).secondsPerFuel
                     }
                     leftManager.recordLeft(targetUUID)
 
@@ -126,7 +131,10 @@ class Ban : CommandExecutor {
 
                     lands.banMap[targetUUID] =
                         Lands.BanData(targetUUID, System.currentTimeMillis())
-                } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat())
+                } else bukkitLinkedAPI.sendMessageAcrossServer(
+                    hostName,
+                    "해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat()
+                )
             }
         }
     }

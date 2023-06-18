@@ -2,22 +2,25 @@ serverName: "lobby"
 
 protect: # Tick
   coreBlock: "DIAMOND_BLOCK" #Not ID, But Material
-  defaultStartTime: 1728000
   createPrice: 10
 
 fuel:
+  defaultFuel: 3600
   price: 10.0
   fuelRequirements:
-    # Required secondsPerFuel: above 0.5 (because TunaLands only checks and consumes fuel every 0.5 seconds)
-    # Recommended secondsPerFuel: above 1
+    # Recommended secondsPerFuel: above 0
+    # Only double type can read
     - numOfMembers: 1
-      secondsPerFuel: 120.0
+      secondsPerFuel: 0.5
 
-    - numOfMembers: 4
-      secondsPerFuel: 60.0
+    - numOfMembers: 2
+      secondsPerFuel: 1.0
 
-    - numOfMembers: 100
-      secondsPerFuel: 0.1
+    - numOfMembers: 5
+      secondsPerFuel: 6.0
+
+    - numOfMembers: 7
+      secondsPerFuel: 10.0
 
 recommend: # Tick
   reset: 1728000

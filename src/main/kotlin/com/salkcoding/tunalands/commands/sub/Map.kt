@@ -175,7 +175,7 @@ class Map : CommandExecutor {
                                 color = NamedTextColor.AQUA
                             } else if (abs(x - centerX) <= width && abs(z - centerZ) <= height) {
                                 icon = "+"
-                                val type = lands.landMap["$x:$z"]!!
+                                val type = lands.landMap["$x:$z"]!!//TODO NPE
                                 color = when (type) {
                                     LandType.NORMAL -> NamedTextColor.GREEN
                                     LandType.FARM -> TextColor.color(0x964b00) as NamedTextColor

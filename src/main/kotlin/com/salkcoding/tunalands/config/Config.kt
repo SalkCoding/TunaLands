@@ -33,6 +33,7 @@ class Config {
         val configFuel = config.getConfigurationSection("fuel")!!
         fuel = Fuel(
             configFuel.getDouble("price"),
+            configFuel.getDouble("defaultFuel"),
             configFuel.getMapList("fuelRequirements").map {
                 Fuel.FuelRequirement(
                     it["numOfMembers"] as Int,

@@ -32,8 +32,8 @@ object JsonReader {
 
                 val ownerName = jsonObject["ownerName"].asString
                 val ownerUUID = UUID.fromString(jsonObject["ownerUUID"].asString)
-                val fuelLeft = jsonObject["fuelLeft"]?.asLong ?: 0
-                val expiredMillisecond = jsonObject["expiredMillisecond"].asLong
+                val fuelLeft = jsonObject["fuelLeft"]?.asDouble ?: 0.0
+                val secondPerFuel = jsonObject["secondPerFuel"]?.asDouble ?: 1.0
                 val enable = jsonObject["enable"].asBoolean
                 val open = jsonObject["open"].asBoolean
                 val recommend = jsonObject["recommend"].asInt
@@ -184,10 +184,7 @@ object JsonReader {
                         upCore,
                         downCore,
                         fuelLeft,
-                        Instant.ofEpochMilli(expiredMillisecond)
-                            .atZone(ZoneId.systemDefault())
-                            .toLocalDateTime(),
-
+                        secondPerFuel,
                         enable,
                         open,
                         recommend,

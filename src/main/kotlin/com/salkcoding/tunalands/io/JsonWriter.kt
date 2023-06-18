@@ -150,10 +150,7 @@ object JsonWriter {
                 jsonObject.addProperty("ownerName", lands.ownerName)
                 jsonObject.addProperty("ownerUUID", lands.ownerUUID.toString())
                 jsonObject.addProperty("fuelLeft", lands.fuelLeft)
-                jsonObject.addProperty(
-                    "expiredMillisecond",
-                    lands.nextTimeFuelNeedsToBeConsumed.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-                )
+                jsonObject.addProperty("secondPerFuel", lands.secondPerFuel)
                 jsonObject.addProperty("enable", lands.enable)
                 jsonObject.addProperty("open", lands.open)
                 jsonObject.addProperty("recommend", lands.recommend)

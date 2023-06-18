@@ -28,22 +28,24 @@ serverName: "lobby"
 
 protect: # Tick
   coreBlock: "DIAMOND_BLOCK" #Not ID, But Material
-  defaultStartTime: 1728000
   createPrice: 10
 
 fuel:
+  defaultFuel: 3600
   price: 10.0
   fuelRequirements:
-    # Required secondsPerFuel: above 0.5 (because TunaLands only checks and consumes fuel every 0.5 seconds)
-    # Recommended secondsPerFuel: above 1
+    # Recommended secondsPerFuel: above 0
     - numOfMembers: 1
-      secondsPerFuel: 120.0
+      secondsPerFuel: 0.5
 
-    - numOfMembers: 4
-      secondsPerFuel: 60.0
+    - numOfMembers: 2
+      secondsPerFuel: 1
 
-    - numOfMembers: 100
-      secondsPerFuel: 0.1
+    - numOfMembers: 5
+      secondsPerFuel: 6
+
+    - numOfMembers: 7
+      secondsPerFuel: 10
 
 recommend: # Tick
   reset: 1728000
@@ -77,7 +79,6 @@ flag:
 {
     "ownerName": "Salk_Coding",
     "ownerUUID": "24c186ac-b905-4b6e-9f96-0ad0744df901",
-    "expiredMillisecond": 1609665486838,
     "enable": true,
     "open": false,
     "landList": [

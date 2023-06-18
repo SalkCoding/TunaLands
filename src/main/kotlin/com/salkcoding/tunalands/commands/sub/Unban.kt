@@ -1,6 +1,7 @@
 package com.salkcoding.tunalands.commands.sub
 
 import com.salkcoding.tunalands.bukkitLinkedAPI
+import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
@@ -12,6 +13,7 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.*
+import kotlin.math.roundToLong
 
 class Unban : CommandExecutor {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
@@ -53,7 +55,10 @@ class Unban : CommandExecutor {
                     if (targetOffline.isOnline)
                         targetOffline.player!!.sendMessage("${player.name}의 땅의 밴이 해제되었습니다.".infoFormat())
                     else
-                        bukkitLinkedAPI.sendMessageAcrossServer(targetName, "${player.name}의 땅의 밴이 해제되었습니다.".infoFormat())
+                        bukkitLinkedAPI.sendMessageAcrossServer(
+                            targetName,
+                            "${player.name}의 땅의 밴이 해제되었습니다.".infoFormat()
+                        )
 
                     lands.banMap.remove(targetOffline.uniqueId)
                 } else player.sendMessage("해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat())
@@ -80,7 +85,10 @@ class Unban : CommandExecutor {
                         bukkitLinkedAPI.sendMessageAcrossServer(targetName, "${hostName}의 땅의 밴이 해제되었습니다.".infoFormat())
 
                     lands.banMap.remove(targetOffline.uniqueId)
-                } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat())
+                } else bukkitLinkedAPI.sendMessageAcrossServer(
+                    hostName,
+                    "해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat()
+                )
             }
         }
     }

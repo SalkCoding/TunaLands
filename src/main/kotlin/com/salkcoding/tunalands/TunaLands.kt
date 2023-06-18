@@ -80,15 +80,16 @@ class TunaLands : JavaPlugin() {
 
         configuration = Config()
 
+        //Independent manager
+        guiManager = GuiManager()
+        borderManager = BorderManager()
+        alarmManager = AlarmManager()
+
         displayManager = DisplayManager()
 
         //Depend on displayManager
         landManager = LandManager()
 
-        //Independent manager
-        guiManager = GuiManager()
-        borderManager = BorderManager()
-        alarmManager = AlarmManager()
         recommendManager = RecommendManager(configuration.recommend.reset * 50, configuration.recommend.cooldown * 50)
         leftManager = LeftManager(configuration.commandCooldown.rejoinCooldown * 50)
 
@@ -171,13 +172,13 @@ class TunaLands : JavaPlugin() {
     override fun onDisable() {
         //Independent manager
         recommendManager.dispose()
-        alarmManager.dispose()
+
         borderManager.dispose()
         guiManager.dispose()
 
         //Depend on displayManager
         landManager.dispose()
-
+        alarmManager.dispose()
         displayManager.dispose()
 
         logger.warning("All guis are closed")
