@@ -80,6 +80,12 @@ class Config {
         flag = Flag(
             flagPriceSection.getDouble("takeProtectFlagPrice"),
             flagPriceSection.getDouble("releaseProtectFlagPrice"),
+            flagPriceSection.getMapList("activePrice").map{
+                Flag.ActivePrice(
+                    it["chunk"] as Int,
+                    it["price"] as Double
+                )
+            },
             flagPriceSection.getDouble("takeFarmFlagPrice"),
             flagPriceSection.getDouble("releaseFarmFlagPrice"),
             flagFarmSection.getInt("limitFarmOccupied")

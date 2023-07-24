@@ -1,6 +1,8 @@
 package com.salkcoding.tunalands.gui.render
 
 import com.salkcoding.tunalands.*
+import com.salkcoding.tunalands.api.event.LandFuelAddEvent
+import com.salkcoding.tunalands.api.event.LandGUIOpenEvent
 import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.gui.render.settinggui.openSettingGui
 import com.salkcoding.tunalands.lands.Lands
@@ -189,6 +191,10 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                     player.sendMessage("${ChatColor.WHITE}남은 시간: ${ChatColor.GOLD}$addedTimeEstimate".infoFormat())
                     player.playSound(player.location, Sound.BLOCK_BLASTFURNACE_FIRE_CRACKLE, 2.5f, 1f)
                     event.inventory.setItem(4, null)
+
+                    Bukkit.getPluginManager().callEvent(
+                        LandFuelAddEvent(lands, player, addedFuelItem.amount)
+                    )
                 }, 2)
             }
 
@@ -330,4 +336,6 @@ fun Player.openMainGui(lands: Lands, rank: Rank) {
 
     val view = this.openInventory(inventory)!!
     guiManager.guiMap[view] = gui
+
+    Bukkit.getPluginManager().callEvent(LandGUIOpenEvent(this, LandGUIOpenEvent.GUIType.MAIN))
 }

@@ -30,22 +30,45 @@ protect: # Tick
   coreBlock: "DIAMOND_BLOCK" #Not ID, But Material
   createPrice: 10
 
+flag:
+  price:
+    takeProtectFlagPrice: 10
+    releaseProtectFlagPrice: 5
+    activePrice:
+      - chunk: 0
+        price: 0
+
+      - chunk: 1
+        price: 10
+
+      - chunk: 5
+        price: 15
+
+      - chunk: 10
+        price: 30
+
+    takeFarmFlagPrice: 10
+    releaseFarmFlagPrice: 5
+  farm:
+    limitFarmOccupied: 10
+
 fuel:
   defaultFuel: 3600
   price: 10.0
   fuelRequirements:
     # Recommended secondsPerFuel: above 0
+    # Only double type can read
     - numOfMembers: 1
       secondsPerFuel: 0.5
 
     - numOfMembers: 2
-      secondsPerFuel: 1
+      secondsPerFuel: 1.0
 
     - numOfMembers: 5
-      secondsPerFuel: 6
+      secondsPerFuel: 6.0
 
     - numOfMembers: 7
-      secondsPerFuel: 10
+      secondsPerFuel: 10.0
 
 recommend: # Tick
   reset: 1728000
@@ -63,15 +86,6 @@ command:
 limitWorld:
   - world_nether
   - world_the_end
-
-flag:
-  price:
-    takeProtectFlagPrice: 10
-    releaseProtectFlagPrice: 5
-    takeFarmFlagPrice: 10
-    releaseFarmFlagPrice: 5
-  farm:
-    limitFarmOccupied: 10
 ```
 
 ## Save format(Json)

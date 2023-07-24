@@ -1,4 +1,4 @@
-package com.salkcoding.tunalands.listener.region
+package com.salkcoding.tunalands.listener.land.protect
 
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.landManager

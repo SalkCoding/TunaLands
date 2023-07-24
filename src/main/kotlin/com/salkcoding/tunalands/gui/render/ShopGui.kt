@@ -1,5 +1,6 @@
 package com.salkcoding.tunalands.gui.render
 
+import com.salkcoding.tunalands.api.event.LandGUIOpenEvent
 import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.economy
 import com.salkcoding.tunalands.gui.GuiInterface
@@ -84,6 +85,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
         inv.setItem(19, takeProtectFlagItem.clone().apply {
             val lore = this.lore!!
             lore.add("${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.flag.takeFarmFlagPrice}캔")
+            lore.add("${ChatColor.WHITE}확장 비용: ${ChatColor.GOLD}${configuration.flag.getActivePrice(lands).price}캔")
             this.lore = lore
         })
         inv.setItem(21, releaseProtectFlagItem.clone().apply {
@@ -291,4 +293,6 @@ fun Player.openShopGui(lands: Lands, rank: Rank) {
 
     val view = this.openInventory(inventory)!!
     guiManager.guiMap[view] = gui
+
+    Bukkit.getPluginManager().callEvent(LandGUIOpenEvent(this, LandGUIOpenEvent.GUIType.SHOP))
 }

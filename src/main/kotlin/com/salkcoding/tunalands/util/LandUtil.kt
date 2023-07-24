@@ -1,5 +1,6 @@
 package com.salkcoding.tunalands.util
 
+import com.salkcoding.tunalands.lands.LandType
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.tunaLands
 import org.bukkit.*
@@ -9,6 +10,16 @@ import java.util.Queue
 
 fun World.playBuyChunkEffect(player: Player, chunk: Chunk) {
     val effect = ChunkEffect(this, chunk, Material.LIME_TERRACOTTA)
+    effect.task = Bukkit.getScheduler().runTaskTimerAsynchronously(tunaLands, effect, 0, 1)
+    for (i in 0..2) {
+        Bukkit.getScheduler().runTaskLater(tunaLands, Runnable {
+            player.playSound(player.location, Sound.BLOCK_NOTE_BLOCK_BELL, 1f, 1f + (i * 0.5f))
+        }, i * 10L)
+    }
+}
+
+fun World.playSetChunkEffect(player: Player, chunk: Chunk, blockType: Material) {
+    val effect = ChunkEffect(this, chunk, blockType)
     effect.task = Bukkit.getScheduler().runTaskTimerAsynchronously(tunaLands, effect, 0, 1)
     for (i in 0..2) {
         Bukkit.getScheduler().runTaskLater(tunaLands, Runnable {
@@ -27,10 +38,14 @@ fun World.playSellChunkEffect(player: Player, chunk: Chunk) {
 Check borders of lands with landList
 It checks coordinates clockwise and finding edge of lands
 */
-fun Lands.borderFinder(): List<String> {
+fun Lands.borderFinder(): Map<LandType, List<String>> {
     val landMap = this.landMap
-    val borderList = mutableListOf<String>()
-    landMap.forEach { (query, _) ->
+    val borderMap = mutableMapOf<LandType, MutableList<String>>()
+    //Not for NullPointException
+    LandType.values().forEach { type ->
+        borderMap[type] = mutableListOf()
+    }
+    landMap.forEach { (query, type) ->
         val split = query.splitQuery()
         val x = split.first
         val z = split.second
@@ -38,6 +53,7 @@ fun Lands.borderFinder(): List<String> {
         val blockX = x shl 4
         val blockZ = z shl 4
 
+        val borderList = borderMap[type]!!
         //Checking sides
         if ("${x - 1}:$z" !in landMap) {//Left side
             val leftBottom = "${blockX}:${blockZ}"
@@ -76,7 +92,7 @@ fun Lands.borderFinder(): List<String> {
                 borderList.add(leftBottom)
         }
     }
-    return borderList
+    return borderMap
 }
 
 /*

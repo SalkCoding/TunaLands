@@ -1,27 +1,28 @@
-package com.salkcoding.tunalands.listener.region
+package com.salkcoding.tunalands.listener.land.protect
 
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.sendErrorTipMessage
 import org.bukkit.ChatColor
-import org.bukkit.entity.ChestedHorse
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.event.player.PlayerInteractEntityEvent
+import org.bukkit.event.entity.EntityBreedEvent
 
-class ChestedHorseListener : Listener {
+class BreedListener : Listener {
 
     @EventHandler
-    fun onChestOpen(event: PlayerInteractEntityEvent) {
+    fun onBreed(event: EntityBreedEvent) {
         if (event.isCancelled) return
-        if (event.player.isOp) return
+        val player = event.breeder as? Player ?: return
+        if (player.isOp) return
 
-        val entity = event.rightClicked as? ChestedHorse ?: return
-        val player = event.player
+        val entity = event.entity
+
         val lands = landManager.getLandsWithChunk(entity.chunk)
         if (lands == null) {
-            player.sendErrorTipMessage("${ChatColor.RED}중립 지역에서는 말의 창고를 열 수 없습니다!")
+            player.sendErrorTipMessage("${ChatColor.RED}중립 지역에서는 동물을 번식 시킬 수 없습니다!")
             event.isCancelled = true
             return
         }
@@ -40,7 +41,7 @@ class ChestedHorseListener : Listener {
                 Rank.VISITOR -> lands.visitorSetting
             }
 
-            if (!setting.useChestedHorse)
+            if (!setting.canBreed)
                 event.isCancelled = true
         } else event.isCancelled = true
 

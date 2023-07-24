@@ -5,6 +5,7 @@ import com.salkcoding.tunalands.fuel.FuelConsumeRunnable
 import com.salkcoding.tunalands.io.JsonReader
 import com.salkcoding.tunalands.io.JsonWriter
 import com.salkcoding.tunalands.util.*
+import net.milkbowl.vault.economy.EconomyResponse
 import org.bukkit.*
 import org.bukkit.block.Block
 import org.bukkit.entity.Player
@@ -206,8 +207,10 @@ class LandManager {
             return
         }
 
+        lands.landMap[query] = type
         flag.amount -= 1
         player.sendMessage("땅의 용도가 ${type}으로 전환되었습니다!".infoFormat())
+        chunk.world.playSetChunkEffect(player, chunk, Material.BROWN_TERRACOTTA)
     }
 
     fun buyLand(player: Player, upCore: Block, downCore: Block): Lands {
@@ -267,6 +270,14 @@ class LandManager {
             player.sendMessage("땅을 다시 활성화 해야합니다!".errorFormat())
             return
         }
+
+        val price = configuration.flag.getActivePrice(lands).price
+        if (player.hasNotEnoughMoney(price)) {
+            val delta = price - economy.getBalance(player)
+            player.sendMessage("${"%.2f".format(delta)}캔이 부족합니다.".errorFormat())
+            return
+        }
+        economy.withdrawPlayer(player, price)
 
         if (!chunk.isMeetOtherChunk(lands.landMap)) {
             player.sendMessage("바로 옆에 자신의 땅이 맞닿아있어야합니다.".errorFormat())

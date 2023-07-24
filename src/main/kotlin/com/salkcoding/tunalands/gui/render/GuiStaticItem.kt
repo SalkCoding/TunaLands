@@ -1,6 +1,5 @@
 package com.salkcoding.tunalands.gui.render
 
-import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.util.times
 import org.bukkit.ChatColor
 import org.bukkit.DyeColor

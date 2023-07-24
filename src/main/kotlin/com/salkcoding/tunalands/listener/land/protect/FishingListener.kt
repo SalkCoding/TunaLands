@@ -1,29 +1,24 @@
-package com.salkcoding.tunalands.listener.region
+package com.salkcoding.tunalands.listener.land.protect
 
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
-import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.sendErrorTipMessage
-import org.bukkit.Bukkit
 import org.bukkit.ChatColor
-import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.event.entity.EntityPickupItemEvent
-import java.util.*
+import org.bukkit.event.player.PlayerFishEvent
 
-class PickupItemListener : Listener {
-
-    private val messageSet = mutableSetOf<UUID>()
+class FishingListener : Listener {
 
     @EventHandler
-    fun onPickupItem(event: EntityPickupItemEvent) {
+    fun onFishing(event: PlayerFishEvent) {
         if (event.isCancelled) return
-        if (event.entity.isOp) return
+        if (event.player.isOp) return
 
-        val lands = landManager.getLandsWithChunk(event.item.chunk) ?: return
-        val player = event.entity as? Player ?: return
+        val player = event.player
+        val lands = landManager.getLandsWithChunk(player.chunk) ?: return
+
         if (!lands.enable) {
             player.sendMessage("땅을 다시 활성화 해야합니다!".errorFormat())
             event.isCancelled = true
@@ -38,17 +33,11 @@ class PickupItemListener : Listener {
                 Rank.VISITOR -> lands.visitorSetting
             }
 
-            if (!setting.pickupItem)
+            if (!setting.canFishing)
                 event.isCancelled = true
         } else event.isCancelled = true
 
-        if (event.isCancelled && player.uniqueId !in messageSet) {
-            messageSet.add(player.uniqueId)
+        if (event.isCancelled)
             player.sendErrorTipMessage("${ChatColor.RED}권한이 없습니다!")
-            Bukkit.getScheduler().runTaskLater(tunaLands, Runnable {
-                messageSet.remove(player.uniqueId)
-            }, 100)
-        }
     }
-
 }

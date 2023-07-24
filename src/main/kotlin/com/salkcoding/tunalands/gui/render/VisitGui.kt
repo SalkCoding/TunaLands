@@ -2,6 +2,7 @@ package com.salkcoding.tunalands.gui.render
 
 
 import com.salkcoding.tunalands.*
+import com.salkcoding.tunalands.api.event.LandGUIOpenEvent
 import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
@@ -350,4 +351,6 @@ fun Player.openVisitGui() {
 
     val view = this.openInventory(inventory)!!
     guiManager.guiMap[view] = gui
+
+    Bukkit.getPluginManager().callEvent(LandGUIOpenEvent(this, LandGUIOpenEvent.GUIType.VISIT))
 }

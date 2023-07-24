@@ -1,24 +1,25 @@
-package com.salkcoding.tunalands.listener.region
+package com.salkcoding.tunalands.listener.land.protect
 
-import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.landManager
+import com.salkcoding.tunalands.lands.Rank
+import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.sendErrorTipMessage
 import org.bukkit.ChatColor
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.event.player.PlayerArmorStandManipulateEvent
+import org.bukkit.event.entity.PlayerLeashEntityEvent
 
-class ArmorStandListener : Listener {
+class LeashEntityListener : Listener {
 
     @EventHandler
-    fun onArmorStand(event: PlayerArmorStandManipulateEvent) {
+    fun onEntityInteract(event: PlayerLeashEntityEvent) {
         if (event.isCancelled) return
         if (event.player.isOp) return
 
+        val lands = landManager.getLandsWithChunk(event.entity.chunk) ?: return
         val player = event.player
-        val lands = landManager.getLandsWithChunk(player.chunk)
-        if (lands == null) {
-            player.sendErrorTipMessage("${ChatColor.RED}중립 지역에서는 갑옷거치대를 사용할 수 없습니다!")
+        if (!lands.enable) {
+            player.sendMessage("땅을 다시 활성화 해야합니다!".errorFormat())
             event.isCancelled = true
             return
         }
@@ -31,7 +32,7 @@ class ArmorStandListener : Listener {
                 Rank.VISITOR -> lands.visitorSetting
             }
 
-            if (!setting.useArmorStand)
+            if (!setting.useLead)
                 event.isCancelled = true
         } else event.isCancelled = true
 

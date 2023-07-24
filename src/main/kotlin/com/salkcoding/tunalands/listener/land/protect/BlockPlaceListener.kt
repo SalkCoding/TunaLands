@@ -1,33 +1,42 @@
-package com.salkcoding.tunalands.listener.region
+package com.salkcoding.tunalands.listener.land.protect
 
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
+import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.sendErrorTipMessage
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.event.block.BlockBreakEvent
+import org.bukkit.event.block.BlockPlaceEvent
 
-class BlockBreakListener : Listener {
+
+class BlockPlaceListener : Listener {
 
     @EventHandler
-    fun onProtect(event: BlockBreakEvent) {
+    fun onProtect(event: BlockPlaceEvent) {
         if (event.isCancelled) return
         if (event.player.isOp) return
 
         val player = event.player
         val chunk = event.block.chunk
-        val block = event.block
         val lands = landManager.getLandsWithChunk(chunk)
         if (lands == null) {
-            player.sendErrorTipMessage("${ChatColor.RED}중립 지역에서는 블럭을 파괴할 수 없습니다!")
+            player.sendErrorTipMessage("${ChatColor.RED}중립 지역에서는 블럭을 설치할 수 없습니다!")
+            event.isCancelled = true
+            return
+        }
+
+        if (!lands.enable) {
+            player.sendMessage("땅을 다시 활성화 해야합니다!".errorFormat())
             event.isCancelled = true
             return
         }
 
         if (!landManager.isProtectedLand(chunk)) return
 
+        val block = event.block
+        //Block break following rank
         if (player.uniqueId in lands.memberMap) {
             val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
                 Rank.OWNER, Rank.DELEGATOR -> return
@@ -43,28 +52,22 @@ class BlockBreakListener : Listener {
                 Material.BEETROOTS,
                 Material.NETHER_WART,
                 Material.COCOA,
-                Material.MELON,
                 Material.MELON_STEM,
-                Material.PUMPKIN,
                 Material.PUMPKIN_STEM,
                 Material.CACTUS,
                 Material.SUGAR_CANE,
-                Material.CHORUS_PLANT,
                 Material.CHORUS_FLOWER,
-                Material.BAMBOO,
                 Material.BAMBOO_SAPLING,
-                Material.KELP,
-                Material.KELP_PLANT
-                -> {
-                    if (!setting.canHarvest)
+                Material.KELP -> {
+                    if (!setting.canSow)
                         event.isCancelled = true
                 }
-                Material.ITEM_FRAME -> {
-                    if (!setting.breakItemFrame)
+                Material.FIRE -> {
+                    if (!setting.useFlintAndSteel)
                         event.isCancelled = true
                 }
                 else -> {
-                    if (!setting.breakBlock)
+                    if (!setting.placeBlock)
                         event.isCancelled = true
                 }
             }

@@ -1,23 +1,23 @@
-package com.salkcoding.tunalands.listener.region
+package com.salkcoding.tunalands.listener.land.protect
 
-import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.landManager
+import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.sendErrorTipMessage
 import org.bukkit.ChatColor
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.event.player.PlayerDropItemEvent
+import org.bukkit.event.player.PlayerShearEntityEvent
 
-class DropItemListener : Listener {
+class ShearListener : Listener {
 
     @EventHandler
-    fun onDrop(event: PlayerDropItemEvent) {
+    fun onShear(event: PlayerShearEntityEvent) {
         if (event.isCancelled) return
         if (event.player.isOp) return
 
         val player = event.player
-        val lands = landManager.getLandsWithChunk(player.chunk) ?: return
+        val lands = landManager.getLandsWithChunk(event.entity.chunk) ?: return
         if (!lands.enable) {
             player.sendMessage("땅을 다시 활성화 해야합니다!".errorFormat())
             event.isCancelled = true
@@ -32,7 +32,7 @@ class DropItemListener : Listener {
                 Rank.VISITOR -> lands.visitorSetting
             }
 
-            if (!setting.dropItem)
+            if (!setting.useShears)
                 event.isCancelled = true
         } else event.isCancelled = true
 

@@ -18,7 +18,7 @@ import com.salkcoding.tunalands.io.AutoSaver
 import com.salkcoding.tunalands.lands.LandManager
 import com.salkcoding.tunalands.lands.LeftManager
 import com.salkcoding.tunalands.listener.*
-import com.salkcoding.tunalands.listener.region.*
+import com.salkcoding.tunalands.listener.land.protect.*
 import com.salkcoding.tunalands.vote.RecommendManager
 import fish.evatuna.metamorphosis.Metamorphosis
 import me.baiks.bukkitlinked.BukkitLinked
@@ -128,6 +128,7 @@ class TunaLands : JavaPlugin() {
             //Protect listener
             ArmorStandListener(),
             BlockBreakListener(),
+            BlockDropItemListener(),
             BlockPlaceListener(),
             BreedListener(),
             BucketListener(),

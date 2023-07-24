@@ -1,5 +1,6 @@
-package com.salkcoding.tunalands.listener.region
+package com.salkcoding.tunalands.listener.land.protect
 
+import com.destroystokyo.paper.event.player.PlayerPickupExperienceEvent
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
@@ -7,17 +8,16 @@ import com.salkcoding.tunalands.util.sendErrorTipMessage
 import org.bukkit.ChatColor
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.event.player.PlayerShearEntityEvent
 
-class ShearListener : Listener {
+class PickupExpListener : Listener {
 
     @EventHandler
-    fun onShear(event: PlayerShearEntityEvent) {
+    fun onPickupExp(event: PlayerPickupExperienceEvent) {
         if (event.isCancelled) return
         if (event.player.isOp) return
 
+        val lands = landManager.getLandsWithChunk(event.experienceOrb.chunk) ?: return
         val player = event.player
-        val lands = landManager.getLandsWithChunk(event.entity.chunk) ?: return
         if (!lands.enable) {
             player.sendMessage("땅을 다시 활성화 해야합니다!".errorFormat())
             event.isCancelled = true
@@ -32,7 +32,7 @@ class ShearListener : Listener {
                 Rank.VISITOR -> lands.visitorSetting
             }
 
-            if (!setting.useShears)
+            if (!setting.pickupExp)
                 event.isCancelled = true
         } else event.isCancelled = true
 

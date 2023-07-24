@@ -1,15 +1,12 @@
 package com.salkcoding.tunalands.api.event
 
-import com.salkcoding.tunalands.lands.Lands
-import com.salkcoding.tunalands.lands.Rank
 import org.bukkit.entity.Player
 import org.bukkit.event.Event
 import org.bukkit.event.HandlerList
 
-class LandJoinEvent(
-    val lands: Lands,
+class LandGUIOpenEvent(
     val player: Player,
-    val rank: Rank
+    val type: GUIType
 ) : Event() {
 
     companion object {
@@ -20,4 +17,10 @@ class LandJoinEvent(
     }
 
     override fun getHandlers(): HandlerList = handler
+
+    enum class GUIType {
+        BAN_LIST, MAIN, RECOMMEND, SHOP, USER_LIST, VISIT,
+        DELEGATOR_SETTING, MEMBER_SETTING, PARTIMEJOB_SETTING,
+        SETTING, VISITOR_SETTING
+    }
 }

@@ -14,8 +14,10 @@ class AlarmManager {
     }, 1200, 1200)
 
     fun registerAlarm(lands: Lands) {
-        if (lands !in alarmMap)
+        if (lands !in alarmMap) {
             alarmMap[lands] = FuelAlarm(lands)
+            alarmMap[lands]!!.reset()
+        }
     }
 
     fun resetAlarm(lands: Lands) {

@@ -14,6 +14,9 @@ class LandCreateEvent(
 
     companion object {
         private val handler = HandlerList()
+
+        @JvmStatic
+        fun getHandlerList(): HandlerList = handler
     }
 
     override fun getHandlers(): HandlerList = handler
