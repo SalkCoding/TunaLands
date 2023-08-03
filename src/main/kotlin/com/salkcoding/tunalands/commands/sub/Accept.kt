@@ -68,14 +68,13 @@ class Accept : CommandExecutor {
                                 data.targetRank
                             )
                         )
-
-                        if (data.targetRank == Rank.MEMBER) {
-                            lands.secondPerFuel =
-                                configuration.fuel.getFuelRequirement(lands).secondsPerFuel
-                        }
-
                         val present = System.currentTimeMillis()
                         lands.memberMap[uuid] = Lands.MemberData(uuid, data.targetRank, present, present)
+                        if (data.targetRank == Rank.MEMBER) {
+                            lands.dayPerFuel =
+                                configuration.fuel.getFuelRequirement(lands).dayPerFuel
+                        }
+
                         data.task.cancel()
                         inviteMap.remove(uuid)
                     } else player.sendMessage("해당 땅이 더이상 존재하지 않습니다.".errorFormat())
@@ -101,13 +100,13 @@ class Accept : CommandExecutor {
                             Rank.VISITOR
                         )?.memberMap?.remove(offlinePlayer.uniqueId)
 
-                        if (data.targetRank == Rank.MEMBER) {
-                            lands.secondPerFuel =
-                                configuration.fuel.getFuelRequirement(lands).secondsPerFuel
-                        }
-
                         val present = System.currentTimeMillis()
                         lands.memberMap[uuid] = Lands.MemberData(uuid, data.targetRank, present, present)
+                        if (data.targetRank == Rank.MEMBER) {
+                            lands.dayPerFuel =
+                                configuration.fuel.getFuelRequirement(lands).dayPerFuel
+                        }
+
                         data.task.cancel()
                         inviteMap.remove(uuid)
                     } else bukkitLinkedAPI.sendMessageAcrossServer(

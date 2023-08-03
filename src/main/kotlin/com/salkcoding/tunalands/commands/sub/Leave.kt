@@ -76,8 +76,8 @@ class Leave : CommandExecutor {
 
                     lands.memberMap.remove(playerUUID)
 
-                    lands.secondPerFuel =
-                        configuration.fuel.getFuelRequirement(lands).secondsPerFuel
+                    lands.dayPerFuel =
+                        configuration.fuel.getFuelRequirement(lands).dayPerFuel
 
                     bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${lands.ownerName}의 땅을 떠났습니다.".infoFormat())
                     leftManager.recordLeft(playerUUID)

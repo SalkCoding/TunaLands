@@ -1,12 +1,12 @@
-package com.salkcoding.tunalands.io
+package com.salkcoding.tunalands.file
 
 import com.salkcoding.tunalands.tunaLands
 
-class AutoSaver : Runnable {
+class PlayerLandMapAutoSaver : Runnable {
 
     override fun run() {
         tunaLands.logger.info("Auto-save start")
-        JsonWriter.savePlayerLandMap()
+        PlayerLandMapWriter.savePlayerLandMap()
         tunaLands.logger.info("Auto-save completed")
     }
 }

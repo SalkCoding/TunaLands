@@ -1,17 +1,12 @@
 package com.salkcoding.tunalands.listener.land.protect
 
-import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.landManager
-import com.salkcoding.tunalands.lands.LandType
+import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.sendErrorTipMessage
-import com.salkcoding.tunalands.util.toQuery
 import org.bukkit.ChatColor
-import org.bukkit.Material
 import org.bukkit.event.EventHandler
-import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
-import org.bukkit.event.block.BlockDropItemEvent
 import org.bukkit.event.player.PlayerDropItemEvent
 
 class DropItemListener : Listener {

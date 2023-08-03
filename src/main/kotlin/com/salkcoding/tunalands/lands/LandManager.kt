@@ -1,11 +1,11 @@
 package com.salkcoding.tunalands.lands
 
 import com.salkcoding.tunalands.*
+import com.salkcoding.tunalands.file.ImposeTimeWriter
 import com.salkcoding.tunalands.fuel.FuelConsumeRunnable
-import com.salkcoding.tunalands.io.JsonReader
-import com.salkcoding.tunalands.io.JsonWriter
+import com.salkcoding.tunalands.file.PlayerLandMapReader
+import com.salkcoding.tunalands.file.PlayerLandMapWriter
 import com.salkcoding.tunalands.util.*
-import net.milkbowl.vault.economy.EconomyResponse
 import org.bukkit.*
 import org.bukkit.block.Block
 import org.bukkit.entity.Player
@@ -14,13 +14,13 @@ import java.io.File
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.HashMap
-import kotlin.math.roundToLong
 
 class LandManager {
 
     private val landMap = ConcurrentHashMap<String, Lands.ChunkInfo>()
-    private val playerLandMap = JsonReader.loadPlayerLandMap()
-    private val task = Bukkit.getScheduler().runTaskTimer(tunaLands, FuelConsumeRunnable(playerLandMap), 100, 20)
+    private val playerLandMap = PlayerLandMapReader.loadPlayerLandMap()
+    private val fuelConsumeRunnable = FuelConsumeRunnable(playerLandMap)
+    private val task = Bukkit.getScheduler().runTaskTimer(tunaLands, fuelConsumeRunnable, 20, 1200)
 
     init {
         playerLandMap.forEach { (_, lands) ->
@@ -38,7 +38,6 @@ class LandManager {
 
             if (lands.fuelLeft > 0) {
                 displayManager.createDisplay(lands)
-                alarmManager.registerAlarm(lands)
             }
         }
     }
@@ -99,6 +98,10 @@ class LandManager {
         return playerLandMap
     }
 
+    fun getFuelConsumeRunner(): FuelConsumeRunnable {
+        return fuelConsumeRunnable
+    }
+
     fun isProtectedLand(chunk: Chunk): Boolean {
         return landMap.containsKey(chunk.toQuery())
     }
@@ -145,7 +148,9 @@ class LandManager {
         return if (landMap.containsKey(query)) {
             var value: Lands? = null
             for ((_, lands) in playerLandMap) {
-                if (lands.landMap.contains(query)) {
+                if (lands.landMap.contains(query)
+                    && lands.upCoreLocation.world.name == chunk.world.name
+                ) {
                     value = lands
                     break
                 }
@@ -202,8 +207,8 @@ class LandManager {
 
         if (lands.landMap.filter { (_, type) ->
                 type == LandType.FARM
-            }.size > configuration.flag.limitFarmOccupied) {
-            player.sendMessage("농지는 ${configuration.flag.limitFarmOccupied}개 이상 소유하실 수 없습니다.".errorFormat())
+            }.size > configuration.farm.limitOccupied) {
+            player.sendMessage("농작지는 ${configuration.farm.limitOccupied}개 이상 소유하실 수 없습니다.".errorFormat())
             return
         }
 
@@ -213,7 +218,7 @@ class LandManager {
         chunk.world.playSetChunkEffect(player, chunk, Material.BROWN_TERRACOTTA)
     }
 
-    fun buyLand(player: Player, upCore: Block, downCore: Block): Lands {
+    fun createLand(player: Player, upCore: Block, downCore: Block): Lands {
         //이미 caller 쪽에서 땅 소유하고 있는지 확인해서 추가 검사할 필요 없습니다.
         val chunk = upCore.chunk
         val query = chunk.toQuery()
@@ -223,7 +228,7 @@ class LandManager {
         // Give fuel that should last for 24 hours
         val defaultFuelRequirement = configuration.fuel.fuelRequirements.minOf { it }
         val defaultFuelAmount = configuration.fuel.defaultFuel
-        val msPerFuel = defaultFuelRequirement.secondsPerFuel
+        val defaultDayPerFuel = defaultFuelRequirement.dayPerFuel
 
         val lands = Lands(
             player.name,
@@ -236,7 +241,7 @@ class LandManager {
             upCore.location,
             downCore.location,
             defaultFuelAmount,
-            msPerFuel
+            defaultDayPerFuel
         ).apply {
             this.memberMap[uuid] = Lands.MemberData(uuid, Rank.OWNER, now, now)
             this.landMap[query] = LandType.NORMAL
@@ -252,7 +257,7 @@ class LandManager {
         return lands
     }
 
-    fun buyLand(player: Player, flag: ItemStack, block: Block) {
+    fun buyChunk(player: Player, flag: ItemStack, block: Block) {
         val chunk = block.chunk
         val query = chunk.toQuery()
         if (landMap.containsKey(query)) {
@@ -270,8 +275,13 @@ class LandManager {
             player.sendMessage("땅을 다시 활성화 해야합니다!".errorFormat())
             return
         }
+        val limitOccupied = configuration.protect.getMaxOccupied(lands)
+        if(limitOccupied.maxChunkAmount <= lands.landMap.size){
+            player.sendMessage("더이상 땅을 구입할 수 없습니다.".errorFormat())
+            return
+        }
 
-        val price = configuration.flag.getActivePrice(lands).price
+        val price = configuration.flag.getActivePrice(lands).price.toDouble()
         if (player.hasNotEnoughMoney(price)) {
             val delta = price - economy.getBalance(player)
             player.sendMessage("${"%.2f".format(delta)}캔이 부족합니다.".errorFormat())
@@ -312,7 +322,7 @@ class LandManager {
         })
     }
 
-    fun sellLand(player: Player, flag: ItemStack, block: Block) {
+    fun sellChunk(player: Player, flag: ItemStack, block: Block) {
         val chunk = block.chunk
         val query = chunk.toQuery()
         if (!landMap.containsKey(query)) {
@@ -416,6 +426,7 @@ class LandManager {
     fun dispose() {
         task.cancel()
 
-        JsonWriter.savePlayerLandMap()
+        PlayerLandMapWriter.savePlayerLandMap()
+        ImposeTimeWriter.saveImposeTime()
     }
 }

@@ -27,7 +27,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
     implementation 'net.kyori:adventure-text-minimessage:4.12.0'
 
-    compileOnly "org.purpurmc.purpur:purpur-api:1.19.4-R0.1-SNAPSHOT"
+    compileOnly "org.purpurmc.purpur:purpur-api:1.20.1-R0.1-SNAPSHOT"
     compileOnly "com.github.MilkBowl:VaultAPI:1.7"
     compileOnly files("lib/bukkitlinked-1.4.2-SNAPSHOT-jar-with-dependencies.jar")
     compileOnly files('lib/Metamorphosis-2.3.0.jar')

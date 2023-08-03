@@ -1,7 +1,6 @@
 package com.salkcoding.tunalands.lands
 
 import com.salkcoding.tunalands.bukkitLinkedAPI
-import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.lands.setting.DelegatorSetting
 import com.salkcoding.tunalands.lands.setting.LandSetting
 import com.salkcoding.tunalands.tunaLands
@@ -10,11 +9,7 @@ import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Chunk
 import org.bukkit.Location
-import java.time.Duration
-import java.time.LocalDateTime
 import java.util.*
-import kotlin.collections.HashMap
-import kotlin.math.roundToLong
 
 data class Lands(
     var ownerName: String,
@@ -23,8 +18,8 @@ data class Lands(
     val landHistory: LandHistory,
     val upCoreLocation: Location, //Chest
     val downCoreLocation: Location, //Core block
-    var fuelLeft: Double, // amount of fuel left (second),
-    var secondPerFuel: Double, // amount of fuel decrement for second (second)
+    var fuelLeft: Int, // amount of fuel left
+    var dayPerFuel: Int, // amount of fuel
     //Optional variables of Constructor
     var enable: Boolean = true,
     var open: Boolean = true,

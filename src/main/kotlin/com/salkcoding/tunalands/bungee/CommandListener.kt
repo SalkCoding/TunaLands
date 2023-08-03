@@ -332,7 +332,7 @@ class CommandListener : Listener {
 
             "pending_visit_teleport" -> {
                 val name = json["name"].asString
-                val targetUUID = UUID.fromString(json["targetUUID"].asString)
+                val targetUUID = UUID.fromString(json["ownerUUID"].asString)
                 val lands = landManager.getPlayerLands(targetUUID, Rank.OWNER)
                 if (lands != null) {
                     //Remove visitor data

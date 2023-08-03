@@ -1,10 +1,12 @@
 package com.salkcoding.tunalands.lands
 
+import com.salkcoding.tunalands.file.PlayerLeftMapReader
+import com.salkcoding.tunalands.file.PlayerLeftMapWriter
 import java.util.*
 
 class LeftManager(private val cooldown: Long) {
 
-    private val leftMap = mutableMapOf<UUID, Long>()
+    private val leftMap = PlayerLeftMapReader.loadPlayerLeftMap()
 
     fun canRejoin(uuid: UUID): Boolean {
         if (uuid !in leftMap)
@@ -21,5 +23,16 @@ class LeftManager(private val cooldown: Long) {
     fun getRejoinCooldown(uuid: UUID): Long? {
         return leftMap[uuid]
     }
+
+    fun resetMilliseconds(uuid: UUID) {
+        leftMap.remove(uuid)
+    }
+
+    fun getLeftMap() = leftMap
+
+    fun dispose() {
+        PlayerLeftMapWriter.savePlayerLeftMap()
+    }
+
 }
 

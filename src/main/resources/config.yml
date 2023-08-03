@@ -1,8 +1,27 @@
 serverName: "lobby"
 
-protect: # Tick
-  coreBlock: "DIAMOND_BLOCK" #Not ID, But Material
+#All time units are in 'tick' units.
+maxMemberLimit: 10
+
+protect:
+  #Material type https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
+  coreBlock: "DIAMOND_BLOCK"
   createPrice: 10
+  limitOccupied:
+    - numOfMembers: 1
+      chunk: 10
+
+    - numOfMembers: 3
+      chunk: 30
+
+    - numOfMembers: 5
+      chunk: 50
+
+    - numOfMembers: 7
+      chunk: 70
+
+farm:
+  limitOccupied: 10
 
 flag:
   price:
@@ -23,33 +42,33 @@ flag:
 
     takeFarmFlagPrice: 10
     releaseFarmFlagPrice: 5
-  farm:
-    limitFarmOccupied: 10
 
 fuel:
-  defaultFuel: 3600
+  defaultFuel: 3
   price: 10.0
+  # Every fuel decrease when 6 A.M
+  # Hours of day 0~23
+  imposeTime: 6
   fuelRequirements:
-    # Recommended secondsPerFuel: above 0
-    # Only double type can read
+    # Recommended dayPerFuel: above 0
     - numOfMembers: 1
-      secondsPerFuel: 0.5
+      dayPerFuel: 1
 
     - numOfMembers: 2
-      secondsPerFuel: 1.0
+      dayPerFuel: 2
 
     - numOfMembers: 5
-      secondsPerFuel: 6.0
+      dayPerFuel: 3
 
     - numOfMembers: 7
-      secondsPerFuel: 10.0
+      dayPerFuel: 4
 
-recommend: # Tick
-  reset: 1728000
-  cooldown: 1728000
+recommend:
+  reset: 1728000 #1d
+  cooldown: 1728000 #1d
 
 command:
-  cooldown: #Tick
+  cooldown:
     rejoin: 5184000 #3d
     visit: 100 #5s
     spawn: 100 #5s

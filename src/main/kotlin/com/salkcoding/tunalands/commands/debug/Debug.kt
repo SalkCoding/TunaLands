@@ -1,11 +1,9 @@
 package com.salkcoding.tunalands.commands.debug
 
-import com.salkcoding.tunalands.alarmManager
-import com.salkcoding.tunalands.displayManager
-import com.salkcoding.tunalands.landManager
+import com.salkcoding.tunalands.*
+import com.salkcoding.tunalands.lands.LandType
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
-import com.salkcoding.tunalands.recommendManager
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
 import com.salkcoding.tunalands.util.times
@@ -64,7 +62,7 @@ class Debug : CommandExecutor {
                     val lands = landManager.getPlayerLands(targetUUID, Rank.OWNER)
                     if (lands != null) {
                         try {
-                            val numOfFuel = args[2].toDouble()
+                            val numOfFuel = args[2].toInt()
                             if (numOfFuel <= 0) {
                                 lands.sendMessageToOnlineMembers(
                                     listOf(
@@ -72,7 +70,6 @@ class Debug : CommandExecutor {
                                         "코어에 연료를 넣어 활성화하지 않을 경우 모든 블럭과의 상호작용이 불가능합니다!".warnFormat()
                                     )
                                 )
-                                alarmManager.unregisterAlarm(lands)
                                 displayManager.pauseDisplay(lands)?.setMessage(
                                     "${ChatColor.RED}비활성화 ${ChatColor.WHITE}상태",
                                     "${ChatColor.GOLD}연료${ChatColor.WHITE}를 사용하여 ${ChatColor.GREEN}재활성화 ${ChatColor.WHITE}해야합니다!"
@@ -83,10 +80,8 @@ class Debug : CommandExecutor {
                                 if (!lands.enable) {
                                     lands.enable = true
                                     displayManager.resumeDisplay(lands)?.update()
-                                    alarmManager.registerAlarm(lands)
                                     lands.sendMessageToOnlineMembers("땅이 다시 활성화되었습니다!".infoFormat())
                                 }
-                                alarmManager.resetAlarm(lands)
                                 lands.sendMessageToOnlineMembers("관리자에의해 땅 연료 갯수가 변경되었습니다.".infoFormat())
                             }
                         } catch (e: NumberFormatException) {
@@ -154,6 +149,12 @@ class Debug : CommandExecutor {
                         recommendManager.resetMilliseconds(target.uniqueId)
                         sender.sendMessage("해당 유저의 추천 쿨타임을 초기화하였습니다.".infoFormat())
                     }
+
+                    "rejoin" -> {
+                        val target = Bukkit.getOfflinePlayer(args[2])
+                        leftManager.resetMilliseconds(target.uniqueId)
+                        sender.sendMessage("해당 유저의 재가입 쿨타임을 초기화하였습니다.".infoFormat())
+                    }
                 }
                 return true
             }
@@ -171,7 +172,7 @@ class Debug : CommandExecutor {
             args[0] == "buy" && args.size == 1 -> {
                 val player = sender as? Player
                 if (player != null) {
-                    landManager.buyLand(player, (Material.APPLE * 1), player.location.block)
+                    landManager.buyChunk(player, (Material.APPLE * 1), player.location.block)
                 } else {
                     sender.sendMessage("콘솔에서는 사용 불가능한 명령어입니다.".errorFormat())
                 }
@@ -195,7 +196,7 @@ class Debug : CommandExecutor {
             args[0] == "sell" && args.size == 1 -> {
                 val player = sender as? Player
                 if (player != null) {
-                    landManager.sellLand(player, (Material.APPLE * 1), player.location.block)
+                    landManager.sellChunk(player, (Material.APPLE * 1), player.location.block)
                 } else {
                     sender.sendMessage("콘솔에서는 사용 불가능한 명령어입니다.".errorFormat())
                 }
@@ -247,6 +248,29 @@ class Debug : CommandExecutor {
                 val lands = landManager.getPlayerLands(targetUUID)!!
                 val present = System.currentTimeMillis()
                 lands.memberMap[uuid] = Lands.MemberData(uuid, Rank.valueOf(args[2].uppercase()), present, present)
+                return true
+            }
+
+            args[0] == "fuel" && args[1] == "decrease" -> {
+                landManager.getFuelConsumeRunner().impose()
+                sender.sendMessage("모든땅의 연료가 멤버수에 비례하여 감소하였습니다.".infoFormat())
+                return true
+            }
+
+            args[0] == "check" && args[1] == "overflow" -> {
+                landManager.getPlayerLandMap().filter { (_, lands) ->
+                    lands.landMap.size >= configuration.protect.getMaxOccupied(lands).maxChunkAmount
+                }.forEach { (_, lands) ->
+                    sender.sendMessage(
+                        "${lands.ownerName}의 땅, 현재 보유 청크: ${lands.landMap.size}/${
+                            configuration.protect.getMaxOccupied(
+                                lands
+                            ).maxChunkAmount
+                        }, 현재 보유 농작지: ${
+                            lands.landMap.filter { (_, type) -> type == LandType.FARM }.size
+                        }/${configuration.farm.limitOccupied}"
+                    )
+                }
                 return true
             }
 

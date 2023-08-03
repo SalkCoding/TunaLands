@@ -1,5 +1,7 @@
-package com.salkcoding.tunalands.vote
+package com.salkcoding.tunalands.recommend
 
+import com.salkcoding.tunalands.file.PlayerRecommendMapReader
+import com.salkcoding.tunalands.file.PlayerRecommendMapWriter
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.tunaLands
@@ -8,7 +10,7 @@ import java.util.*
 
 class RecommendManager(reset: Long, private val cooldown: Long) {
 
-    private val recommendMap = mutableMapOf<UUID, Long>()
+    private val recommendMap = PlayerRecommendMapReader.loadPlayerRecommendMap()
 
     private var nextReset = System.currentTimeMillis() + reset
     private val task = Bukkit.getScheduler().runTaskTimerAsynchronously(tunaLands, Runnable {
@@ -47,5 +49,8 @@ class RecommendManager(reset: Long, private val cooldown: Long) {
 
     fun dispose() {
         task.cancel()
+        PlayerRecommendMapWriter.savePlayerRecommendMap()
     }
+
+    fun getRecommendMap() = recommendMap
 }

@@ -7,6 +7,7 @@ import org.bukkit.Material
 
 class Config {
     val protect: Protect
+    val farm: Farm
     val fuel: Fuel
     val recommend: Recommend
     val commandCooldown: CommandCooldown
@@ -26,18 +27,32 @@ class Config {
         protect = Protect(
             Material.valueOf(configProtect.getString("coreBlock")!!),
             configProtect.getInt("createPrice"),
+            configProtect.getMapList("limitOccupied").map {
+                Protect.LimitOccupied(
+                    it["numOfMembers"] as Int,
+                    it["chunk"] as Int
+                )
+            }
         )
         logger.info("protect: $protect")
+
+        //Farm
+        val farmSection = config.getConfigurationSection("farm")!!
+        farm = Farm(
+            farmSection.getInt("limitOccupied")
+        )
+        logger.info("farm: $farm")
 
         //Fuel
         val configFuel = config.getConfigurationSection("fuel")!!
         fuel = Fuel(
             configFuel.getDouble("price"),
-            configFuel.getDouble("defaultFuel"),
+            configFuel.getInt("defaultFuel"),
+            configFuel.getInt("imposeTime"),
             configFuel.getMapList("fuelRequirements").map {
                 Fuel.FuelRequirement(
                     it["numOfMembers"] as Int,
-                    it["secondsPerFuel"] as Double
+                    it["dayPerFuel"] as Int
                 )
             }
         )
@@ -76,19 +91,17 @@ class Config {
         // Flag prices
         val flagSection = config.getConfigurationSection("flag")!!
         val flagPriceSection = flagSection.getConfigurationSection("price")!!
-        val flagFarmSection = flagSection.getConfigurationSection("farm")!!
         flag = Flag(
             flagPriceSection.getDouble("takeProtectFlagPrice"),
             flagPriceSection.getDouble("releaseProtectFlagPrice"),
-            flagPriceSection.getMapList("activePrice").map{
+            flagPriceSection.getMapList("activePrice").map {
                 Flag.ActivePrice(
                     it["chunk"] as Int,
-                    it["price"] as Double
+                    it["price"] as Int
                 )
             },
             flagPriceSection.getDouble("takeFarmFlagPrice"),
             flagPriceSection.getDouble("releaseFarmFlagPrice"),
-            flagFarmSection.getInt("limitFarmOccupied")
         )
     }
 

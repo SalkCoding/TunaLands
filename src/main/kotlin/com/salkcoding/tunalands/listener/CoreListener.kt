@@ -53,7 +53,7 @@ class CoreListener : Listener {
             val chest = placedBlock.getRelative(0, 1, 0)
             chest.type = Material.CHEST
 
-            val lands = landManager.buyLand(player, chest, placedBlock)
+            val lands = landManager.createLand(player, chest, placedBlock)
             Bukkit.getPluginManager().callEvent(
                 LandCreateEvent(
                     lands,
@@ -61,7 +61,6 @@ class CoreListener : Listener {
                     placedBlock.location
                 )
             )
-            alarmManager.registerAlarm(lands)
 
             event.isCancelled = false
         }

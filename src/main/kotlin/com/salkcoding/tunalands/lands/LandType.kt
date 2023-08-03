@@ -6,7 +6,7 @@ enum class LandType {
     override fun toString(): String {
         return when (this) {
             NORMAL -> "일반 영토"
-            FARM -> "농지"
+            FARM -> "농작지"
             else -> "UNKNOWN"
         }
     }

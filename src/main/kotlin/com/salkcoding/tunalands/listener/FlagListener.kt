@@ -27,14 +27,19 @@ class FlagListener : Listener {
         when (flag.type) {
             //Protect flag
             Material.GREEN_BANNER -> {
-                if (flag.isSimilar(takeProtectFlagItem)) landManager.buyLand(player, flag, under)
-                else if (flag.isSimilar(releaseProtectFlagItem)) landManager.sellLand(player, flag, under)
+                if (flag.isSimilar(takeProtectFlagItem)) landManager.buyChunk(player, flag, under)
+                else if (flag.isSimilar(releaseProtectFlagItem)) landManager.sellChunk(player, flag, under)
                 event.isCancelled = true
             }
             //Farm flag
             Material.BROWN_BANNER -> {
                 if (flag.isSimilar(takeFarmFlagItem)) landManager.setLandType(player, flag, under, LandType.FARM)
-                else if (flag.isSimilar(releaseFarmFlagItem)) landManager.setLandType(player, flag, under, LandType.NORMAL)
+                else if (flag.isSimilar(releaseFarmFlagItem)) landManager.setLandType(
+                    player,
+                    flag,
+                    under,
+                    LandType.NORMAL
+                )
                 event.isCancelled = true
             }
 

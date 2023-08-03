@@ -9,8 +9,6 @@ data class Flag(
 
     val takeFarmFlagPrice: Double,
     val releaseFarmFlagPrice: Double,
-
-    val limitFarmOccupied: Int
 ){
     fun getActivePrice(land: Lands): ActivePrice {
         return activePrice.filter {
@@ -20,7 +18,7 @@ data class Flag(
 
     data class ActivePrice(
         val chunk: Int,
-        val price: Double
+        val price: Int
     ) : Comparable<ActivePrice> {
         override fun compareTo(other: ActivePrice): Int {
             return this.price.compareTo(other.price)

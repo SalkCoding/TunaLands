@@ -40,6 +40,11 @@ class Map : CommandExecutor {
                     val centerX = player.location.chunk.x
                     val centerZ = player.location.chunk.z
 
+                    val owned = lands.landMap
+                        .map { it.key.splitQuery() }
+                        .filter { abs(it.first - centerX) <= width && abs(it.second - centerZ) <= height }
+                        .toHashSet()
+
                     val messages = mutableListOf<Component>()
                     val margin = Component.text("   ")
                     val compassWidth = 18
@@ -155,7 +160,21 @@ class Map : CommandExecutor {
                         }
 
                         // Add padding
-                        compass = compass.append(Component.text(getStringSpace(compassWidth - rowWith)))
+                        compass = compass.append(
+                            Component.text(
+                                getStringSpace(
+                                    compassWidth -
+                                            //2,4,6번째 줄은 2칸 앞으로 당겨서 출력
+                                            (rowWith + when (offsetZ) {
+                                                -halfHeight + 2,
+                                                -halfHeight + 4,
+                                                -halfHeight + 6 -> 2
+
+                                                else -> 0
+                                            })
+                                )
+                            )
+                        )
 
                         // Add Compass Text to row
                         row = row.append(compass)
@@ -173,12 +192,12 @@ class Map : CommandExecutor {
                             if (lands.upCoreLocation.chunk.x == x && lands.upCoreLocation.chunk.z == z) {
                                 icon = "+"
                                 color = NamedTextColor.AQUA
-                            } else if (abs(x - centerX) <= width && abs(z - centerZ) <= height) {
+                            } else if (owned.contains(Pair(x, z))) {
                                 icon = "+"
-                                val type = lands.landMap["$x:$z"]!!//TODO NPE
+                                val type = lands.landMap["$x:$z"]!!
                                 color = when (type) {
                                     LandType.NORMAL -> NamedTextColor.GREEN
-                                    LandType.FARM -> TextColor.color(0x964b00) as NamedTextColor
+                                    LandType.FARM -> NamedTextColor.GOLD
                                 }
                             } else if (landAtXZ != null && landAtXZ.ownerUUID != lands.ownerUUID) {
                                 icon = "+"
@@ -202,12 +221,15 @@ class Map : CommandExecutor {
                                 .append(Component.text(" : 코어", NamedTextColor.WHITE))
 
                             -halfHeight + 4 -> Component.text("#", NamedTextColor.GREEN)
-                                .append(Component.text(" : 점유 중", NamedTextColor.WHITE))
+                                .append(Component.text(" : 일반 땅", NamedTextColor.WHITE))
 
-                            -halfHeight + 5 -> Component.text("#", NamedTextColor.YELLOW)
+                            -halfHeight + 5 -> Component.text("#", NamedTextColor.GOLD)
+                                .append(Component.text(" : 농지", NamedTextColor.WHITE))
+
+                            -halfHeight + 6 -> Component.text("#", NamedTextColor.YELLOW)
                                 .append(Component.text(" : 타지역", NamedTextColor.WHITE))
 
-                            -halfHeight + 6 -> Component.text("#", NamedTextColor.GRAY)
+                            -halfHeight + 7 -> Component.text("#", NamedTextColor.GRAY)
                                 .append(Component.text(" : 미점유", NamedTextColor.WHITE))
 
                             else -> Component.empty()

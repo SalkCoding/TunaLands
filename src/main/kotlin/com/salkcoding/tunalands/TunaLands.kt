@@ -2,7 +2,6 @@ package com.salkcoding.tunalands
 
 import com.comphenix.protocol.ProtocolLibrary
 import com.comphenix.protocol.ProtocolManager
-import com.salkcoding.tunalands.alarm.AlarmManager
 import com.salkcoding.tunalands.border.BorderManager
 import com.salkcoding.tunalands.bungee.BroadcastLandMembersRunnable
 import com.salkcoding.tunalands.bungee.CommandListener
@@ -14,12 +13,12 @@ import com.salkcoding.tunalands.config.Config
 import com.salkcoding.tunalands.display.DisplayChunkListener
 import com.salkcoding.tunalands.display.DisplayManager
 import com.salkcoding.tunalands.gui.GuiManager
-import com.salkcoding.tunalands.io.AutoSaver
+import com.salkcoding.tunalands.file.PlayerLandMapAutoSaver
 import com.salkcoding.tunalands.lands.LandManager
 import com.salkcoding.tunalands.lands.LeftManager
 import com.salkcoding.tunalands.listener.*
 import com.salkcoding.tunalands.listener.land.protect.*
-import com.salkcoding.tunalands.vote.RecommendManager
+import com.salkcoding.tunalands.recommend.RecommendManager
 import fish.evatuna.metamorphosis.Metamorphosis
 import me.baiks.bukkitlinked.BukkitLinked
 import me.baiks.bukkitlinked.api.BukkitLinkedAPI
@@ -33,7 +32,6 @@ lateinit var landManager: LandManager
 lateinit var borderManager: BorderManager
 lateinit var guiManager: GuiManager
 lateinit var displayManager: DisplayManager
-lateinit var alarmManager: AlarmManager
 lateinit var recommendManager: RecommendManager
 lateinit var leftManager: LeftManager
 
@@ -83,7 +81,6 @@ class TunaLands : JavaPlugin() {
         //Independent manager
         guiManager = GuiManager()
         borderManager = BorderManager()
-        alarmManager = AlarmManager()
 
         displayManager = DisplayManager()
 
@@ -164,7 +161,7 @@ class TunaLands : JavaPlugin() {
 
         LoreSignUpdatePacketListener().registerListener()
 
-        server.scheduler.runTaskTimerAsynchronously(this, AutoSaver(), 18000, 18000)
+        server.scheduler.runTaskTimerAsynchronously(this, PlayerLandMapAutoSaver(), 18000, 18000)
         server.scheduler.runTaskTimerAsynchronously(this, broadcastLandMembersRunnable, 100, 100)
 
         logger.info("Plugin is now enabled")
@@ -173,13 +170,13 @@ class TunaLands : JavaPlugin() {
     override fun onDisable() {
         //Independent manager
         recommendManager.dispose()
+        leftManager.dispose()
 
         borderManager.dispose()
         guiManager.dispose()
 
         //Depend on displayManager
         landManager.dispose()
-        alarmManager.dispose()
         displayManager.dispose()
 
         logger.warning("All guis are closed")

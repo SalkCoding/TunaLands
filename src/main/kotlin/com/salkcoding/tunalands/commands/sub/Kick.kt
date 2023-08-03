@@ -60,8 +60,8 @@ class Kick : CommandExecutor {
                         }
                         lands.memberMap.remove(targetUUID)
                         leftManager.recordLeft(targetUUID)
-                        lands.secondPerFuel =
-                            configuration.fuel.getFuelRequirement(lands).secondsPerFuel
+                        lands.dayPerFuel =
+                            configuration.fuel.getFuelRequirement(lands).dayPerFuel
 
                         player.sendMessage("${targetName}을/를 쫓아냈습니다.".infoFormat())
                         if (targetOffline.isOnline)
@@ -97,9 +97,8 @@ class Kick : CommandExecutor {
                             return
                         }
 
-                        lands.secondPerFuel =
-                            configuration.fuel.getFuelRequirement(lands).secondsPerFuel
                         lands.memberMap.remove(targetUUID)
+                        lands.dayPerFuel = configuration.fuel.getFuelRequirement(lands).dayPerFuel
                         leftManager.recordLeft(targetUUID)
 
                         bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${targetName}을/를 쫓아냈습니다.".infoFormat())
@@ -111,8 +110,14 @@ class Kick : CommandExecutor {
                                 "${hostName}이/가 당신을 ${lands.ownerName}의 땅에서 당신을 쫓아냈습니다.".infoFormat()
                             )
 
-                    } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${targetName}은/는 당신의 땅에 소속되어있지 않습니다.".errorFormat())
-                } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat())
+                    } else bukkitLinkedAPI.sendMessageAcrossServer(
+                        hostName,
+                        "${targetName}은/는 당신의 땅에 소속되어있지 않습니다.".errorFormat()
+                    )
+                } else bukkitLinkedAPI.sendMessageAcrossServer(
+                    hostName,
+                    "해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat()
+                )
             }
         }
     }
