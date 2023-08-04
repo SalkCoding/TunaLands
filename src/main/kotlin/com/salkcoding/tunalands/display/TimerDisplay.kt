@@ -3,12 +3,10 @@ package com.salkcoding.tunalands.display
 import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.lands.LandType
 import com.salkcoding.tunalands.lands.Lands
+import org.bukkit.ChatColor
+import org.bukkit.entity.Display.Billboard
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.TextDisplay
-import org.bukkit.entity.Display.Billboard
-import java.time.Duration
-import java.time.LocalDateTime
-import java.util.*
 
 class TimerDisplay(
     private val lands: Lands
@@ -24,7 +22,14 @@ class TimerDisplay(
 
         hologram = location.world.spawnEntity(location, EntityType.TEXT_DISPLAY) as TextDisplay
         hologram.billboard = Billboard.CENTER
-        hologram.text = ReadyMessage
+        hologram.text = when (lands.enable) {
+            true -> ReadyMessage
+            false -> {
+                isPause = true
+                "${ChatColor.RED}비활성화 ${ChatColor.WHITE}상태" +
+                        "\n${ChatColor.GOLD}연료${ChatColor.WHITE}를 사용하여 ${ChatColor.GREEN}재활성화 ${ChatColor.WHITE}해야합니다!"
+            }
+        }
     }
 
     override fun update(): Boolean {
@@ -49,13 +54,7 @@ class TimerDisplay(
         builder.append("현재 연료: ${lands.fuelLeft}개\n")
 
         // Text Line 4 (예상: a일 b시간 c분 d초 남음)
-        val timeLeftInDay = lands.fuelLeft / lands.dayPerFuel
-        val expired =
-            LocalDateTime.now().plusDays(timeLeftInDay.toLong())
-                .withHour(6).withMinute(0).withSecond(0).withNano(0)
-        val between = Duration.between(LocalDateTime.now(), expired)
-        val timeLeftInMilliseconds = if (between.isNegative) 0 else between.toMillis()
-
+        val timeLeftInMilliseconds = lands.getExpiredDateToMilliseconds()
         if (timeLeftInMilliseconds > 0) {
             val days = timeLeftInMilliseconds / 86400000
             val hours = (timeLeftInMilliseconds / 3600000) % 24

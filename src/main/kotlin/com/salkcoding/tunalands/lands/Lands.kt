@@ -1,6 +1,7 @@
 package com.salkcoding.tunalands.lands
 
 import com.salkcoding.tunalands.bukkitLinkedAPI
+import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.lands.setting.DelegatorSetting
 import com.salkcoding.tunalands.lands.setting.LandSetting
 import com.salkcoding.tunalands.tunaLands
@@ -9,6 +10,8 @@ import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Chunk
 import org.bukkit.Location
+import java.time.Duration
+import java.time.LocalDateTime
 import java.util.*
 
 data class Lands(
@@ -102,6 +105,14 @@ data class Lands(
             else
                 bukkitLinkedAPI.sendMessageAcrossServer(offlinePlayer.name, message)
         }
+    }
+
+    fun getExpiredDateToMilliseconds(): Long {
+        val expired =
+            LocalDateTime.now().plusDays((fuelLeft / dayPerFuel).toLong()).withHour(configuration.fuel.imposeTime)
+                .withMinute(0).withSecond(0).withNano(0)
+        val between = Duration.between(LocalDateTime.now(), expired)
+        return if (between.isNegative || between.isZero) 0 else between.toMillis()
     }
 
 }

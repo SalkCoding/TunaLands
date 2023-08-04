@@ -18,8 +18,6 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.scheduler.BukkitTask
-import java.time.Duration
-import java.time.LocalDateTime
 import java.util.*
 
 class MainGui(private val player: Player, private val lands: Lands, private val rank: Rank) : GuiInterface {
@@ -69,7 +67,7 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
         task = Bukkit.getScheduler().runTaskTimer(tunaLands, Runnable {
             val timeLeftUntilExpiration = lands.fuelLeft / lands.dayPerFuel
             //Expired
-            if (lands.enable && timeLeftUntilExpiration < 0) {//Just close, DO NOT DELETE DATA OR BLOCK HERE
+            if (lands.enable && timeLeftUntilExpiration <= 0) {//Just close, DO NOT DELETE DATA OR BLOCK HERE
                 player.sendMessage("보호 기간이 만료되어, 지역 보호가 비활성화됩니다!".warnFormat())
                 task.cancel()
                 Bukkit.getScheduler().runTask(tunaLands, Runnable(player::closeInventory))
@@ -77,16 +75,7 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
             }
             //Not expired or already disabled
             totalInfoIcon.apply {
-                val timeLeftInDay = lands.fuelLeft / lands.dayPerFuel
-                var expired = LocalDateTime.now().plusDays(timeLeftInDay.toLong())
-                //활성화 상태이면 시간 뜨도록 설정 아니면 비활성화 뜨도록 유도
-                expired = if (lands.enable) expired.withHour(6)
-                    .withMinute(0).withSecond(0).withNano(0)
-                else expired.minusHours(1)
-
-                val between = Duration.between(LocalDateTime.now(), expired)
-                val timeLeftInMilliseconds = if (between.isNegative) 0 else between.toMillis()
-
+                val timeLeftInMilliseconds = lands.getExpiredDateToMilliseconds()
                 val timeLeft = "${ChatColor.WHITE}${
                     when {
                         timeLeftInMilliseconds > 0 -> {
@@ -185,13 +174,7 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                         displayManager.resumeDisplay(lands)?.update()
                     } else displayManager.updateDisplay(lands)
 
-                    val timeLeftInDay = lands.fuelLeft / lands.dayPerFuel
-                    val expired =
-                        LocalDateTime.now().plusDays(timeLeftInDay.toLong()).withHour(6).withMinute(0).withSecond(0)
-                            .withNano(0)
-                    val between = Duration.between(LocalDateTime.now(), expired)
-                    val timeLeftInMilliseconds = if (between.isNegative) 0 else between.toMillis()
-
+                    val timeLeftInMilliseconds = lands.getExpiredDateToMilliseconds()
                     val timeLeft = when {
                         timeLeftInMilliseconds > 0 -> {
                             val days = timeLeftInMilliseconds / 86400000
@@ -321,13 +304,7 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                     displayManager.resumeDisplay(lands)?.update()
                 }
 
-                val timeLeftInDay = lands.fuelLeft / lands.dayPerFuel
-                val expired =
-                    LocalDateTime.now().plusDays(timeLeftInDay.toLong()).withHour(6).withMinute(0).withSecond(0)
-                        .withNano(0)
-                val between = Duration.between(LocalDateTime.now(), expired)
-                val timeLeftInMilliseconds = if (between.isNegative) 0 else between.toMillis()
-
+                val timeLeftInMilliseconds = lands.getExpiredDateToMilliseconds()
                 val timeLeft = when {
                     timeLeftInMilliseconds > 0 -> {
                         val days = timeLeftInMilliseconds / 86400000

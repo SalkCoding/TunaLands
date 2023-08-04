@@ -1,13 +1,11 @@
 package com.salkcoding.tunalands.listener
 
+import com.salkcoding.tunalands.displayManager
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.util.infoFormat
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
-import java.time.Duration
-import java.time.LocalDateTime
-import java.util.*
 
 class JoinListener : Listener {
 
@@ -15,13 +13,12 @@ class JoinListener : Listener {
     fun onJoinAlarm(event: PlayerJoinEvent) {
         val player = event.player
         val lands = landManager.getPlayerLands(player.uniqueId) ?: return
+        //이미 있으면 안만들어짐
+        displayManager.createDisplay(lands)
 
-        val timeLeftInDay = lands.fuelLeft / lands.dayPerFuel
-        val expired =
-            LocalDateTime.now().plusDays(timeLeftInDay.toLong()).withHour(6).withMinute(0).withSecond(0).withNano(0)
-        val between = Duration.between(LocalDateTime.now(), expired)
-        val timeLeftInMilliseconds = if (between.isNegative) 0 else between.toMillis()
+        if (!lands.enable) return
 
+        val timeLeftInMilliseconds = lands.getExpiredDateToMilliseconds()
         val timeLeft = when {
             timeLeftInMilliseconds > 0 -> {
                 val days = timeLeftInMilliseconds / 86400000

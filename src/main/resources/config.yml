@@ -70,6 +70,7 @@ recommend:
 command:
   cooldown:
     rejoin: 5184000 #3d
+    # Teleport effect cooldown
     visit: 100 #5s
     spawn: 100 #5s
   price:
