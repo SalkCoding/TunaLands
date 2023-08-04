@@ -2,8 +2,11 @@ package com.salkcoding.tunalands.api
 
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.landManager
+import com.salkcoding.tunalands.lands.LandType
 import com.salkcoding.tunalands.lands.Lands
+import com.salkcoding.tunalands.util.toQuery
 import org.bukkit.Bukkit
+import org.bukkit.Chunk
 import org.bukkit.entity.Player
 import java.util.*
 
@@ -80,5 +83,18 @@ object LandsAPI {
     fun getOwnerUUIDWithChunkQuery(worldName: String, chunkData: String): UUID? {
         val land = landManager.getLandsWithChunkQuery(worldName, chunkData) ?: return null
         return land.ownerUUID
+    }
+
+    /**
+     * Returns the LandType of chunk if that chunk is protected by system
+     *
+     * @param  worldName  world name
+     * @param  chunkData  chunk_x:chunk_z
+     * @return the LandType of chunk
+     */
+    fun getChunkLandType(worldName: String, chunkData: String): LandType? {
+        val lands = landManager.getLandsWithChunkQuery(worldName, chunkData) ?: return null
+        if (!lands.landMap.containsKey(chunkData)) return null
+        return lands.landMap[chunkData]
     }
 }

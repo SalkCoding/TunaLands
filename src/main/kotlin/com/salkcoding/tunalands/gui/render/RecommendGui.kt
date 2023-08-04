@@ -1,6 +1,7 @@
 package com.salkcoding.tunalands.gui.render
 
 import com.salkcoding.tunalands.*
+import com.salkcoding.tunalands.api.event.LandGUIOpenEvent
 import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.util.*
 import org.bukkit.Bukkit
@@ -19,6 +20,7 @@ class RecommendGui(private val player: Player) : GuiInterface {
     private val landMap = landManager.getPlayerLandMap()
     private lateinit var landList: List<UUID>
 
+    //Dynamic button
     private val sortButton = (Material.HOPPER * 1).apply {
         this.setDisplayName("${ChatColor.WHITE}정렬 방법 선택")
     }
@@ -256,4 +258,6 @@ fun Player.openRecommendGui() {
 
     val view = this.openInventory(inventory)!!
     guiManager.guiMap[view] = gui
+
+    Bukkit.getPluginManager().callEvent(LandGUIOpenEvent(this, LandGUIOpenEvent.GUIType.MAIN))
 }

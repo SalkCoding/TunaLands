@@ -1,43 +1,60 @@
 package com.salkcoding.tunalands.display
 
-import com.gmail.filoghost.holographicdisplays.api.HologramsAPI
-import com.gmail.filoghost.holographicdisplays.api.line.TextLine
+import com.salkcoding.tunalands.configuration
+import com.salkcoding.tunalands.lands.LandType
 import com.salkcoding.tunalands.lands.Lands
-import com.salkcoding.tunalands.tunaLands
-import org.bukkit.Bukkit
 import org.bukkit.ChatColor
+import org.bukkit.entity.Display.Billboard
+import org.bukkit.entity.EntityType
+import org.bukkit.entity.TextDisplay
 
 class TimerDisplay(
     private val lands: Lands
 ) : Display() {
 
+    companion object {
+        const val ReadyMessage = "준비중..."
+    }
+
     override fun create() {
         val location = lands.upCoreLocation.toCenterLocation()
-        location.y += 1.5
+        location.y += 1.0
 
-        hologram = HologramsAPI.createHologram(tunaLands, location)
-        hologram.appendTextLine(lands.landsName)
-        hologram.appendTextLine("준비중...")
+        hologram = location.world.spawnEntity(location, EntityType.TEXT_DISPLAY) as TextDisplay
+        hologram.billboard = Billboard.CENTER
+        hologram.text = when (lands.enable) {
+            true -> ReadyMessage
+            false -> {
+                isPause = true
+                "${ChatColor.RED}비활성화 ${ChatColor.WHITE}상태" +
+                        "\n${ChatColor.GOLD}연료${ChatColor.WHITE}를 사용하여 ${ChatColor.GREEN}재활성화 ${ChatColor.WHITE}해야합니다!"
+            }
+        }
     }
 
     override fun update(): Boolean {
         try {
-            if (hologram.isDeleted)
-                throw IllegalStateException("Hologram already deleted!")
+            if (!hologram.isPersistent)
+                throw IllegalStateException("Hologram already disabled!")
         } catch (e: UninitializedPropertyAccessException) {
-            throw IllegalStateException("Hologram not initialized!")
+            throw IllegalStateException("Hologram isn't initialized!")
         }
 
-        val hologramTexts: MutableList<String> = mutableListOf()
+        val builder = StringBuilder()
         // Text Line 0 (땅 이름)
-        hologramTexts.add(lands.landsName)
+        builder.append("${lands.landsName}\n")
 
-        // Text Line 1 (현재 연료: a개)
-        hologramTexts.add("현재 연료: ${lands.fuelLeft}개")
+        // Text Line 1 (최대 땅 점유 개수)
+        builder.append("땅: ${lands.landMap.size}/${configuration.protect.getMaxOccupied(lands).maxChunkAmount}\n")
 
-        // Text Line 2 (예상: a일 b시간 c분 d초 남음)
-        val timeLeftInMilliseconds = lands.getEstimatedMillisecondsLeftWithCurrentFuel()
+        // Text Line 2 (최대 농작지 점유 개수)
+        builder.append("농작지: ${lands.landMap.filter { it.value == LandType.FARM }.size}/${configuration.farm.limitOccupied}\n")
 
+        // Text Line 3 (현재 연료: a개)
+        builder.append("현재 연료: ${lands.fuelLeft}개\n")
+
+        // Text Line 4 (예상: a일 b시간 c분 d초 남음)
+        val timeLeftInMilliseconds = lands.getExpiredDateToMilliseconds()
         if (timeLeftInMilliseconds > 0) {
             val days = timeLeftInMilliseconds / 86400000
             val hours = (timeLeftInMilliseconds / 3600000) % 24
@@ -52,82 +69,21 @@ class TimerDisplay(
                 else -> "예상: 0초 남음"
             }
 
-            hologramTexts.add(timeMessage)
+            builder.append(timeMessage).append("\n")
         } else {
-            hologramTexts.add("예상: 0초 남음")
+            builder.append("예상: 0초 남음").append("\n")
         }
 
-        // Text Line 3 (*시간당 x개 소모 (하루에 y개)
-        // Milliseconds in a day = 86400000
-        val fuelPerHour = 3600000.0 / lands.getMillisecondsPerFuel()
-        val fuelPerDay = 86400000.0 / lands.getMillisecondsPerFuel()
-        hologramTexts.add(String.format("*시간 당 %.2f개 소모 (하루에 %.2f개)", fuelPerHour, fuelPerDay))
+        // Text Line 5 (* 하루당 x개 소모)
+        builder.append("* 하루당 ${lands.dayPerFuel}개 소모")
 
-
-        // Sync invoke
-        // Change Hologram
-//        Bukkit.getScheduler().runTask(tunaLands, Runnable {
-//            //Flicker prevent
-//            var removeLinesFrom: Int? = null
-//            for (lineNum in 0 until hologram.size()) {
-//                val line = hologram.getLine(lineNum) as TextLine
-//                line.text = hologramTexts[lineNum]
-//                if (lineNum < hologramTexts.size) {
-//                    if (line.text != hologramTexts[lineNum]) {
-//                        // if line text is same, leave it
-//                        line.text = hologramTexts[lineNum]
-//                    }
-//                } else {
-//                    removeLinesFrom = lineNum
-//                    break
-//                }
-//            }
-//
-////            // Remove unused lines
-//            if (removeLinesFrom != null) {
-//                for (ignored in removeLinesFrom until hologram.size()) {
-//                    hologram.removeLine(removeLinesFrom)
-//                }
-//            }
-//        })
-
-//        Bukkit.getScheduler().runTask(tunaLands, Runnable {
-            //Flicker prevent
-            var lineNum: Int = 0
-            hologramTexts.forEach { text ->
-                if (lineNum < hologram.size()) {
-                    val line = hologram.getLine(lineNum) as TextLine
-                    if (line.text != text) {
-                        line.text = text
-                    }
-                } else {
-                    hologram.appendTextLine(text)
-                }
-                lineNum++
-            }
-
-            while (hologram.size() - 1 > lineNum) {
-                hologram.removeLine(hologram.size() - 1)
-            }
-//        })
-
+        hologram.text = builder.toString()
         return true
-    }
-
-    override fun pause() {
-        val line = hologram.getLine(1) as TextLine
-        line.text = "${ChatColor.RED}비활성화"
-        pause = true
-    }
-
-    override fun resume() {
-        update()
-        pause = false
     }
 
     override fun remove() {
         try {
-            hologram.delete()
+            hologram.remove()
         } catch (e: UninitializedPropertyAccessException) {
             throw IllegalStateException("Hologram not created!")
         }

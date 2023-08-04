@@ -1,12 +1,10 @@
 package com.salkcoding.tunalands.lands
 
-import com.google.gson.JsonObject
 import com.salkcoding.tunalands.bukkitLinkedAPI
 import com.salkcoding.tunalands.configuration
-import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.lands.setting.DelegatorSetting
 import com.salkcoding.tunalands.lands.setting.LandSetting
-import com.salkcoding.tunalands.metamorphosis
+import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.ObservableMap
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -15,17 +13,16 @@ import org.bukkit.Location
 import java.time.Duration
 import java.time.LocalDateTime
 import java.util.*
-import kotlin.math.roundToLong
 
 data class Lands(
     var ownerName: String,
     var ownerUUID: UUID,
-    val landList: MutableList<String>,
+    val landMap: HashMap<String, LandType>,
     val landHistory: LandHistory,
     val upCoreLocation: Location, //Chest
     val downCoreLocation: Location, //Core block
-    var fuelLeft: Long, // amount of fuel left,
-    var nextTimeFuelNeedsToBeConsumed: LocalDateTime,
+    var fuelLeft: Int, // amount of fuel left
+    var dayPerFuel: Int, // amount of fuel
     //Optional variables of Constructor
     var enable: Boolean = true,
     var open: Boolean = true,
@@ -59,6 +56,7 @@ data class Lands(
         }),
     val banMap: MutableMap<UUID, BanData> = mutableMapOf(),
 ) {
+
     data class MemberData(
         val uuid: UUID,
         var rank: Rank,
@@ -81,7 +79,8 @@ data class Lands(
         var ownerUUID: UUID,
         val worldName: String,
         val xChunk: Int,
-        val zChunk: Int
+        val zChunk: Int,
+        var landType: LandType
     ) {
         val chunk: Chunk = Bukkit.getWorld(worldName)!!.getChunkAt(xChunk, zChunk)
     }
@@ -108,22 +107,12 @@ data class Lands(
         }
     }
 
-    fun getEstimatedMillisecondsLeftWithCurrentFuel(): Long {
-        var currentFuelTimeLeft = Duration.between(LocalDateTime.now(), this.nextTimeFuelNeedsToBeConsumed)
-        if (currentFuelTimeLeft.isNegative) {
-            currentFuelTimeLeft = Duration.ZERO
-        }
-
-        val secondsPerFuel = configuration.fuel.getFuelRequirement(this).secondsPerFuel
-        val msPerFuel = (secondsPerFuel * 1000).roundToLong()
-        val timeLeftInMilliseconds = currentFuelTimeLeft.toMillis() + msPerFuel * this.fuelLeft
-
-        return timeLeftInMilliseconds
+    fun getExpiredDateToMilliseconds(): Long {
+        val expired =
+            LocalDateTime.now().plusDays((fuelLeft / dayPerFuel).toLong()).withHour(configuration.fuel.imposeTime)
+                .withMinute(0).withSecond(0).withNano(0)
+        val between = Duration.between(LocalDateTime.now(), expired)
+        return if (between.isNegative || between.isZero) 0 else between.toMillis()
     }
 
-    fun getMillisecondsPerFuel(): Long {
-        val secondsPerFuel = configuration.fuel.getFuelRequirement(this).secondsPerFuel
-        val msPerFuel = (secondsPerFuel * 1000).roundToLong()
-        return msPerFuel
-    }
 }

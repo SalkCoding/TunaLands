@@ -17,12 +17,12 @@ class SetSpawn : CommandExecutor {
             if (player != null) {
                 val lands = landManager.getPlayerLands(player.uniqueId, Rank.OWNER, Rank.DELEGATOR)
                 if (lands != null) {
-                    if (player.location.chunk.toQuery() !in lands.landList) {
+                    if (player.location.chunk.toQuery() !in lands.landMap) {
                         player.sendMessage("자신의 보호된 땅 이외의 위치에서는 스폰을 설정할 수 없습니다!".errorFormat())
                         return true
                     }
 
-                    val price = configuration.command.setSpawnPrice.toDouble()
+                    val price = configuration.commandPrice.setSpawnPrice.toDouble()
                     if (player.hasNotEnoughMoney(price)) {
                         val delta = price - economy.getBalance(player)
                         player.sendMessage("${"%.2f".format(delta)}캔이 부족합니다.".errorFormat())

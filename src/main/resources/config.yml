@@ -1,42 +1,76 @@
 serverName: "lobby"
 
-database:
-  name: 'test'
-  ip: 'localhost'
-  port: 3306
-  username: 'root'
-  password: 'test'
-  encoding: 'utf-8'
+#All time units are in 'tick' units.
+maxMemberLimit: 10
 
-protect: # Tick
-  coreBlock: "DIAMOND_BLOCK" #Not ID, But Material
-  defaultStartTime: 1728000
+protect:
+  #Material type https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
+  coreBlock: "DIAMOND_BLOCK"
   createPrice: 10
+  limitOccupied:
+    - numOfMembers: 1
+      chunk: 10
+
+    - numOfMembers: 3
+      chunk: 30
+
+    - numOfMembers: 5
+      chunk: 50
+
+    - numOfMembers: 7
+      chunk: 70
+
+farm:
+  limitOccupied: 10
+
+flag:
+  price:
+    takeProtectFlagPrice: 10
+    releaseProtectFlagPrice: 5
+    activePrice:
+      - chunk: 0
+        price: 0
+
+      - chunk: 1
+        price: 10
+
+      - chunk: 5
+        price: 15
+
+      - chunk: 10
+        price: 30
+
+    takeFarmFlagPrice: 10
+    releaseFarmFlagPrice: 5
 
 fuel:
+  defaultFuel: 3
   price: 10.0
+  # Every fuel decrease when 6 A.M
+  # Hours of day 0~23
+  imposeTime: 6
   fuelRequirements:
-    # Required secondsPerFuel: above 0.5 (because TunaLands only checks and consumes fuel every 0.5 seconds)
-    # Recommended secondsPerFuel: above 1
+    # Recommended dayPerFuel: above 0
     - numOfMembers: 1
-      numOfChunks: 1
-      secondsPerFuel: 120.0
+      dayPerFuel: 1
 
-    - numOfMembers: 4
-      numOfChunks: 4
-      secondsPerFuel: 60.0
+    - numOfMembers: 2
+      dayPerFuel: 2
 
-    - numOfMembers: 100
-      numOfChunks: 400
-      secondsPerFuel: 0.1
+    - numOfMembers: 5
+      dayPerFuel: 3
 
-recommend: # Tick
-  reset: 1728000
-  cooldown: 1728000
+    - numOfMembers: 7
+      dayPerFuel: 4
+
+recommend:
+  reset: 1728000 #1d
+  cooldown: 1728000 #1d
 
 command:
-  cooldown: #Tick
+  cooldown:
     rejoin: 5184000 #3d
+    # Teleport effect cooldown
     visit: 100 #5s
     spawn: 100 #5s
   price:
@@ -46,7 +80,3 @@ command:
 limitWorld:
   - world_nether
   - world_the_end
-
-flag:
-  takeFlagPrice: 10
-  releaseFlagPrice: 5

@@ -4,6 +4,7 @@ import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.util.*
 import org.bukkit.ChatColor
+import org.bukkit.World
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerMoveEvent
@@ -13,7 +14,7 @@ import java.util.*
 
 class InOutListener : Listener {
 
-    private val enterSet = mutableMapOf<UUID, Int>()
+    private val enterSet = mutableMapOf<UUID, UUID>()
 
     @EventHandler
     fun onMove(event: PlayerMoveEvent) {
@@ -31,11 +32,11 @@ class InOutListener : Listener {
             }
 
             if (uuid !in enterSet) {
-                enterSet[uuid] = lands.hashCode()
+                enterSet[uuid] = lands.ownerUUID
                 player.sendTitle("", lands.landsName, 10, 20, 10)
             } else {
                 val old = enterSet[uuid]
-                val present = lands.hashCode()
+                val present = lands.ownerUUID
                 if (old != present) {
                     enterSet[uuid] = present
                     player.sendTitle("", lands.landsName, 10, 20, 10)

@@ -1,6 +1,7 @@
 package com.salkcoding.tunalands.commands.sub
 
 import com.salkcoding.tunalands.bukkitLinkedAPI
+import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.leftManager
@@ -13,6 +14,7 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.*
+import kotlin.math.roundToLong
 
 class Kick : CommandExecutor {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
@@ -58,6 +60,8 @@ class Kick : CommandExecutor {
                         }
                         lands.memberMap.remove(targetUUID)
                         leftManager.recordLeft(targetUUID)
+                        lands.dayPerFuel =
+                            configuration.fuel.getFuelRequirement(lands).dayPerFuel
 
                         player.sendMessage("${targetName}을/를 쫓아냈습니다.".infoFormat())
                         if (targetOffline.isOnline)
@@ -92,7 +96,9 @@ class Kick : CommandExecutor {
                             bukkitLinkedAPI.sendMessageAcrossServer(hostName, "소유자를 쫓아낼 수는 없습니다.".errorFormat())
                             return
                         }
+
                         lands.memberMap.remove(targetUUID)
+                        lands.dayPerFuel = configuration.fuel.getFuelRequirement(lands).dayPerFuel
                         leftManager.recordLeft(targetUUID)
 
                         bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${targetName}을/를 쫓아냈습니다.".infoFormat())
@@ -104,8 +110,14 @@ class Kick : CommandExecutor {
                                 "${hostName}이/가 당신을 ${lands.ownerName}의 땅에서 당신을 쫓아냈습니다.".infoFormat()
                             )
 
-                    } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${targetName}은/는 당신의 땅에 소속되어있지 않습니다.".errorFormat())
-                } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat())
+                    } else bukkitLinkedAPI.sendMessageAcrossServer(
+                        hostName,
+                        "${targetName}은/는 당신의 땅에 소속되어있지 않습니다.".errorFormat()
+                    )
+                } else bukkitLinkedAPI.sendMessageAcrossServer(
+                    hostName,
+                    "해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat()
+                )
             }
         }
     }

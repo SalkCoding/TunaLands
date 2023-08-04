@@ -1,6 +1,8 @@
 package com.salkcoding.tunalands.commands.sub
 
+import com.salkcoding.tunalands.api.event.LandJoinEvent
 import com.salkcoding.tunalands.bukkitLinkedAPI
+import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
@@ -13,6 +15,7 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.*
+import kotlin.math.roundToLong
 
 class Accept : CommandExecutor {
 
@@ -58,8 +61,20 @@ class Accept : CommandExecutor {
                             Rank.VISITOR
                         )?.memberMap?.remove(player.uniqueId)
 
+                        Bukkit.getPluginManager().callEvent(
+                            LandJoinEvent(
+                                lands,
+                                player,
+                                data.targetRank
+                            )
+                        )
                         val present = System.currentTimeMillis()
                         lands.memberMap[uuid] = Lands.MemberData(uuid, data.targetRank, present, present)
+                        if (data.targetRank == Rank.MEMBER) {
+                            lands.dayPerFuel =
+                                configuration.fuel.getFuelRequirement(lands).dayPerFuel
+                        }
+
                         data.task.cancel()
                         inviteMap.remove(uuid)
                     } else player.sendMessage("해당 땅이 더이상 존재하지 않습니다.".errorFormat())
@@ -87,9 +102,17 @@ class Accept : CommandExecutor {
 
                         val present = System.currentTimeMillis()
                         lands.memberMap[uuid] = Lands.MemberData(uuid, data.targetRank, present, present)
+                        if (data.targetRank == Rank.MEMBER) {
+                            lands.dayPerFuel =
+                                configuration.fuel.getFuelRequirement(lands).dayPerFuel
+                        }
+
                         data.task.cancel()
                         inviteMap.remove(uuid)
-                    } else bukkitLinkedAPI.sendMessageAcrossServer(offlinePlayer.name, "해당 땅이 더이상 존재하지 않습니다.".errorFormat())
+                    } else bukkitLinkedAPI.sendMessageAcrossServer(
+                        offlinePlayer.name,
+                        "해당 땅이 더이상 존재하지 않습니다.".errorFormat()
+                    )
                 } else bukkitLinkedAPI.sendMessageAcrossServer(offlinePlayer.name, "받은 초대가 없습니다.".errorFormat())
             }
         }

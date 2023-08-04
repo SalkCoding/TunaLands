@@ -1,11 +1,13 @@
 package com.salkcoding.tunalands.gui.render.settinggui
 
 
+import com.salkcoding.tunalands.api.event.LandGUIOpenEvent
 import com.salkcoding.tunalands.gui.GuiInterface
+import com.salkcoding.tunalands.gui.render.backButton
+import com.salkcoding.tunalands.gui.render.openShopGui
 import com.salkcoding.tunalands.guiManager
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
-import com.salkcoding.tunalands.util.backButton
 import com.salkcoding.tunalands.util.times
 import com.salkcoding.tunalands.util.toColoredText
 import org.bukkit.Bukkit
@@ -576,4 +578,6 @@ fun Player.openPartTimeJobSettingGui(lands: Lands, rank: Rank) {
 
     val view = this.openInventory(inventory)!!
     guiManager.guiMap[view] = gui
+
+    Bukkit.getPluginManager().callEvent(LandGUIOpenEvent(this, LandGUIOpenEvent.GUIType.PARTIMEJOB_SETTING))
 }

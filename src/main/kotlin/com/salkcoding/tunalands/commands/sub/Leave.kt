@@ -1,6 +1,7 @@
 package com.salkcoding.tunalands.commands.sub
 
 import com.salkcoding.tunalands.bukkitLinkedAPI
+import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.leftManager
@@ -16,6 +17,7 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.*
+import kotlin.math.roundToLong
 
 class Leave : CommandExecutor {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
@@ -73,6 +75,9 @@ class Leave : CommandExecutor {
                     }
 
                     lands.memberMap.remove(playerUUID)
+
+                    lands.dayPerFuel =
+                        configuration.fuel.getFuelRequirement(lands).dayPerFuel
 
                     bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${lands.ownerName}의 땅을 떠났습니다.".infoFormat())
                     leftManager.recordLeft(playerUUID)

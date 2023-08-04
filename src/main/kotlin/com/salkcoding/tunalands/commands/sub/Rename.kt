@@ -22,7 +22,7 @@ class Rename : CommandExecutor {
         if (label == "rename" && args.isNotEmpty()) {
             val player = sender as? Player
             if (player != null) {
-                val price = configuration.command.renamePrice.toDouble()
+                val price = configuration.commandPrice.renamePrice.toDouble()
                 if (player.hasNotEnoughMoney(price)) {
                     val delta = price - economy.getBalance(player)
                     player.sendMessage("${"%.2f".format(delta)}캔이 부족합니다.".errorFormat())

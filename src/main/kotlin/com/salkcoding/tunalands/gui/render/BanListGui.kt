@@ -1,5 +1,6 @@
 package com.salkcoding.tunalands.gui.render
 
+import com.salkcoding.tunalands.api.event.LandGUIOpenEvent
 import com.salkcoding.tunalands.gui.GuiInterface
 import com.salkcoding.tunalands.guiManager
 import com.salkcoding.tunalands.lands.Lands
@@ -65,6 +66,7 @@ class BanListGui(
                 }
                 "기본"
             }
+
             1 -> {
                 //Descending sorting
                 playerList = lands.banMap.keys.sortedByDescending {
@@ -72,6 +74,7 @@ class BanListGui(
                 }
                 "오래된 순"
             }
+
             else -> ""
         }
 
@@ -179,4 +182,6 @@ fun Player.openBanListGui(lands: Lands, callByCommand: Boolean, rank: Rank) {
 
     val view = this.openInventory(inventory)!!
     guiManager.guiMap[view] = gui
+
+    Bukkit.getPluginManager().callEvent(LandGUIOpenEvent(this, LandGUIOpenEvent.GUIType.BAN_LIST))
 }

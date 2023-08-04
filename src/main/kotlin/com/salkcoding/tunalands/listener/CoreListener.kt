@@ -1,9 +1,9 @@
 package com.salkcoding.tunalands.listener
 
-import com.salkcoding.tunalands.configuration
-import com.salkcoding.tunalands.economy
-import com.salkcoding.tunalands.landManager
+import com.salkcoding.tunalands.*
+import com.salkcoding.tunalands.api.event.LandCreateEvent
 import com.salkcoding.tunalands.util.*
+import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.event.EventHandler
@@ -22,14 +22,14 @@ class CoreListener : Listener {
 
         val placedBlock = event.block
         val player = event.player
-        if (placedBlock.type == configuration.protect.coreBlock && player.isSneaking) {
-            if(configuration.limitWorld.contains(placedBlock.world.name)){
+        if (placedBlock.type == configuration.protect.coreBlockType && player.isSneaking) {
+            if (configuration.limitWorld.contains(placedBlock.world.name)) {
                 player.sendErrorTipMessage("${ChatColor.RED}해당 월드에서는 코어를 만들 수 없습니다!")
                 event.isCancelled = true
                 return
             }
 
-            if (landManager.isProtectedLand(placedBlock.chunk)){
+            if (landManager.isProtectedLand(placedBlock.chunk)) {
                 player.sendErrorTipMessage("${ChatColor.RED}다른 사람의 땅에는 코어를 만들 수 없습니다!")
                 event.isCancelled = true
                 return
@@ -53,7 +53,14 @@ class CoreListener : Listener {
             val chest = placedBlock.getRelative(0, 1, 0)
             chest.type = Material.CHEST
 
-            landManager.buyLand(player, chest, placedBlock)
+            val lands = landManager.createLand(player, chest, placedBlock)
+            Bukkit.getPluginManager().callEvent(
+                LandCreateEvent(
+                    lands,
+                    player,
+                    placedBlock.location
+                )
+            )
 
             event.isCancelled = false
         }
@@ -70,7 +77,7 @@ class CoreListener : Listener {
         if (landManager.isProtectedLand(chunk)) {
             //Core protection
             val block = event.block
-            if (block.type == Material.CHEST || block.type == configuration.protect.coreBlock) {
+            if (block.type == Material.CHEST || block.type == configuration.protect.coreBlockType) {
                 val upCoreLocation = lands.upCoreLocation
                 val downCoreLocation = lands.downCoreLocation
 

@@ -24,7 +24,7 @@ class Spawn : CommandExecutor {
                         Rank.OWNER, Rank.DELEGATOR, Rank.MEMBER -> lands.memberSpawn
                         else -> lands.visitorSpawn
                     }
-                    TeleportCooltime.addPlayer(player, spawn, configuration.command.spawnCooldown, {
+                    TeleportCooltime.addPlayer(player, spawn, configuration.commandCooldown.spawnCooldown, {
                         //Remove visitor data
                         val previousLands = landManager.getPlayerLands(uuid, Rank.VISITOR)
                         if (previousLands != null) {
