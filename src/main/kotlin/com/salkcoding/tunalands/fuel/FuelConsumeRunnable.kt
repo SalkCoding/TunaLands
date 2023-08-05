@@ -4,6 +4,7 @@ import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.displayManager
 import com.salkcoding.tunalands.file.ImposeTimeReader
 import com.salkcoding.tunalands.lands.Lands
+import com.salkcoding.tunalands.util.infoFormat
 import com.salkcoding.tunalands.util.warnFormat
 import org.bukkit.ChatColor
 import java.util.*
@@ -33,6 +34,7 @@ class FuelConsumeRunnable(private val playerLandMap: ConcurrentHashMap<UUID, Lan
 
     fun impose() {
         playerLandMap.forEach { (_, lands) ->
+            lands.sendMessageToOnlineMembers("연료가 차감되었습니다.".infoFormat())
             if (lands.enable) {
                 lands.fuelLeft -= lands.dayPerFuel//연료 차감
                 if (lands.fuelLeft <= 0) {//만료

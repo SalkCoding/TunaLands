@@ -205,9 +205,9 @@ class LandManager {
             return
         }
 
-        if (lands.landMap.filter { (_, type) ->
+        if (type == LandType.FARM && lands.landMap.filter { (_, type) ->
                 type == LandType.FARM
-            }.size > configuration.farm.limitOccupied) {
+            }.size >= configuration.farm.limitOccupied) {
             player.sendMessage("농작지는 ${configuration.farm.limitOccupied}개 이상 소유하실 수 없습니다.".errorFormat())
             return
         }
@@ -276,8 +276,8 @@ class LandManager {
             return
         }
         val limitOccupied = configuration.protect.getMaxOccupied(lands)
-        if(limitOccupied.maxChunkAmount <= lands.landMap.size){
-            player.sendMessage("더이상 땅을 구입할 수 없습니다.".errorFormat())
+        if (limitOccupied.maxChunkAmount <= lands.landMap.size) {
+            player.sendMessage("더 이상 땅을 구입할 수 없습니다.".errorFormat())
             return
         }
 

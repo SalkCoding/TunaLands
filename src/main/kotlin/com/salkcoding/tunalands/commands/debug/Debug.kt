@@ -254,6 +254,9 @@ class Debug : CommandExecutor {
             args[0] == "fuel" && args[1] == "decrease" -> {
                 landManager.getFuelConsumeRunner().impose()
                 sender.sendMessage("모든땅의 연료가 멤버수에 비례하여 감소하였습니다.".infoFormat())
+                bukkitLinkedAPI.onlinePlayersInfo.forEach{
+                    bukkitLinkedAPI.sendMessageAcrossServer(it.playerUUID,"관리자에 의해 연료가 차감되었습니다.".warnFormat())
+                }
                 return true
             }
 

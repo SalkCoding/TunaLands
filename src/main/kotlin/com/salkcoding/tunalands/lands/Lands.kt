@@ -109,7 +109,8 @@ data class Lands(
 
     fun getExpiredDateToMilliseconds(): Long {
         val expired =
-            LocalDateTime.now().plusDays((fuelLeft / dayPerFuel).toLong()).withHour(configuration.fuel.imposeTime)
+            LocalDateTime.now().plusDays((if (fuelLeft == dayPerFuel) 0 else (fuelLeft / dayPerFuel) - 1).toLong())
+                .withHour(configuration.fuel.imposeTime)
                 .withMinute(0).withSecond(0).withNano(0)
         val between = Duration.between(LocalDateTime.now(), expired)
         return if (between.isNegative || between.isZero) 0 else between.toMillis()
