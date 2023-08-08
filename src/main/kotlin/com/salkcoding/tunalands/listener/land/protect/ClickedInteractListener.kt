@@ -1,13 +1,16 @@
 package com.salkcoding.tunalands.listener.land.protect
 
+import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.sendErrorTipMessage
+import com.salkcoding.tunalands.util.toQuery
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
@@ -18,15 +21,18 @@ class ClickedInteractListener : Listener {
     fun onClicked(event: PlayerInteractEvent) {
         if (event.useInteractedBlock() == Event.Result.DENY) return
         if (event.action != Action.RIGHT_CLICK_BLOCK) return
-        if (event.isBlockInHand && event.item!!.type == Material.DIAMOND_BLOCK && event.player.isSneaking) return
+        if (event.isBlockInHand && (event.item!!.type == configuration.protect.coreBlockType && event.player.isSneaking)) return
+
         if (event.player.isOp) return
 
         val player = event.player
+        if (player.world.name in configuration.ignoreWorld) return
+
         val block = event.clickedBlock!!
         val lands = landManager.getLandsWithChunk(block.chunk)
-        if (lands == null) {
-            player.sendErrorTipMessage("${ChatColor.RED}중립 지역에서는 블럭과 상호작용이 할 수 없습니다!")
 
+        if (lands == null) {
+            player.sendErrorTipMessage("${ChatColor.RED}중립 지역에서는 블럭과 상호작용을 할 수 없습니다!")
             event.isCancelled = true
             return
         }

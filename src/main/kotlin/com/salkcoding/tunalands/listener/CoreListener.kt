@@ -18,26 +18,22 @@ class CoreListener : Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     fun onCorePlace(event: BlockPlaceEvent) {
-        if (event.isCancelled) return
-
         val placedBlock = event.block
         val player = event.player
         if (placedBlock.type == configuration.protect.coreBlockType && player.isSneaking) {
+            event.isCancelled = true
             if (configuration.limitWorld.contains(placedBlock.world.name)) {
                 player.sendErrorTipMessage("${ChatColor.RED}해당 월드에서는 코어를 만들 수 없습니다!")
-                event.isCancelled = true
                 return
             }
 
             if (landManager.isProtectedLand(placedBlock.chunk)) {
                 player.sendErrorTipMessage("${ChatColor.RED}다른 사람의 땅에는 코어를 만들 수 없습니다!")
-                event.isCancelled = true
                 return
             }
 
             if (landManager.getPlayerLands(player.uniqueId) != null) {
                 player.sendErrorTipMessage("${ChatColor.RED}이미 땅을 소유하고있습니다!")
-                event.isCancelled = true
                 return
             }
 
@@ -45,7 +41,6 @@ class CoreListener : Listener {
             if (player.hasNotEnoughMoney(price)) {
                 val delta = price - economy.getBalance(player)
                 player.sendErrorTipMessage("${ChatColor.RED}${"%.2f".format(delta)}캔이 부족합니다.")
-                event.isCancelled = true
                 return
             }
             economy.withdrawPlayer(player, price)
@@ -61,7 +56,6 @@ class CoreListener : Listener {
                     placedBlock.location
                 )
             )
-
             event.isCancelled = false
         }
     }

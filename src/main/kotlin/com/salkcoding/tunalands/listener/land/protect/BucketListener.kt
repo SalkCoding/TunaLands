@@ -1,5 +1,6 @@
 package com.salkcoding.tunalands.listener.land.protect
 
+import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
@@ -16,6 +17,7 @@ class BucketListener : Listener {
     fun onEmpty(event: PlayerBucketEmptyEvent) {
         if (event.isCancelled) return
         if (event.player.isOp) return
+        if (event.player.world.name in configuration.ignoreWorld) return
 
         val block = event.blockClicked
         val lands = landManager.getLandsWithChunk(block.chunk)
@@ -54,6 +56,8 @@ class BucketListener : Listener {
         if (event.player.isOp) return
 
         val player = event.player
+        if (player.world.name in configuration.ignoreWorld) return
+
         val block = event.blockClicked
         val lands = landManager.getLandsWithChunk(block.chunk)
         if (lands == null) {

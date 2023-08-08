@@ -1,5 +1,6 @@
 package com.salkcoding.tunalands.listener.land.protect
 
+import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
@@ -19,6 +20,8 @@ class BlockPlaceListener : Listener {
         if (event.player.isOp) return
 
         val player = event.player
+        if (player.world.name in configuration.ignoreWorld) return
+
         val chunk = event.block.chunk
         val lands = landManager.getLandsWithChunk(chunk)
         if (lands == null) {
@@ -62,10 +65,12 @@ class BlockPlaceListener : Listener {
                     if (!setting.canSow)
                         event.isCancelled = true
                 }
+
                 Material.FIRE -> {
                     if (!setting.useFlintAndSteel)
                         event.isCancelled = true
                 }
+
                 else -> {
                     if (!setting.placeBlock)
                         event.isCancelled = true

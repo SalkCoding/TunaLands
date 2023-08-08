@@ -13,6 +13,7 @@ class Config {
     val commandCooldown: CommandCooldown
     val commandPrice: CommandPrice
     val limitWorld: List<String>
+    val ignoreWorld: List<String>
     val flag: Flag
 
     init {
@@ -87,6 +88,10 @@ class Config {
         //Limit worlds
         limitWorld = config.getStringList("limitWorld")
         logger.info("limitWorld: $limitWorld")
+
+        //ignore worlds
+        ignoreWorld = config.getStringList("ignoreWorld")
+        logger.info("ignoreWorld: $ignoreWorld")
 
         // Flag prices
         val flagSection = config.getConfigurationSection("flag")!!

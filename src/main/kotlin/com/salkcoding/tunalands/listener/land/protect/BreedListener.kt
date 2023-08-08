@@ -1,5 +1,6 @@
 package com.salkcoding.tunalands.listener.land.protect
 
+import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
@@ -17,6 +18,7 @@ class BreedListener : Listener {
         if (event.isCancelled) return
         val player = event.breeder as? Player ?: return
         if (player.isOp) return
+        if (player.world.name in configuration.ignoreWorld) return
 
         val entity = event.entity
 

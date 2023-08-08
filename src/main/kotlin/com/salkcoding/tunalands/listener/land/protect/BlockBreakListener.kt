@@ -1,5 +1,6 @@
 package com.salkcoding.tunalands.listener.land.protect
 
+import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.sendErrorTipMessage
@@ -17,6 +18,8 @@ class BlockBreakListener : Listener {
         if (event.player.isOp) return
 
         val player = event.player
+        if (player.world.name in configuration.ignoreWorld) return
+
         val chunk = event.block.chunk
         val block = event.block
         val lands = landManager.getLandsWithChunk(chunk)
@@ -59,10 +62,12 @@ class BlockBreakListener : Listener {
                     if (!setting.canHarvest)
                         event.isCancelled = true
                 }
+
                 Material.ITEM_FRAME -> {
                     if (!setting.breakItemFrame)
                         event.isCancelled = true
                 }
+
                 else -> {
                     if (!setting.breakBlock)
                         event.isCancelled = true

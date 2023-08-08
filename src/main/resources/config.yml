@@ -80,3 +80,6 @@ command:
 limitWorld:
   - world_nether
   - world_the_end
+
+ignoreWorld:
+  - spawn

@@ -1,5 +1,6 @@
 package com.salkcoding.tunalands.listener.land.protect
 
+import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
@@ -19,6 +20,8 @@ class ChestedHorseListener : Listener {
 
         val entity = event.rightClicked as? ChestedHorse ?: return
         val player = event.player
+        if (player.world.name in configuration.ignoreWorld) return
+
         val lands = landManager.getLandsWithChunk(entity.chunk)
         if (lands == null) {
             player.sendErrorTipMessage("${ChatColor.RED}중립 지역에서는 말의 창고를 열 수 없습니다!")

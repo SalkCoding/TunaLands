@@ -13,6 +13,7 @@ import org.bukkit.Location
 import java.time.Duration
 import java.time.LocalDateTime
 import java.util.*
+import kotlin.math.ceil
 
 data class Lands(
     var ownerName: String,
@@ -109,7 +110,7 @@ data class Lands(
 
     fun getExpiredDateToMilliseconds(): Long {
         val expired =
-            LocalDateTime.now().plusDays((if (fuelLeft == dayPerFuel) 0 else (fuelLeft / dayPerFuel) - 1).toLong())
+            LocalDateTime.now().plusDays(ceil(fuelLeft / dayPerFuel.toDouble()).toLong())
                 .withHour(configuration.fuel.imposeTime)
                 .withMinute(0).withSecond(0).withNano(0)
         val between = Duration.between(LocalDateTime.now(), expired)

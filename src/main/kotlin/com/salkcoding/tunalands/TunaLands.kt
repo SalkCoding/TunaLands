@@ -155,6 +155,7 @@ class TunaLands : JavaPlugin() {
             InventoryCloseListener(),
             InventoryDragListener(),
             JoinListener(),
+            LandJoinListener()
         ).forEach { listener ->
             server.pluginManager.registerEvents(listener, this)
         }
