@@ -57,9 +57,11 @@ class LandManager {
 
 
         displayManager.removeDisplay(lands)
+        val listOfQueries = lands.landMap.keys.toList()
         lands.landMap.forEach { (query, _) ->
             landMap.remove(query)
         }
+        onChunkInfoChange(listOfQueries)
         playerLandMap.remove(uuid)
 
         Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
@@ -212,7 +214,13 @@ class LandManager {
             return
         }
 
+        if (landMap.contains(query)){
+            landMap[query]!!.landType = type
+        } else {
+            landMap[query] = Lands.ChunkInfo(lands.ownerName, lands.ownerUUID, chunk.world.name, chunk.x, chunk.z, type)
+        }
         lands.landMap[query] = type
+        onChunkInfoChange(listOf(query))
         flag.amount -= 1
         player.sendMessage("땅의 용도가 ${type}으로 전환되었습니다!".infoFormat())
         chunk.world.playSetChunkEffect(player, chunk, Material.BROWN_TERRACOTTA)
@@ -249,6 +257,7 @@ class LandManager {
         playerLandMap[uuid] = lands
         val chunkInfo = Lands.ChunkInfo(player.name, uuid, chunk.world.name, chunk.x, chunk.z, LandType.NORMAL)
         landMap[query] = chunkInfo
+        onChunkInfoChange(listOf(query))
 
         displayManager.createDisplay(lands)
 
@@ -304,6 +313,7 @@ class LandManager {
         )
 
         landMap[query] = chunkInfo
+        onChunkInfoChange(listOf(query))
         Bukkit.getScheduler().runTaskAsynchronously(tunaLands, Runnable {
             val floodFill = lands.checkFloodFill()
             Bukkit.getScheduler().runTask(tunaLands, Runnable {
@@ -358,6 +368,7 @@ class LandManager {
 
                             player.sendMessage("제거되었습니다.".infoFormat())
                             player.world.playSellChunkEffect(player, chunk)
+                            onChunkInfoChange(listOf(query))
                         } else {
                             landMap[query] = removedInfo
                             lands.landMap[query] = removedInfo.landType
@@ -389,6 +400,7 @@ class LandManager {
         val chunkInfo =
             Lands.ChunkInfo(lands.ownerName, lands.ownerUUID, chunk.world.name, chunk.x, chunk.z, LandType.NORMAL)
         landMap[query] = chunkInfo
+        onChunkInfoChange(listOf(query))
 
         player.sendMessage("해당 위치의 땅을 강제 구매했습니다.".infoFormat())
         player.world.playBuyChunkEffect(player, chunk)
@@ -418,6 +430,8 @@ class LandManager {
         if (lands.landMap.isEmpty()) {
             playerLandMap.remove(player.uniqueId)
         }
+        landMap.remove(query)
+        onChunkInfoChange(listOf(query))
 
         player.sendMessage("제거되었습니다.".infoFormat())
         player.world.playSellChunkEffect(player, chunk)
@@ -428,5 +442,22 @@ class LandManager {
 
         PlayerLandMapWriter.savePlayerLandMap()
         ImposeTimeWriter.saveImposeTime()
+    }
+
+    fun onChunkInfoChange(changedChunkQueries: List<String>) {
+        val updates = changedChunkQueries.associateWith {
+            val chunkInfo = landMap[it]
+            if (chunkInfo == null) {
+                null
+            } else {
+                Pair(chunkInfo.worldName, chunkInfo.landType)
+            }
+        }
+        tunaLands.nonMainServerSyncSender.sendChunkInfo(updates)
+    }
+
+
+    fun getLandMap(): ConcurrentHashMap<String, Lands.ChunkInfo> {
+        return landMap
     }
 }
