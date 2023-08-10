@@ -3,7 +3,7 @@ plugins {
 }
 
 group "kr.kro.salk"
-version "1.2.4"
+version "1.2.5"
 
 repositories {
     mavenCentral()
@@ -30,9 +30,9 @@ dependencies {
     compileOnly "org.purpurmc.purpur:purpur-api:1.20.1-R0.1-SNAPSHOT"
     compileOnly "com.github.MilkBowl:VaultAPI:1.7"
     compileOnly files("lib/bukkitlinked-1.4.2-SNAPSHOT-jar-with-dependencies.jar")
-    compileOnly files('lib/Metamorphosis-2.3.0.jar')
+    compileOnly files('lib/Metamorphosis-api-2.7.1.jar')
 
-    compileOnly"com.comphenix.protocol:ProtocolLib:4.7.0"
+    compileOnly "com.comphenix.protocol:ProtocolLib:5.0.0"
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
