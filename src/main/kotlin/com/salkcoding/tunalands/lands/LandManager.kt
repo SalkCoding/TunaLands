@@ -443,15 +443,15 @@ class LandManager {
     }
 
     fun onChunkInfoChange(changedChunkQueries: List<String>) {
-        val updates = changedChunkQueries.associateWith {
-            val chunkInfo = landMap[it]
-            if (chunkInfo == null) {
-                null
-            } else {
-                Pair(chunkInfo.worldName, chunkInfo.landType)
-            }
-        }
-        tunaLands.nonMainServerSyncSender.sendChunkInfo(updates)
+//        val updates = changedChunkQueries.associateWith {
+//            val chunkInfo = landMap[it]
+//            if (chunkInfo == null) {
+//                null
+//            } else {
+//                Pair(chunkInfo.worldName, chunkInfo.landType)
+//            }
+//        }
+//        tunaLands.nonMainServerSyncSender.sendChunkInfo(updates)
     }
 
 
