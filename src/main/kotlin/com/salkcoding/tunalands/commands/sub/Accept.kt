@@ -46,6 +46,18 @@ class Accept : CommandExecutor {
                     val host = data.host
                     val lands = landManager.getPlayerLands(host.uniqueId, Rank.OWNER, Rank.DELEGATOR)
                     if (lands != null) {
+                        if (data.targetRank == Rank.MEMBER) {
+                            if (lands.memberMap.filter { it.value.rank == Rank.OWNER || it.value.rank == Rank.DELEGATOR || it.value.rank == Rank.MEMBER }.size >= configuration.maxMemberLimit) {
+                                player.sendMessage("해당 마을은 이미 최대 인원 ${configuration.maxMemberLimit}명에 도달하여 초대를 수락할 수 없습니다!".errorFormat())
+                                return
+                            }
+                        } else if (data.targetRank == Rank.PARTTIMEJOB) {
+                            if (lands.memberMap.filter { it.value.rank == Rank.PARTTIMEJOB }.size >= configuration.maxAlbaLimit) {
+                                player.sendMessage("해당 마을은 이미 최대 알바 인원 ${configuration.maxAlbaLimit}명에 도달하여 초대를 수락할 수 없습니다!".errorFormat())
+                                return
+                            }
+                        }
+
                         player.sendMessage("초대를 수락했습니다.".infoFormat())
 
                         val rankString = when (data.targetRank) {
@@ -85,6 +97,17 @@ class Accept : CommandExecutor {
                     val host = data.host
                     val lands = landManager.getPlayerLands(host.uniqueId, Rank.OWNER, Rank.DELEGATOR)
                     if (lands != null) {
+                        if (data.targetRank == Rank.MEMBER) {
+                            if (lands.memberMap.filter { it.value.rank == Rank.OWNER || it.value.rank == Rank.DELEGATOR || it.value.rank == Rank.MEMBER }.size >= configuration.maxMemberLimit) {
+                                bukkitLinkedAPI.sendMessageAcrossServer(offlinePlayer.name, "해당 마을은 이미 최대 인원 ${configuration.maxMemberLimit}명에 도달하여 초대를 수락할 수 없습니다!".errorFormat())
+                                return
+                            }
+                        } else if (data.targetRank == Rank.PARTTIMEJOB) {
+                            if (lands.memberMap.filter { it.value.rank == Rank.PARTTIMEJOB }.size >= configuration.maxAlbaLimit) {
+                                bukkitLinkedAPI.sendMessageAcrossServer(offlinePlayer.name, "해당 마을은 이미 최대 알바 인원 ${configuration.maxAlbaLimit}명에 도달하여 초대를 수락할 수 없습니다!".errorFormat())
+                                return
+                            }
+                        }
                         bukkitLinkedAPI.sendMessageAcrossServer(offlinePlayer.name, "초대를 수락했습니다.".infoFormat())
 
                         val rankString = when (data.targetRank) {
