@@ -5,7 +5,7 @@ import com.comphenix.protocol.ProtocolManager
 import com.salkcoding.tunalands.border.BorderManager
 import com.salkcoding.tunalands.bungee.BroadcastLandMembersRunnable
 import com.salkcoding.tunalands.bungee.CommandListener
-import com.salkcoding.tunalands.bungee.NonMainServerSyncSender
+//import com.salkcoding.tunalands.bungee.NonMainServerSyncSender
 import com.salkcoding.tunalands.commands.LandCommandHandler
 import com.salkcoding.tunalands.commands.debug.Debug
 import com.salkcoding.tunalands.commands.sub.*
@@ -48,7 +48,7 @@ lateinit var protocolManager: ProtocolManager
 class TunaLands : JavaPlugin() {
 
     val broadcastLandMembersRunnable: BroadcastLandMembersRunnable = BroadcastLandMembersRunnable(LinkedBlockingQueue())
-    val nonMainServerSyncSender: NonMainServerSyncSender =  NonMainServerSyncSender()
+//    val nonMainServerSyncSender: NonMainServerSyncSender =  NonMainServerSyncSender()
 
     override fun onEnable() {
         val tempMetamorphosis = server.pluginManager.getPlugin("Metamorphosis") as? Metamorphosis
@@ -123,7 +123,7 @@ class TunaLands : JavaPlugin() {
 
         listOf(
             //For bungee command support
-            nonMainServerSyncSender,
+//            nonMainServerSyncSender,
             CommandListener(),
             //Protect listener
             ArmorStandListener(),
