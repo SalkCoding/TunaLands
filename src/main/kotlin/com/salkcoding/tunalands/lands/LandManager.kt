@@ -54,8 +54,6 @@ class LandManager {
         else
             downCoreLocation.block.breakNaturally()
 
-
-
         displayManager.removeDisplay(lands)
         val listOfQueries = lands.landMap.keys.toList()
         lands.landMap.forEach { (query, _) ->

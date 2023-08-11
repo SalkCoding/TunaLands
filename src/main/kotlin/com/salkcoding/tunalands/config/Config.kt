@@ -15,6 +15,8 @@ class Config {
     val limitWorld: List<String>
     val ignoreWorld: List<String>
     val flag: Flag
+    val maxMemberLimit: Int
+    val maxAlbaLimit: Int
 
     init {
         tunaLands.saveDefaultConfig()
@@ -23,6 +25,10 @@ class Config {
         val logger = tunaLands.logger
 
         currentServerName = config.getString("serverName")!!
+
+        maxMemberLimit = config.getInt("maxMemberLimit")
+        maxAlbaLimit = config.getInt("maxAlbaLimit")
+
         //Protect
         val configProtect = config.getConfigurationSection("protect")!!
         protect = Protect(

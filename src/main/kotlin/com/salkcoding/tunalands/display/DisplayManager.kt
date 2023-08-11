@@ -5,7 +5,6 @@ import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.toChunkQuery
 import com.salkcoding.tunalands.util.toQuery
 import org.bukkit.Bukkit
-import org.bukkit.ChatColor
 import org.bukkit.Chunk
 
 class DisplayManager {
@@ -15,15 +14,17 @@ class DisplayManager {
     //Auto update scheduler
     private val task = Bukkit.getScheduler().runTaskTimer(tunaLands, Runnable {
         displayMap.forEach { (_, display) ->
-            if (!display.isPause)
-                display.update()
+            display.update()
         }
     }, 20, 20)
 
     fun createDisplay(lands: Lands) {
         val query = lands.upCoreLocation.chunk.toQuery()
-        if (query in displayMap)
+        if (query in displayMap) {
+            val display = displayMap[query]!!
+            if (!display.isAlive()) display.create()
             return
+        }
 
         val display = TimerDisplay(lands)
         display.create()

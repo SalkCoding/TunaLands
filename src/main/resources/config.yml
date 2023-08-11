@@ -2,6 +2,7 @@ serverName: "lobby"
 
 #All time units are in 'tick' units.
 maxMemberLimit: 10
+maxAlbaLimit: 10
 
 protect:
   #Material type https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html

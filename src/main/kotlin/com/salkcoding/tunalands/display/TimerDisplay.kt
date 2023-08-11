@@ -32,13 +32,13 @@ class TimerDisplay(
         }
     }
 
-    override fun update(): Boolean {
+    override fun update() {
         try {
-            if (!hologram.isPersistent)
-                throw IllegalStateException("Hologram already disabled!")
+            if (hologram.isDead) create()
         } catch (e: UninitializedPropertyAccessException) {
             throw IllegalStateException("Hologram isn't initialized!")
         }
+        if (isPause) return
 
         val builder = StringBuilder()
         // Text Line 0 (땅 이름)
@@ -78,12 +78,19 @@ class TimerDisplay(
         builder.append("* 하루당 ${lands.dayPerFuel}개 소모")
 
         hologram.text = builder.toString()
-        return true
     }
 
     override fun remove() {
         try {
             hologram.remove()
+        } catch (e: UninitializedPropertyAccessException) {
+            throw IllegalStateException("Hologram not created!")
+        }
+    }
+
+    override fun isAlive(): Boolean {
+        try {
+            return hologram.isDead
         } catch (e: UninitializedPropertyAccessException) {
             throw IllegalStateException("Hologram not created!")
         }
