@@ -11,7 +11,7 @@ abstract class Display {
         throw NotImplementedError("Create method not implemented")
     }
 
-    open fun update(): Boolean {
+    open fun update() {
         throw NotImplementedError("Update method not implemented")
     }
 

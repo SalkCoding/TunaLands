@@ -14,8 +14,7 @@ class DisplayManager {
     //Auto update scheduler
     private val task = Bukkit.getScheduler().runTaskTimer(tunaLands, Runnable {
         displayMap.forEach { (_, display) ->
-            if (!display.isPause)
-                display.update()
+            display.update()
         }
     }, 20, 20)
 

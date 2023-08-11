@@ -32,13 +32,13 @@ class TimerDisplay(
         }
     }
 
-    override fun update(): Boolean {
+    override fun update() {
         try {
-            if (!hologram.isDead)
-                throw IllegalStateException("Hologram already disabled!")
+            if (hologram.isDead) create()
         } catch (e: UninitializedPropertyAccessException) {
             throw IllegalStateException("Hologram isn't initialized!")
         }
+        if (isPause) return
 
         val builder = StringBuilder()
         // Text Line 0 (땅 이름)
@@ -78,7 +78,6 @@ class TimerDisplay(
         builder.append("* 하루당 ${lands.dayPerFuel}개 소모")
 
         hologram.text = builder.toString()
-        return true
     }
 
     override fun remove() {
