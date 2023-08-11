@@ -34,7 +34,7 @@ class TimerDisplay(
 
     override fun update(): Boolean {
         try {
-            if (!hologram.isPersistent)
+            if (!hologram.isDead)
                 throw IllegalStateException("Hologram already disabled!")
         } catch (e: UninitializedPropertyAccessException) {
             throw IllegalStateException("Hologram isn't initialized!")
@@ -84,6 +84,14 @@ class TimerDisplay(
     override fun remove() {
         try {
             hologram.remove()
+        } catch (e: UninitializedPropertyAccessException) {
+            throw IllegalStateException("Hologram not created!")
+        }
+    }
+
+    override fun isAlive(): Boolean {
+        try {
+            return hologram.isDead
         } catch (e: UninitializedPropertyAccessException) {
             throw IllegalStateException("Hologram not created!")
         }

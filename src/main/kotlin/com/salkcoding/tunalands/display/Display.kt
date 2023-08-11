@@ -16,7 +16,11 @@ abstract class Display {
     }
 
     open fun remove() {
-        throw NotImplementedError("Create method not implemented")
+        throw NotImplementedError("Remove method not implemented")
+    }
+
+    open fun isAlive(): Boolean {
+        throw NotImplementedError("isAlive method not implemented")
     }
 
     fun setMessage(vararg messages: String) {
