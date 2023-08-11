@@ -43,7 +43,7 @@ data class Lands(
     val partTimeJobSetting: LandSetting = LandSetting(),
     val memberSetting: LandSetting = LandSetting(),
     val delegatorSetting: DelegatorSetting = DelegatorSetting(),
-    val memberMap: MutableMap<UUID, MemberData> = ObservableMap(
+    val memberMap: ObservableMap<UUID, MemberData> = ObservableMap(
         plugin = tunaLands,
         map = mutableMapOf(),
         onChange = object : ObservableMap.Observed<UUID, MemberData> {
