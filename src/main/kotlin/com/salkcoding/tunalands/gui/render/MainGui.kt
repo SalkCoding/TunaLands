@@ -65,7 +65,7 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
         created.timeInMillis = landHistory.createdMillisecond
 
         task = Bukkit.getScheduler().runTaskTimer(tunaLands, Runnable {
-            val timeLeftUntilExpiration = lands.fuelLeft / lands.dayPerFuel
+            val timeLeftUntilExpiration = lands.fuelLeft.toDouble() / lands.dayPerFuel.toDouble()
             //Expired
             if (lands.enable && timeLeftUntilExpiration <= 0) {//Just close, DO NOT DELETE DATA OR BLOCK HERE
                 player.sendMessage("보호 기간이 만료되어, 지역 보호가 비활성화됩니다!".warnFormat())

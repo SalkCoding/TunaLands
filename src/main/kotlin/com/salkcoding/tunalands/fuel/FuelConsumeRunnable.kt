@@ -37,7 +37,7 @@ class FuelConsumeRunnable(private val playerLandMap: ConcurrentHashMap<UUID, Lan
             lands.sendMessageToOnlineMembers("연료가 차감되었습니다.".infoFormat())
             if (lands.enable) {
                 lands.fuelLeft -= lands.dayPerFuel//연료 차감
-                if (lands.fuelLeft <= 0) {//만료
+                if (lands.fuelLeft < 0) {//만료
                     lands.sendMessageToOnlineMembers(
                         listOf(
                             "땅 보호 기간이 만료되어 비활성화 상태로 전환됩니다!".warnFormat(),
