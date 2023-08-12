@@ -70,7 +70,7 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
             if (lands.enable && timeLeftUntilExpiration <= 0) {//Just close, DO NOT DELETE DATA OR BLOCK HERE
                 player.sendMessage("보호 기간이 만료되어, 지역 보호가 비활성화됩니다!".warnFormat())
                 task.cancel()
-                Bukkit.getScheduler().runTask(tunaLands, Runnable(player::closeInventory))
+//                Bukkit.getScheduler().runTask(tunaLands, Runnable(player::closeInventory))
                 return@Runnable
             }
             //Not expired or already disabled
