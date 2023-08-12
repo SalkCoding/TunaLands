@@ -38,6 +38,7 @@ class TimerDisplay(
         } catch (e: UninitializedPropertyAccessException) {
             throw IllegalStateException("Hologram isn't initialized!")
         }
+
         if (isPause) return
 
         val builder = StringBuilder()
@@ -83,14 +84,6 @@ class TimerDisplay(
     override fun remove() {
         try {
             hologram.remove()
-        } catch (e: UninitializedPropertyAccessException) {
-            throw IllegalStateException("Hologram not created!")
-        }
-    }
-
-    override fun isAlive(): Boolean {
-        try {
-            return hologram.isDead
         } catch (e: UninitializedPropertyAccessException) {
             throw IllegalStateException("Hologram not created!")
         }

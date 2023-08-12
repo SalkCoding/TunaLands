@@ -20,11 +20,8 @@ class DisplayManager {
 
     fun createDisplay(lands: Lands) {
         val query = lands.upCoreLocation.chunk.toQuery()
-        if (query in displayMap) {
-            val display = displayMap[query]!!
-            if (!display.isAlive()) display.create()
+        if (query in displayMap)
             return
-        }
 
         val display = TimerDisplay(lands)
         display.create()

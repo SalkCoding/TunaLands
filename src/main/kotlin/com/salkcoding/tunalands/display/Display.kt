@@ -19,10 +19,6 @@ abstract class Display {
         throw NotImplementedError("Remove method not implemented")
     }
 
-    open fun isAlive(): Boolean {
-        throw NotImplementedError("isAlive method not implemented")
-    }
-
     fun setMessage(vararg messages: String) {
         try {
             hologram.text = messages.joinToString("\n")

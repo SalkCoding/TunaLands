@@ -3,7 +3,6 @@ package com.salkcoding.tunalands.listener
 import com.salkcoding.tunalands.gui.render.openMainGui
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
-import com.salkcoding.tunalands.displayManager
 import com.salkcoding.tunalands.util.sendErrorTipMessage
 import org.bukkit.ChatColor
 import org.bukkit.Material
@@ -38,7 +37,6 @@ class ChestGuiOpenListener : Listener {
                     )
                     else -> player.sendErrorTipMessage("${ChatColor.RED}권한이 없습니다!")
                 }
-                displayManager.createDisplay(lands)
             } else player.sendErrorTipMessage("${ChatColor.RED}권한이 없습니다!")
         }
     }
