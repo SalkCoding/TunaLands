@@ -294,7 +294,6 @@ class LandManager {
             player.sendMessage("${"%.2f".format(delta)}캔이 부족합니다.".errorFormat())
             return
         }
-        economy.withdrawPlayer(player, price)
 
         if (!chunk.isMeetOtherChunk(lands.landMap)) {
             player.sendMessage("바로 옆에 자신의 땅이 맞닿아있어야합니다.".errorFormat())
@@ -317,6 +316,7 @@ class LandManager {
             Bukkit.getScheduler().runTask(tunaLands, Runnable {
                 if (floodFill) {
                     flag.amount -= 1
+                    economy.withdrawPlayer(player, price)
 
                     player.sendMessage("해당 위치의 땅을 구매했습니다.".infoFormat())
                     player.world.playBuyChunkEffect(player, chunk)
