@@ -24,6 +24,10 @@ abstract class Display {
     }
 
     fun setMessage(vararg messages: String) {
-        hologram.text = messages.joinToString("\n")
+        try {
+            hologram.text = messages.joinToString("\n")
+        } catch (e: UninitializedPropertyAccessException) {
+            throw IllegalStateException("Hologram isn't initialized!")
+        }
     }
 }

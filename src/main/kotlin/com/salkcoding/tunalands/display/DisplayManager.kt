@@ -99,9 +99,9 @@ class DisplayManager {
     }
 
     fun dispose() {
+        task.cancel()
         displayMap.forEach { (_, display) ->
             display.remove()
         }
-        task.cancel()
     }
 }
