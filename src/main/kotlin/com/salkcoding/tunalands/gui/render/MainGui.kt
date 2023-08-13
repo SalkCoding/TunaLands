@@ -331,6 +331,10 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                 player.sendMessage("${ChatColor.WHITE}남은 시간: ${ChatColor.GOLD}$timeLeft".infoFormat())
                 player.playSound(player.location, Sound.BLOCK_BLASTFURNACE_FIRE_CRACKLE, 2.5f, 1f)
                 event.inventory.setItem(4, null)
+
+                Bukkit.getPluginManager().callEvent(
+                    LandFuelAddEvent(lands, player, addedFuelItem.amount)
+                )
             }, 2)
         }
     }
