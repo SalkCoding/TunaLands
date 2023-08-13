@@ -1,6 +1,5 @@
 package com.salkcoding.tunalands.listener
 
-import com.salkcoding.tunalands.displayManager
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.util.infoFormat
 import org.bukkit.event.EventHandler
@@ -13,8 +12,6 @@ class JoinListener : Listener {
     fun onJoinAlarm(event: PlayerJoinEvent) {
         val player = event.player
         val lands = landManager.getPlayerLands(player.uniqueId) ?: return
-        //이미 있으면 안만들어짐
-        displayManager.createDisplay(lands)
 
         if (!lands.enable) return
 

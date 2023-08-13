@@ -59,6 +59,9 @@ class LandManager {
         lands.landMap.forEach { (query, _) ->
             landMap.remove(query)
         }
+        //For ObservableMap timer
+        lands.memberMap.disable()
+
         onChunkInfoChange(listOfQueries)
         playerLandMap.remove(uuid)
 

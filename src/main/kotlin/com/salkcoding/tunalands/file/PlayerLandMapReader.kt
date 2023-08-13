@@ -73,7 +73,7 @@ object PlayerLandMapReader {
             jsonObject["welcomeMessage"].asJsonArray.forEach {
                 welcomeMessage.add(ChatColor.translateAlternateColorCodes('&', it.asString))
             }
-            val memberMap: MutableMap<UUID, Lands.MemberData> = ObservableMap(
+            val memberMap: ObservableMap<UUID, Lands.MemberData> = ObservableMap(
                 map = mutableMapOf(),
                 onChange = object : ObservableMap.Observed<UUID, Lands.MemberData> {
                     override fun syncChanges(newMap: MutableMap<UUID, Lands.MemberData>) {
