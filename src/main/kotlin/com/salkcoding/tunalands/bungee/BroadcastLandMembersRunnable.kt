@@ -23,7 +23,7 @@ class BroadcastLandMembersRunnable(
                     }
                     message = msg
                 } else {
-                    message += "&$msg"
+                    message += ".$msg"
                 }
                 i++
             }
