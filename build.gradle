@@ -3,7 +3,7 @@ plugins {
 }
 
 group "kr.kro.salk"
-version "1.2.8-b"
+version "1.2.8"
 
 repositories {
     mavenCentral()

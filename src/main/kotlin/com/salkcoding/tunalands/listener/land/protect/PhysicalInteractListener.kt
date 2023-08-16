@@ -55,6 +55,11 @@ class PhysicalInteractListener : Listener {
                         event.isCancelled = true
                 }
 
+                Material.TRIPWIRE -> {
+                    if (!setting.useCircuit)
+                        event.isCancelled = true
+                }
+
                 Material.FARMLAND -> {
                     if (!setting.canRuinFarmland)
                         event.isCancelled = true

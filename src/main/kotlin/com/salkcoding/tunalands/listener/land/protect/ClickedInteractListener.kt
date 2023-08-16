@@ -1,16 +1,14 @@
 package com.salkcoding.tunalands.listener.land.protect
 
 import com.salkcoding.tunalands.configuration
-import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.landManager
+import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.sendErrorTipMessage
-import com.salkcoding.tunalands.util.toQuery
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
-import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.player.PlayerInteractEvent
