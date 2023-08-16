@@ -5,6 +5,7 @@ import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.sendErrorTipMessage
 import org.bukkit.ChatColor
+import org.bukkit.Material
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler

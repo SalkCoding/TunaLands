@@ -44,6 +44,10 @@ compileJava {
     targetCompatibility = JavaVersion.VERSION_17
 }
 
+test{
+    useJUnitPlatform()
+}
+
 task copyBuild(type: Copy) {
     dependsOn 'build'
     from 'build/libs'

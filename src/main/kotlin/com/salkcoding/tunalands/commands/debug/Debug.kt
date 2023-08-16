@@ -93,10 +93,14 @@ class Debug : CommandExecutor {
             }
 
             args[0] == "info" && args.size == 2 -> {
-                val name = args[1]
-                val list = landManager.getPlayerLandList(Bukkit.getOfflinePlayer(name).uniqueId)?.toList()
-                if (list != null) sender.sendMessage("$name 소유의 땅 목록: ${list.joinToString(separator = ", ")}".infoFormat())
-                else sender.sendMessage("소유한 땅이 없습니다.".infoFormat())
+                val uuid = bukkitLinkedAPI.getPlayerInfo(args[1]).playerUUID
+                val lands = landManager.getPlayerLands(uuid)
+                if(lands == null){
+                    sender.sendMessage("소속된 땅이 없습니다.".warnFormat())
+                    return true
+                }
+
+                sender.sendMessage("땅 정보: $lands".infoFormat())
                 return true
             }
 
@@ -154,6 +158,18 @@ class Debug : CommandExecutor {
                         val target = Bukkit.getOfflinePlayer(args[2])
                         leftManager.resetMilliseconds(target.uniqueId)
                         sender.sendMessage("해당 유저의 재가입 쿨타임을 초기화하였습니다.".infoFormat())
+                    }
+                }
+                return true
+            }
+
+            args[0] == "reset" && args.size == 2 -> {
+                when (args[1]) {
+                    "dayperfuel" -> {
+                        landManager.getPlayerLandMap().forEach { (_, lands) ->
+                            lands.dayPerFuel = configuration.fuel.getFuelRequirement(lands).dayPerFuel
+                        }
+                        sender.sendMessage("모든 땅의 dayPerFuel이 다시 계산되었습니다.")
                     }
                 }
                 return true
@@ -254,8 +270,8 @@ class Debug : CommandExecutor {
             args[0] == "fuel" && args[1] == "decrease" -> {
                 landManager.getFuelConsumeRunner().impose()
                 sender.sendMessage("모든땅의 연료가 멤버수에 비례하여 감소하였습니다.".infoFormat())
-                bukkitLinkedAPI.onlinePlayersInfo.forEach{
-                    bukkitLinkedAPI.sendMessageAcrossServer(it.playerUUID,"관리자에 의해 연료가 차감되었습니다.".warnFormat())
+                bukkitLinkedAPI.onlinePlayersInfo.forEach {
+                    bukkitLinkedAPI.sendMessageAcrossServer(it.playerUUID, "관리자에 의해 연료가 차감되었습니다.".warnFormat())
                 }
                 return true
             }

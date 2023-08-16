@@ -134,18 +134,6 @@ class LandManager {
         return landsList
     }
 
-    fun getPlayerLandList(
-        playerUUID: UUID,
-        vararg filter: Rank = arrayOf(*Rank.values())
-    ): HashMap<String, LandType>? {
-        playerLandMap.forEach { (_, lands) ->
-            if (playerUUID in lands.memberMap)
-                if (lands.memberMap[playerUUID]!!.rank in filter)
-                    return lands.landMap
-        }
-        return null
-    }
-
     fun getLandsWithChunk(chunk: Chunk): Lands? {
         val query = chunk.toQuery()
         return if (landMap.containsKey(query)) {

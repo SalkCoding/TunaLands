@@ -48,8 +48,8 @@ data class Lands(
         map = mutableMapOf(),
         onChange = object : ObservableMap.Observed<UUID, MemberData> {
             override fun syncChanges(newMap: MutableMap<UUID, MemberData>) {
-                val message = newMap.map {
-                    "${it.value.uuid},${Bukkit.getOfflinePlayer(it.value.uuid).name},${it.value.rank}"
+                val message = newMap.map { (uuid, data) ->
+                    "${uuid},${Bukkit.getOfflinePlayer(uuid).name},${data.rank}"
                 }.joinToString(";")
 
                 tunaLands.broadcastLandMembersRunnable.queue.offer(message)
@@ -115,6 +115,28 @@ data class Lands(
                 .withMinute(0).withSecond(0).withNano(0)
         val between = Duration.between(LocalDateTime.now(), expired)
         return if (between.isNegative || between.isZero) 0 else between.toMillis()
+    }
+
+    override fun toString(): String {
+        val normal = landMap.values.count { it == LandType.NORMAL }
+        val delegator = memberMap.values.count { it.rank == Rank.DELEGATOR }
+        val member = memberMap.values.count { it.rank == Rank.MEMBER }
+        val parttime = memberMap.values.count { it.rank == Rank.PARTTIMEJOB }
+        val visitor = memberMap.values.count { it.rank == Rank.VISITOR }
+        return "{ownerName: $ownerName, " +
+                "ownerUUID: $ownerUUID, " +
+                "land: ${landMap.size}" +
+                "(Normal: ${normal}, " +
+                "(Farm: ${landMap.size - normal}), " +
+                "fuelLeft: $fuelLeft, " +
+                "dayPerFuel: $dayPerFuel, " +
+                "member: ${memberMap.size}" +
+                "(delegator: $delegator, " +
+                "member: $member, " +
+                "parttime: $parttime, " +
+                "visitor: $visitor), " +
+                "ban: ${banMap.size}" +
+                "}"
     }
 
 }
