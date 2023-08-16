@@ -58,7 +58,9 @@ class Accept : CommandExecutor {
                             }
                         }
 
+                        val day = configuration.commandCooldown.rejoinCooldown / 1728000
                         player.sendMessage("초대를 수락했습니다.".infoFormat())
+                        player.sendMessage("/tl leave를 통해 탈퇴할 수 있으며, ${day}일 후 다른 땅에 재가입 가능합니다.".infoFormat())
 
                         val rankString = when (data.targetRank) {
                             Rank.MEMBER -> "멤버"
@@ -99,16 +101,28 @@ class Accept : CommandExecutor {
                     if (lands != null) {
                         if (data.targetRank == Rank.MEMBER) {
                             if (lands.memberMap.filter { it.value.rank == Rank.OWNER || it.value.rank == Rank.DELEGATOR || it.value.rank == Rank.MEMBER }.size >= configuration.maxMemberLimit) {
-                                bukkitLinkedAPI.sendMessageAcrossServer(offlinePlayer.name, "해당 마을은 이미 최대 인원 ${configuration.maxMemberLimit}명에 도달하여 초대를 수락할 수 없습니다!".errorFormat())
+                                bukkitLinkedAPI.sendMessageAcrossServer(
+                                    offlinePlayer.name,
+                                    "해당 마을은 이미 최대 인원 ${configuration.maxMemberLimit}명에 도달하여 초대를 수락할 수 없습니다!".errorFormat()
+                                )
                                 return
                             }
                         } else if (data.targetRank == Rank.PARTTIMEJOB) {
                             if (lands.memberMap.filter { it.value.rank == Rank.PARTTIMEJOB }.size >= configuration.maxAlbaLimit) {
-                                bukkitLinkedAPI.sendMessageAcrossServer(offlinePlayer.name, "해당 마을은 이미 최대 알바 인원 ${configuration.maxAlbaLimit}명에 도달하여 초대를 수락할 수 없습니다!".errorFormat())
+                                bukkitLinkedAPI.sendMessageAcrossServer(
+                                    offlinePlayer.name,
+                                    "해당 마을은 이미 최대 알바 인원 ${configuration.maxAlbaLimit}명에 도달하여 초대를 수락할 수 없습니다!".errorFormat()
+                                )
                                 return
                             }
                         }
+
+                        val day = configuration.commandCooldown.rejoinCooldown / 1728000
                         bukkitLinkedAPI.sendMessageAcrossServer(offlinePlayer.name, "초대를 수락했습니다.".infoFormat())
+                        bukkitLinkedAPI.sendMessageAcrossServer(
+                            offlinePlayer.name,
+                            "/tl leave를 통해 탈퇴할 수 있으며, ${day}일 후 다른 땅에 재가입 가능합니다.".infoFormat()
+                        )
 
                         val rankString = when (data.targetRank) {
                             Rank.MEMBER -> "멤버"

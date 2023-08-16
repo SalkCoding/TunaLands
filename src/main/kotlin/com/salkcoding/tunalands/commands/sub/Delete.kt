@@ -3,6 +3,7 @@ package com.salkcoding.tunalands.commands.sub
 import com.salkcoding.tunalands.bukkitLinkedAPI
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
+import com.salkcoding.tunalands.metamorphosis
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
 import org.bukkit.Bukkit
@@ -50,9 +51,13 @@ class Delete : CommandExecutor {
                     if (lands.memberMap.size == 1) {
                         landManager.deleteLands(lands)
                         bukkitLinkedAPI.sendMessageAcrossServer(hostName, "땅을 삭제했습니다.".infoFormat())
-                    } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "모든 멤버가 나가기전까지는 땅을 삭제할 수 없습니다.".errorFormat())
+                    } else bukkitLinkedAPI.sendMessageAcrossServer(
+                        hostName,
+                        "모든 멤버가 나가기전까지는 땅을 삭제할 수 없습니다.".errorFormat()
+                    )
                 } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "해당 명령어는 땅 소유자만 사용가능합니다.".errorFormat())
             }
+            metamorphosis.send("com.salkcoding.tunalands.sync_delete", offlinePlayer.uniqueId.toString())
         }
     }
 }

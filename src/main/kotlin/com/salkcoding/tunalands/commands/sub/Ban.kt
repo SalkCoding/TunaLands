@@ -1,11 +1,8 @@
 package com.salkcoding.tunalands.commands.sub
 
-import com.salkcoding.tunalands.bukkitLinkedAPI
-import com.salkcoding.tunalands.configuration
-import com.salkcoding.tunalands.landManager
+import com.salkcoding.tunalands.*
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
-import com.salkcoding.tunalands.leftManager
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
 import org.bukkit.Bukkit
@@ -83,6 +80,8 @@ class Ban : CommandExecutor {
 
                     lands.banMap[targetUUID] =
                         Lands.BanData(targetUUID, System.currentTimeMillis())
+
+                    metamorphosis.send("com.salkcoding.tunalands.sync_ban", targetUUID.toString())
                 } else player.sendMessage("해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat())
             } else {
                 val hostName = offlinePlayer.name
@@ -131,6 +130,8 @@ class Ban : CommandExecutor {
 
                     lands.banMap[targetUUID] =
                         Lands.BanData(targetUUID, System.currentTimeMillis())
+
+                    metamorphosis.send("com.salkcoding.tunalands.sync_ban", targetUUID.toString())
                 } else bukkitLinkedAPI.sendMessageAcrossServer(
                     hostName,
                     "해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat()

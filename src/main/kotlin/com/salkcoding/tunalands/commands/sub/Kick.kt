@@ -1,10 +1,7 @@
 package com.salkcoding.tunalands.commands.sub
 
-import com.salkcoding.tunalands.bukkitLinkedAPI
-import com.salkcoding.tunalands.configuration
-import com.salkcoding.tunalands.landManager
+import com.salkcoding.tunalands.*
 import com.salkcoding.tunalands.lands.Rank
-import com.salkcoding.tunalands.leftManager
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
 import org.bukkit.Bukkit
@@ -72,6 +69,8 @@ class Kick : CommandExecutor {
                                 "${player.name}이/가 당신을 ${lands.ownerName}의 땅에서 당신을 쫓아냈습니다.".infoFormat()
                             )
 
+                        metamorphosis.send("com.salkcoding.tunalands.sync_kick", targetUUID.toString())
+
                     } else player.sendMessage("${targetName}은/는 당신의 땅에 소속되어있지 않습니다.".errorFormat())
                 } else player.sendMessage("해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat())
             } else {
@@ -109,6 +108,8 @@ class Kick : CommandExecutor {
                                 targetName,
                                 "${hostName}이/가 당신을 ${lands.ownerName}의 땅에서 당신을 쫓아냈습니다.".infoFormat()
                             )
+
+                        metamorphosis.send("com.salkcoding.tunalands.sync_kick", targetUUID.toString())
 
                     } else bukkitLinkedAPI.sendMessageAcrossServer(
                         hostName,
