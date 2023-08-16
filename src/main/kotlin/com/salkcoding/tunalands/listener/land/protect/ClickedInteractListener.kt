@@ -58,7 +58,8 @@ class ClickedInteractListener : Listener {
                 }
                 Material.CHEST,
                 Material.ENDER_CHEST,
-                Material.TRAPPED_CHEST -> {
+                Material.TRAPPED_CHEST,
+                Material.BARREL -> {
                     if (!setting.openChest)
                         event.isCancelled = true
                 }
@@ -133,7 +134,9 @@ class ClickedInteractListener : Listener {
                     if (!setting.useCraftTable)
                         event.isCancelled = true
                 }
-                Material.FURNACE -> {
+                Material.FURNACE,
+                Material.BLAST_FURNACE,
+                Material.SMOKER -> {
                     if (!setting.useCraftTable)
                         event.isCancelled = true
                 }
