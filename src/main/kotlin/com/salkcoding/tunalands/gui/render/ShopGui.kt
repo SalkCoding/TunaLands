@@ -84,7 +84,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
         // 깃발
         inv.setItem(19, takeProtectFlagItem.clone().apply {
             val lore = this.lore!!
-            lore.add("${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.flag.takeFarmFlagPrice}캔")
+            lore.add("${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.flag.takeProtectFlagPrice}캔")
             lore.add("${ChatColor.WHITE}확장 비용: ${ChatColor.GOLD}${configuration.flag.getActivePrice(lands).price}캔")
             this.lore = lore
         })
@@ -100,7 +100,7 @@ class ShopGui(private val player: Player, private val lands: Lands, private val 
         })
         inv.setItem(25, releaseFarmFlagItem.clone().apply {
             val lore = this.lore!!
-            lore.add("${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.flag.takeFarmFlagPrice}캔")
+            lore.add("${ChatColor.WHITE}가격: ${ChatColor.GOLD}${configuration.flag.releaseFarmFlagPrice}캔")
             this.lore = lore
         })
 
