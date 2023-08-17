@@ -84,10 +84,6 @@ class Accept : CommandExecutor {
                         )
                         val present = System.currentTimeMillis()
                         lands.memberMap[uuid] = Lands.MemberData(uuid, data.targetRank, present, present)
-                        if (data.targetRank == Rank.MEMBER) {
-                            lands.dayPerFuel =
-                                configuration.fuel.getFuelRequirement(lands).dayPerFuel
-                        }
 
                         data.task.cancel()
                         inviteMap.remove(uuid)
@@ -139,10 +135,6 @@ class Accept : CommandExecutor {
 
                         val present = System.currentTimeMillis()
                         lands.memberMap[uuid] = Lands.MemberData(uuid, data.targetRank, present, present)
-                        if (data.targetRank == Rank.MEMBER) {
-                            lands.dayPerFuel =
-                                configuration.fuel.getFuelRequirement(lands).dayPerFuel
-                        }
 
                         data.task.cancel()
                         inviteMap.remove(uuid)

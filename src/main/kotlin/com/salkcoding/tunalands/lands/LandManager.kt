@@ -1,7 +1,6 @@
 package com.salkcoding.tunalands.lands
 
 import com.salkcoding.tunalands.*
-import com.salkcoding.tunalands.file.ImposeTimeWriter
 import com.salkcoding.tunalands.fuel.FuelConsumeRunnable
 import com.salkcoding.tunalands.file.PlayerLandMapReader
 import com.salkcoding.tunalands.file.PlayerLandMapWriter
@@ -20,7 +19,7 @@ class LandManager {
     private val landMap = ConcurrentHashMap<String, Lands.ChunkInfo>()
     private val playerLandMap = PlayerLandMapReader.loadPlayerLandMap()
     private val fuelConsumeRunnable = FuelConsumeRunnable(playerLandMap)
-    private val task = Bukkit.getScheduler().runTaskTimer(tunaLands, fuelConsumeRunnable, 20, 1200)
+    private val task = Bukkit.getScheduler().runTaskTimer(tunaLands, fuelConsumeRunnable, 20, 20)
 
     init {
         playerLandMap.forEach { (_, lands) ->
@@ -229,9 +228,7 @@ class LandManager {
         val uuid = player.uniqueId
         val now = System.currentTimeMillis()
         // Give fuel that should last for 24 hours
-        val defaultFuelRequirement = configuration.fuel.fuelRequirements.minOf { it }
         val defaultFuelAmount = configuration.fuel.defaultFuel
-        val defaultDayPerFuel = defaultFuelRequirement.dayPerFuel
 
         val lands = Lands(
             player.name,
@@ -243,8 +240,7 @@ class LandManager {
             ),
             upCore.location,
             downCore.location,
-            defaultFuelAmount,
-            defaultDayPerFuel
+            defaultFuelAmount
         ).apply {
             this.memberMap[uuid] = Lands.MemberData(uuid, Rank.OWNER, now, now)
             this.landMap[query] = LandType.NORMAL
@@ -443,7 +439,6 @@ class LandManager {
         task.cancel()
 
         PlayerLandMapWriter.savePlayerLandMap()
-        ImposeTimeWriter.saveImposeTime()
     }
 
     fun onChunkInfoChange(changedChunkQueries: List<String>) {

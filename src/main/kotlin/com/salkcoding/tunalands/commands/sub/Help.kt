@@ -41,7 +41,6 @@ class Help : CommandExecutor {
             sender.sendMessage("/tl debug reset recommend (name) (count): 해당 유저의 땅의 추천수를 해당 수로 설정합니다.".warnFormat())
             sender.sendMessage("/tl debug reset cooldown (name): 해당 유저의 추천 쿨타임을 초기화합니다.".warnFormat())
             sender.sendMessage("/tl debug reset rejoin (name): 해당 유저의 재가입 쿨타임을 초기화합니다.".warnFormat())
-            sender.sendMessage("/tl debug reset dayperfuel: 모든 땅의 dayPerFuel를 다시 계산하여 적용합니다.".warnFormat())
             sender.sendMessage("/tl debug player (name): 해당 유저의 소속을 조회합니다.".warnFormat())
             sender.sendMessage("/tl debug info (name): 해당 유저가 가지고 있는 땅 정보를 보여줍니다.".warnFormat())
             sender.sendMessage("/tl debug forcebuy (ownername): 해당 위치의 청크를 강제 구매합니다.".warnFormat())
@@ -50,7 +49,6 @@ class Help : CommandExecutor {
             sender.sendMessage("/tl debug sell: 해당 위치의 청크를 판매합니다.".warnFormat())
             sender.sendMessage("/tl debug delete (name): 해당 유저의 땅을 삭제합니다.".warnFormat())
             sender.sendMessage("/tl debug move (name) (target) (rank): (name) 유저의 소속을 (target)의 땅으로 옮기며 등급을 (rank)로 설정합니다.".warnFormat())
-            sender.sendMessage("/tl debug fuel decrease: 모든 땅에 연료를 감소시킵니다. (실행 이후 새벽 6시에도 정상 부과)".warnFormat())
         }
         return true
     }

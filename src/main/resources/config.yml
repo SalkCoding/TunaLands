@@ -44,25 +44,22 @@ flag:
     takeFarmFlagPrice: 10
     releaseFarmFlagPrice: 5
 
+# Time unit: seconds 86400 = 1 day
 fuel:
-  defaultFuel: 3
+  defaultFuel: 259200
   price: 10.0
-  # Every fuel decrease when 6 A.M
-  # Hours of day 0~23
-  imposeTime: 6
-  fuelRequirements:
-    # Recommended dayPerFuel: above 0
+  fuelAddAmount:
     - numOfMembers: 1
-      dayPerFuel: 1
+      addAmount: 86400
 
     - numOfMembers: 2
-      dayPerFuel: 2
+      addAmount: 75000
 
     - numOfMembers: 5
-      dayPerFuel: 3
+      addAmount: 55000
 
     - numOfMembers: 7
-      dayPerFuel: 4
+      addAmount: 43200
 
 recommend:
   reset: 1728000 #1d

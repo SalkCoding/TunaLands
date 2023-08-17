@@ -148,7 +148,6 @@ object PlayerLandMapWriter {
             jsonObject.addProperty("ownerName", lands.ownerName)
             jsonObject.addProperty("ownerUUID", lands.ownerUUID.toString())
             jsonObject.addProperty("fuelLeft", lands.fuelLeft)
-            jsonObject.addProperty("dayPerFuel", lands.dayPerFuel)
             jsonObject.addProperty("enable", lands.enable)
             jsonObject.addProperty("open", lands.open)
             jsonObject.addProperty("recommend", lands.recommend)

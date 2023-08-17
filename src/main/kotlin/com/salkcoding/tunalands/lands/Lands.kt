@@ -22,8 +22,7 @@ data class Lands(
     val landHistory: LandHistory,
     val upCoreLocation: Location, //Chest
     val downCoreLocation: Location, //Core block
-    var fuelLeft: Int, // amount of fuel left
-    var dayPerFuel: Int, // amount of fuel
+    var fuelLeft: Long, // amount of fuel left
     //Optional variables of Constructor
     var enable: Boolean = true,
     var open: Boolean = true,
@@ -108,15 +107,6 @@ data class Lands(
         }
     }
 
-    fun getExpiredDateToMilliseconds(): Long {
-        val expired =
-            LocalDateTime.now().plusDays(ceil(fuelLeft / dayPerFuel.toDouble()).toLong())
-                .withHour(configuration.fuel.imposeTime)
-                .withMinute(0).withSecond(0).withNano(0)
-        val between = Duration.between(LocalDateTime.now(), expired)
-        return if (between.isNegative || between.isZero) 0 else between.toMillis()
-    }
-
     override fun toString(): String {
         val normal = landMap.values.count { it == LandType.NORMAL }
         val delegator = memberMap.values.count { it.rank == Rank.DELEGATOR }
@@ -129,9 +119,9 @@ data class Lands(
                 "(Normal: ${normal}, " +
                 "(Farm: ${landMap.size - normal}), " +
                 "fuelLeft: $fuelLeft, " +
-                "dayPerFuel: $dayPerFuel, " +
                 "member: ${memberMap.size}" +
-                "(delegator: $delegator, " +
+                "(owner: 1, " +
+                "delegator: $delegator, " +
                 "member: $member, " +
                 "parttime: $parttime, " +
                 "visitor: $visitor), " +

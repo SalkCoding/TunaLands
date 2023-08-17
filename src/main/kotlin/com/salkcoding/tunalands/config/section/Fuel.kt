@@ -5,24 +5,23 @@ import com.salkcoding.tunalands.lands.Rank
 
 data class Fuel(
     val price: Double,
-    val defaultFuel: Int,
-    val imposeTime: Int,
-    val fuelRequirements: List<FuelRequirement>
+    val defaultFuel: Long,
+    val fuelAddAmounts: List<AddAmount>
 ) {
-    fun getFuelRequirement(land: Lands): FuelRequirement {
-        return fuelRequirements.filter {
+    fun getFuelRequirement(land: Lands): AddAmount {
+        return fuelAddAmounts.filter {
             land.memberMap.filter { (_, it) ->
                 it.rank != Rank.VISITOR && it.rank != Rank.PARTTIMEJOB
-            }.size <= it.numOfMembers
-        }.minOrNull() ?: fuelRequirements.maxOf { it }
+            }.size >= it.numOfMembers
+        }.minOrNull() ?: fuelAddAmounts.maxOf { it }
     }
 
-    data class FuelRequirement(
+    data class AddAmount(
         val numOfMembers: Int,
-        val dayPerFuel: Int
-    ) : Comparable<FuelRequirement> {
-        override fun compareTo(other: FuelRequirement): Int {
-            return this.dayPerFuel.compareTo(other.dayPerFuel)
+        val addAmount: Long
+    ) : Comparable<AddAmount> {
+        override fun compareTo(other: AddAmount): Int {
+            return this.addAmount.compareTo(other.addAmount)
         }
     }
 }

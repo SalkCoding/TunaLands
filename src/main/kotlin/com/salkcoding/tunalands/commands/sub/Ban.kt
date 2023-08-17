@@ -64,8 +64,6 @@ class Ban : CommandExecutor {
                             return
                         }
                         lands.memberMap.remove(targetUUID)
-                        lands.dayPerFuel =
-                            configuration.fuel.getFuelRequirement(lands).dayPerFuel
                     }
                     leftManager.recordLeft(targetUUID)
 
@@ -116,8 +114,6 @@ class Ban : CommandExecutor {
                             return
                         }
                         lands.memberMap.remove(targetUUID)
-                        lands.dayPerFuel =
-                            configuration.fuel.getFuelRequirement(lands).dayPerFuel
                     }
                     leftManager.recordLeft(targetUUID)
 

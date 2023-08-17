@@ -9,18 +9,18 @@ class RequirementTest {
 
     @Test
     fun fuelTest() {
-        val fuelRequirements = listOf(
-            Fuel.FuelRequirement(1, 1),
-            Fuel.FuelRequirement(2, 2),
-            Fuel.FuelRequirement(3, 3),
-            Fuel.FuelRequirement(4, 4)
+        val fuelAddAmount = listOf(
+            Fuel.AddAmount(1, 7),
+            Fuel.AddAmount(3, 5),
+            Fuel.AddAmount(5, 3),
+            Fuel.AddAmount(7, 1)
         )
-        for (i in 1..4) {
-            val fr = fuelRequirements.filter {
-                i <= it.numOfMembers
-            }.minOrNull() ?: fuelRequirements.maxOf { it }
-            Assertions.assertEquals(i, fr.dayPerFuel)
-        }
+
+        val cnt = 1
+        val fr = fuelAddAmount.filter {
+            cnt >= it.numOfMembers
+        }.minOrNull() ?: fuelAddAmount.maxOf { it }
+        Assertions.assertEquals(7, fr.addAmount)
     }
 
     @Test

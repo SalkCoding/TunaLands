@@ -57,8 +57,6 @@ class Kick : CommandExecutor {
                         }
                         lands.memberMap.remove(targetUUID)
                         leftManager.recordLeft(targetUUID)
-                        lands.dayPerFuel =
-                            configuration.fuel.getFuelRequirement(lands).dayPerFuel
 
                         player.sendMessage("${targetName}을/를 쫓아냈습니다.".infoFormat())
                         if (targetOffline.isOnline)
@@ -99,7 +97,6 @@ class Kick : CommandExecutor {
                         }
 
                         lands.memberMap.remove(targetUUID)
-                        lands.dayPerFuel = configuration.fuel.getFuelRequirement(lands).dayPerFuel
                         leftManager.recordLeft(targetUUID)
 
                         bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${targetName}을/를 쫓아냈습니다.".infoFormat())

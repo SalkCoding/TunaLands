@@ -58,7 +58,7 @@ class TimerDisplay(
         builder.append("현재 연료: ${lands.fuelLeft}개\n")
 
         // Text Line 4 (예상: a일 b시간 c분 d초 남음)
-        val timeLeftInMilliseconds = lands.getExpiredDateToMilliseconds()
+        val timeLeftInMilliseconds = lands.fuelLeft
         if (timeLeftInMilliseconds > 0) {
             val days = timeLeftInMilliseconds / 86400000
             val hours = (timeLeftInMilliseconds / 3600000) % 24
@@ -77,9 +77,6 @@ class TimerDisplay(
         } else {
             builder.append("예상: 0초 남음").append("\n")
         }
-
-        // Text Line 5 (* 하루당 x개 소모)
-        builder.append("* 하루당 ${lands.dayPerFuel}개 소모")
 
         hologram.text = builder.toString()
     }

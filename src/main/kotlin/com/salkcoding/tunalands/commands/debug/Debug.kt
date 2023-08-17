@@ -62,7 +62,7 @@ class Debug : CommandExecutor {
                     val lands = landManager.getPlayerLands(targetUUID, Rank.OWNER)
                     if (lands != null) {
                         try {
-                            val numOfFuel = args[2].toInt()
+                            val numOfFuel = args[2].toLong()
                             if (numOfFuel <= 0) {
                                 lands.sendMessageToOnlineMembers(
                                     listOf(
@@ -163,18 +163,6 @@ class Debug : CommandExecutor {
                 return true
             }
 
-            args[0] == "reset" && args.size == 2 -> {
-                when (args[1]) {
-                    "dayperfuel" -> {
-                        landManager.getPlayerLandMap().forEach { (_, lands) ->
-                            lands.dayPerFuel = configuration.fuel.getFuelRequirement(lands).dayPerFuel
-                        }
-                        sender.sendMessage("모든 땅의 dayPerFuel이 다시 계산되었습니다.")
-                    }
-                }
-                return true
-            }
-
             args[0] == "delete" && args.size == 2 -> {
                 val target = Bukkit.getOfflinePlayer(args[1])
                 val lands = landManager.getPlayerLands(target.uniqueId, Rank.OWNER)
@@ -264,15 +252,6 @@ class Debug : CommandExecutor {
                 val lands = landManager.getPlayerLands(targetUUID)!!
                 val present = System.currentTimeMillis()
                 lands.memberMap[uuid] = Lands.MemberData(uuid, Rank.valueOf(args[2].uppercase()), present, present)
-                return true
-            }
-
-            args[0] == "fuel" && args[1] == "decrease" -> {
-                landManager.getFuelConsumeRunner().impose()
-                sender.sendMessage("모든땅의 연료가 멤버수에 비례하여 감소하였습니다.".infoFormat())
-                bukkitLinkedAPI.onlinePlayersInfo.forEach {
-                    bukkitLinkedAPI.sendMessageAcrossServer(it.playerUUID, "관리자에 의해 연료가 차감되었습니다.".warnFormat())
-                }
                 return true
             }
 

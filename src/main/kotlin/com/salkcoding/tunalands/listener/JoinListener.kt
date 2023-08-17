@@ -15,7 +15,7 @@ class JoinListener : Listener {
 
         if (!lands.enable) return
 
-        val timeLeftInMilliseconds = lands.getExpiredDateToMilliseconds()
+        val timeLeftInMilliseconds = lands.fuelLeft
         val timeLeft = when {
             timeLeftInMilliseconds > 0 -> {
                 val days = timeLeftInMilliseconds / 86400000
