@@ -186,6 +186,12 @@ class LandManager {
             return
         }
 
+        val info = landMap[query]!!
+        if (info.ownerUUID != lands.ownerUUID) {
+            player.sendMessage("자신이 소속된 땅에서만 가능합니다.".errorFormat())
+            return
+        }
+
         if (!lands.enable) {
             player.sendMessage("땅을 다시 활성화 해야합니다!".errorFormat())
             return
@@ -203,7 +209,7 @@ class LandManager {
             return
         }
 
-        if (landMap.contains(query)){
+        if (landMap.contains(query)) {
             landMap[query]!!.landType = type
         } else {
             landMap[query] = Lands.ChunkInfo(lands.ownerName, lands.ownerUUID, chunk.world.name, chunk.x, chunk.z, type)
@@ -273,6 +279,7 @@ class LandManager {
             player.sendMessage("땅을 다시 활성화 해야합니다!".errorFormat())
             return
         }
+
         val limitOccupied = configuration.protect.getMaxOccupied(lands)
         if (limitOccupied.maxChunkAmount <= lands.landMap.size) {
             player.sendMessage("더 이상 땅을 구입할 수 없습니다.".errorFormat())
@@ -330,6 +337,12 @@ class LandManager {
         }
         val chunkInfo = landMap[query]!!
         val lands = this.getPlayerLands(chunkInfo.ownerUUID, Rank.OWNER) ?: return
+
+        val info = landMap[query]!!
+        if (info.ownerUUID != lands.ownerUUID) {
+            player.sendMessage("자신이 소속된 땅에서만 가능합니다.".errorFormat())
+            return
+        }
 
         if (!lands.enable) {
             player.sendMessage("땅을 다시 활성화 해야합니다!".errorFormat())

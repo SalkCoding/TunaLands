@@ -1,5 +1,6 @@
 package com.salkcoding.tunalands.commands.sub
 
+import com.google.gson.JsonObject
 import com.salkcoding.tunalands.*
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
@@ -89,7 +90,9 @@ class Leave : CommandExecutor {
                 } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "어느 땅에도 소속되어있지 않습니다.".errorFormat())
             }
 
-            metamorphosis.send("com.salkcoding.tunalands.sync_leave", offlinePlayer.uniqueId.toString())
+            val json = JsonObject()
+            json.addProperty("uuid", offlinePlayer.uniqueId.toString())
+            metamorphosis.send("com.salkcoding.tunalands.sync_leave", json.toString())
         }
     }
 }

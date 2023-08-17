@@ -1,5 +1,6 @@
 package com.salkcoding.tunalands.commands.sub
 
+import com.google.gson.JsonObject
 import com.salkcoding.tunalands.*
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
@@ -12,7 +13,6 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.*
-import kotlin.math.roundToLong
 
 class Ban : CommandExecutor {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
@@ -81,7 +81,10 @@ class Ban : CommandExecutor {
                     lands.banMap[targetUUID] =
                         Lands.BanData(targetUUID, System.currentTimeMillis())
 
-                    metamorphosis.send("com.salkcoding.tunalands.sync_ban", targetUUID.toString())
+                    val json = JsonObject()
+                    json.addProperty("uuid", targetUUID.toString())
+                    metamorphosis.send("com.salkcoding.tunalands.sync_ban", json.toString())
+
                 } else player.sendMessage("해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat())
             } else {
                 val hostName = offlinePlayer.name
@@ -131,7 +134,9 @@ class Ban : CommandExecutor {
                     lands.banMap[targetUUID] =
                         Lands.BanData(targetUUID, System.currentTimeMillis())
 
-                    metamorphosis.send("com.salkcoding.tunalands.sync_ban", targetUUID.toString())
+                    val json = JsonObject()
+                    json.addProperty("uuid", targetUUID.toString())
+                    metamorphosis.send("com.salkcoding.tunalands.sync_ban", json.toString())
                 } else bukkitLinkedAPI.sendMessageAcrossServer(
                     hostName,
                     "해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat()

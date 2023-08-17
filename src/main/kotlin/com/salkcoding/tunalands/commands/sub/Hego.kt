@@ -1,5 +1,6 @@
 package com.salkcoding.tunalands.commands.sub
 
+import com.google.gson.JsonObject
 import com.salkcoding.tunalands.bukkitLinkedAPI
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
@@ -56,7 +57,9 @@ class Hego : CommandExecutor {
                                     targetName,
                                     "${player.name}이/가 당신을 ${lands.ownerName}의 땅에서 해고 했습니다.".infoFormat()
                                 )
-                            metamorphosis.send("com.salkcoding.tunalands.sync_hego", targetData.uuid.toString())
+                            val json = JsonObject()
+                            json.addProperty("uuid", targetData.uuid.toString())
+                            metamorphosis.send("com.salkcoding.tunalands.sync_hego", json.toString())
                             return
                         } else player.sendMessage("${targetName}은/는 알바가 아닙니다.".errorFormat())
                     } else player.sendMessage("${targetName}은/는 당신의 땅의 소속되어있지 않습니다.".errorFormat())
@@ -84,11 +87,22 @@ class Hego : CommandExecutor {
                                     targetName,
                                     "${hostName}이/가 당신을 ${lands.ownerName}의 땅에서 해고 했습니다.".infoFormat()
                                 )
-                            metamorphosis.send("com.salkcoding.tunalands.sync_hego", targetData.uuid.toString())
+                            val json = JsonObject()
+                            json.addProperty("uuid", targetData.uuid.toString())
+                            metamorphosis.send("com.salkcoding.tunalands.sync_hego", json.toString())
                             return
-                        } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${targetName}은/는 알바가 아닙니다.".errorFormat())
-                    } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${targetName}은/는 당신의 땅의 소속되어있지 않습니다.".errorFormat())
-                } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat())
+                        } else bukkitLinkedAPI.sendMessageAcrossServer(
+                            hostName,
+                            "${targetName}은/는 알바가 아닙니다.".errorFormat()
+                        )
+                    } else bukkitLinkedAPI.sendMessageAcrossServer(
+                        hostName,
+                        "${targetName}은/는 당신의 땅의 소속되어있지 않습니다.".errorFormat()
+                    )
+                } else bukkitLinkedAPI.sendMessageAcrossServer(
+                    hostName,
+                    "해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat()
+                )
             }
         }
     }
