@@ -13,14 +13,14 @@ import java.util.*
 object LandsAPI {
 
     fun getPlayerRank(uuid: UUID): Rank? {
-        return when (val lands = landManager.getPlayerLands(uuid)) {
+        return when (val lands = landManager.getPlayerLands(uuid, Rank.OWNER, Rank.DELEGATOR, Rank.MEMBER)) {
             null -> null
             else -> lands.memberMap[uuid]!!.rank
         }
     }
 
     fun getPlayerLandsMemberList(uuid: UUID): List<String>? {
-        return when (val lands = landManager.getPlayerLands(uuid)) {
+        return when (val lands = landManager.getPlayerLands(uuid, Rank.OWNER, Rank.DELEGATOR, Rank.MEMBER)) {
             null -> null
             else -> {
                 val memberMap = lands.memberMap

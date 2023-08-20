@@ -26,6 +26,12 @@ class ClickedInteractListener : Listener {
         val player = event.player
         if (player.world.name in configuration.ignoreWorld) return
 
+        val mainItem = player.inventory.itemInMainHand
+        val offItem = player.inventory.itemInOffHand
+        if (mainItem.type.toString().contains("BOAT")
+            || (mainItem.type == Material.AIR && offItem.type.toString().contains("BOAT"))
+        ) return
+
         val block = event.clickedBlock!!
         val lands = landManager.getLandsWithChunk(block.chunk)
 
