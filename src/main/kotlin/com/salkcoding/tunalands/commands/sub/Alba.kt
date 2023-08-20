@@ -58,11 +58,11 @@ class Alba : CommandExecutor {
                         return
                     }
 
-                    if (targetUUID in lands.memberMap) {
-                        if (lands.memberMap[targetUUID]!!.rank != Rank.VISITOR) {
-                            player.sendMessage("해당 플레이어는 이미 땅에 소속되어있습니다.".errorFormat())
-                            return
-                        }
+                    val targetLands =
+                        landManager.getPlayerLands(targetUUID, Rank.OWNER, Rank.DELEGATOR, Rank.PARTTIMEJOB)
+                    if (targetLands != null) {
+                        player.sendMessage("해당 유저가 다른 땅의 소유주, 관리자, 알바인 경우 초대할 수 없습니다.".errorFormat())
+                        return
                     }
 
                     if (targetUUID in lands.banMap) {
@@ -128,11 +128,14 @@ class Alba : CommandExecutor {
                         return
                     }
 
-                    if (targetUUID in lands.memberMap) {
-                        if (lands.memberMap[targetUUID]!!.rank != Rank.VISITOR) {
-                            bukkitLinkedAPI.sendMessageAcrossServer(hostName, "해당 플레이어는 이미 땅에 소속되어있습니다.".errorFormat())
-                            return
-                        }
+                    val targetLands =
+                        landManager.getPlayerLands(targetUUID, Rank.OWNER, Rank.DELEGATOR, Rank.PARTTIMEJOB)
+                    if (targetLands != null) {
+                        bukkitLinkedAPI.sendMessageAcrossServer(
+                            hostName,
+                            "해당 유저가 다른 땅의 소유주, 관리자, 알바인 경우 초대할 수 없습니다.".errorFormat()
+                        )
+                        return
                     }
 
                     if (targetUUID in lands.banMap) {
@@ -140,7 +143,10 @@ class Alba : CommandExecutor {
                         return
                     }
 
-                    bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${targetName}에게 알바로 채용하겠다는 의사를 보냈습니다.".infoFormat())
+                    bukkitLinkedAPI.sendMessageAcrossServer(
+                        hostName,
+                        "${targetName}에게 알바로 채용하겠다는 의사를 보냈습니다.".infoFormat()
+                    )
                     //Online in current server
                     if (targetOffline.isOnline) {
                         val target = targetOffline.player!!
@@ -153,7 +159,10 @@ class Alba : CommandExecutor {
                                 target,
                                 Rank.PARTTIMEJOB,
                                 Bukkit.getScheduler().runTaskLater(tunaLands, Runnable {
-                                    bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${targetName}이/가 당신의 채용에 응하지 않았습니다.".warnFormat())
+                                    bukkitLinkedAPI.sendMessageAcrossServer(
+                                        hostName,
+                                        "${targetName}이/가 당신의 채용에 응하지 않았습니다.".warnFormat()
+                                    )
                                     target.sendMessage("초대가 만료되었습니다.".warnFormat())
                                     inviteMap.remove(target.uniqueId)
                                 }, 600)//Later 30 seconds
@@ -182,9 +191,15 @@ class Alba : CommandExecutor {
                                 }, 600)//Later 30 seconds
                             )
                             inviteMap[targetUUID] = inviteData
-                        } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "해당 플레이어를 찾을 수 없습니다.".errorFormat())//Not online
+                        } else bukkitLinkedAPI.sendMessageAcrossServer(
+                            hostName,
+                            "해당 플레이어를 찾을 수 없습니다.".errorFormat()
+                        )//Not online
                     }
-                } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다!".errorFormat())
+                } else bukkitLinkedAPI.sendMessageAcrossServer(
+                    hostName,
+                    "해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다!".errorFormat()
+                )
             }
         }
     }

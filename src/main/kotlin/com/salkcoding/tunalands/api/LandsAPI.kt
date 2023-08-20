@@ -1,12 +1,10 @@
 package com.salkcoding.tunalands.api
 
-import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.LandType
 import com.salkcoding.tunalands.lands.Lands
-import com.salkcoding.tunalands.util.toQuery
+import com.salkcoding.tunalands.lands.Rank
 import org.bukkit.Bukkit
-import org.bukkit.Chunk
 import org.bukkit.entity.Player
 import java.util.*
 
