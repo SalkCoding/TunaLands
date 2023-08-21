@@ -58,7 +58,7 @@ class TimerDisplay(
         builder.append("현재 땅 소속 인원: ${lands.memberMap.size}명\n")
 
         // Text Line 4 (예상: a일 b시간 c분 d초 남음)
-        val timeLeftInSeconds = lands.fuelLeft
+        val timeLeftInSeconds = lands.fuelSecLeft
         if (timeLeftInSeconds > 0) {
             val days = timeLeftInSeconds / 86400
             val hours = (timeLeftInSeconds / 3600) % 24

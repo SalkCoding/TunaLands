@@ -35,7 +35,7 @@ class LandManager {
                 )
             }
 
-            if (lands.fuelLeft > 0) {
+            if (lands.fuelSecLeft > 0) {
                 displayManager.createDisplay(lands)
             }
         }

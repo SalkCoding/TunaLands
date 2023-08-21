@@ -1,9 +1,11 @@
 package com.salkcoding.tunalands.commands.sub
 
 import com.salkcoding.tunalands.*
+import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
+import com.salkcoding.tunalands.util.secondsToDateString
 import com.salkcoding.tunalands.util.warnFormat
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
@@ -90,6 +92,11 @@ class Invite : CommandExecutor {
                         player.sendMessage("밴 당한 유저는 초대하실 수 없습니다.".errorFormat())
                         return
                     }
+
+                    player.sendMessage("초대 수락 전, 남은 연료 예상 시간: ${secondsToDateString(lands.fuelSecLeft)}".infoFormat())
+                    val beforeCnt = lands.memberMap.size
+                    val afterCnt = lands.memberMap.size+1
+                    player.sendMessage("초대 수락 시, 연료 예상 시간: ${secondsToDateString(lands.fuelCompute(beforeCnt,afterCnt))}".infoFormat())
 
                     //Online in current server
                     if (targetOffline.isOnline) {

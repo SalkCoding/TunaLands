@@ -63,7 +63,10 @@ class Ban : CommandExecutor {
                             player.sendMessage("소유자는 밴할 수 없습니다.".errorFormat())
                             return
                         }
+                        val beforeCnt = lands.memberMap.size
                         lands.memberMap.remove(targetUUID)
+                        val afterCnt = lands.memberMap.size
+                        lands.fuelRecomputeAndSave(beforeCnt, afterCnt)
                     }
                     leftManager.recordLeft(targetUUID)
 
@@ -113,7 +116,10 @@ class Ban : CommandExecutor {
                             bukkitLinkedAPI.sendMessageAcrossServer(hostName, "소유자는 밴할 수 없습니다.".errorFormat())
                             return
                         }
+                        val beforeCnt = lands.memberMap.size
                         lands.memberMap.remove(targetUUID)
+                        val afterCnt = lands.memberMap.size
+                        lands.fuelRecomputeAndSave(beforeCnt, afterCnt)
                     }
                     leftManager.recordLeft(targetUUID)
 

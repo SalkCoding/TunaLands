@@ -75,8 +75,9 @@ class Debug : CommandExecutor {
                                     "${ChatColor.GOLD}연료${ChatColor.WHITE}를 사용하여 ${ChatColor.GREEN}재활성화 ${ChatColor.WHITE}해야합니다!"
                                 )
                                 lands.enable = false
+                                lands.fuelSecLeft = 0
                             } else {
-                                lands.fuelLeft = numOfFuel
+                                lands.fuelSecLeft = numOfFuel
                                 if (!lands.enable) {
                                     lands.enable = true
                                     displayManager.resumeDisplay(lands)?.update()
@@ -237,6 +238,8 @@ class Debug : CommandExecutor {
                 if (landList.isNotEmpty()) {
                     landList.forEach { lands ->
                         val data = lands.memberMap[uuid]!!
+
+                        val beforeCnt = lands.memberMap.size
                         if (data.rank != Rank.OWNER) lands.memberMap.remove(uuid)
                         else {
                             lands.memberMap.remove(uuid)
@@ -247,28 +250,17 @@ class Debug : CommandExecutor {
                                 Bukkit.getOfflinePlayer(list.first().uuid)
                             )
                         }
+                        val afterCnt = lands.memberMap.size
+                        lands.fuelRecomputeAndSave(beforeCnt, afterCnt)
                     }
                 }
                 val lands = landManager.getPlayerLands(targetUUID)!!
                 val present = System.currentTimeMillis()
-                lands.memberMap[uuid] = Lands.MemberData(uuid, Rank.valueOf(args[3].uppercase()), present, present)
-                return true
-            }
 
-            args[0] == "check" && args[1] == "overflow" -> {
-                landManager.getPlayerLandMap().filter { (_, lands) ->
-                    lands.landMap.size >= configuration.protect.getMaxOccupied(lands).maxChunkAmount
-                }.forEach { (_, lands) ->
-                    sender.sendMessage(
-                        "${lands.ownerName}의 땅, 현재 보유 청크: ${lands.landMap.size}/${
-                            configuration.protect.getMaxOccupied(
-                                lands
-                            ).maxChunkAmount
-                        }, 현재 보유 농작지: ${
-                            lands.landMap.filter { (_, type) -> type == LandType.FARM }.size
-                        }/${configuration.farm.limitOccupied}"
-                    )
-                }
+                val beforeCnt = lands.memberMap.size
+                lands.memberMap[uuid] = Lands.MemberData(uuid, Rank.valueOf(args[3].uppercase()), present, present)
+                val afterCnt = lands.memberMap.size
+                lands.fuelRecomputeAndSave(beforeCnt, afterCnt)
                 return true
             }
 

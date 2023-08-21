@@ -8,6 +8,21 @@ import org.bukkit.entity.Player
 import java.util.LinkedList
 import java.util.Queue
 
+fun secondsToDateString(totalSeconds: Long): String {
+    val days = totalSeconds / 86400
+    val hours = (totalSeconds / 3600) % 24
+    val minutes = (totalSeconds / 60) % 60
+    val seconds = totalSeconds % 60
+
+    return when {
+        days > 0 -> "${days}일 ${hours}시간 ${minutes}분 ${seconds}초"
+        hours > 0 -> "${hours}시간 ${minutes}분 ${seconds}초"
+        minutes > 0 -> "${minutes}분 ${seconds}초"
+        seconds > 0 -> "${seconds}초"
+        else -> "0초"
+    }
+}
+
 fun World.playBuyChunkEffect(player: Player, chunk: Chunk) {
     val effect = ChunkEffect(this, chunk, Material.LIME_TERRACOTTA)
     effect.task = Bukkit.getScheduler().runTaskTimerAsynchronously(tunaLands, effect, 0, 1)

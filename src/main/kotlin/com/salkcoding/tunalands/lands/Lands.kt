@@ -6,14 +6,13 @@ import com.salkcoding.tunalands.lands.setting.DelegatorSetting
 import com.salkcoding.tunalands.lands.setting.LandSetting
 import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.ObservableMap
+import com.salkcoding.tunalands.util.infoFormat
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Chunk
 import org.bukkit.Location
-import java.time.Duration
-import java.time.LocalDateTime
 import java.util.*
-import kotlin.math.ceil
+import kotlin.math.roundToLong
 
 data class Lands(
     var ownerName: String,
@@ -22,7 +21,7 @@ data class Lands(
     val landHistory: LandHistory,
     val upCoreLocation: Location, //Chest
     val downCoreLocation: Location, //Core block
-    var fuelLeft: Long, // amount of fuel left
+    var fuelSecLeft: Long, // amount of fuel left
     //Optional variables of Constructor
     var enable: Boolean = true,
     var open: Boolean = true,
@@ -107,6 +106,22 @@ data class Lands(
         }
     }
 
+    fun fuelRecomputeAndSave(beforeMemberCnt: Int, afterMemberCnt: Int) {
+        fuelSecLeft = fuelCompute(beforeMemberCnt,afterMemberCnt)
+        sendMessageToOnlineMembers("인원이 변동되어, 예상 연료 시간이 변경되었습니다.".infoFormat())
+    }
+
+    fun fuelCompute(beforeMemberCnt: Int, afterMemberCnt: Int):Long {
+        val currentFuelSec = this.fuelSecLeft.toDouble()
+        val addAmountBefore = configuration.fuel.getFuelAddAmount(beforeMemberCnt)
+        val addAmountAfter = configuration.fuel.getFuelAddAmount(afterMemberCnt)
+
+        val fuelSecToFuel = currentFuelSec / addAmountBefore.addAmount
+        val newFuelSecLeft = fuelSecToFuel * addAmountAfter.addAmount
+
+        return newFuelSecLeft.roundToLong()
+    }
+
     override fun toString(): String {
         val normal = landMap.values.count { it == LandType.NORMAL }
         val delegator = memberMap.values.count { it.rank == Rank.DELEGATOR }
@@ -118,7 +133,7 @@ data class Lands(
                 "land: ${landMap.size}" +
                 "(Normal: ${normal}, " +
                 "(Farm: ${landMap.size - normal}), " +
-                "fuelLeft: $fuelLeft, " +
+                "fuelLeft: $fuelSecLeft, " +
                 "member: ${memberMap.size}" +
                 "(owner: 1, " +
                 "delegator: $delegator, " +

@@ -13,9 +13,9 @@ class FuelConsumeRunnable(private val playerLandMap: ConcurrentHashMap<UUID, Lan
         playerLandMap.forEach { (_, lands) ->
             if (!lands.enable) return@forEach
 
-            lands.fuelLeft--//연료 차감
+            lands.fuelSecLeft--//연료 차감
 
-            if (lands.fuelLeft > 0) return@forEach
+            if (lands.fuelSecLeft > 0) return@forEach
 
             //만료
             lands.sendMessageToOnlineMembers(
@@ -25,7 +25,7 @@ class FuelConsumeRunnable(private val playerLandMap: ConcurrentHashMap<UUID, Lan
                 )
             )
             lands.enable = false
-            lands.fuelLeft = 0
+            lands.fuelSecLeft = 0
             displayManager.pauseDisplay(lands)?.setMessage(
                 "${ChatColor.RED}비활성화 ${ChatColor.WHITE}상태",
                 "${ChatColor.GOLD}연료${ChatColor.WHITE}를 사용하여 ${ChatColor.GREEN}재활성화 ${ChatColor.WHITE}해야합니다!"

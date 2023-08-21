@@ -16,6 +16,12 @@ data class Fuel(
         }.minOrNull() ?: fuelAddAmounts.maxOf { it }
     }
 
+    fun getFuelAddAmount(memberCnt: Int): AddAmount {
+        return fuelAddAmounts.filter {
+            memberCnt >= it.numOfMembers
+        }.minOrNull() ?: fuelAddAmounts.maxOf { it }
+    }
+
     data class AddAmount(
         val numOfMembers: Int,
         val addAmount: Long

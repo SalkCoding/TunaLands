@@ -55,7 +55,11 @@ class Kick : CommandExecutor {
                             player.sendMessage("소유자를 쫓아낼 수는 없습니다.".errorFormat())
                             return
                         }
+                        val beforeCnt = lands.memberMap.size
                         lands.memberMap.remove(targetUUID)
+                        val afterCnt = lands.memberMap.size
+                        lands.fuelRecomputeAndSave(beforeCnt, afterCnt)
+
                         leftManager.recordLeft(targetUUID)
 
                         player.sendMessage("${targetName}을/를 쫓아냈습니다.".infoFormat())
@@ -96,7 +100,11 @@ class Kick : CommandExecutor {
                             return
                         }
 
+                        val beforeCnt = lands.memberMap.size
                         lands.memberMap.remove(targetUUID)
+                        val afterCnt = lands.memberMap.size
+                        lands.fuelRecomputeAndSave(beforeCnt, afterCnt)
+
                         leftManager.recordLeft(targetUUID)
 
                         bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${targetName}을/를 쫓아냈습니다.".infoFormat())

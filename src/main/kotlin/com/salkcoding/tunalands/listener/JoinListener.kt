@@ -15,7 +15,7 @@ class JoinListener : Listener {
 
         if (!lands.enable) return
 
-        val timeLeftInSeconds = lands.fuelLeft
+        val timeLeftInSeconds = lands.fuelSecLeft
         val timeLeft = "예상: ${when {
             timeLeftInSeconds > 0 -> {
                 val days = timeLeftInSeconds / 86400

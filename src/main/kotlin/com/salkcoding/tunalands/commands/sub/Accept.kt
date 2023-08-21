@@ -83,7 +83,10 @@ class Accept : CommandExecutor {
                             )
                         )
                         val present = System.currentTimeMillis()
+                        val beforeCnt = lands.memberMap.size
                         lands.memberMap[uuid] = Lands.MemberData(uuid, data.targetRank, present, present)
+                        val afterCnt = lands.memberMap.size
+                        lands.fuelRecomputeAndSave(beforeCnt, afterCnt)
 
                         data.task.cancel()
                         inviteMap.remove(uuid)
@@ -134,7 +137,10 @@ class Accept : CommandExecutor {
                         )?.memberMap?.remove(offlinePlayer.uniqueId)
 
                         val present = System.currentTimeMillis()
+                        val beforeCnt = lands.memberMap.size
                         lands.memberMap[uuid] = Lands.MemberData(uuid, data.targetRank, present, present)
+                        val afterCnt = lands.memberMap.size
+                        lands.fuelRecomputeAndSave(beforeCnt, afterCnt)
 
                         data.task.cancel()
                         inviteMap.remove(uuid)
