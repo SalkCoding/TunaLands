@@ -62,7 +62,7 @@ class Debug : CommandExecutor {
                     val lands = landManager.getPlayerLands(targetUUID, Rank.OWNER)
                     if (lands != null) {
                         try {
-                            val numOfFuel = args[2].toInt()
+                            val numOfFuel = args[2].toLong()
                             if (numOfFuel <= 0) {
                                 lands.sendMessageToOnlineMembers(
                                     listOf(
@@ -93,10 +93,14 @@ class Debug : CommandExecutor {
             }
 
             args[0] == "info" && args.size == 2 -> {
-                val name = args[1]
-                val list = landManager.getPlayerLandList(Bukkit.getOfflinePlayer(name).uniqueId)?.toList()
-                if (list != null) sender.sendMessage("$name 소유의 땅 목록: ${list.joinToString(separator = ", ")}".infoFormat())
-                else sender.sendMessage("소유한 땅이 없습니다.".infoFormat())
+                val uuid = bukkitLinkedAPI.getPlayerInfo(args[1]).playerUUID
+                val lands = landManager.getPlayerLands(uuid)
+                if(lands == null){
+                    sender.sendMessage("소속된 땅이 없습니다.".warnFormat())
+                    return true
+                }
+
+                sender.sendMessage("땅 정보: $lands".infoFormat())
                 return true
             }
 
@@ -217,7 +221,7 @@ class Debug : CommandExecutor {
                 return true
             }
 
-            args[0] == "move" && args.size == 3 -> {
+            args[0] == "move" && args.size == 4 -> {
                 val uuid = Bukkit.getPlayerUniqueId(args[1])
                 val targetUUID = Bukkit.getPlayerUniqueId(args[2])
                 if (uuid == null) {
@@ -247,16 +251,7 @@ class Debug : CommandExecutor {
                 }
                 val lands = landManager.getPlayerLands(targetUUID)!!
                 val present = System.currentTimeMillis()
-                lands.memberMap[uuid] = Lands.MemberData(uuid, Rank.valueOf(args[2].uppercase()), present, present)
-                return true
-            }
-
-            args[0] == "fuel" && args[1] == "decrease" -> {
-                landManager.getFuelConsumeRunner().impose()
-                sender.sendMessage("모든땅의 연료가 멤버수에 비례하여 감소하였습니다.".infoFormat())
-                bukkitLinkedAPI.onlinePlayersInfo.forEach{
-                    bukkitLinkedAPI.sendMessageAcrossServer(it.playerUUID,"관리자에 의해 연료가 차감되었습니다.".warnFormat())
-                }
+                lands.memberMap[uuid] = Lands.MemberData(uuid, Rank.valueOf(args[3].uppercase()), present, present)
                 return true
             }
 

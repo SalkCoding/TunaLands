@@ -3,6 +3,7 @@ package com.salkcoding.tunalands.listener.land.protect
 import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.landManager
+import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.sendErrorTipMessage
 import org.bukkit.ChatColor
 import org.bukkit.event.EventHandler
@@ -22,6 +23,12 @@ class ArmorStandListener : Listener {
         val lands = landManager.getLandsWithChunk(player.chunk)
         if (lands == null) {
             player.sendErrorTipMessage("${ChatColor.RED}중립 지역에서는 갑옷거치대를 사용할 수 없습니다!")
+            event.isCancelled = true
+            return
+        }
+
+        if (!lands.enable) {
+            player.sendMessage("땅을 다시 활성화 해야합니다!".errorFormat())
             event.isCancelled = true
             return
         }

@@ -65,24 +65,23 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
         created.timeInMillis = landHistory.createdMillisecond
 
         task = Bukkit.getScheduler().runTaskTimer(tunaLands, Runnable {
-            val timeLeftUntilExpiration = lands.fuelLeft / lands.dayPerFuel
             //Expired
-            if (lands.enable && timeLeftUntilExpiration <= 0) {//Just close, DO NOT DELETE DATA OR BLOCK HERE
+            if (lands.enable && lands.fuelLeft <= 0) {//Just close, DO NOT DELETE DATA OR BLOCK HERE
                 player.sendMessage("보호 기간이 만료되어, 지역 보호가 비활성화됩니다!".warnFormat())
                 task.cancel()
-                Bukkit.getScheduler().runTask(tunaLands, Runnable(player::closeInventory))
+//                Bukkit.getScheduler().runTask(tunaLands, Runnable(player::closeInventory))
                 return@Runnable
             }
             //Not expired or already disabled
             totalInfoIcon.apply {
-                val timeLeftInMilliseconds = lands.getExpiredDateToMilliseconds()
+                val timeLeftInSeconds = lands.fuelLeft
                 val timeLeft = "${ChatColor.WHITE}${
                     when {
-                        timeLeftInMilliseconds > 0 -> {
-                            val days = timeLeftInMilliseconds / 86400000
-                            val hours = (timeLeftInMilliseconds / 3600000) % 24
-                            val minutes = (timeLeftInMilliseconds / 60000) % 60
-                            val seconds = (timeLeftInMilliseconds / 1000) % 60
+                        timeLeftInSeconds > 0 -> {
+                            val days = timeLeftInSeconds / 86400
+                            val hours = (timeLeftInSeconds / 3600) % 24
+                            val minutes = (timeLeftInSeconds / 60) % 60
+                            val seconds = timeLeftInSeconds % 60
 
                             when {
                                 days > 0 -> "예상: ${days}일 ${hours}시간 ${minutes}분 ${seconds}초 남음"
@@ -97,8 +96,6 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                     }
                 }"
 
-                val fuelInfo = String.format("${ChatColor.WHITE}* 하루당 ${lands.dayPerFuel}개 소모")
-
                 val currentNumOfMembers = lands.memberMap.filter { (_, memberData) ->
                     memberData.rank != Rank.VISITOR && memberData.rank != Rank.PARTTIMEJOB
                 }.size
@@ -107,7 +104,6 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                 this.lore = listOf(
                     "${ChatColor.WHITE}현재 연료: ${lands.fuelLeft}개",
                     timeLeft,
-                    fuelInfo,
                     "${ChatColor.WHITE}점유한 지역: ${ChatColor.GOLD}${lands.landMap.size}${ChatColor.WHITE}개",
                     "${ChatColor.WHITE}멤버 수: ${ChatColor.GOLD}${currentNumOfMembers}${ChatColor.WHITE}명",
                     "${ChatColor.WHITE}추천 수: ${ChatColor.GOLD}${lands.recommend}",
@@ -167,20 +163,20 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                     val addedFuelItem = event.inventory.getItem(4) ?: return@Runnable
                     if (!addedFuelItem.isSimilar(fuelItem)) return@Runnable
 
-                    lands.fuelLeft += addedFuelItem.amount
+                    lands.fuelLeft += addedFuelItem.amount * configuration.fuel.getFuelAddAmount(lands).addAmount
 
                     if (!lands.enable) {
                         lands.enable = true
                         displayManager.resumeDisplay(lands)?.update()
                     } else displayManager.updateDisplay(lands)
 
-                    val timeLeftInMilliseconds = lands.getExpiredDateToMilliseconds()
+                    val timeLeftInSeconds = lands.fuelLeft
                     val timeLeft = when {
-                        timeLeftInMilliseconds > 0 -> {
-                            val days = timeLeftInMilliseconds / 86400000
-                            val hours = (timeLeftInMilliseconds / 3600000) % 24
-                            val minutes = (timeLeftInMilliseconds / 60000) % 60
-                            val seconds = (timeLeftInMilliseconds / 1000) % 60
+                        timeLeftInSeconds > 0 -> {
+                            val days = timeLeftInSeconds / 86400
+                            val hours = (timeLeftInSeconds / 3600) % 24
+                            val minutes = (timeLeftInSeconds / 60) % 60
+                            val seconds = timeLeftInSeconds % 60
 
                             when {
                                 days > 0 -> "예상: ${days}일 ${hours}시간 ${minutes}분 ${seconds}초 남음"
@@ -297,20 +293,20 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
             Bukkit.getScheduler().runTaskLater(tunaLands, Runnable {
                 val addedFuelItem = event.inventory.getItem(4) ?: return@Runnable
                 if (!addedFuelItem.isSimilar(fuelItem)) return@Runnable
-                lands.fuelLeft += addedFuelItem.amount
+                lands.fuelLeft += addedFuelItem.amount * configuration.fuel.getFuelAddAmount(lands).addAmount
 
                 if (!lands.enable) {
                     lands.enable = true
                     displayManager.resumeDisplay(lands)?.update()
                 }
 
-                val timeLeftInMilliseconds = lands.getExpiredDateToMilliseconds()
+                val timeLeftInSeconds = lands.fuelLeft
                 val timeLeft = when {
-                    timeLeftInMilliseconds > 0 -> {
-                        val days = timeLeftInMilliseconds / 86400000
-                        val hours = (timeLeftInMilliseconds / 3600000) % 24
-                        val minutes = (timeLeftInMilliseconds / 60000) % 60
-                        val seconds = (timeLeftInMilliseconds / 1000) % 60
+                    timeLeftInSeconds > 0 -> {
+                        val days = timeLeftInSeconds / 86400
+                        val hours = (timeLeftInSeconds / 3600) % 24
+                        val minutes = (timeLeftInSeconds / 60) % 60
+                        val seconds = timeLeftInSeconds % 60
 
                         when {
                             days > 0 -> "예상: ${days}일 ${hours}시간 ${minutes}분 ${seconds}초 남음"
@@ -331,6 +327,10 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                 player.sendMessage("${ChatColor.WHITE}남은 시간: ${ChatColor.GOLD}$timeLeft".infoFormat())
                 player.playSound(player.location, Sound.BLOCK_BLASTFURNACE_FIRE_CRACKLE, 2.5f, 1f)
                 event.inventory.setItem(4, null)
+
+                Bukkit.getPluginManager().callEvent(
+                    LandFuelAddEvent(lands, player, addedFuelItem.amount)
+                )
             }, 2)
         }
     }

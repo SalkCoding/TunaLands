@@ -1,26 +1,24 @@
 package com.salkcoding.tunalands.api
 
-import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.LandType
 import com.salkcoding.tunalands.lands.Lands
-import com.salkcoding.tunalands.util.toQuery
+import com.salkcoding.tunalands.lands.Rank
 import org.bukkit.Bukkit
-import org.bukkit.Chunk
 import org.bukkit.entity.Player
 import java.util.*
 
 object LandsAPI {
 
     fun getPlayerRank(uuid: UUID): Rank? {
-        return when (val lands = landManager.getPlayerLands(uuid)) {
+        return when (val lands = landManager.getPlayerLands(uuid, Rank.OWNER, Rank.DELEGATOR, Rank.MEMBER)) {
             null -> null
             else -> lands.memberMap[uuid]!!.rank
         }
     }
 
     fun getPlayerLandsMemberList(uuid: UUID): List<String>? {
-        return when (val lands = landManager.getPlayerLands(uuid)) {
+        return when (val lands = landManager.getPlayerLands(uuid, Rank.OWNER, Rank.DELEGATOR, Rank.MEMBER)) {
             null -> null
             else -> {
                 val memberMap = lands.memberMap

@@ -18,10 +18,7 @@ class HurtListener : Listener {
         val victim = event.entity as? Player ?: return
         val lands = landManager.getLandsWithChunk(victim.chunk) ?: return
 
-        if (!lands.enable) {
-            event.isCancelled = true
-            return
-        }
+        if (!lands.enable) return
 
         if (victim.uniqueId in lands.memberMap) {
             val victimSetting = when (lands.memberMap[victim.uniqueId]!!.rank) {

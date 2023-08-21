@@ -1,6 +1,5 @@
 package com.salkcoding.tunalands.listener
 
-import com.salkcoding.tunalands.displayManager
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.util.infoFormat
 import org.bukkit.event.EventHandler
@@ -13,30 +12,28 @@ class JoinListener : Listener {
     fun onJoinAlarm(event: PlayerJoinEvent) {
         val player = event.player
         val lands = landManager.getPlayerLands(player.uniqueId) ?: return
-        //이미 있으면 안만들어짐
-        displayManager.createDisplay(lands)
 
         if (!lands.enable) return
 
-        val timeLeftInMilliseconds = lands.getExpiredDateToMilliseconds()
-        val timeLeft = when {
-            timeLeftInMilliseconds > 0 -> {
-                val days = timeLeftInMilliseconds / 86400000
-                val hours = (timeLeftInMilliseconds / 3600000) % 24
-                val minutes = (timeLeftInMilliseconds / 60000) % 60
-                val seconds = (timeLeftInMilliseconds / 1000) % 60
+        val timeLeftInSeconds = lands.fuelLeft
+        val timeLeft = "예상: ${when {
+            timeLeftInSeconds > 0 -> {
+                val days = timeLeftInSeconds / 86400
+                val hours = (timeLeftInSeconds / 3600) % 24
+                val minutes = (timeLeftInSeconds / 60) % 60
+                val seconds = timeLeftInSeconds% 60
 
                 when {
-                    days > 0 -> "예상: ${days}일 ${hours}시간 ${minutes}분 ${seconds}초 남음"
-                    hours > 0 -> "예상: ${hours}시간 ${minutes}분 ${seconds}초 남음"
-                    minutes > 0 -> "예상: ${minutes}분 ${seconds}초 남음"
-                    seconds > 0 -> "예상: ${seconds}초 남음"
-                    else -> "예상: 0초 남음"
+                    days > 0 -> "${days}일 ${hours}시간 ${minutes}분 ${seconds}초"
+                    hours > 0 -> "${hours}시간 ${minutes}분 ${seconds}초"
+                    minutes > 0 -> "${minutes}분 ${seconds}초"
+                    seconds > 0 -> "${seconds}초"
+                    else -> "0초"
                 }
             }
 
-            else -> "예상: 0초 남음"
-        }
+            else -> "0초"
+        }} 남음"
         player.sendMessage(timeLeft.infoFormat())
     }
 }

@@ -33,8 +33,8 @@ object PlayerLandMapReader {
 
             val ownerName = jsonObject["ownerName"].asString
             val ownerUUID = UUID.fromString(jsonObject["ownerUUID"].asString)
-            val fuelLeft = jsonObject["fuelLeft"]?.asInt ?: 0
-            val dayPerFuel = jsonObject["dayPerFuel"]?.asInt ?: 1
+            val fuelLeft = jsonObject["fuelLeft"]?.asString?.toLong() ?: 86400L
+            //val dayPerFuel = jsonObject["dayPerFuel"]?.asInt ?: 1
             val enable = jsonObject["enable"].asBoolean
             val open = jsonObject["open"].asBoolean
             val recommend = jsonObject["recommend"].asInt
@@ -73,7 +73,7 @@ object PlayerLandMapReader {
             jsonObject["welcomeMessage"].asJsonArray.forEach {
                 welcomeMessage.add(ChatColor.translateAlternateColorCodes('&', it.asString))
             }
-            val memberMap: MutableMap<UUID, Lands.MemberData> = ObservableMap(
+            val memberMap: ObservableMap<UUID, Lands.MemberData> = ObservableMap(
                 map = mutableMapOf(),
                 onChange = object : ObservableMap.Observed<UUID, Lands.MemberData> {
                     override fun syncChanges(newMap: MutableMap<UUID, Lands.MemberData>) {
@@ -184,8 +184,9 @@ object PlayerLandMapReader {
                     landHistory,
                     upCore,
                     downCore,
+                    // 데이터 통합용
+//                    if (fuelLeft < 200) (fuelLeft / dayPerFuel) * 86400 else fuelLeft,
                     fuelLeft,
-                    dayPerFuel,
                     enable,
                     open,
                     recommend,

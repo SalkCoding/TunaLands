@@ -259,47 +259,23 @@ class VisitorSettingGui(private val player: Player, private val lands: Lands, pr
 
         val setting = lands.visitorSetting
         val inv = event.inventory
-        when (event.rawSlot) {
+        when (val selected = event.rawSlot) {
             0, 8 -> {
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
                 player.openSettingGui(lands, rank)//Back button
             }
-            3 -> {
+            3,5 -> {
                 val x = player.location.blockX
-                val y = -64
+                val y = player.eyeLocation.blockY
                 val z = player.location.blockZ
                 player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
-                welcomeMessageChatMap[player.uniqueId] = Triple(x, y, z)
+
+                if(selected == 3) welcomeMessageChatMap[player.uniqueId] = Triple(x, y, z)
+                else loreChatMap[player.uniqueId] = Triple(x, y, z)
+
                 player.sendMessage("${ChatColor.WHITE}원하는 문장을 표지판에 입력해주세요.".infoFormat())
                 player.sendMessage("${ChatColor.WHITE}색 채팅을 이용할 수 있습니다.".infoFormat())
                 player.closeInventory()
-
-                // Send block change of sign at the last y bedrock
-                val blockSignPacket = PacketContainer(PacketType.Play.Server.BLOCK_CHANGE)
-                blockSignPacket.blockPositionModifier.write(0, BlockPosition(x, y, z))
-                blockSignPacket.blockData.write(0, WrappedBlockData.createData(Material.ACACIA_WALL_SIGN))
-
-                // Send open sign packet
-                val openSignPacket = PacketContainer(PacketType.Play.Server.OPEN_SIGN_EDITOR)
-                openSignPacket.blockPositionModifier.write(0, BlockPosition(x, y, z))
-
-                try {
-                    protocolManager.sendServerPacket(player, blockSignPacket)
-                    protocolManager.sendServerPacket(player, openSignPacket)
-                } catch (e: InvocationTargetException) {
-                    throw RuntimeException("Cannot send packet $openSignPacket or $blockSignPacket", e)
-                }
-            }
-            5 -> {
-                val x = player.location.blockX
-                val y = -64
-                val z = player.location.blockZ
-                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
-                loreChatMap[player.uniqueId] = Triple(x, y, z)
-                player.sendMessage("${ChatColor.WHITE}원하는 문장을 표지판에 입력해주세요.".infoFormat())
-                player.sendMessage("${ChatColor.WHITE}색 채팅을 이용할 수 있습니다.".infoFormat())
-                player.closeInventory()
-
 
                 // Send block change of sign at the last y bedrock
                 val blockSignPacket = PacketContainer(PacketType.Play.Server.BLOCK_CHANGE)

@@ -19,11 +19,11 @@ abstract class Display {
         throw NotImplementedError("Remove method not implemented")
     }
 
-    open fun isAlive(): Boolean {
-        throw NotImplementedError("isAlive method not implemented")
-    }
-
     fun setMessage(vararg messages: String) {
-        hologram.text = messages.joinToString("\n")
+        try {
+            hologram.text = messages.joinToString("\n")
+        } catch (e: UninitializedPropertyAccessException) {
+            throw IllegalStateException("Hologram isn't initialized!")
+        }
     }
 }

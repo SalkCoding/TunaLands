@@ -29,6 +29,12 @@ class BlockDropItemListener : Listener {
 
         val type = lands.landMap[player.chunk.toQuery()] ?: return
         if (type == LandType.NORMAL) {
+            val brokenType = event.block.type
+            if (brokenType == Material.CHEST
+                || brokenType == Material.BARREL
+                || brokenType == Material.TRAPPED_CHEST)
+                return
+
             val items = event.items
             var isRemoved = false
             items.removeAll {

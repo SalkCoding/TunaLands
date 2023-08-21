@@ -25,11 +25,8 @@ class PVPListener : Listener {
             damager as? Player ?: return
 
         val lands = landManager.getLandsWithChunk(damager.chunk) ?: return
-        if (!lands.enable) {
-            damager.sendMessage("땅을 다시 활성화 해야합니다!".errorFormat())
-            event.isCancelled = true
-            return
-        }
+
+        if (!lands.enable) return
 
         if (damager.uniqueId in lands.memberMap) {
             val damagerSetting = when (lands.memberMap[damager.uniqueId]!!.rank) {

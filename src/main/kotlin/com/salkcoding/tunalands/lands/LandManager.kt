@@ -1,7 +1,6 @@
 package com.salkcoding.tunalands.lands
 
 import com.salkcoding.tunalands.*
-import com.salkcoding.tunalands.file.ImposeTimeWriter
 import com.salkcoding.tunalands.fuel.FuelConsumeRunnable
 import com.salkcoding.tunalands.file.PlayerLandMapReader
 import com.salkcoding.tunalands.file.PlayerLandMapWriter
@@ -20,7 +19,7 @@ class LandManager {
     private val landMap = ConcurrentHashMap<String, Lands.ChunkInfo>()
     private val playerLandMap = PlayerLandMapReader.loadPlayerLandMap()
     private val fuelConsumeRunnable = FuelConsumeRunnable(playerLandMap)
-    private val task = Bukkit.getScheduler().runTaskTimer(tunaLands, fuelConsumeRunnable, 20, 1200)
+    private val task = Bukkit.getScheduler().runTaskTimer(tunaLands, fuelConsumeRunnable, 20, 20)
 
     init {
         playerLandMap.forEach { (_, lands) ->
@@ -59,6 +58,9 @@ class LandManager {
         lands.landMap.forEach { (query, _) ->
             landMap.remove(query)
         }
+        //For ObservableMap timer
+        lands.memberMap.disable()
+
         onChunkInfoChange(listOfQueries)
         playerLandMap.remove(uuid)
 
@@ -131,18 +133,6 @@ class LandManager {
         return landsList
     }
 
-    fun getPlayerLandList(
-        playerUUID: UUID,
-        vararg filter: Rank = arrayOf(*Rank.values())
-    ): HashMap<String, LandType>? {
-        playerLandMap.forEach { (_, lands) ->
-            if (playerUUID in lands.memberMap)
-                if (lands.memberMap[playerUUID]!!.rank in filter)
-                    return lands.landMap
-        }
-        return null
-    }
-
     fun getLandsWithChunk(chunk: Chunk): Lands? {
         val query = chunk.toQuery()
         return if (landMap.containsKey(query)) {
@@ -195,6 +185,12 @@ class LandManager {
             return
         }
 
+        val info = landMap[query]!!
+        if (info.ownerUUID != lands.ownerUUID) {
+            player.sendMessage("자신이 소속된 땅에서만 가능합니다.".errorFormat())
+            return
+        }
+
         if (!lands.enable) {
             player.sendMessage("땅을 다시 활성화 해야합니다!".errorFormat())
             return
@@ -212,7 +208,7 @@ class LandManager {
             return
         }
 
-        if (landMap.contains(query)){
+        if (landMap.contains(query)) {
             landMap[query]!!.landType = type
         } else {
             landMap[query] = Lands.ChunkInfo(lands.ownerName, lands.ownerUUID, chunk.world.name, chunk.x, chunk.z, type)
@@ -232,9 +228,7 @@ class LandManager {
         val uuid = player.uniqueId
         val now = System.currentTimeMillis()
         // Give fuel that should last for 24 hours
-        val defaultFuelRequirement = configuration.fuel.fuelRequirements.minOf { it }
         val defaultFuelAmount = configuration.fuel.defaultFuel
-        val defaultDayPerFuel = defaultFuelRequirement.dayPerFuel
 
         val lands = Lands(
             player.name,
@@ -246,8 +240,7 @@ class LandManager {
             ),
             upCore.location,
             downCore.location,
-            defaultFuelAmount,
-            defaultDayPerFuel
+            defaultFuelAmount
         ).apply {
             this.memberMap[uuid] = Lands.MemberData(uuid, Rank.OWNER, now, now)
             this.landMap[query] = LandType.NORMAL
@@ -282,6 +275,7 @@ class LandManager {
             player.sendMessage("땅을 다시 활성화 해야합니다!".errorFormat())
             return
         }
+
         val limitOccupied = configuration.protect.getMaxOccupied(lands)
         if (limitOccupied.maxChunkAmount <= lands.landMap.size) {
             player.sendMessage("더 이상 땅을 구입할 수 없습니다.".errorFormat())
@@ -294,7 +288,6 @@ class LandManager {
             player.sendMessage("${"%.2f".format(delta)}캔이 부족합니다.".errorFormat())
             return
         }
-        economy.withdrawPlayer(player, price)
 
         if (!chunk.isMeetOtherChunk(lands.landMap)) {
             player.sendMessage("바로 옆에 자신의 땅이 맞닿아있어야합니다.".errorFormat())
@@ -317,6 +310,7 @@ class LandManager {
             Bukkit.getScheduler().runTask(tunaLands, Runnable {
                 if (floodFill) {
                     flag.amount -= 1
+                    economy.withdrawPlayer(player, price)
 
                     player.sendMessage("해당 위치의 땅을 구매했습니다.".infoFormat())
                     player.world.playBuyChunkEffect(player, chunk)
@@ -339,6 +333,12 @@ class LandManager {
         }
         val chunkInfo = landMap[query]!!
         val lands = this.getPlayerLands(chunkInfo.ownerUUID, Rank.OWNER) ?: return
+
+        val info = landMap[query]!!
+        if (info.ownerUUID != lands.ownerUUID) {
+            player.sendMessage("자신이 소속된 땅에서만 가능합니다.".errorFormat())
+            return
+        }
 
         if (!lands.enable) {
             player.sendMessage("땅을 다시 활성화 해야합니다!".errorFormat())
@@ -439,7 +439,6 @@ class LandManager {
         task.cancel()
 
         PlayerLandMapWriter.savePlayerLandMap()
-        ImposeTimeWriter.saveImposeTime()
     }
 
     fun onChunkInfoChange(changedChunkQueries: List<String>) {

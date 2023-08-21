@@ -19,6 +19,8 @@ class CoreListener : Listener {
     @EventHandler(priority = EventPriority.LOW)
     fun onCorePlace(event: BlockPlaceEvent) {
         val placedBlock = event.block
+        if (placedBlock.world.name in configuration.ignoreWorld) return
+
         val player = event.player
         if (placedBlock.type == configuration.protect.coreBlockType && player.isSneaking) {
             event.isCancelled = true

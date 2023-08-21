@@ -22,8 +22,7 @@ data class Lands(
     val landHistory: LandHistory,
     val upCoreLocation: Location, //Chest
     val downCoreLocation: Location, //Core block
-    var fuelLeft: Int, // amount of fuel left
-    var dayPerFuel: Int, // amount of fuel
+    var fuelLeft: Long, // amount of fuel left
     //Optional variables of Constructor
     var enable: Boolean = true,
     var open: Boolean = true,
@@ -43,13 +42,13 @@ data class Lands(
     val partTimeJobSetting: LandSetting = LandSetting(),
     val memberSetting: LandSetting = LandSetting(),
     val delegatorSetting: DelegatorSetting = DelegatorSetting(),
-    val memberMap: MutableMap<UUID, MemberData> = ObservableMap(
+    val memberMap: ObservableMap<UUID, MemberData> = ObservableMap(
         plugin = tunaLands,
         map = mutableMapOf(),
         onChange = object : ObservableMap.Observed<UUID, MemberData> {
             override fun syncChanges(newMap: MutableMap<UUID, MemberData>) {
-                val message = newMap.map {
-                    "${it.value.uuid},${Bukkit.getOfflinePlayer(it.value.uuid).name},${it.value.rank}"
+                val message = newMap.map { (uuid, data) ->
+                    "${uuid},${Bukkit.getOfflinePlayer(uuid).name},${data.rank}"
                 }.joinToString(";")
 
                 tunaLands.broadcastLandMembersRunnable.queue.offer(message)
@@ -108,13 +107,26 @@ data class Lands(
         }
     }
 
-    fun getExpiredDateToMilliseconds(): Long {
-        val expired =
-            LocalDateTime.now().plusDays(ceil(fuelLeft / dayPerFuel.toDouble()).toLong())
-                .withHour(configuration.fuel.imposeTime)
-                .withMinute(0).withSecond(0).withNano(0)
-        val between = Duration.between(LocalDateTime.now(), expired)
-        return if (between.isNegative || between.isZero) 0 else between.toMillis()
+    override fun toString(): String {
+        val normal = landMap.values.count { it == LandType.NORMAL }
+        val delegator = memberMap.values.count { it.rank == Rank.DELEGATOR }
+        val member = memberMap.values.count { it.rank == Rank.MEMBER }
+        val parttime = memberMap.values.count { it.rank == Rank.PARTTIMEJOB }
+        val visitor = memberMap.values.count { it.rank == Rank.VISITOR }
+        return "{ownerName: $ownerName, " +
+                "ownerUUID: $ownerUUID, " +
+                "land: ${landMap.size}" +
+                "(Normal: ${normal}, " +
+                "(Farm: ${landMap.size - normal}), " +
+                "fuelLeft: $fuelLeft, " +
+                "member: ${memberMap.size}" +
+                "(owner: 1, " +
+                "delegator: $delegator, " +
+                "member: $member, " +
+                "parttime: $parttime, " +
+                "visitor: $visitor), " +
+                "ban: ${banMap.size}" +
+                "}"
     }
 
 }

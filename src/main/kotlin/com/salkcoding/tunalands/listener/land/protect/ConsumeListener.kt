@@ -21,16 +21,10 @@ class ConsumeListener : Listener {
         val player = event.player
         val lands = landManager.getLandsWithChunk(player.chunk) ?: return
 
-        if (!lands.enable) {
-            player.sendMessage("땅을 다시 활성화 해야합니다!".errorFormat())
-            event.isCancelled = true
-            return
-        }
-
         if (player.uniqueId in lands.memberMap) {
             val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
                 Rank.OWNER, Rank.DELEGATOR -> return
-                Rank.MEMBER -> lands.memberSetting
+                Rank.MEMBER -> if (lands.enable) lands.memberSetting else return
                 Rank.PARTTIMEJOB -> lands.partTimeJobSetting
                 Rank.VISITOR -> lands.visitorSetting
             }
