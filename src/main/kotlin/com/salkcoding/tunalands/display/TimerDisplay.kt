@@ -18,7 +18,7 @@ class TimerDisplay(
 
     override fun create() {
         val location = lands.upCoreLocation.toCenterLocation()
-        location.y += 1.0
+        location.y += 1.2
 
         hologram = location.world.spawnEntity(location, EntityType.TEXT_DISPLAY) as TextDisplay
         hologram.billboard = Billboard.CENTER
@@ -34,7 +34,7 @@ class TimerDisplay(
 
     override fun update() {
         try {
-            if (hologram.isDead){
+            if (hologram.isDead) {
                 hologram.remove()
                 create()
             }
@@ -54,28 +54,49 @@ class TimerDisplay(
         // Text Line 2 (최대 농작지 점유 개수)
         builder.append("농작지: ${lands.landMap.filter { it.value == LandType.FARM }.size}/${configuration.farm.limitOccupied}\n")
 
-        // Text Line 3 (현재 연료: a개)
-        builder.append("현재 연료: ${lands.fuelLeft}개\n")
+        // Text Line 3 (현재 땅 소속 인원: a명)
+        builder.append("현재 땅 소속 인원: ${lands.memberMap.size}명\n")
 
         // Text Line 4 (예상: a일 b시간 c분 d초 남음)
-        val timeLeftInMilliseconds = lands.fuelLeft
-        if (timeLeftInMilliseconds > 0) {
-            val days = timeLeftInMilliseconds / 86400000
-            val hours = (timeLeftInMilliseconds / 3600000) % 24
-            val minutes = (timeLeftInMilliseconds / 60000) % 60
-            val seconds = (timeLeftInMilliseconds / 1000) % 60
+        val timeLeftInSeconds = lands.fuelLeft
+        if (timeLeftInSeconds > 0) {
+            val days = timeLeftInSeconds / 86400
+            val hours = (timeLeftInSeconds / 3600) % 24
+            val minutes = (timeLeftInSeconds / 60) % 60
+            val seconds = timeLeftInSeconds % 60
 
-            val timeMessage = when {
-                days > 0 -> "예상: ${days}일 ${hours}시간 ${minutes}분 ${seconds}초 남음"
-                hours > 0 -> "예상: ${hours}시간 ${minutes}분 ${seconds}초 남음"
-                minutes > 0 -> "예상: ${minutes}분 ${seconds}초 남음"
-                seconds > 0 -> "예상: ${seconds}초 남음"
-                else -> "예상: 0초 남음"
-            }
+            val timeMessage = "예상: ${when {
+                days > 0 -> "${days}일 ${hours}시간 ${minutes}분 ${seconds}초"
+                hours > 0 -> "${hours}시간 ${minutes}분 ${seconds}초"
+                minutes > 0 -> "${minutes}분 ${seconds}초"
+                seconds > 0 -> "${seconds}초"
+                else -> "0초"
+            }} 남음"
 
             builder.append(timeMessage).append("\n")
         } else {
             builder.append("예상: 0초 남음").append("\n")
+        }
+
+        // Text Line 5 (연료 개당 가치: b시간 c분 d초 남음)
+
+        val addSeconds = configuration.fuel.getFuelAddAmount(lands).addAmount
+        if (addSeconds > 0) {
+            val days = addSeconds / 86400
+            val hours = (addSeconds / 3600) % 24
+            val minutes = (addSeconds / 60) % 60
+            val seconds = addSeconds % 60
+
+            val timeMessage = "연료 개당 가치: ${when {
+                days > 0 -> "${days}일 ${hours}시간 ${minutes}분 ${seconds}초"
+                hours > 0 -> "${hours}시간 ${minutes}분 ${seconds}초"
+                minutes > 0 -> "${minutes}분 ${seconds}초"
+                seconds > 0 -> "${seconds}초"
+                else -> "0초"
+            }}"
+            builder.append(timeMessage)
+        } else {
+            builder.append("연료 개당 가치: 0초")
         }
 
         hologram.text = builder.toString()

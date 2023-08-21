@@ -33,8 +33,8 @@ object PlayerLandMapReader {
 
             val ownerName = jsonObject["ownerName"].asString
             val ownerUUID = UUID.fromString(jsonObject["ownerUUID"].asString)
-            val fuelLeft = jsonObject["fuelLeft"]?.asLong ?: 86400
-            val dayPerFuel = jsonObject["dayPerFuel"]?.asInt ?: 1
+            val fuelLeft = jsonObject["fuelLeft"]?.asString?.toLong() ?: 86400L
+            //val dayPerFuel = jsonObject["dayPerFuel"]?.asInt ?: 1
             val enable = jsonObject["enable"].asBoolean
             val open = jsonObject["open"].asBoolean
             val recommend = jsonObject["recommend"].asInt
@@ -185,7 +185,8 @@ object PlayerLandMapReader {
                     upCore,
                     downCore,
                     // 데이터 통합용
-                    if (fuelLeft < 200) (fuelLeft / dayPerFuel) * 86400 else fuelLeft,
+//                    if (fuelLeft < 200) (fuelLeft / dayPerFuel) * 86400 else fuelLeft,
+                    fuelLeft,
                     enable,
                     open,
                     recommend,

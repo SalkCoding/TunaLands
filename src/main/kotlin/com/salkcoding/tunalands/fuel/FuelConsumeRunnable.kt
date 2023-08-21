@@ -13,7 +13,7 @@ class FuelConsumeRunnable(private val playerLandMap: ConcurrentHashMap<UUID, Lan
         playerLandMap.forEach { (_, lands) ->
             if (!lands.enable) return@forEach
 
-            lands.fuelLeft -= 20//연료 차감
+            lands.fuelLeft--//연료 차감
 
             if (lands.fuelLeft > 0) return@forEach
 

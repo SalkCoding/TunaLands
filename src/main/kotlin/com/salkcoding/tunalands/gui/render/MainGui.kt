@@ -74,14 +74,14 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
             }
             //Not expired or already disabled
             totalInfoIcon.apply {
-                val timeLeftInMilliseconds = lands.fuelLeft
+                val timeLeftInSeconds = lands.fuelLeft
                 val timeLeft = "${ChatColor.WHITE}${
                     when {
-                        timeLeftInMilliseconds > 0 -> {
-                            val days = timeLeftInMilliseconds / 86400000
-                            val hours = (timeLeftInMilliseconds / 3600000) % 24
-                            val minutes = (timeLeftInMilliseconds / 60000) % 60
-                            val seconds = (timeLeftInMilliseconds / 1000) % 60
+                        timeLeftInSeconds > 0 -> {
+                            val days = timeLeftInSeconds / 86400
+                            val hours = (timeLeftInSeconds / 3600) % 24
+                            val minutes = (timeLeftInSeconds / 60) % 60
+                            val seconds = timeLeftInSeconds % 60
 
                             when {
                                 days > 0 -> "예상: ${days}일 ${hours}시간 ${minutes}분 ${seconds}초 남음"
@@ -163,20 +163,20 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                     val addedFuelItem = event.inventory.getItem(4) ?: return@Runnable
                     if (!addedFuelItem.isSimilar(fuelItem)) return@Runnable
 
-                    lands.fuelLeft += addedFuelItem.amount
+                    lands.fuelLeft += addedFuelItem.amount * configuration.fuel.getFuelAddAmount(lands).addAmount
 
                     if (!lands.enable) {
                         lands.enable = true
                         displayManager.resumeDisplay(lands)?.update()
                     } else displayManager.updateDisplay(lands)
 
-                    val timeLeftInMilliseconds = lands.fuelLeft
+                    val timeLeftInSeconds = lands.fuelLeft
                     val timeLeft = when {
-                        timeLeftInMilliseconds > 0 -> {
-                            val days = timeLeftInMilliseconds / 86400000
-                            val hours = (timeLeftInMilliseconds / 3600000) % 24
-                            val minutes = (timeLeftInMilliseconds / 60000) % 60
-                            val seconds = (timeLeftInMilliseconds / 1000) % 60
+                        timeLeftInSeconds > 0 -> {
+                            val days = timeLeftInSeconds / 86400
+                            val hours = (timeLeftInSeconds / 3600) % 24
+                            val minutes = (timeLeftInSeconds / 60) % 60
+                            val seconds = timeLeftInSeconds % 60
 
                             when {
                                 days > 0 -> "예상: ${days}일 ${hours}시간 ${minutes}분 ${seconds}초 남음"
@@ -293,20 +293,20 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
             Bukkit.getScheduler().runTaskLater(tunaLands, Runnable {
                 val addedFuelItem = event.inventory.getItem(4) ?: return@Runnable
                 if (!addedFuelItem.isSimilar(fuelItem)) return@Runnable
-                lands.fuelLeft += addedFuelItem.amount * configuration.fuel.getFuelRequirement(lands).addAmount
+                lands.fuelLeft += addedFuelItem.amount * configuration.fuel.getFuelAddAmount(lands).addAmount
 
                 if (!lands.enable) {
                     lands.enable = true
                     displayManager.resumeDisplay(lands)?.update()
                 }
 
-                val timeLeftInMilliseconds = lands.fuelLeft
+                val timeLeftInSeconds = lands.fuelLeft
                 val timeLeft = when {
-                    timeLeftInMilliseconds > 0 -> {
-                        val days = timeLeftInMilliseconds / 86400000
-                        val hours = (timeLeftInMilliseconds / 3600000) % 24
-                        val minutes = (timeLeftInMilliseconds / 60000) % 60
-                        val seconds = (timeLeftInMilliseconds / 1000) % 60
+                    timeLeftInSeconds > 0 -> {
+                        val days = timeLeftInSeconds / 86400
+                        val hours = (timeLeftInSeconds / 3600) % 24
+                        val minutes = (timeLeftInSeconds / 60) % 60
+                        val seconds = timeLeftInSeconds % 60
 
                         when {
                             days > 0 -> "예상: ${days}일 ${hours}시간 ${minutes}분 ${seconds}초 남음"

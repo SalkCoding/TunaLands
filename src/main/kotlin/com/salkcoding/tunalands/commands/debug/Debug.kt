@@ -221,7 +221,7 @@ class Debug : CommandExecutor {
                 return true
             }
 
-            args[0] == "move" && args.size == 3 -> {
+            args[0] == "move" && args.size == 4 -> {
                 val uuid = Bukkit.getPlayerUniqueId(args[1])
                 val targetUUID = Bukkit.getPlayerUniqueId(args[2])
                 if (uuid == null) {
@@ -251,7 +251,7 @@ class Debug : CommandExecutor {
                 }
                 val lands = landManager.getPlayerLands(targetUUID)!!
                 val present = System.currentTimeMillis()
-                lands.memberMap[uuid] = Lands.MemberData(uuid, Rank.valueOf(args[2].uppercase()), present, present)
+                lands.memberMap[uuid] = Lands.MemberData(uuid, Rank.valueOf(args[3].uppercase()), present, present)
                 return true
             }
 

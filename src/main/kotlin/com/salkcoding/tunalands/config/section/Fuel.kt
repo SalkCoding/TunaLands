@@ -8,7 +8,7 @@ data class Fuel(
     val defaultFuel: Long,
     val fuelAddAmounts: List<AddAmount>
 ) {
-    fun getFuelRequirement(land: Lands): AddAmount {
+    fun getFuelAddAmount(land: Lands): AddAmount {
         return fuelAddAmounts.filter {
             land.memberMap.filter { (_, it) ->
                 it.rank != Rank.VISITOR && it.rank != Rank.PARTTIMEJOB

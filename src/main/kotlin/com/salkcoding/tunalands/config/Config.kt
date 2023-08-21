@@ -55,10 +55,10 @@ class Config {
         fuel = Fuel(
             configFuel.getDouble("price"),
             configFuel.getLong("defaultFuel"),
-            configFuel.getMapList("fuelRequirements").map {
+            configFuel.getMapList("fuelAddAmount").map {
                 Fuel.AddAmount(
                     it["numOfMembers"] as Int,
-                    it["addAmount"] as Long
+                    (it["addAmount"].toString()).toLong()
                 )
             }
         )

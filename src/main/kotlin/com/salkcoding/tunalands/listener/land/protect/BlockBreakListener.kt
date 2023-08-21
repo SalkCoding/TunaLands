@@ -3,6 +3,7 @@ package com.salkcoding.tunalands.listener.land.protect
 import com.salkcoding.tunalands.configuration
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
+import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.sendErrorTipMessage
 import org.bukkit.ChatColor
 import org.bukkit.Material
@@ -29,7 +30,11 @@ class BlockBreakListener : Listener {
             return
         }
 
-        if (!landManager.isProtectedLand(chunk)) return
+        if (!lands.enable) {
+            player.sendMessage("땅을 다시 활성화 해야합니다!".errorFormat())
+            event.isCancelled = true
+            return
+        }
 
         if (player.uniqueId in lands.memberMap) {
             val setting = when (lands.memberMap[player.uniqueId]!!.rank) {
