@@ -1,7 +1,7 @@
 package com.salkcoding.tunalands.gui.render
 
 import com.salkcoding.tunalands.api.event.LandGUIOpenEvent
-import com.salkcoding.tunalands.gui.GuiInterface
+import com.salkcoding.tunalands.gui.*
 import com.salkcoding.tunalands.guiManager
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank

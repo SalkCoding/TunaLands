@@ -3,7 +3,7 @@ package com.salkcoding.tunalands.gui.render
 import com.salkcoding.tunalands.*
 import com.salkcoding.tunalands.api.event.LandFuelAddEvent
 import com.salkcoding.tunalands.api.event.LandGUIOpenEvent
-import com.salkcoding.tunalands.gui.GuiInterface
+import com.salkcoding.tunalands.gui.*
 import com.salkcoding.tunalands.gui.render.settinggui.openSettingGui
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
@@ -102,7 +102,14 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
 
                 this.setDisplayName(lands.landsName)
                 this.lore = listOf(
-                    "${ChatColor.WHITE}현재 연료: ${lands.fuelSecLeft}개",
+                    "${ChatColor.WHITE}현재 연료 가치: ${secondsToDateString(lands.fuelSecLeft)}",
+                    "${ChatColor.WHITE}(* 멤버 증가시 연료 가치: ${
+                        secondsToDateString(
+                            lands.fuelCompute(
+                                lands.memberMap.size, 
+                                lands.memberMap.size + 1)
+                        )
+                    })",
                     timeLeft,
                     "${ChatColor.WHITE}점유한 지역: ${ChatColor.GOLD}${lands.landMap.size}${ChatColor.WHITE}개",
                     "${ChatColor.WHITE}멤버 수: ${ChatColor.GOLD}${currentNumOfMembers}${ChatColor.WHITE}명",

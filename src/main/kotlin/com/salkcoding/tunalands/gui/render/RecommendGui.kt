@@ -2,7 +2,7 @@ package com.salkcoding.tunalands.gui.render
 
 import com.salkcoding.tunalands.*
 import com.salkcoding.tunalands.api.event.LandGUIOpenEvent
-import com.salkcoding.tunalands.gui.GuiInterface
+import com.salkcoding.tunalands.gui.*
 import com.salkcoding.tunalands.util.*
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor

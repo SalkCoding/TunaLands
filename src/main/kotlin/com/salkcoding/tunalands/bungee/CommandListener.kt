@@ -13,6 +13,7 @@ import com.salkcoding.tunalands.util.infoFormat
 import fish.evatuna.metamorphosis.redis.MetamorphosisReceiveEvent
 import me.baiks.bukkitlinked.api.TeleportResult
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import java.util.*
@@ -41,6 +42,7 @@ class CommandListener : Listener {
             "pending_spawn_teleport",
             "unban",
             "visit",
+            "visit_specific",
             "visit_connect",
             "pending_visit_teleport",
         )
@@ -384,6 +386,55 @@ class CommandListener : Listener {
                         spawn.z.toInt()
                     )
                 } else tunaLands.logger.warning("$uuid requested ${event.uniqueId}:${event.key}:${event.value} but lands instance is null")
+            }
+
+            "visit_specific" -> {
+                val ownerName = json["ownerName"].asString
+                val ownerUUID = Bukkit.getPlayerUniqueId(ownerName)
+                if (ownerUUID == null) {
+                    bukkitLinkedAPI.sendMessageAcrossServer(uuid, "${ownerName}이라는 유저가 존재하지 않습니다.".errorFormat())
+                    return
+                }
+
+                val lands = landManager.getPlayerLands(ownerUUID, Rank.OWNER)
+                if (lands == null) {
+                    bukkitLinkedAPI.sendMessageAcrossServer(uuid, "${ownerName}이라는 유저는 땅을 소유하고 있지 않습니다.".errorFormat())
+                    return
+                }
+
+                if (!lands.enable) {
+                    bukkitLinkedAPI.sendMessageAcrossServer(uuid, "비활성화된 땅은 방문할 수 없습니다.".errorFormat())
+                    return
+                }
+
+                if (!lands.open) {
+                    bukkitLinkedAPI.sendMessageAcrossServer(uuid, "비공개 설정된 땅은 방문할 수 없습니다.".errorFormat())
+                    return
+                }
+
+                if (uuid in lands.memberMap) {
+                    val rank = lands.memberMap[uuid]!!.rank
+                    if (rank != Rank.PARTTIMEJOB && rank != Rank.VISITOR) {
+                        bukkitLinkedAPI.sendMessageAcrossServer(uuid, "자신이 소속되어있는 땅에는 방문할 수 없습니다!".errorFormat())
+                        return
+                    }
+                }
+
+                if (uuid in lands.banMap) {
+                    bukkitLinkedAPI.sendMessageAcrossServer(
+                        uuid,
+                        "${ChatColor.GREEN}${lands.ownerName}${ChatColor.WHITE}의 땅에서 밴되었기 때문에 방문할 수 없습니다!".errorFormat()
+                    )
+                    return
+                }
+
+                val sendJson = JsonObject().apply {
+                    addProperty("uuid", uuid.toString())
+                    addProperty("ownerUUID", lands.ownerUUID.toString())
+                    addProperty("targetServerName", json["serverName"].asString)
+                    addProperty("visitCooldown", configuration.commandCooldown.visitCooldown)
+                }
+                metamorphosis.send("com.salkcoding.tunalands.response_visit_specific", sendJson.toString())
             }
         }
     }

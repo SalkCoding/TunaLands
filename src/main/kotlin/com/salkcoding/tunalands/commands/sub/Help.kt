@@ -30,6 +30,7 @@ class Help : CommandExecutor {
         sender.sendMessage("/tl spawn: 땅의 스폰 지점으로 이동합니다.".infoFormat())
         sender.sendMessage("/tl unban (name): 해당 유저의 밴을 해제합니다.".infoFormat())
         sender.sendMessage("/tl visit: 방문할 수 있는 땅을 GUI로 보여줍니다.".infoFormat())
+        sender.sendMessage("/tl visit (name): 해당 유저가 소유주인 땅을 방문합니다.".infoFormat())
         sender.sendMessage("/tl setleader (name): 해당 유저를 땅의 소유주로 만듭니다.".infoFormat())
         if (sender.isOp) {
             sender.sendMessage("관리자 전용 디버깅 명령어 목록".infoFormat())

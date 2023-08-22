@@ -3,7 +3,7 @@ package com.salkcoding.tunalands.gui.render
 
 import com.salkcoding.tunalands.*
 import com.salkcoding.tunalands.api.event.LandGUIOpenEvent
-import com.salkcoding.tunalands.gui.GuiInterface
+import com.salkcoding.tunalands.gui.*
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.*
@@ -66,18 +66,20 @@ class VisitGui(private val player: Player) : GuiInterface {
                 // oldest created
                 landList = landMap.keys
                     .sortedBy {
-                    landMap[it]!!.landHistory.createdMillisecond
-                }
+                        landMap[it]!!.landHistory.createdMillisecond
+                    }
                 "오래된 순"
             }
+
             1 -> {
                 // most recently created
                 landList = landMap.keys
                     .sortedByDescending {
-                    landMap[it]!!.landHistory.createdMillisecond
-                }
+                        landMap[it]!!.landHistory.createdMillisecond
+                    }
                 "최신 순"
             }
+
             2 -> {
                 //Public sorting
                 landList = landMap.keys
@@ -89,6 +91,7 @@ class VisitGui(private val player: Player) : GuiInterface {
                     }
                 "공개 지역"
             }
+
             3 -> {
                 //Private sorting
                 landList = landMap.keys
@@ -100,6 +103,7 @@ class VisitGui(private val player: Player) : GuiInterface {
                     }
                 "비공개 지역"
             }
+
             4 -> {
                 //Recommend count sorting
                 landList = landMap.keys
@@ -111,6 +115,7 @@ class VisitGui(private val player: Player) : GuiInterface {
                     }
                 "추천 수"
             }
+
             5 -> {
                 //Member count sorting
                 landList = landMap.keys
@@ -122,6 +127,7 @@ class VisitGui(private val player: Player) : GuiInterface {
                     }
                 "멤버 수"
             }
+
             6 -> {
                 //Visitor count sorting
                 landList = landMap.keys
@@ -133,6 +139,7 @@ class VisitGui(private val player: Player) : GuiInterface {
                     }
                 "방문자 수"
             }
+
             7 -> {
                 //Solo sorting
                 landList = landMap.keys
@@ -143,6 +150,7 @@ class VisitGui(private val player: Player) : GuiInterface {
                     }
                 "혼자 운영중인 지역만"
             }
+
             else -> ""
         }
 
@@ -258,6 +266,7 @@ class VisitGui(private val player: Player) : GuiInterface {
                     pageRender(event.inventory)
                 }
             }
+
             in 18..53 -> {
                 val index = (currentPage * 36) + (event.rawSlot - 18)
                 if (index >= landList.size) return
@@ -276,7 +285,7 @@ class VisitGui(private val player: Player) : GuiInterface {
                 val uuid = player.uniqueId
                 if (uuid in lands.memberMap) {
                     val rank = lands.memberMap[uuid]!!.rank
-                    if (rank != Rank.PARTTIMEJOB) {
+                    if (rank != Rank.PARTTIMEJOB && rank != Rank.VISITOR) {
                         player.playSound(player.location, Sound.ENTITY_VILLAGER_NO, 0.5f, 1.0f)
                         player.sendMessage("자신이 소속되어있는 땅에는 방문할 수 없습니다!".errorFormat())
                         return
@@ -285,56 +294,55 @@ class VisitGui(private val player: Player) : GuiInterface {
 
                 if (uuid in lands.memberMap) {
                     val rank = lands.memberMap[uuid]!!.rank
-                    if (rank != Rank.PARTTIMEJOB) {
+                    if (rank == Rank.VISITOR) {
                         player.playSound(player.location, Sound.ENTITY_VILLAGER_NO, 0.5f, 1.0f)
                         player.sendMessage("이미 방문 중입니다!".errorFormat())
                         return
                     }
                 }
 
-                if (!lands.banMap.containsKey(uuid)) {
-                    if (lands.open || player.isOp) {
-                        player.closeInventory()
+                if (uuid in lands.banMap) {
+                    player.playSound(player.location, Sound.ENTITY_VILLAGER_NO, 0.5f, 1.0f)
+                    player.sendMessage("${ChatColor.GREEN}${lands.ownerName}${ChatColor.WHITE}의 땅에서 밴되었기 때문에 방문할 수 없습니다!".errorFormat())
+                    return
+                }
+
+                player.closeInventory()
+                player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
+                TeleportCooltime.addPlayer(
+                    player,
+                    lands.visitorSpawn,
+                    configuration.commandCooldown.visitCooldown,
+                    {
+                        //Remove visitor data
+                        val previousLands = landManager.getPlayerLands(uuid, Rank.VISITOR)
+                        if (previousLands != null) {
+                            previousLands.memberMap.remove(uuid)
+                            player.sendMessage("${previousLands.ownerName}의 땅을 떠났습니다.".infoFormat())
+                        }
+
+                        if (uuid in lands.memberMap) {
+                            if (lands.memberMap[uuid]!!.rank == Rank.PARTTIMEJOB)
+                                return@addPlayer
+                        }
+
+                        lands.landHistory.visitorCount += 1
+                        val current = System.currentTimeMillis()
+                        lands.memberMap[uuid] = Lands.MemberData(
+                            uuid,
+                            Rank.VISITOR,
+                            current,
+                            current
+                        )
+
                         lands.welcomeMessage.forEach { welcomeMessage ->
                             player.sendMessage(welcomeMessage)
                         }
 
-                        player.playSound(player.location, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f)
-                        TeleportCooltime.addPlayer(
-                            player,
-                            lands.visitorSpawn,
-                            configuration.commandCooldown.visitCooldown,
-                            {
-                                //Remove visitor data
-                                val previousLands = landManager.getPlayerLands(uuid, Rank.VISITOR)
-                                if (previousLands != null) {
-                                    previousLands.memberMap.remove(uuid)
-                                    player.sendMessage("${previousLands.ownerName}의 땅을 떠났습니다.".infoFormat())
-                                }
-
-                                if (uuid in lands.memberMap) {
-                                    if (lands.memberMap[uuid]!!.rank == Rank.PARTTIMEJOB)
-                                        return@addPlayer
-                                }
-
-                                lands.landHistory.visitorCount += 1
-                                val current = System.currentTimeMillis()
-                                lands.memberMap[uuid] = Lands.MemberData(
-                                    uuid,
-                                    Rank.VISITOR,
-                                    current,
-                                    current
-                                )
-
-                                lands.sendMessageToOnlineMembers("${ChatColor.GREEN}${player.name}${ChatColor.WHITE}님이 땅에 방문했습니다.".infoFormat())
-                            },
-                            false
-                        )
-                    }
-                } else {
-                    player.playSound(player.location, Sound.ENTITY_VILLAGER_NO, 0.5f, 1.0f)
-                    player.sendMessage("${ChatColor.GREEN}${lands.ownerName}${ChatColor.WHITE}의 땅에서 밴되었기 때문에 방문할 수 없습니다!".errorFormat())
-                }
+                        lands.sendMessageToOnlineMembers("${ChatColor.GREEN}${player.name}${ChatColor.WHITE}님이 땅에 방문했습니다.".infoFormat())
+                    },
+                    false
+                )
             }
         }
     }

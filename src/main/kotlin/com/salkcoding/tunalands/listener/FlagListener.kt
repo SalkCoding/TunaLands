@@ -1,9 +1,9 @@
 package com.salkcoding.tunalands.listener
 
-import com.salkcoding.tunalands.gui.render.releaseFarmFlagItem
-import com.salkcoding.tunalands.gui.render.releaseProtectFlagItem
-import com.salkcoding.tunalands.gui.render.takeFarmFlagItem
-import com.salkcoding.tunalands.gui.render.takeProtectFlagItem
+import com.salkcoding.tunalands.gui.releaseFarmFlagItem
+import com.salkcoding.tunalands.gui.releaseProtectFlagItem
+import com.salkcoding.tunalands.gui.takeFarmFlagItem
+import com.salkcoding.tunalands.gui.takeProtectFlagItem
 import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.LandType
 import org.bukkit.Material
