@@ -51,15 +51,19 @@ class CommandListener : Listener {
     @EventHandler
     fun onReceived(event: MetamorphosisReceiveEvent) {
         if (!event.key.startsWith("com.salkcoding.tunalands")) return
+
+        val command = event.key.split(".").last()
+        if (!commandList.contains(command)) return
+
         lateinit var json: JsonObject
         try {
+            val element = JsonParser.parseString(event.value)
+            if (!element.isJsonObject) return
+
             json = JsonParser.parseString(event.value).asJsonObject
         } catch (e: MalformedJsonException) {
             tunaLands.logger.warning("${event.key} sent an object without transform to JSON object!")
         }
-
-        val command = event.key.split(".").last()
-        if (!commandList.contains(command)) return
 
         val uuid = UUID.fromString(json["uuid"].asString)
         //Split a last sub key

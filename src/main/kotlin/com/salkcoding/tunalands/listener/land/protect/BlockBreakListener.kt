@@ -53,8 +53,10 @@ class BlockBreakListener : Listener {
                 Material.COCOA,
                 Material.MELON,
                 Material.MELON_STEM,
+                Material.ATTACHED_MELON_STEM,
                 Material.PUMPKIN,
                 Material.PUMPKIN_STEM,
+                Material.ATTACHED_PUMPKIN_STEM,
                 Material.CACTUS,
                 Material.SUGAR_CANE,
                 Material.CHORUS_PLANT,
@@ -62,7 +64,10 @@ class BlockBreakListener : Listener {
                 Material.BAMBOO,
                 Material.BAMBOO_SAPLING,
                 Material.KELP,
-                Material.KELP_PLANT
+                Material.KELP_PLANT,
+                Material.SWEET_BERRY_BUSH,
+                Material.TORCHFLOWER_CROP,
+                Material.PITCHER_CROP
                 -> {
                     if (!setting.canHarvest)
                         event.isCancelled = true
