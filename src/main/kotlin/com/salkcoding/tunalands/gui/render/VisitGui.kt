@@ -123,7 +123,7 @@ class VisitGui(private val player: Player) : GuiInterface {
                         landMap[it]!!.landHistory.createdMillisecond
                     }
                     .sortedByDescending {
-                        landMap[it]!!.memberMap.size
+                        landMap[it]!!.getFullTimeMemberSize()
                     }
                 "멤버 수"
             }
@@ -146,7 +146,7 @@ class VisitGui(private val player: Player) : GuiInterface {
                     .sortedByDescending {
                         landMap[it]!!.landHistory.createdMillisecond
                     }.filter {
-                        landMap[it]!!.memberMap.size == 1
+                        landMap[it]!!.getFullTimeMemberSize() == 1
                     }
                 "혼자 운영중인 지역만"
             }
@@ -193,7 +193,7 @@ class VisitGui(private val player: Player) : GuiInterface {
                                 false -> "${ChatColor.RED}비공개"
                             }
                         }",
-                        "${ChatColor.WHITE}멤버 수: ${ChatColor.GOLD}${lands.memberMap.size}",
+                        "${ChatColor.WHITE}멤버 수: ${ChatColor.GOLD}${lands.getFullTimeMemberSize()}",
                         "${ChatColor.WHITE}방문자 수: ${ChatColor.GOLD}${lands.landHistory.visitorCount}",
                         "${ChatColor.WHITE}추천 수: ${ChatColor.GOLD}${lands.recommend}",
                         "${ChatColor.WHITE}생성일: ${ChatColor.GRAY}${created.get(Calendar.YEAR)}/${created.get(Calendar.MONTH) + 1}/${

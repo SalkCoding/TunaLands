@@ -104,7 +104,7 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                 this.lore = listOf(
                     "${ChatColor.WHITE}현재 연료 가치: ${secondsToDateString(lands.fuelSecLeft)}",
                     "${ChatColor.WHITE}(* 멤버 증가시 연료 가치: ${
-                        secondsToDateString(configuration.fuel.getFuelAddAmount(lands.memberMap.size + 1).addAmount)
+                        secondsToDateString(configuration.fuel.getFuelAddAmount(lands.getFullTimeMemberSize() + 1).addAmount)
                     })",
                     timeLeft,
                     "${ChatColor.WHITE}점유한 지역: ${ChatColor.GOLD}${lands.landMap.size}${ChatColor.WHITE}개",

@@ -107,11 +107,11 @@ data class Lands(
     }
 
     fun fuelRecomputeAndSave(beforeMemberCnt: Int, afterMemberCnt: Int) {
-        fuelSecLeft = fuelCompute(beforeMemberCnt,afterMemberCnt)
+        fuelSecLeft = fuelCompute(beforeMemberCnt, afterMemberCnt)
         sendMessageToOnlineMembers("인원이 변동되어, 예상 연료 시간이 변경되었습니다.".infoFormat())
     }
 
-    fun fuelCompute(beforeMemberCnt: Int, afterMemberCnt: Int):Long {
+    fun fuelCompute(beforeMemberCnt: Int, afterMemberCnt: Int): Long {
         val currentFuelSec = this.fuelSecLeft.toDouble()
         val addAmountBefore = configuration.fuel.getFuelAddAmount(beforeMemberCnt)
         val addAmountAfter = configuration.fuel.getFuelAddAmount(afterMemberCnt)
@@ -121,6 +121,14 @@ data class Lands(
 
         return newFuelSecLeft.roundToLong()
     }
+
+    fun getFullTimeMemberSize(vararg filter: Rank = arrayOf(Rank.OWNER, Rank.DELEGATOR, Rank.MEMBER)): Int {
+        return memberMap.values.count { data ->
+            data.rank in filter
+        }
+    }
+
+    fun getAllMemberSize(): Int = memberMap.size
 
     override fun toString(): String {
         val normal = landMap.values.count { it == LandType.NORMAL }

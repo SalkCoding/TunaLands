@@ -239,7 +239,7 @@ class Debug : CommandExecutor {
                     landList.forEach { lands ->
                         val data = lands.memberMap[uuid]!!
 
-                        val beforeCnt = lands.memberMap.size
+                        val beforeCnt = lands.getFullTimeMemberSize()
                         if (data.rank != Rank.OWNER) lands.memberMap.remove(uuid)
                         else {
                             lands.memberMap.remove(uuid)
@@ -250,16 +250,16 @@ class Debug : CommandExecutor {
                                 Bukkit.getOfflinePlayer(list.first().uuid)
                             )
                         }
-                        val afterCnt = lands.memberMap.size
+                        val afterCnt = lands.getFullTimeMemberSize()
                         lands.fuelRecomputeAndSave(beforeCnt, afterCnt)
                     }
                 }
                 val lands = landManager.getPlayerLands(targetUUID)!!
                 val present = System.currentTimeMillis()
 
-                val beforeCnt = lands.memberMap.size
+                val beforeCnt = lands.getFullTimeMemberSize()
                 lands.memberMap[uuid] = Lands.MemberData(uuid, Rank.valueOf(args[3].uppercase()), present, present)
-                val afterCnt = lands.memberMap.size
+                val afterCnt = lands.getFullTimeMemberSize()
                 lands.fuelRecomputeAndSave(beforeCnt, afterCnt)
                 return true
             }

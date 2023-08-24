@@ -63,20 +63,20 @@ class Ban : CommandExecutor {
                             player.sendMessage("소유자는 밴할 수 없습니다.".errorFormat())
                             return
                         }
-                        val beforeCnt = lands.memberMap.size
+                        val beforeCnt = lands.getFullTimeMemberSize()
                         lands.memberMap.remove(targetUUID)
-                        val afterCnt = lands.memberMap.size
+                        val afterCnt = lands.getFullTimeMemberSize()
                         lands.fuelRecomputeAndSave(beforeCnt, afterCnt)
                     }
                     leftManager.recordLeft(targetUUID)
 
                     player.sendMessage("${targetOffline.name}을/를 밴하였습니다.".infoFormat())
                     if (targetOffline.isOnline)
-                        targetOffline.player!!.sendMessage("${lands.ownerName}의 땅에서 ${player.name}에 의해 밴당하셨습니다.".infoFormat())
+                        targetOffline.player!!.sendMessage("${lands.landsName}에서 ${player.name}에 의해 밴당하셨습니다.".infoFormat())
                     else
                         bukkitLinkedAPI.sendMessageAcrossServer(
                             targetName,
-                            "${lands.ownerName}의 땅에서 ${player.name}에 의해 밴당하셨습니다.".infoFormat()
+                            "${lands.landsName}에서 ${player.name}에 의해 밴당하셨습니다.".infoFormat()
                         )
 
                     lands.banMap[targetUUID] =
@@ -116,9 +116,9 @@ class Ban : CommandExecutor {
                             bukkitLinkedAPI.sendMessageAcrossServer(hostName, "소유자는 밴할 수 없습니다.".errorFormat())
                             return
                         }
-                        val beforeCnt = lands.memberMap.size
+                        val beforeCnt = lands.getFullTimeMemberSize()
                         lands.memberMap.remove(targetUUID)
-                        val afterCnt = lands.memberMap.size
+                        val afterCnt = lands.getFullTimeMemberSize()
                         lands.fuelRecomputeAndSave(beforeCnt, afterCnt)
                     }
                     leftManager.recordLeft(targetUUID)
@@ -126,11 +126,11 @@ class Ban : CommandExecutor {
                     //Else ban another player
                     bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${targetOffline.name}을/를 밴하였습니다.".infoFormat())
                     if (targetOffline.isOnline)
-                        targetOffline.player!!.sendMessage("${lands.ownerName}의 땅에서 ${offlinePlayer.name}에 의해 밴당하셨습니다.".infoFormat())
+                        targetOffline.player!!.sendMessage("${lands.landsName}에서 ${offlinePlayer.name}에 의해 밴당하셨습니다.".infoFormat())
                     else
                         bukkitLinkedAPI.sendMessageAcrossServer(
                             targetName,
-                            "${lands.ownerName}의 땅에서 ${offlinePlayer.name}에 의해 밴당하셨습니다.".infoFormat()
+                            "${lands.landsName}에서 ${offlinePlayer.name}에 의해 밴당하셨습니다.".infoFormat()
                         )
 
                     lands.banMap[targetUUID] =

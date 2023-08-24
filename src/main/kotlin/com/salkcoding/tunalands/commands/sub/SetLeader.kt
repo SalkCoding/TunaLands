@@ -61,7 +61,7 @@ class SetLeader : CommandExecutor {
                                     targetData.rank = Rank.OWNER
                                     data.rank = Rank.DELEGATOR
 
-                                    target.sendMessage("${player.name}의 땅의 소유자가 되었습니다.".infoFormat())
+                                    target.sendMessage("${lands.landsName}의 소유자가 되었습니다.".infoFormat())
                                 } else {
                                     lands.ownerName = targetName
                                     landManager.changeChunksOwner(player, targetOffline)
@@ -71,14 +71,14 @@ class SetLeader : CommandExecutor {
 
                                     bukkitLinkedAPI.sendMessageAcrossServer(
                                         targetName,
-                                        "${player.name}의 땅의 소유자가 되었습니다.".infoFormat()
+                                        "${lands.landsName}의 땅의 소유자가 되었습니다.".infoFormat()
                                     )
                                 }
 
-                                player.sendMessage("${targetName}은/는 이제 땅의 소유자입니다.".infoFormat())
+                                player.sendMessage("${targetName}은/는 이제 ${lands.landsName}의 소유자입니다.".infoFormat())
                                 player.sendMessage("관리 대리인으로 강등되셨습니다.".warnFormat())
 
-                                lands.sendMessageToOnlineMembers("${targetName}이/가 새로운 땅의 소유자가 되었습니다.".infoFormat())
+                                lands.sendMessageToOnlineMembers("${targetName}이/가 ${lands.landsName}의 새로운 소유자가 되었습니다.".infoFormat())
                             }
                             else -> player.sendMessage("관리 대리인과 멤버만 소유자가 될 수 있습니다.".errorFormat())
                         }
@@ -112,7 +112,7 @@ class SetLeader : CommandExecutor {
                                     targetData.rank = Rank.OWNER
                                     data.rank = Rank.DELEGATOR
 
-                                    target.sendMessage("${hostName}의 땅의 소유자가 되었습니다.".infoFormat())
+                                    target.sendMessage("${lands.landsName}의 소유자가 되었습니다.".infoFormat())
                                 } else {
                                     lands.ownerName = targetName
                                     landManager.changeChunksOwner(offlinePlayer, targetOffline)
@@ -122,14 +122,14 @@ class SetLeader : CommandExecutor {
 
                                     bukkitLinkedAPI.sendMessageAcrossServer(
                                         targetName,
-                                        "${hostName}의 땅의 소유자가 되었습니다.".infoFormat()
+                                        "${lands.landsName}의 소유자가 되었습니다.".infoFormat()
                                     )
                                 }
 
-                                bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${targetName}은/는 이제 땅의 소유자입니다.".infoFormat())
+                                bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${targetName}은/는 이제 ${lands.landsName}의 소유자입니다.".infoFormat())
                                 bukkitLinkedAPI.sendMessageAcrossServer(hostName, "관리 대리인으로 강등되셨습니다.".warnFormat())
 
-                                lands.sendMessageToOnlineMembers("${targetName}이/가 새로운 땅의 소유자가 되었습니다.".infoFormat())
+                                lands.sendMessageToOnlineMembers("${targetName}이/가 ${lands.landsName}의 소유자가 되었습니다.".infoFormat())
                             }
                             else -> bukkitLinkedAPI.sendMessageAcrossServer(hostName, "관리 대리인과 멤버만 소유자가 될 수 있습니다.".errorFormat())
                         }

@@ -29,7 +29,7 @@ class Spawn : CommandExecutor {
                         val previousLands = landManager.getPlayerLands(uuid, Rank.VISITOR)
                         if (previousLands != null) {
                             previousLands.memberMap.remove(uuid)
-                            player.sendMessage("${previousLands.ownerName}의 땅을 떠났습니다.".infoFormat())
+                            player.sendMessage("${previousLands.landsName}을/를 떠났습니다.".infoFormat())
                         }
                     }, false)
                 } else player.sendMessage("해당 명령어는 땅의 소유자, 관리 대리인, 멤버만 사용가능합니다.".errorFormat())

@@ -55,7 +55,7 @@ class TimerDisplay(
         builder.append("농작지: ${lands.landMap.filter { it.value == LandType.FARM }.size}/${configuration.farm.limitOccupied}\n")
 
         // Text Line 3 (현재 땅 소속 인원: a명)
-        builder.append("현재 땅 소속 인원: ${lands.memberMap.size}명\n")
+        builder.append("현재 땅 소속 인원: ${lands.getFullTimeMemberSize()}명\n")
 
         // Text Line 4 (예상: a일 b시간 c분 d초 남음)
         val timeLeftInSeconds = lands.fuelSecLeft

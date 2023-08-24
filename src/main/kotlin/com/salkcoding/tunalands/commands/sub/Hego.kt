@@ -51,11 +51,11 @@ class Hego : CommandExecutor {
 
                             player.sendMessage("${targetName}을/를 해고했습니다.".infoFormat())
                             if (targetOffline.isOnline)
-                                targetOffline.player!!.sendMessage("${player.name}이/가 당신을 ${lands.ownerName}의 땅에서 해고 했습니다.".infoFormat())
+                                targetOffline.player!!.sendMessage("${player.name}이/가 당신을 ${lands.landsName}에서 해고 했습니다.".infoFormat())
                             else
                                 bukkitLinkedAPI.sendMessageAcrossServer(
                                     targetName,
-                                    "${player.name}이/가 당신을 ${lands.ownerName}의 땅에서 해고 했습니다.".infoFormat()
+                                    "${player.name}이/가 당신을 ${lands.landsName}에서 해고 했습니다.".infoFormat()
                                 )
                             val json = JsonObject()
                             json.addProperty("uuid", targetData.uuid.toString())
@@ -81,11 +81,11 @@ class Hego : CommandExecutor {
 
                             bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${targetName}을/를 해고했습니다.".infoFormat())
                             if (targetOffline.isOnline)
-                                targetOffline.player!!.sendMessage("${hostName}이/가 당신을 ${lands.ownerName}의 땅에서 해고 했습니다.".infoFormat())
+                                targetOffline.player!!.sendMessage("${hostName}이/가 당신을 ${lands.landsName}에서 해고 했습니다.".infoFormat())
                             else
                                 bukkitLinkedAPI.sendMessageAcrossServer(
                                     targetName,
-                                    "${hostName}이/가 당신을 ${lands.ownerName}의 땅에서 해고 했습니다.".infoFormat()
+                                    "${hostName}이/가 당신을 ${lands.landsName}에서 해고 했습니다.".infoFormat()
                                 )
                             val json = JsonObject()
                             json.addProperty("uuid", targetData.uuid.toString())
