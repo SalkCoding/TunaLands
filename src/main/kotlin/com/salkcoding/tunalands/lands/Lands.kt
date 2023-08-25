@@ -7,10 +7,7 @@ import com.salkcoding.tunalands.lands.setting.LandSetting
 import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.ObservableMap
 import com.salkcoding.tunalands.util.infoFormat
-import org.bukkit.Bukkit
-import org.bukkit.ChatColor
-import org.bukkit.Chunk
-import org.bukkit.Location
+import org.bukkit.*
 import java.util.*
 import kotlin.math.roundToLong
 
@@ -19,8 +16,8 @@ data class Lands(
     var ownerUUID: UUID,
     val landMap: HashMap<String, LandType>,
     val landHistory: LandHistory,
-    val upCoreLocation: Location, //Chest
-    val downCoreLocation: Location, //Core block
+    var upCoreLocation: Location, //Chest
+    var downCoreLocation: Location, //Core block
     var fuelSecLeft: Long, // amount of fuel left
     //Optional variables of Constructor
     var enable: Boolean = true,
@@ -129,6 +126,16 @@ data class Lands(
     }
 
     fun getAllMemberSize(): Int = memberMap.size
+
+    fun removeCoreBlock(removeNaturally: Boolean = false) {
+        if (removeNaturally) {
+            upCoreLocation.block.breakNaturally()
+            downCoreLocation.block.breakNaturally()
+        } else {
+            upCoreLocation.block.type = Material.AIR
+            downCoreLocation.block.type = Material.AIR
+        }
+    }
 
     override fun toString(): String {
         val normal = landMap.values.count { it == LandType.NORMAL }
