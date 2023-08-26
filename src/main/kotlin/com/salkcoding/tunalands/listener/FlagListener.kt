@@ -22,28 +22,28 @@ class FlagListener : Listener {
         if (event.action != Action.RIGHT_CLICK_BLOCK) return
 
         val flag = event.item ?: return
+        if (flag.type != Material.GREEN_BANNER && flag.type != Material.BROWN_BANNER) return
+
         val under = event.clickedBlock ?: return
         val player = event.player
-        when (flag.type) {
-            //Protect flag
-            Material.GREEN_BANNER -> {
-                if (flag.isSimilar(takeProtectFlagItem)) landManager.buyChunk(player, flag, under)
-                else if (flag.isSimilar(releaseProtectFlagItem)) landManager.sellChunk(player, flag, under)
-                event.isCancelled = true
-            }
-            //Farm flag
-            Material.BROWN_BANNER -> {
-                if (flag.isSimilar(takeFarmFlagItem)) landManager.setLandType(player, flag, under, LandType.FARM)
-                else if (flag.isSimilar(releaseFarmFlagItem)) landManager.setLandType(
-                    player,
-                    flag,
-                    under,
-                    LandType.NORMAL
-                )
-                event.isCancelled = true
-            }
 
-            else -> return
+        event.isCancelled = true
+
+        when {
+            //Protect flag
+            flag.isSimilar(takeProtectFlagItem) -> landManager.buyChunk(player, flag, under)
+            flag.isSimilar(releaseProtectFlagItem) -> landManager.sellChunk(player, flag, under)
+            //Farm flag
+            flag.isSimilar(takeFarmFlagItem) -> landManager.setLandType(player, flag, under, LandType.FARM)
+            flag.isSimilar(releaseFarmFlagItem) -> landManager.setLandType(
+                player,
+                flag,
+                under,
+                LandType.NORMAL
+            )
+
+            //Normal flag
+            else -> event.isCancelled = false
         }
     }
 }
