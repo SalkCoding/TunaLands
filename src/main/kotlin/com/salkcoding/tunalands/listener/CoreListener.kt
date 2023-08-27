@@ -7,6 +7,7 @@ import com.salkcoding.tunalands.util.*
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Material
+import org.bukkit.event.Event
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -14,6 +15,7 @@ import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPistonExtendEvent
 import org.bukkit.event.block.BlockPistonRetractEvent
 import org.bukkit.event.block.BlockPlaceEvent
+import org.bukkit.event.player.PlayerInteractEvent
 
 class CoreListener : Listener {
 
@@ -38,7 +40,7 @@ class CoreListener : Listener {
 
             val query = event.block.chunk.toQuery()
             if (query !in lands.landMap || lands.landMap[query] == LandType.FARM) {
-                player.sendErrorTipMessage("자신의 일반 땅에만 코어 블럭을 재배치 할 수 있습니다.")
+                player.sendErrorTipMessage("${ChatColor.RED}자신의 일반 땅에만 코어 블럭을 재배치 할 수 있습니다.")
                 return
             }
 
@@ -85,7 +87,7 @@ class CoreListener : Listener {
 
         lands = landManager.createLand(player, chest, placedBlock)
         player.sendMessage("해당 위치의 땅을 구매했습니다.".infoFormat())
-        player.sendMessage("코어 블럭 위치를 옮기려면, 앉은 상태에서 코어블럭을 설치하면 옮길 수 있습니다.".infoFormat())
+        player.sendMessage("코어 블럭 위치를 옮기려면, 앉은 상태에서 코어 블럭을 설치하면 옮길 수 있습니다.".infoFormat())
         player.sendMessage("코어 이전 비용: ${configuration.protect.replaceCoreBlockPrice}캔".infoFormat())
         Bukkit.getPluginManager().callEvent(
             LandCreateEvent(
@@ -138,6 +140,21 @@ class CoreListener : Listener {
                 event.isCancelled = true
                 return
             }
+        }
+    }
+
+    @EventHandler
+    fun onCoreInteract(event: PlayerInteractEvent) {
+        if (event.isCancelled) return
+
+        val clickedBlock = event.clickedBlock ?: return
+        if (clickedBlock.type != configuration.protect.coreBlockType) return
+
+        val lands = landManager.getLandsWithChunk(clickedBlock.chunk) ?: return
+        val clickedLocation = clickedBlock.location
+        if (lands.downCoreLocation == clickedLocation) {
+            event.player.sendErrorTipMessage("${ChatColor.RED}코어 블럭과는 상호 작용할 수 없습니다.")
+            event.isCancelled = true
         }
     }
 }
