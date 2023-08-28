@@ -2,7 +2,7 @@ package com.salkcoding.tunalands.gui.render
 
 import com.salkcoding.tunalands.*
 import com.salkcoding.tunalands.api.event.LandGUIOpenEvent
-import com.salkcoding.tunalands.gui.GuiInterface
+import com.salkcoding.tunalands.gui.*
 import com.salkcoding.tunalands.util.*
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -91,7 +91,7 @@ class RecommendGui(private val player: Player) : GuiInterface {
             4 -> {
                 //Member count sorting
                 landList = landMap.keys.sortedByDescending {
-                    landMap[it]!!.memberMap.size
+                    landMap[it]!!.getFullTimeMemberSize()
                 }
                 "멤버 수"
             }
@@ -107,7 +107,7 @@ class RecommendGui(private val player: Player) : GuiInterface {
                 landList = landMap.keys.sortedByDescending {
                     landMap[it]!!.landHistory.createdMillisecond
                 }.filter {
-                    landMap[it]!!.memberMap.size == 1
+                    landMap[it]!!.getFullTimeMemberSize() == 1
                 }
                 "혼자 운영중인 지역"
             }
@@ -152,8 +152,8 @@ class RecommendGui(private val player: Player) : GuiInterface {
                                 false -> "${ChatColor.RED}비공개"
                             }
                         }",
-                        "${ChatColor.WHITE}멤버 수: ${ChatColor.GOLD}${lands.memberMap.size}",
-                        "${ChatColor.WHITE}방문자 수: ${ChatColor.GOLD}${lands.landHistory.visitorCount}",
+                        "${ChatColor.WHITE}멤버 수: ${ChatColor.GOLD}${lands.getFullTimeMemberSize()}",
+                        "${ChatColor.WHITE}총 방문자 수: ${ChatColor.GOLD}${lands.landHistory.visitorCount}",
                         "${ChatColor.WHITE}추천 수: ${ChatColor.GOLD}${lands.recommend}",
                         "${ChatColor.WHITE}생성일: ${ChatColor.GRAY}${created.get(Calendar.YEAR)}/${created.get(Calendar.MONTH) + 1}/${
                             created.get(

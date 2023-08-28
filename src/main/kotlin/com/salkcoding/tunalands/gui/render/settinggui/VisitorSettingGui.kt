@@ -7,8 +7,7 @@ import com.comphenix.protocol.wrappers.BlockPosition
 import com.comphenix.protocol.wrappers.WrappedBlockData
 import com.salkcoding.tunalands.api.event.LandGUIOpenEvent
 import com.salkcoding.tunalands.gui.GuiInterface
-import com.salkcoding.tunalands.gui.render.backButton
-import com.salkcoding.tunalands.gui.render.openShopGui
+import com.salkcoding.tunalands.gui.backButton
 import com.salkcoding.tunalands.guiManager
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
@@ -20,7 +19,6 @@ import org.bukkit.Bukkit
 import org.bukkit.ChatColor
 import org.bukkit.Material
 import org.bukkit.Sound
-import org.bukkit.block.Sign
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryAction
 import org.bukkit.event.inventory.InventoryClickEvent

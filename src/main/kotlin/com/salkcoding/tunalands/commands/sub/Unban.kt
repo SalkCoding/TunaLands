@@ -53,11 +53,11 @@ class Unban : CommandExecutor {
 
                     player.sendMessage("${targetName}의 밴을 해제했습니다.".infoFormat())
                     if (targetOffline.isOnline)
-                        targetOffline.player!!.sendMessage("${player.name}의 땅의 밴이 해제되었습니다.".infoFormat())
+                        targetOffline.player!!.sendMessage("${lands.landsName}에서의 밴이 해제되었습니다.".infoFormat())
                     else
                         bukkitLinkedAPI.sendMessageAcrossServer(
                             targetName,
-                            "${player.name}의 땅의 밴이 해제되었습니다.".infoFormat()
+                            "${lands.landsName}에서의 밴이 해제되었습니다.".infoFormat()
                         )
 
                     lands.banMap.remove(targetOffline.uniqueId)
@@ -80,9 +80,9 @@ class Unban : CommandExecutor {
 
                     bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${targetName}의 밴을 해제했습니다.".infoFormat())
                     if (targetOffline.isOnline)
-                        targetOffline.player!!.sendMessage("${hostName}의 땅의 밴이 해제되었습니다.".infoFormat())
+                        targetOffline.player!!.sendMessage("${lands.landsName}에서의 밴이 해제되었습니다.".infoFormat())
                     else
-                        bukkitLinkedAPI.sendMessageAcrossServer(targetName, "${hostName}의 땅의 밴이 해제되었습니다.".infoFormat())
+                        bukkitLinkedAPI.sendMessageAcrossServer(targetName, "${lands.landsName}에서의 밴이 해제되었습니다.".infoFormat())
 
                     lands.banMap.remove(targetOffline.uniqueId)
                 } else bukkitLinkedAPI.sendMessageAcrossServer(

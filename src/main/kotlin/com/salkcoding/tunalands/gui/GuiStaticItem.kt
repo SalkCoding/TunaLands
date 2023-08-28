@@ -1,4 +1,4 @@
-package com.salkcoding.tunalands.gui.render
+package com.salkcoding.tunalands.gui
 
 import com.salkcoding.tunalands.util.times
 import org.bukkit.ChatColor
@@ -96,5 +96,15 @@ val banListButton = (Material.CRIMSON_SIGN * 1).apply {
     this.setDisplayName("${ChatColor.WHITE}밴 목록")
     this.lore = listOf(
         "${ChatColor.WHITE}밴 목록을 확인합니다."
+    )
+}
+
+//TODO 해당 연료 데이터 전달 받으면 이걸 통해 main gui에서 연료 추가 해줄 것
+//소규모 마을 전용 연료
+val smallTownFuel = (Material.PAPER * 1).apply {
+    this.setDisplayName("${ChatColor.WHITE}소규모 마을 전용 연료")
+    this.lore = listOf(
+        "${ChatColor.WHITE}마을 인원 ~명, 점유한 지역이 ~개",
+        "${ChatColor.WHITE}이하일 때만 사용 가능합니다.",
     )
 }

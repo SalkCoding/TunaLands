@@ -50,10 +50,12 @@ class Leave : CommandExecutor {
                         player.sendMessage("소유자는 땅을 삭제하기전에는 땅에서 나갈 수 없습니다.".errorFormat())
                         return
                     }
-
+                    val beforeCnt = lands.getFullTimeMemberSize()
                     lands.memberMap.remove(playerUUID)
+                    val afterCnt = lands.getFullTimeMemberSize()
+                    lands.fuelRecomputeAndSave(beforeCnt, afterCnt)
 
-                    player.sendMessage("${lands.ownerName}의 땅을 떠났습니다.".infoFormat())
+                    player.sendMessage("${lands.landsName}을/를 떠났습니다.".infoFormat())
                     leftManager.recordLeft(playerUUID)
 
                     lands.sendMessageToOnlineMembers("${ChatColor.GRAY}[${data.rank.toColoredText()}${ChatColor.GRAY}] ${ChatColor.GREEN}${player.name}${ChatColor.WHITE}이/가 땅을 떠났습니다.".warnFormat())
@@ -75,9 +77,12 @@ class Leave : CommandExecutor {
                         return
                     }
 
+                    val beforeCnt = lands.getFullTimeMemberSize()
                     lands.memberMap.remove(playerUUID)
+                    val afterCnt = lands.getFullTimeMemberSize()
+                    lands.fuelRecomputeAndSave(beforeCnt, afterCnt)
 
-                    bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${lands.ownerName}의 땅을 떠났습니다.".infoFormat())
+                    bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${lands.landsName}을/를 떠났습니다.".infoFormat())
                     leftManager.recordLeft(playerUUID)
 
                     lands.sendMessageToOnlineMembers("${hostName}이/가 땅을 떠났습니다.".warnFormat())

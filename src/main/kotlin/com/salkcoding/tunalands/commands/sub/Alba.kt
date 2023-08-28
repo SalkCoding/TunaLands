@@ -150,7 +150,7 @@ class Alba : CommandExecutor {
                     //Online in current server
                     if (targetOffline.isOnline) {
                         val target = targetOffline.player!!
-                        target.sendMessage("${hostName}이/가 당신을 ${lands.ownerName}의 알바로 채용하고자 합니다.".infoFormat())
+                        target.sendMessage("${hostName}이/가 당신을 ${lands.landsName}의 알바로 채용하고자 합니다.".infoFormat())
                         target.sendMessage("수락하시려면, /tl accept를 거부하시려면, /tl deny을 입력해주세요.".infoFormat())
 
                         inviteMap[target.uniqueId] =
@@ -171,7 +171,7 @@ class Alba : CommandExecutor {
                         if (targetUUID in onlinePlayerSet) {//In proxy server
                             bukkitLinkedAPI.sendMessageAcrossServer(
                                 targetName,
-                                "${hostName}이/가 당신을 ${lands.ownerName}의 알바로 채용하고자 합니다.".infoFormat()
+                                "${hostName}이/가 당신을 ${lands.landsName}의 알바로 채용하고자 합니다.".infoFormat()
                             )
                             bukkitLinkedAPI.sendMessageAcrossServer(
                                 targetName,

@@ -68,7 +68,7 @@ class Accept : CommandExecutor {
                             else -> "null"
                         }
 
-                        lands.sendMessageToOnlineMembers("${player.name}님이 ${rankString}로 땅에 가입되었습니다.".infoFormat())
+                        lands.sendMessageToOnlineMembers("${player.name}님이 $rankString 등급으로 땅에 가입되었습니다.".infoFormat())
 
                         landManager.getPlayerLands(
                             player.uniqueId,
@@ -83,7 +83,10 @@ class Accept : CommandExecutor {
                             )
                         )
                         val present = System.currentTimeMillis()
+                        val beforeCnt = lands.getFullTimeMemberSize()
                         lands.memberMap[uuid] = Lands.MemberData(uuid, data.targetRank, present, present)
+                        val afterCnt = lands.getFullTimeMemberSize()
+                        lands.fuelRecomputeAndSave(beforeCnt, afterCnt)
 
                         data.task.cancel()
                         inviteMap.remove(uuid)
@@ -126,7 +129,7 @@ class Accept : CommandExecutor {
                             else -> "null"
                         }
 
-                        lands.sendMessageToOnlineMembers("${offlinePlayer.name}님이 ${rankString}로 땅에 가입되었습니다.".infoFormat())
+                        lands.sendMessageToOnlineMembers("${offlinePlayer.name}님이 $rankString 등급으로 땅에 가입되었습니다.".infoFormat())
 
                         landManager.getPlayerLands(
                             offlinePlayer.uniqueId,
@@ -134,7 +137,10 @@ class Accept : CommandExecutor {
                         )?.memberMap?.remove(offlinePlayer.uniqueId)
 
                         val present = System.currentTimeMillis()
+                        val beforeCnt = lands.getFullTimeMemberSize()
                         lands.memberMap[uuid] = Lands.MemberData(uuid, data.targetRank, present, present)
+                        val afterCnt = lands.getFullTimeMemberSize()
+                        lands.fuelRecomputeAndSave(beforeCnt, afterCnt)
 
                         data.task.cancel()
                         inviteMap.remove(uuid)

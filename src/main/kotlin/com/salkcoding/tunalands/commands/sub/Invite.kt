@@ -1,9 +1,11 @@
 package com.salkcoding.tunalands.commands.sub
 
 import com.salkcoding.tunalands.*
+import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
+import com.salkcoding.tunalands.util.secondsToDateString
 import com.salkcoding.tunalands.util.warnFormat
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
@@ -91,11 +93,25 @@ class Invite : CommandExecutor {
                         return
                     }
 
+                    player.sendMessage("초대 수락 전, 남은 연료 예상 시간: ${secondsToDateString(lands.fuelSecLeft)}".infoFormat())
+                    val beforeCnt = lands.getFullTimeMemberSize()
+                    val afterCnt = beforeCnt + 1
+                    player.sendMessage(
+                        "초대 수락 시, 연료 예상 시간: ${
+                            secondsToDateString(
+                                lands.fuelCompute(
+                                    beforeCnt,
+                                    afterCnt
+                                )
+                            )
+                        }".infoFormat()
+                    )
+
                     //Online in current server
                     if (targetOffline.isOnline) {
                         player.sendMessage("${targetName}에게 멤버 초대장를 보냈습니다.".infoFormat())
                         val target = targetOffline.player!!
-                        target.sendMessage("${player.name}이/가 당신을 ${lands.ownerName}의 멤버로 초대했습니다.".infoFormat())
+                        target.sendMessage("${player.name}이/가 당신을 ${lands.landsName}의 멤버로 초대했습니다.".infoFormat())
                         target.sendMessage("수락하시려면, /tl accept를 거부하시려면, /tl deny을 입력해주세요.".infoFormat())
 
                         inviteMap[target.uniqueId] =
@@ -114,7 +130,7 @@ class Invite : CommandExecutor {
                             player.sendMessage("${targetName}에게 멤버 초대장를 보냈습니다.".infoFormat())
                             bukkitLinkedAPI.sendMessageAcrossServer(
                                 targetName,
-                                "${player.name}이/가 당신을 ${lands.ownerName}의 멤버로 초대했습니다.".infoFormat()
+                                "${player.name}이/가 당신을 ${lands.landsName}의 멤버로 초대했습니다.".infoFormat()
                             )
                             bukkitLinkedAPI.sendMessageAcrossServer(
                                 targetName,
@@ -195,7 +211,7 @@ class Invite : CommandExecutor {
                     //Online in current server
                     if (targetOffline.isOnline) {
                         val target = targetOffline.player!!
-                        target.sendMessage("${offlinePlayer.name}이/가 당신을 ${lands.ownerName}의 멤버로 초대했습니다.".infoFormat())
+                        target.sendMessage("${offlinePlayer.name}이/가 당신을 ${lands.landsName}의 멤버로 초대했습니다.".infoFormat())
                         target.sendMessage("수락하시려면, /tl accept를 거부하시려면, /tl deny을 입력해주세요.".infoFormat())
 
                         inviteMap[target.uniqueId] =
@@ -204,7 +220,10 @@ class Invite : CommandExecutor {
                                 target,
                                 Rank.MEMBER,
                                 Bukkit.getScheduler().runTaskLater(tunaLands, Runnable {
-                                    bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${target.name}가 초대에 응하지 않았습니다.".warnFormat())
+                                    bukkitLinkedAPI.sendMessageAcrossServer(
+                                        hostName,
+                                        "${target.name}가 초대에 응하지 않았습니다.".warnFormat()
+                                    )
                                     target.sendMessage("초대가 만료되었습니다.".warnFormat())
                                     inviteMap.remove(target.uniqueId)
                                 }, 600)//Later 30 seconds
@@ -213,7 +232,7 @@ class Invite : CommandExecutor {
                         if (targetUUID in onlinePlayerSet) {//In proxy server
                             bukkitLinkedAPI.sendMessageAcrossServer(
                                 targetName,
-                                "${offlinePlayer.name}이/가 당신을 ${lands.ownerName}의 멤버로 초대했습니다.".infoFormat()
+                                "${offlinePlayer.name}이/가 당신을 ${lands.landsName}의 멤버로 초대했습니다.".infoFormat()
                             )
                             bukkitLinkedAPI.sendMessageAcrossServer(
                                 targetName,
@@ -224,7 +243,10 @@ class Invite : CommandExecutor {
                                 targetOffline,
                                 Rank.MEMBER,
                                 Bukkit.getScheduler().runTaskLater(tunaLands, Runnable {
-                                    bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${targetName}가 초대에 응하지 않았습니다.".warnFormat())
+                                    bukkitLinkedAPI.sendMessageAcrossServer(
+                                        hostName,
+                                        "${targetName}가 초대에 응하지 않았습니다.".warnFormat()
+                                    )
                                     if (targetOffline.isOnline)
                                         targetOffline.player?.sendMessage("초대가 만료되었습니다.".warnFormat())
                                     else
@@ -236,9 +258,15 @@ class Invite : CommandExecutor {
                                 }, 600)//Later 30 seconds
                             )
                             inviteMap[targetUUID] = inviteData
-                        } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "해당 플레이어를 찾을 수 없습니다.".errorFormat())//Not online
+                        } else bukkitLinkedAPI.sendMessageAcrossServer(
+                            hostName,
+                            "해당 플레이어를 찾을 수 없습니다.".errorFormat()
+                        )//Not online
                     }
-                } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat())
+                } else bukkitLinkedAPI.sendMessageAcrossServer(
+                    hostName,
+                    "해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat()
+                )
             }
         }
     }

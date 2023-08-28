@@ -5,10 +5,11 @@ import com.salkcoding.tunalands.lands.Rank
 import org.bukkit.Material
 
 data class Protect(
-    val coreBlockType:Material,
+    val coreBlockType: Material,
+    val replaceCoreBlockPrice: Int,
     val createPrice: Int,
     val limitOccupied: List<LimitOccupied>
-){
+) {
     fun getMaxOccupied(land: Lands): LimitOccupied {
         return limitOccupied.filter {
             land.memberMap.filter { (_, it) ->

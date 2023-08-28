@@ -55,12 +55,16 @@ class Kick : CommandExecutor {
                             player.sendMessage("소유자를 쫓아낼 수는 없습니다.".errorFormat())
                             return
                         }
+                        val beforeCnt = lands.getFullTimeMemberSize()
                         lands.memberMap.remove(targetUUID)
+                        val afterCnt = lands.getFullTimeMemberSize()
+                        lands.fuelRecomputeAndSave(beforeCnt, afterCnt)
+
                         leftManager.recordLeft(targetUUID)
 
                         player.sendMessage("${targetName}을/를 쫓아냈습니다.".infoFormat())
                         if (targetOffline.isOnline)
-                            targetOffline.player!!.sendMessage("${player.name}이/가 당신을 ${lands.ownerName}의 땅에서 당신을 쫓아냈습니다.".infoFormat())
+                            targetOffline.player!!.sendMessage("${player.name}이/가 당신을 ${lands.landsName}에서 쫓아냈습니다.".infoFormat())
                         else
                             bukkitLinkedAPI.sendMessageAcrossServer(
                                 targetName,
@@ -96,12 +100,16 @@ class Kick : CommandExecutor {
                             return
                         }
 
+                        val beforeCnt = lands.getFullTimeMemberSize()
                         lands.memberMap.remove(targetUUID)
+                        val afterCnt = lands.getFullTimeMemberSize()
+                        lands.fuelRecomputeAndSave(beforeCnt, afterCnt)
+
                         leftManager.recordLeft(targetUUID)
 
                         bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${targetName}을/를 쫓아냈습니다.".infoFormat())
                         if (targetOffline.isOnline)
-                            targetOffline.player!!.sendMessage("${hostName}이/가 당신을 ${lands.ownerName}의 땅에서 당신을 쫓아냈습니다.".infoFormat())
+                            targetOffline.player!!.sendMessage("${hostName}이/가 당신을 ${lands.landsName}에서 쫓아냈습니다.".infoFormat())
                         else
                             bukkitLinkedAPI.sendMessageAcrossServer(
                                 targetName,

@@ -33,6 +33,7 @@ class Config {
         val configProtect = config.getConfigurationSection("protect")!!
         protect = Protect(
             Material.valueOf(configProtect.getString("coreBlock")!!),
+            configProtect.getInt("replaceCoreBlockPrice"),
             configProtect.getInt("createPrice"),
             configProtect.getMapList("limitOccupied").map {
                 Protect.LimitOccupied(

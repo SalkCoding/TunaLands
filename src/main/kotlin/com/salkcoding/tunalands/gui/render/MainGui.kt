@@ -3,7 +3,7 @@ package com.salkcoding.tunalands.gui.render
 import com.salkcoding.tunalands.*
 import com.salkcoding.tunalands.api.event.LandFuelAddEvent
 import com.salkcoding.tunalands.api.event.LandGUIOpenEvent
-import com.salkcoding.tunalands.gui.GuiInterface
+import com.salkcoding.tunalands.gui.*
 import com.salkcoding.tunalands.gui.render.settinggui.openSettingGui
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
@@ -66,7 +66,7 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
 
         task = Bukkit.getScheduler().runTaskTimer(tunaLands, Runnable {
             //Expired
-            if (lands.enable && lands.fuelLeft <= 0) {//Just close, DO NOT DELETE DATA OR BLOCK HERE
+            if (lands.enable && lands.fuelSecLeft <= 0) {//Just close, DO NOT DELETE DATA OR BLOCK HERE
                 player.sendMessage("보호 기간이 만료되어, 지역 보호가 비활성화됩니다!".warnFormat())
                 task.cancel()
 //                Bukkit.getScheduler().runTask(tunaLands, Runnable(player::closeInventory))
@@ -74,7 +74,7 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
             }
             //Not expired or already disabled
             totalInfoIcon.apply {
-                val timeLeftInSeconds = lands.fuelLeft
+                val timeLeftInSeconds = lands.fuelSecLeft
                 val timeLeft = "${ChatColor.WHITE}${
                     when {
                         timeLeftInSeconds > 0 -> {
@@ -102,7 +102,10 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
 
                 this.setDisplayName(lands.landsName)
                 this.lore = listOf(
-                    "${ChatColor.WHITE}현재 연료: ${lands.fuelLeft}개",
+                    "${ChatColor.WHITE}현재 연료 가치: ${secondsToDateString(lands.fuelSecLeft)}",
+                    "${ChatColor.WHITE}(* 멤버 증가시 연료 가치: ${
+                        secondsToDateString(configuration.fuel.getFuelAddAmount(lands.getFullTimeMemberSize() + 1).addAmount)
+                    })",
                     timeLeft,
                     "${ChatColor.WHITE}점유한 지역: ${ChatColor.GOLD}${lands.landMap.size}${ChatColor.WHITE}개",
                     "${ChatColor.WHITE}멤버 수: ${ChatColor.GOLD}${currentNumOfMembers}${ChatColor.WHITE}명",
@@ -163,14 +166,14 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
                     val addedFuelItem = event.inventory.getItem(4) ?: return@Runnable
                     if (!addedFuelItem.isSimilar(fuelItem)) return@Runnable
 
-                    lands.fuelLeft += addedFuelItem.amount * configuration.fuel.getFuelAddAmount(lands).addAmount
+                    lands.fuelSecLeft += addedFuelItem.amount * configuration.fuel.getFuelAddAmount(lands).addAmount
 
                     if (!lands.enable) {
                         lands.enable = true
                         displayManager.resumeDisplay(lands)?.update()
                     } else displayManager.updateDisplay(lands)
 
-                    val timeLeftInSeconds = lands.fuelLeft
+                    val timeLeftInSeconds = lands.fuelSecLeft
                     val timeLeft = when {
                         timeLeftInSeconds > 0 -> {
                             val days = timeLeftInSeconds / 86400
@@ -293,14 +296,14 @@ class MainGui(private val player: Player, private val lands: Lands, private val 
             Bukkit.getScheduler().runTaskLater(tunaLands, Runnable {
                 val addedFuelItem = event.inventory.getItem(4) ?: return@Runnable
                 if (!addedFuelItem.isSimilar(fuelItem)) return@Runnable
-                lands.fuelLeft += addedFuelItem.amount * configuration.fuel.getFuelAddAmount(lands).addAmount
+                lands.fuelSecLeft += addedFuelItem.amount * configuration.fuel.getFuelAddAmount(lands).addAmount
 
                 if (!lands.enable) {
                     lands.enable = true
                     displayManager.resumeDisplay(lands)?.update()
                 }
 
-                val timeLeftInSeconds = lands.fuelLeft
+                val timeLeftInSeconds = lands.fuelSecLeft
                 val timeLeft = when {
                     timeLeftInSeconds > 0 -> {
                         val days = timeLeftInSeconds / 86400

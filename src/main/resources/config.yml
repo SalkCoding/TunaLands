@@ -7,6 +7,7 @@ maxAlbaLimit: 10
 protect:
   #Material type https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
   coreBlock: "DIAMOND_BLOCK"
+  replaceCoreBlockPrice: 50
   createPrice: 10
   limitOccupied:
     - numOfMembers: 1

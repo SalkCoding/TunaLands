@@ -1,7 +1,7 @@
 package com.salkcoding.tunalands.gui.render
 
 import com.salkcoding.tunalands.api.event.LandGUIOpenEvent
-import com.salkcoding.tunalands.gui.GuiInterface
+import com.salkcoding.tunalands.gui.*
 import com.salkcoding.tunalands.guiManager
 import com.salkcoding.tunalands.lands.Lands
 import com.salkcoding.tunalands.lands.Rank
@@ -53,7 +53,7 @@ class UserListGui(private val player: Player, private val lands: Lands, private 
                 }
             }
             val lore = mutableListOf(
-                "${ChatColor.WHITE}온라인 인원: ${ChatColor.GREEN}${onlineCount}${ChatColor.WHITE}/${ChatColor.GRAY}${lands.memberMap.size}",
+                "${ChatColor.WHITE}온라인 인원: ${ChatColor.GREEN}${onlineCount}${ChatColor.WHITE}/${ChatColor.GRAY}${lands.getFullTimeMemberSize()}",
             )
             when {
                 ownerCount > 0 -> lore.add("${ChatColor.WHITE}소유자: ${ChatColor.GOLD}1${ChatColor.WHITE}명")

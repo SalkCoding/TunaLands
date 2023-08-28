@@ -35,7 +35,7 @@ class LandManager {
                 )
             }
 
-            if (lands.fuelLeft > 0) {
+            if (lands.fuelSecLeft > 0) {
                 displayManager.createDisplay(lands)
             }
         }
@@ -252,7 +252,6 @@ class LandManager {
 
         displayManager.createDisplay(lands)
 
-        player.sendMessage("해당 위치의 땅을 구매했습니다.".infoFormat())
         player.world.playBuyChunkEffect(player, chunk)
         return lands
     }
