@@ -3,6 +3,7 @@ package com.salkcoding.tunalands.listener
 import com.salkcoding.tunalands.*
 import com.salkcoding.tunalands.api.event.LandCreateEvent
 import com.salkcoding.tunalands.lands.LandType
+import com.salkcoding.tunalands.lands.Rank
 import com.salkcoding.tunalands.util.*
 import org.bukkit.Bukkit
 import org.bukkit.ChatColor
@@ -36,6 +37,32 @@ class CoreListener : Listener {
         //Core block replace
         var lands = landManager.getPlayerLands(player.uniqueId)
         if (lands != null) {
+            //Must be an owner
+            val data = lands.memberMap[player.uniqueId]!!
+            when (data.rank) {
+                Rank.DELEGATOR, Rank.MEMBER -> {
+                    player.sendErrorTipMessage("${ChatColor.RED}현재 소속된 땅을 탈퇴 해야만, 땅을 만들 수 있습니다.")
+                    return
+                }
+
+                Rank.PARTTIMEJOB -> {
+                    player.sendErrorTipMessage("${ChatColor.RED}알바를 그만둬야만, 땅을 만들 수 있습니다.")
+                    return
+                }
+
+                Rank.VISITOR -> {
+                    player.sendErrorTipMessage("${ChatColor.RED}현재 방문중인 땅을 나가야 땅을 만들 수 있습니다.")
+                    return
+                }
+
+                else -> {
+                    /*
+                    Ignored
+                    Owner = Continue core replacing
+                    */
+                }
+            }
+
             event.isCancelled = false
 
             val query = event.block.chunk.toQuery()
@@ -87,7 +114,7 @@ class CoreListener : Listener {
 
         lands = landManager.createLand(player, chest, placedBlock)
         player.sendMessage("해당 위치의 땅을 구매했습니다.".infoFormat())
-        player.sendMessage("코어 블럭 위치를 옮기려면, 앉은 상태에서 코어 블럭을 설치하면 옮길 수 있습니다.".infoFormat())
+        player.sendMessage("코어 블럭 위치를 옮기려면, 앉은 상태에서 코어 블럭을 일반 땅에 설치하면 옮길 수 있습니다. (소유자 전용)".infoFormat())
         player.sendMessage("코어 이전 비용: ${configuration.protect.replaceCoreBlockPrice}캔".infoFormat())
         Bukkit.getPluginManager().callEvent(
             LandCreateEvent(
