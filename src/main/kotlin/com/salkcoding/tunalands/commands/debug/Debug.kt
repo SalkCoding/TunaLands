@@ -96,7 +96,7 @@ class Debug : CommandExecutor {
             args[0] == "info" && args.size == 2 -> {
                 val uuid = bukkitLinkedAPI.getPlayerInfo(args[1]).playerUUID
                 val lands = landManager.getPlayerLands(uuid)
-                if(lands == null){
+                if (lands == null) {
                     sender.sendMessage("소속된 땅이 없습니다.".warnFormat())
                     return true
                 }
@@ -251,16 +251,16 @@ class Debug : CommandExecutor {
                             )
                         }
                         val afterCnt = lands.getFullTimeMemberSize()
-                        lands.fuelRecomputeAndSave(beforeCnt, afterCnt)
+                        lands.fuelRecomputeAndSave(beforeCnt, afterCnt, data.rank != Rank.PARTTIMEJOB)
                     }
                 }
                 val lands = landManager.getPlayerLands(targetUUID)!!
                 val present = System.currentTimeMillis()
-
+                val rank = Rank.valueOf(args[3].uppercase())
                 val beforeCnt = lands.getFullTimeMemberSize()
-                lands.memberMap[uuid] = Lands.MemberData(uuid, Rank.valueOf(args[3].uppercase()), present, present)
+                lands.memberMap[uuid] = Lands.MemberData(uuid, rank, present, present)
                 val afterCnt = lands.getFullTimeMemberSize()
-                lands.fuelRecomputeAndSave(beforeCnt, afterCnt)
+                lands.fuelRecomputeAndSave(beforeCnt, afterCnt, rank != Rank.PARTTIMEJOB)
                 return true
             }
 
