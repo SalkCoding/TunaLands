@@ -103,9 +103,10 @@ data class Lands(
         }
     }
 
-    fun fuelRecomputeAndSave(beforeMemberCnt: Int, afterMemberCnt: Int) {
+    fun fuelRecomputeAndSave(beforeMemberCnt: Int, afterMemberCnt: Int, printMessage: Boolean = true) {
         fuelSecLeft = fuelCompute(beforeMemberCnt, afterMemberCnt)
-        sendMessageToOnlineMembers("인원이 변동되어, 예상 연료 시간이 변경되었습니다.".infoFormat())
+        if (printMessage)
+            sendMessageToOnlineMembers("인원이 변동되어, 예상 연료 시간이 변경되었습니다.".infoFormat())
     }
 
     fun fuelCompute(beforeMemberCnt: Int, afterMemberCnt: Int): Long {
