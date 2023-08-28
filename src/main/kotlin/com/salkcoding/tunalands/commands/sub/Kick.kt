@@ -58,7 +58,7 @@ class Kick : CommandExecutor {
                         val beforeCnt = lands.getFullTimeMemberSize()
                         lands.memberMap.remove(targetUUID)
                         val afterCnt = lands.getFullTimeMemberSize()
-                        lands.fuelRecomputeAndSave(beforeCnt, afterCnt, targetData.rank != Rank.PARTTIMEJOB)
+                        lands.fuelRecomputeAndSave(beforeCnt, afterCnt)
 
                         leftManager.recordLeft(targetUUID)
 
@@ -103,7 +103,7 @@ class Kick : CommandExecutor {
                         val beforeCnt = lands.getFullTimeMemberSize()
                         lands.memberMap.remove(targetUUID)
                         val afterCnt = lands.getFullTimeMemberSize()
-                        lands.fuelRecomputeAndSave(beforeCnt, afterCnt, targetData.rank != Rank.PARTTIMEJOB)
+                        lands.fuelRecomputeAndSave(beforeCnt, afterCnt)
 
                         leftManager.recordLeft(targetUUID)
 

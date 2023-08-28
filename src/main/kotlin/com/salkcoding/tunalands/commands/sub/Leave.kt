@@ -53,7 +53,7 @@ class Leave : CommandExecutor {
                     val beforeCnt = lands.getFullTimeMemberSize()
                     lands.memberMap.remove(playerUUID)
                     val afterCnt = lands.getFullTimeMemberSize()
-                    lands.fuelRecomputeAndSave(beforeCnt, afterCnt, data.rank != Rank.PARTTIMEJOB)
+                    lands.fuelRecomputeAndSave(beforeCnt, afterCnt)
 
                     player.sendMessage("${lands.landsName}을/를 떠났습니다.".infoFormat())
                     leftManager.recordLeft(playerUUID)
@@ -80,7 +80,7 @@ class Leave : CommandExecutor {
                     val beforeCnt = lands.getFullTimeMemberSize()
                     lands.memberMap.remove(playerUUID)
                     val afterCnt = lands.getFullTimeMemberSize()
-                    lands.fuelRecomputeAndSave(beforeCnt, afterCnt, data.rank != Rank.PARTTIMEJOB)
+                    lands.fuelRecomputeAndSave(beforeCnt, afterCnt)
 
                     bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${lands.landsName}을/를 떠났습니다.".infoFormat())
                     leftManager.recordLeft(playerUUID)

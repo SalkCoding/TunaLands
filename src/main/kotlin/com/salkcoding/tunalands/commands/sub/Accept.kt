@@ -86,7 +86,7 @@ class Accept : CommandExecutor {
                         val beforeCnt = lands.getFullTimeMemberSize()
                         lands.memberMap[uuid] = Lands.MemberData(uuid, data.targetRank, present, present)
                         val afterCnt = lands.getFullTimeMemberSize()
-                        lands.fuelRecomputeAndSave(beforeCnt, afterCnt, data.targetRank != Rank.PARTTIMEJOB)
+                        lands.fuelRecomputeAndSave(beforeCnt, afterCnt)
 
                         data.task.cancel()
                         inviteMap.remove(uuid)
@@ -140,7 +140,7 @@ class Accept : CommandExecutor {
                         val beforeCnt = lands.getFullTimeMemberSize()
                         lands.memberMap[uuid] = Lands.MemberData(uuid, data.targetRank, present, present)
                         val afterCnt = lands.getFullTimeMemberSize()
-                        lands.fuelRecomputeAndSave(beforeCnt, afterCnt, data.targetRank != Rank.PARTTIMEJOB)
+                        lands.fuelRecomputeAndSave(beforeCnt, afterCnt)
 
                         data.task.cancel()
                         inviteMap.remove(uuid)

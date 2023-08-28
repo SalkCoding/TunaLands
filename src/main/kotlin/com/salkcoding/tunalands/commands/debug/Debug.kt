@@ -251,7 +251,7 @@ class Debug : CommandExecutor {
                             )
                         }
                         val afterCnt = lands.getFullTimeMemberSize()
-                        lands.fuelRecomputeAndSave(beforeCnt, afterCnt, data.rank != Rank.PARTTIMEJOB)
+                        lands.fuelRecomputeAndSave(beforeCnt, afterCnt)
                     }
                 }
                 val lands = landManager.getPlayerLands(targetUUID)!!
@@ -260,7 +260,7 @@ class Debug : CommandExecutor {
                 val beforeCnt = lands.getFullTimeMemberSize()
                 lands.memberMap[uuid] = Lands.MemberData(uuid, rank, present, present)
                 val afterCnt = lands.getFullTimeMemberSize()
-                lands.fuelRecomputeAndSave(beforeCnt, afterCnt, rank != Rank.PARTTIMEJOB)
+                lands.fuelRecomputeAndSave(beforeCnt, afterCnt)
                 return true
             }
 
