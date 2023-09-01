@@ -15,7 +15,7 @@ import org.bukkit.event.player.PlayerInteractEvent
 
 class ChestGuiOpenListener : Listener {
 
-    @EventHandler(priority = EventPriority.LOW)
+    @EventHandler(priority = EventPriority.LOWEST)
     fun onInteract(event: PlayerInteractEvent) {
         if (event.useInteractedBlock() == Event.Result.DENY) return
         if (event.action != Action.RIGHT_CLICK_BLOCK) return

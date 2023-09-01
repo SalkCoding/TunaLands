@@ -168,9 +168,10 @@ class CoreListener : Listener {
                 return
             }
         }
+        val `val` =1
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     fun onCoreInteract(event: PlayerInteractEvent) {
         if (event.isCancelled) return
 
