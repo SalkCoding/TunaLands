@@ -13,6 +13,7 @@ class Help : CommandExecutor {
         sender.sendMessage("/tl alba (name): 해당 유저를 알바로 채용하기 위한 초대를 보냅니다.".warnFormat())
         sender.sendMessage("/tl ban (name): 해당 유저를 밴합니다.".infoFormat())
         sender.sendMessage("/tl banlist: 땅에서 밴된 유저 목록을 보여줍니다.".infoFormat())
+        sender.sendMessage("/tl core: 코어 블럭 gui를 엽니다.(스폰, 거주 월드 한정)".infoFormat())
         sender.sendMessage("/tl cancel (name): 보낸 초대를 취소합니다.".infoFormat())
         sender.sendMessage("/tl delete: 자신 소유의 땅을 삭제합니다.".infoFormat())
         sender.sendMessage("/tl demote (name): 해당 유저를 강등시킵니다.".infoFormat())

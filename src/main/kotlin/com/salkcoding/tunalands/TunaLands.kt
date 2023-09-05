@@ -97,6 +97,7 @@ class TunaLands : JavaPlugin() {
         handler.register("alba", Alba())
         handler.register("ban", Ban())
         handler.register("banlist", BanList())
+        handler.register("core", Core())
         handler.register("cancel", Cancel())
         handler.register("delete", Delete())
         handler.register("demote", Demote())
