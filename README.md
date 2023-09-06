@@ -1,13 +1,13 @@
 # TunaLands
 ## Developing environment
-* IntelliJ IDEA 2023.1.1
-* Runtime version: 17.0.6+10-b829.9 amd64
+* IntelliJ IDEA 2023.2.1
+* Runtime version: 17.0.8+7-b1000.8 x86_64
 * Kotlin 1.8.20
-* Gradle 7.2
+* Gradle 7.3.2
 
 ## Testing environment
 * Windows 10 Home
-* [Purpur-1.19.4-R0.1](https://github.com/pl3xgaming/Purpur)
+* [Purpur-1.20.1-R0.1](https://github.com/pl3xgaming/Purpur)
 * [openJDK 17](https://jdk.java.net/17/)
 * [MockK 1.13.5](https://github.com/mockk/mockk)
 * [MockBukkit 1.19-SNAPSHOT](https://github.com/MockBukkit/MockBukkit)
@@ -16,7 +16,7 @@
 ## Dependencies
 * kotlin-stdlib
 * [adventure-text-minimessage.4.12.0](https://docs.adventure.kyori.net/minimessage) (For Purpur)
-* [Purpur-1.19.4-R0.1-SNAPSHOT](https://github.com/pl3xgaming/Purpur)
+* [Purpur-1.20.1-R0.1-SNAPSHOT](https://github.com/pl3xgaming/Purpur)
 * [Vault 1.7.3](https://github.com/MilkBowl/Vault)
 * BukkitLinkedAPI
 * Metamorphosis
@@ -26,9 +26,30 @@
 ```
 serverName: "lobby"
 
-protect: # Tick
-  coreBlock: "DIAMOND_BLOCK" #Not ID, But Material
+#All time units are in 'tick' units.
+maxMemberLimit: 10
+maxAlbaLimit: 10
+
+protect:
+  #Material type https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html
+  coreBlock: "DIAMOND_BLOCK"
+  replaceCoreBlockPrice: 50
   createPrice: 10
+  limitOccupied:
+    - numOfMembers: 1
+      chunk: 10
+
+    - numOfMembers: 3
+      chunk: 30
+
+    - numOfMembers: 5
+      chunk: 50
+
+    - numOfMembers: 7
+      chunk: 70
+
+farm:
+  limitOccupied: 10
 
 flag:
   price:
@@ -49,34 +70,32 @@ flag:
 
     takeFarmFlagPrice: 10
     releaseFarmFlagPrice: 5
-  farm:
-    limitFarmOccupied: 10
 
+# Time unit: seconds 86400 = 1 day
 fuel:
-  defaultFuel: 3600
+  defaultFuel: 259200
   price: 10.0
-  fuelRequirements:
-    # Recommended secondsPerFuel: above 0
-    # Only double type can read
+  fuelAddAmount:
     - numOfMembers: 1
-      secondsPerFuel: 0.5
+      addAmount: 86400
 
     - numOfMembers: 2
-      secondsPerFuel: 1.0
+      addAmount: 75000
 
     - numOfMembers: 5
-      secondsPerFuel: 6.0
+      addAmount: 55000
 
     - numOfMembers: 7
-      secondsPerFuel: 10.0
+      addAmount: 43200
 
-recommend: # Tick
-  reset: 1728000
-  cooldown: 1728000
+recommend:
+  reset: 1728000 #1d
+  cooldown: 1728000 #1d
 
 command:
-  cooldown: #Tick
+  cooldown:
     rejoin: 5184000 #3d
+    # Teleport effect cooldown
     visit: 100 #5s
     spawn: 100 #5s
   price:
@@ -86,6 +105,9 @@ command:
 limitWorld:
   - world_nether
   - world_the_end
+
+ignoreWorld:
+  - spawn
 ```
 
 ## Save format(Json)
@@ -93,8 +115,11 @@ limitWorld:
 {
     "ownerName": "Salk_Coding",
     "ownerUUID": "24c186ac-b905-4b6e-9f96-0ad0744df901",
+    "fuelLeft": 86400,
     "enable": true,
     "open": false,
+    "recommend": 0,
+    "landsName": "Salk_Coding의 땅"
     "landList": [
         "1:1",
         "1:2"
