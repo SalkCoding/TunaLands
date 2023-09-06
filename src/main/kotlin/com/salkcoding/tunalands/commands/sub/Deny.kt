@@ -14,14 +14,16 @@ import java.util.*
 class Deny : CommandExecutor {
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        if (label == "deny" && args.isEmpty()) {
-            val player = sender as? Player
-            if (player != null) {
-                work(player)
-            } else sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
+        if (args.isNotEmpty()) return false
+
+        val player = sender as? Player
+        if (player == null) {
+            sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
             return true
         }
-        return false
+
+        work(player)
+        return true
     }
 
     companion object {
@@ -43,7 +45,10 @@ class Deny : CommandExecutor {
                     if (host.isOnline)
                         host.player!!.sendMessage("${player.name}이/가 당신의 초대를 거절하였습니다.".infoFormat())
                     else
-                        bukkitLinkedAPI.sendMessageAcrossServer(host.name, "${player.name}이/가 당신의 초대를 거절하였습니다.".infoFormat())
+                        bukkitLinkedAPI.sendMessageAcrossServer(
+                            host.name,
+                            "${player.name}이/가 당신의 초대를 거절하였습니다.".infoFormat()
+                        )
 
                     data.task.cancel()
                     inviteMap.remove(uuid)
@@ -57,7 +62,10 @@ class Deny : CommandExecutor {
                     if (host.isOnline)
                         host.player!!.sendMessage("${offlinePlayer.name}이/가 당신의 초대를 거절하였습니다.".infoFormat())
                     else
-                        bukkitLinkedAPI.sendMessageAcrossServer(host.name, "${offlinePlayer.name}이/가 당신의 초대를 거절하였습니다.".infoFormat())
+                        bukkitLinkedAPI.sendMessageAcrossServer(
+                            host.name,
+                            "${offlinePlayer.name}이/가 당신의 초대를 거절하였습니다.".infoFormat()
+                        )
 
                     data.task.cancel()
                     inviteMap.remove(uuid)

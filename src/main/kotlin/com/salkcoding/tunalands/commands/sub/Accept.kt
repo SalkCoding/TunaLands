@@ -19,14 +19,16 @@ import java.util.*
 class Accept : CommandExecutor {
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        if (label == "accept" && args.isEmpty()) {
-            val player = sender as? Player
-            if (player != null) {
-                work(player)
-            } else sender.sendMessage("콘솔에서는 사용 불가능한 명령어입니다.".errorFormat())
+        if (args.isNotEmpty()) return true
+
+        val player = sender as? Player
+        if(player == null){
+            sender.sendMessage("콘솔에서는 사용 불가능한 명령어입니다.".errorFormat())
             return true
         }
-        return false
+
+        work(player.uniqueId)
+        return true
     }
 
     companion object {

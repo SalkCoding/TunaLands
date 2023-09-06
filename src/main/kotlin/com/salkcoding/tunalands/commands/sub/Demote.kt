@@ -15,14 +15,16 @@ import java.util.*
 
 class Demote : CommandExecutor {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        if (label == "demote" && args.size == 1) {
-            val player = sender as? Player
-            if (player != null) {
-                work(player, args[0])
-            } else sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
+        if (args.isEmpty()) return false
+
+        val player = sender as? Player
+        if (player == null) {
+            sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
             return true
         }
-        return false
+
+        work(player, args[0])
+        return true
     }
 
     companion object {
@@ -62,6 +64,7 @@ class Demote : CommandExecutor {
                                     )
                                 player.sendMessage("${targetName}이/가 멤버로 강등되었습니다..".infoFormat())
                             }
+
                             else -> player.sendMessage("관리 대리인만 강등이 가능합니다.".errorFormat())
                         }
                     } else player.sendMessage("${targetName}은/는 당신의 땅에 소속되어있지 않습니다.".errorFormat())
@@ -94,12 +97,25 @@ class Demote : CommandExecutor {
                                         targetName,
                                         "${hostName}이/가 당신을 멤버로 강등시켰습니다.".infoFormat()
                                     )
-                                bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${targetName}이/가 멤버로 강등되었습니다..".infoFormat())
+                                bukkitLinkedAPI.sendMessageAcrossServer(
+                                    hostName,
+                                    "${targetName}이/가 멤버로 강등되었습니다..".infoFormat()
+                                )
                             }
-                            else -> bukkitLinkedAPI.sendMessageAcrossServer(hostName, "관리 대리인만 강등이 가능합니다.".errorFormat())
+
+                            else -> bukkitLinkedAPI.sendMessageAcrossServer(
+                                hostName,
+                                "관리 대리인만 강등이 가능합니다.".errorFormat()
+                            )
                         }
-                    } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${targetName}은/는 당신의 땅에 소속되어있지 않습니다.".errorFormat())
-                } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat())
+                    } else bukkitLinkedAPI.sendMessageAcrossServer(
+                        hostName,
+                        "${targetName}은/는 당신의 땅에 소속되어있지 않습니다.".errorFormat()
+                    )
+                } else bukkitLinkedAPI.sendMessageAcrossServer(
+                    hostName,
+                    "해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat()
+                )
             }
         }
     }

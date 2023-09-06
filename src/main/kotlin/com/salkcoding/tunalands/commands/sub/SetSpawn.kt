@@ -12,54 +12,65 @@ import org.bukkit.entity.Player
 
 class SetSpawn : CommandExecutor {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        if (label == "setspawn" && args.size == 1) {
-            val player = sender as? Player
-            if (player != null) {
+        when (args.size) {
+            1 -> {
+                val player = sender as? Player
+                if (player == null) {
+                    sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
+                    return true
+                }
+
                 val lands = landManager.getPlayerLands(player.uniqueId, Rank.OWNER, Rank.DELEGATOR)
-                if (lands != null) {
-                    if (player.location.chunk.toQuery() !in lands.landMap) {
-                        player.sendMessage("자신의 보호된 땅 이외의 위치에서는 스폰을 설정할 수 없습니다!".errorFormat())
-                        return true
-                    }
+                if (lands == null) {
+                    player.sendMessage("해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat())
+                    return true
+                }
 
-                    val price = configuration.commandPrice.setSpawnPrice.toDouble()
-                    if (player.hasNotEnoughMoney(price)) {
-                        val delta = price - economy.getBalance(player)
-                        player.sendMessage("${"%.2f".format(delta)}캔이 부족합니다.".errorFormat())
-                        return true
-                    }
-                    economy.withdrawPlayer(player, price)
+                if (player.location.chunk.toQuery() !in lands.landMap) {
+                    player.sendMessage("자신의 보호된 땅 이외의 위치에서는 스폰을 설정할 수 없습니다!".errorFormat())
+                    return true
+                }
 
-                    val data = lands.memberMap[player.uniqueId]!!
-                    when (data.rank) {
-                        Rank.OWNER -> {
-                            when (args[0]) {
-                                "main" -> lands.memberSpawn = player.location.toCenterLocation()
-                                "visitor" -> lands.visitorSpawn = player.location.toCenterLocation()
-                                else -> return false
-                            }
-                            player.sendMessage("해당 위치를 스폰으로 설정하였습니다.".infoFormat())
+                val price = configuration.commandPrice.setSpawnPrice.toDouble()
+                if (player.hasNotEnoughMoney(price)) {
+                    val delta = price - economy.getBalance(player)
+                    player.sendMessage("${"%.2f".format(delta)}캔이 부족합니다.".errorFormat())
+                    return true
+                }
+                economy.withdrawPlayer(player, price)
+
+                val data = lands.memberMap[player.uniqueId]!!
+                when (data.rank) {
+                    Rank.OWNER -> {
+                        when (args[0]) {
+                            "main" -> lands.memberSpawn = player.location.toCenterLocation()
+                            "visitor" -> lands.visitorSpawn = player.location.toCenterLocation()
+                            else -> return false
                         }
-                        Rank.DELEGATOR -> {
-                            if (!lands.delegatorSetting.canSetSpawn) {
-                                player.sendMessage("권한이 없습니다!".errorFormat())
-                                return true
-                            }
-
-                            when (args[0]) {
-                                "main" -> lands.memberSpawn = player.location
-                                "visitor" -> lands.visitorSpawn = player.location
-                                else -> return false
-                            }
-
-                            player.sendMessage("해당 위치를 스폰으로 설정하였습니다.".infoFormat())
-                        }
-                        else -> player.sendMessage("권한이 없습니다!".errorFormat())
+                        player.sendMessage("해당 위치를 스폰으로 설정하였습니다.".infoFormat())
                     }
-                } else player.sendMessage("해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat())
-            } else sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
-            return true
+
+                    Rank.DELEGATOR -> {
+                        if (!lands.delegatorSetting.canSetSpawn) {
+                            player.sendMessage("권한이 없습니다!".errorFormat())
+                            return true
+                        }
+
+                        when (args[0]) {
+                            "main" -> lands.memberSpawn = player.location
+                            "visitor" -> lands.visitorSpawn = player.location
+                            else -> return false
+                        }
+
+                        player.sendMessage("해당 위치를 스폰으로 설정하였습니다.".infoFormat())
+                    }
+
+                    else -> player.sendMessage("권한이 없습니다!".errorFormat())
+                }
+            }
+
+            0 -> return false
         }
-        return false
+        return true
     }
 }

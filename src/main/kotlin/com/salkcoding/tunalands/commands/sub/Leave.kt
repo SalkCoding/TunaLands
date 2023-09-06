@@ -1,8 +1,11 @@
 package com.salkcoding.tunalands.commands.sub
 
 import com.google.gson.JsonObject
-import com.salkcoding.tunalands.*
+import com.salkcoding.tunalands.bukkitLinkedAPI
+import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
+import com.salkcoding.tunalands.leftManager
+import com.salkcoding.tunalands.metamorphosis
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
 import com.salkcoding.tunalands.util.toColoredText
@@ -15,18 +18,19 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.util.*
-import kotlin.math.roundToLong
 
 class Leave : CommandExecutor {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        if (label == "leave" && args.isEmpty()) {
-            val player = sender as? Player
-            if (player != null) {
-                work(player)
-            } else sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
+        if (args.isNotEmpty()) return false
+
+        val player = sender as? Player
+        if (player == null) {
+            sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
             return true
         }
-        return false
+
+        work(player)
+        return true
     }
 
     companion object {

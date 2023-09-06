@@ -1,8 +1,10 @@
 package com.salkcoding.tunalands.commands.sub
 
-import com.salkcoding.tunalands.*
-import com.salkcoding.tunalands.lands.Lands
+import com.salkcoding.tunalands.bukkitLinkedAPI
+import com.salkcoding.tunalands.landManager
 import com.salkcoding.tunalands.lands.Rank
+import com.salkcoding.tunalands.leftManager
+import com.salkcoding.tunalands.tunaLands
 import com.salkcoding.tunalands.util.errorFormat
 import com.salkcoding.tunalands.util.infoFormat
 import com.salkcoding.tunalands.util.secondsToDateString
@@ -21,14 +23,20 @@ val inviteMap = mutableMapOf<UUID, InviteData>()
 class Invite : CommandExecutor {
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        if (label == "invite" && args.size == 1) {
-            val player = sender as? Player
-            if (player != null) {
+        when (args.size) {
+            1 -> {
+                val player = sender as? Player
+                if (player == null) {
+                    sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
+                    return true
+                }
+
                 work(player, args[0])
-            } else sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
-            return true
+            }
+
+            else -> return false
         }
-        return false
+        return true
     }
 
     companion object {

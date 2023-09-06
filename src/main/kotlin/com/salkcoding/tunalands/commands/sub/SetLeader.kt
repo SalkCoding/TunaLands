@@ -16,14 +16,19 @@ import java.util.*
 
 class SetLeader : CommandExecutor {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        if (label == "setleader" && args.size == 1) {
-            val player = sender as? Player
-            if (player != null) {
+        when (args.size) {
+            1 -> {
+                val player = sender as? Player
+                if (player == null) {
+                    sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
+                    return true
+                }
                 work(player, args[0])
-            } else sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
-            return true
+            }
+
+            else -> return false
         }
-        return false
+        return true
     }
 
     companion object {
@@ -80,6 +85,7 @@ class SetLeader : CommandExecutor {
 
                                 lands.sendMessageToOnlineMembers("${targetName}이/가 ${lands.landsName}의 새로운 소유자가 되었습니다.".infoFormat())
                             }
+
                             else -> player.sendMessage("관리 대리인과 멤버만 소유자가 될 수 있습니다.".errorFormat())
                         }
                     } else player.sendMessage("${targetName}은/는 당신의 땅에 소속되어있지 않습니다.".errorFormat())
@@ -126,14 +132,24 @@ class SetLeader : CommandExecutor {
                                     )
                                 }
 
-                                bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${targetName}은/는 이제 ${lands.landsName}의 소유자입니다.".infoFormat())
+                                bukkitLinkedAPI.sendMessageAcrossServer(
+                                    hostName,
+                                    "${targetName}은/는 이제 ${lands.landsName}의 소유자입니다.".infoFormat()
+                                )
                                 bukkitLinkedAPI.sendMessageAcrossServer(hostName, "관리 대리인으로 강등되셨습니다.".warnFormat())
 
                                 lands.sendMessageToOnlineMembers("${targetName}이/가 ${lands.landsName}의 소유자가 되었습니다.".infoFormat())
                             }
-                            else -> bukkitLinkedAPI.sendMessageAcrossServer(hostName, "관리 대리인과 멤버만 소유자가 될 수 있습니다.".errorFormat())
+
+                            else -> bukkitLinkedAPI.sendMessageAcrossServer(
+                                hostName,
+                                "관리 대리인과 멤버만 소유자가 될 수 있습니다.".errorFormat()
+                            )
                         }
-                    } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${targetName}은/는 당신의 땅에 소속되어있지 않습니다.".errorFormat())
+                    } else bukkitLinkedAPI.sendMessageAcrossServer(
+                        hostName,
+                        "${targetName}은/는 당신의 땅에 소속되어있지 않습니다.".errorFormat()
+                    )
                 } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "해당 명령어는 땅 소유자만 사용가능합니다.".errorFormat())
             }
         }

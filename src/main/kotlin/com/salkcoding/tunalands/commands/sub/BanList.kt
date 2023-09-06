@@ -11,18 +11,23 @@ import org.bukkit.entity.Player
 
 class BanList : CommandExecutor {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        if (label == "banlist" && args.isEmpty()) {
-            val player = sender as? Player
-            if (player != null) {
-                val uuid = player.uniqueId
-                val lands = landManager.getPlayerLands(player.uniqueId, Rank.OWNER, Rank.DELEGATOR, Rank.MEMBER)
-                if (lands != null) {
-                    val data = lands.memberMap[uuid]!!
-                    player.openBanListGui(lands, true, data.rank)
-                } else player.sendMessage("해당 명령어는 땅 소속만 사용가능합니다.".errorFormat())
-            } else sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
+        if (args.isNotEmpty()) return false
+
+        val player = sender as? Player
+        if (player == null) {
+            sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
             return true
         }
-        return false
+
+        val uuid = player.uniqueId
+        val lands = landManager.getPlayerLands(player.uniqueId, Rank.OWNER, Rank.DELEGATOR, Rank.MEMBER)
+        if (lands == null) {
+            player.sendMessage("해당 명령어는 땅 소속만 사용가능합니다.".errorFormat())
+            return true
+        }
+
+        val data = lands.memberMap[uuid]!!
+        player.openBanListGui(lands, true, data.rank)
+        return true
     }
 }

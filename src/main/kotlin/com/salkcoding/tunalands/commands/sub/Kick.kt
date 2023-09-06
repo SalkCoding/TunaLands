@@ -15,14 +15,18 @@ import java.util.*
 
 class Kick : CommandExecutor {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        if (label == "kick" && args.size == 1) {
-            val player = sender as? Player
-            if (player != null) {
+        when (args.size) {
+            1 -> {
+                val player = sender as? Player
+                if (player == null) {
+                    sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
+                    return true
+                }
                 work(player, args[0])
-            } else sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
-            return true
+            }
+            else -> return false
         }
-        return false
+        return true
     }
 
     companion object {

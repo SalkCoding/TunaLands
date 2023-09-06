@@ -15,14 +15,20 @@ import java.util.*
 
 class Cancel : CommandExecutor {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        if (label == "cancel" && args.size == 1) {
-            val player = sender as? Player
-            if (player != null) {
+        when (args.size) {
+            1 -> {
+                val player = sender as? Player
+                if (player == null) {
+                    sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
+                    return true
+                }
+
                 work(player, args[0])
-            } else sender.sendMessage("콘솔에서는 사용할 수 없는 명령어입니다.".errorFormat())
-            return true
+            }
+
+            else -> return false
         }
-        return false
+        return true
     }
 
     companion object {
@@ -70,7 +76,10 @@ class Cancel : CommandExecutor {
 
                     if (target.uniqueId in inviteMap) {
                         val data = inviteMap[target.uniqueId]!!
-                        bukkitLinkedAPI.sendMessageAcrossServer(hostName, "${targetName}에게 보낸 초대가 취소되었습니다.".infoFormat())
+                        bukkitLinkedAPI.sendMessageAcrossServer(
+                            hostName,
+                            "${targetName}에게 보낸 초대가 취소되었습니다.".infoFormat()
+                        )
                         if (data.target.isOnline) {
                             data.target.player!!.sendMessage("${hostName}가 초대를 취소하였습니다.".errorFormat())
                         } else {
@@ -82,7 +91,10 @@ class Cancel : CommandExecutor {
                         data.task.cancel()
                         inviteMap.remove(data.target.uniqueId)
                     } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "보낸 초대가 없습니다.".errorFormat())
-                } else bukkitLinkedAPI.sendMessageAcrossServer(hostName, "해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat())
+                } else bukkitLinkedAPI.sendMessageAcrossServer(
+                    hostName,
+                    "해당 명령어는 땅 소유자와 관리 대리인만 사용가능합니다.".errorFormat()
+                )
             }
         }
     }
